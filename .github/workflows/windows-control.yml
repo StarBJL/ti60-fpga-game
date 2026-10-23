@@ -1,0 +1,34 @@
+name: Windows control console
+on:
+  push:
+    branches: [main]
+    paths: ["tools/control_panel/**", "verification/r5/windows_console/**", "*.cmd", ".github/workflows/windows-control.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify native CMD bootstrap
+        shell: cmd
+        run: Start_Control_Panel.cmd --check
+      - name: Build standalone Windows executable
+        run: python tools/control_panel/build_windows.py
+      - name: Protocol and Windows branch checks
+        run: .venv-control-build/Scripts/python.exe verification/r5/windows_console/test_portability.py
+      - name: Packaged executable HTTP smoke test
+        run: python verification/r5/windows_console/windows_exe_smoke.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Ti60-R5-Windows-Console
+          path: |
+            dist/windows/
+            verification/r5/windows_console/windows_exe_results.json
+          if-no-files-found: error
+          retention-days: 30
