@@ -5,7 +5,7 @@ on:
     paths: ["tools/control_panel/**", "verification/r5/windows_console/**", "*.cmd", ".github/workflows/windows-control.yml"]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   package:
     runs-on: windows-latest
@@ -24,6 +24,16 @@ jobs:
         run: .venv-control-build/Scripts/python.exe verification/r5/windows_console/test_portability.py
       - name: Packaged executable HTTP smoke test
         run: python verification/r5/windows_console/windows_exe_smoke.py
+      - name: Preserve verified build on private artifact branch
+        shell: pwsh
+        run: |
+          python tools/control_panel/export_windows_artifact.py
+          git switch -c "windows-artifact-$env:GITHUB_RUN_ID"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f dist/windows dist/Ti60_R5_Windows_Console.zip _artifact_transport verification/r5/windows_console/windows_exe_results.json
+          git commit -m "Archive verified Windows console build $env:GITHUB_RUN_ID"
+          git push origin "windows-artifact-$env:GITHUB_RUN_ID"
       - uses: actions/upload-artifact@v4
         with:
           name: Ti60-R5-Windows-Console
