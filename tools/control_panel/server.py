@@ -240,6 +240,11 @@ def make_server(session,port=8765):
     return ThreadingHTTPServer(('127.0.0.1',port),Handler)
 
 def main():
+    # Frozen Python ignores PYTHONUTF8. A Western Windows code page must not
+    # crash the console when printing Chinese UI text or a Unicode log path.
+    for stream in (sys.stdout,sys.stderr):
+        if stream is not None and hasattr(stream,'reconfigure'):
+            stream.reconfigure(encoding='utf-8',errors='backslashreplace')
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--port',type=int,default=0);ap.add_argument('--log-root',type=Path,default=default_log_root());ap.add_argument('--open',action='store_true');args=ap.parse_args()
     if not 0<=args.port<=65535:ap.error('--port 必须为 0–65535，0 表示自动选择空闲端口')
     session=Session(args.log_root.expanduser().resolve())
