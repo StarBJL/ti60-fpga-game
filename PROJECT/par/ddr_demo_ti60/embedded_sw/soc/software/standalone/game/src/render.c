@@ -272,18 +272,24 @@ static void ground(Gfx *g) {
     }
 }
 
-static Pixel pressure_pixels[4][4][25*25] __attribute__((aligned(64)));
-static Sprite pressure_sprites[4][4];
-static const int pressure_sizes[4]={9,13,17,25};
+static Pixel pressure_pixels[7][4][25*25] __attribute__((aligned(64)));
+static Sprite pressure_sprites[7][4];
+static const int pressure_sizes[7]={1,3,6,9,13,17,25};
 static void init_pressure_sprites(void){
-    for(int k=0;k<4;k++)for(int s=0;s<4;s++){
+    for(int k=0;k<7;k++)for(int s=0;s<4;s++){
         int n=pressure_sizes[k];pressure_sprites[k][s]=(Sprite){n,n,pressure_pixels[k][s],0};
         for(int y=0;y<n;y++)for(int x=0;x<n;x++)
-            pressure_pixels[k][s][y*n+x]=hostile_pixels[s][(y*9/n)*9+x*9/n];
+            pressure_pixels[k][s][y*n+x]=hostile_pixels[s][(n<9?((2*y+1)*9/(2*n)):y*9/n)*9+(n<9?((2*x+1)*9/(2*n)):x*9/n)];
+        /* A 1px ring must remain visible even though its source centre is key. */
+        if(n==1){Pixel best=0;unsigned light=0;
+            for(int a=0;a<81;a++){Pixel p=hostile_pixels[s][a];unsigned q=(p>>11)+(p>>5&63)+(p&31);
+                if(p!=COLOR_KEY&&q>light){best=p;light=q;}}
+            pressure_pixels[k][s][0]=best;
+        }
     }
 }
 int render_set_pressure_size(int pixels){
-    int k;for(k=0;k<4&&pressure_sizes[k]!=pixels;k++);if(k==4)return 0;
+    int k;for(k=0;k<7&&pressure_sizes[k]!=pixels;k++);if(k==7)return 0;
     for(int s=0;s<4;s++)hostile_sprites[s]=pressure_sprites[k][s];
     init_player_locator();return 1;
 }
@@ -488,7 +494,7 @@ int render_seed_table=1;
 
 static int draw_seeds(Gfx *r,const Game *g,int batch) {
     const Sprite *seeds=g->limit_mode?hostile_sprites:normal_seeds;
-    int half=game_seed_half(g),size=half*2+1;
+    int half=game_seed_half(g),size=game_seed_extent(g);
     int nh=game_hostile_used(g),i,k=0,drawn=0; const Bullet *hp=nh?game_hostile_at(g,0):0;  /* contiguous pool, slots >= nh are free */
     if(!batch) {
         for(i=0;i<nh;i++) if(hp[i].active) {
@@ -530,7 +536,7 @@ static volatile int prof_sink;
 static Sprite tiny_sprites[4];
 
 int render_seed_part(Gfx *r,const Game *g,int part) {
-    int half=game_seed_half(g),size=half*2+1;
+    int half=game_seed_half(g),size=game_seed_extent(g);
     int nh=game_hostile_used(g),i,k=0,n=0,sum=0; const Bullet *hp=nh?game_hostile_at(g,0):0;
     switch(part) {
     case SEED_PART_PREP:            /* first 128 on-screen seeds -> prof_list, total count -> prof_n */
@@ -650,6 +656,7 @@ static void draw_world(Gfx *r,const Game *g,int batch) {
     n=enemy_order(g,order,ys);
     t1=clock_now(); RSPLIT(sort,t1-t); t=t1;
     prepare_player_locator(g);
+    t1=clock_now(); RSPLIT(locator,t1-t); t=t1;
     shadow(r,g->x/FIX,g->y/FIX+21,14);
     for(i=0;i<n;i++)draw_enemy(r,&g->enemies[order[i]],g->ticks);
     draw_player(r,g);
@@ -733,7 +740,7 @@ void render_game(const Game *g,Gfx *r,RenderInfo info) {
         gfx_fill_rect(r,360,485,560,60,GOLD);menu_label(r,503,"L 压力测试",3,INK);
         menu_label(r,578,"低档 / 中档 / 高档 / 自定义",2,MUTED);
     }else if(g->phase==STRESS_SELECT){
-        static const char *names[]={"1 低档 32怪物 1024弹","2 中档 64怪物 2048弹","3 高档 128怪物 4096弹","4 自定义 最高40000弹"};
+        static const char *names[]={"1 低档 32怪物 1024弹","2 中档 64怪物 2048弹","3 高档 128怪物 4096弹","4 自定义 最高99999弹"};
         panel(r,240,130,800,490,EDGE);menu_label(r,163,"压力测试",4,GOLD);menu_label(r,225,"按数字1至4选择档位",2,CREAM);
         for(i=0;i<4;i++){gfx_fill_rect(r,340,270+i*64,600,54,i==0?GREEN:i==1?GOLD:RED);menu_center(r,285+i*64,names[i],2,INK);}
         menu_label(r,577,"M 返回菜单；自定义档中 - / + 调整弹幕数",1,MUTED);

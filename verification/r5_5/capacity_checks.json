@@ -1,0 +1,10 @@
+[
+  {
+    "name": "capacity",
+    "passed": true
+  },
+  {
+    "name": "squares",
+    "passed": true
+  }
+]

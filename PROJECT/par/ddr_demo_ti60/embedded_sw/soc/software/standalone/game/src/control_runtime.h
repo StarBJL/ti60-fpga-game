@@ -48,8 +48,8 @@ static void control_state(unsigned id){
       id,settings_epoch,scene,scene==SCENE_TH?th.mode:scene==SCENE_GAME?game.phase:0,count_step,control_limit(),
       scene==SCENE_SQUARES?DEMO_MAX_SQUARES:scene==SCENE_GAME?MAX_HOSTILE_BULLETS:scene==SCENE_TH?TH_MAX_BULLETS:3,
       scene==SCENE_TH?th_pressure_scale():game_seed_size(),demo_square_size(),alpha_fx,vsync,use_hw,autoplay,show_stats);
-    tx_printf("A4 id=%u bgm=%d track=%s volume=%d tone=%d motion=%d table=%d stress_auto=%d density=%d verbose=%d period=%d bank_sounds=%d mixer=%d audio_ctrl=%u music_supported=1 music_auto=%d music_index=%d music_total=10\r\n",
-      id,music_enabled(),aud_name(aud_bgm_current()),aud.master,aud.tone,demo_motion_enabled(),demo_table_enabled(),
+    tx_printf("A4 id=%u bgm=%d track=%s volume=%d tone=%d motion=%d motion_min_px=%d table=%d stress_auto=%d density=%d verbose=%d period=%d bank_sounds=%d mixer=%d audio_ctrl=%u pressure_supported=1 music_supported=1 music_auto=%d music_index=%d music_total=10\r\n",
+      id,music_enabled(),aud_name(aud_bgm_current()),aud.master,aud.tone,demo_motion_enabled(),demo_motion_min_size(),demo_table_enabled(),
       th.stress_auto,th_stress_dens(&th),report_verbose,img_period,aud.nsnd,aud.mixer,HDMI_REG(0x20),music_follow_scene(),music_index());
     control_video_state(id);control_engine_state(id);control_input_state(id);
 }
@@ -95,7 +95,7 @@ static int control_apply(ControlEvent e){
     case CT_BULLET_SIZE:
         if(scene==SCENE_TH){control_fence();if(!th_pressure_scale_set(v))return 0;th_rebuild_draw(&th);}
         else if(scene==SCENE_GAME){
-            if(v!=9&&v!=13&&v!=17&&v!=25)return 0;control_fence();
+            if(v!=1&&v!=3&&v!=6&&v!=9&&v!=13&&v!=17&&v!=25)return 0;control_fence();
             if(!render_set_pressure_size(v))return 0;game_set_seed_size(&game,v);
         }else return 0;
         if(hw_avail){blit_fence();blit_cache_inv();}break;
@@ -106,7 +106,7 @@ static int control_apply(ControlEvent e){
     case CT_VSYNC:if(v<0||v>1)return 0;if(v!=vsync)handle_legacy_char('v');break;
     case CT_ALPHA:if(v<0||v>1)return 0;alpha_fx=v;break;
     case CT_BACKEND:if(v<0||v>1||(v&&!hw_avail))return 0;control_fence();set_hw(v);break;
-    case CT_MOTION:if(v<0||v>1||(v&&(!demo_motion_available()||demo_motion_error())))return 0;control_fence();if(v!=demo_motion_enabled())demo_motion_toggle();break;
+    case CT_MOTION:if(v&&demo_square_size()&&demo_square_size()<demo_motion_min_size())return 0;if(v<0||v>1||(v&&(!demo_motion_available()||demo_motion_error())))return 0;control_fence();if(v!=demo_motion_enabled())demo_motion_toggle();break;
     case CT_TABLE:if(v<0||v>1)return 0;control_fence();if(v!=demo_table_enabled())demo_table_toggle();break;
     case CT_BGM:if(v<0||v>1)return 0;music_enable(v);break;
     case CT_NEXT_TRACK:music_next();break;
@@ -154,9 +154,9 @@ static void handle_char(char c){
     case '4':if(scene==SCENE_GAME){e.type=CT_STRESS;e.value=4;}break;
     case 'j':case 'J':if(scene==SCENE_GAME){e.type=CT_SKILL;}break;
     case '[':case ']':{
-        const int carrot[]={9,13,17,25},thscale[]={75,100,125,150};e.type=CT_BULLET_SIZE;
-        e.value=cycle_value(scene==SCENE_TH?thscale:carrot,4,scene==SCENE_TH?th_pressure_scale():game_seed_size(),c==']'?1:-1);break;}
-    case '{':case '}':{const int sizes[]={0,6,8,12,16,24,32,40};e.type=CT_SQUARE_SIZE;e.value=cycle_value(sizes,8,demo_square_size(),c=='}'?1:-1);break;}
+        const int carrot[]={1,3,6,9,13,17,25},thscale[]={1,3,6,75,100,125,150};e.type=CT_BULLET_SIZE;
+        e.value=cycle_value(scene==SCENE_TH?thscale:carrot,7,scene==SCENE_TH?th_pressure_scale():game_seed_size(),c==']'?1:-1);break;}
+    case '{':case '}':{const int sizes[]={0,1,3,6,8,12,16,24,32,40};e.type=CT_SQUARE_SIZE;e.value=cycle_value(sizes,10,demo_square_size(),c=='}'?1:-1);break;}
     case '\\':e.type=CT_NEXT_TRACK;break;
     case ';':e.type=CT_BGM;e.value=!music_enabled();break;
     case ',':case '.':case '-':case '+':case '=':

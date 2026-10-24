@@ -51,12 +51,12 @@ module square_motion #(
  always @* begin
   prdata=0;
   case(paddr[7:0])
-   8'h00:prdata=32'h4d4f5432;8'h04:prdata=32'h00020000;
+   8'h00:prdata=32'h4d4f5432;8'h04:prdata=32'h00020001;
    8'h08,8'h28:prdata=status;8'h0c:prdata=base;8'h10:prdata={16'd0,count};
    8'h18:prdata=cycles;8'h1c:prdata=sequence_id;8'h20:prdata={22'd0,hist_index};
    8'h24:prdata={16'd0,hist_q};8'h2c:prdata=error_addr;
    8'h30:prdata=total_refs;8'h34:prdata={16'd0,peak};
-   8'h38:prdata=WIDTH;8'h3c:prdata=(BOTTOM<<16)|TOP;8'h40:prdata=MAX_COUNT;
+   8'h38:prdata=WIDTH;8'h3c:prdata=(BOTTOM<<16)|TOP;8'h40:prdata=MAX_COUNT;8'h44:prdata=(40<<16)|1;
   endcase
  end
  always @* begin
@@ -133,7 +133,7 @@ module square_motion #(
     GETXY:begin xy<=scratch_q;state<=GETM;end
     GETM:begin motion<=scratch_q;size<=scratch_q[23:16];state<=MOVE;end
     MOVE:begin
-     if(size<6||size>40||motion[31:24]>=8||motion[7:0]==8'h80||motion[15:8]==8'h80||xy[15:0]>((WIDTH-size)<<4)||xy[31:16]<(TOP*16)||xy[31:16]>((BOTTOM-size)<<4))state<=FAIL;
+     if(size<1||size>40||motion[31:24]>=8||motion[7:0]==8'h80||motion[15:8]==8'h80||xy[15:0]>((WIDTH-size)<<4)||xy[31:16]<(TOP*16)||xy[31:16]>((BOTTOM-size)<<4))state<=FAIL;
      else begin
       xraw<=$signed({2'b0,xy[15:0]})+(advance?$signed(motion[7:0]):18'sd0);
       yraw<=$signed({2'b0,xy[31:16]})+(advance?$signed(motion[15:8]):18'sd0);

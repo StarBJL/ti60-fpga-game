@@ -25,6 +25,10 @@ static uint32_t bm_lptr, bm_lend, bm_lerr;
 static uint32_t bm_limit = (1024u << 16) | (128u << 8) | 16u;   /* 0x54 LIMIT (no effect on the model) */
 static uint32_t bm_lhdr, bm_lmask;        /* record being decoded (mask = fields still due) */
 static uint32_t bm_lwords;                /* words decoded (host statistics only) */
+#ifndef BLIT_MODEL_SQTAB
+#define BLIT_MODEL_SQTAB 0
+#endif
+static uint32_t bm_sq_count,bm_sq_alpha,bm_sq_items,bm_sq_commands;
 static uint32_t bm_ltab;                  /* TAB 记录：等地址字时 = 项数 + 1，否则 0 */
 
 /* band mode (D, CAPS[31]). The model draws every command at once, so a band frame
@@ -192,6 +196,16 @@ static void bm_list_word(uint32_t w)
         memset(BLIT_MODEL_PTR(w), 0, n);              /* the band window starts black */
         return;
     }
+    if(bm_sq_count){
+        static const uint32_t colors[]={0xf32a,0x3dbb,0xb70d,0xf5eb,0x9bdc,0xeb50,0x7698,0xf77a};
+        uint32_t n=bm_sq_count-1u;bm_sq_count=0;bm_sq_items+=n;++bm_sq_commands;
+        for(uint32_t i=0;i<n;i++){
+            uint32_t xy=bm_rd32(w+8*i),m=bm_rd32(w+8*i+4),sz=(m>>16)&255u;
+            uint32_t f[10]={0};f[0]=bm_lctx[BM_L_BASE]+(xy>>20)*bm_lctx[BM_L_DSTR]+((xy&65535u)>>4)*2;
+            f[1]=bm_lctx[BM_L_DSTR];f[6]=sz|(sz<<16);f[7]=colors[(m>>24)&7];
+            bm_exec_f(f,(bm_sq_alpha&&(i&1)?150u:255u)<<8);
+        }return;
+    }
     if (bm_ltab) {                                    /* TAB 的地址字：逐项画 8 B 的表项 */
         uint32_t k, n = bm_ltab - 1u, a = w & ~3u;
         bm_ltab = 0;
@@ -212,6 +226,10 @@ static void bm_list_word(uint32_t w)
         if (w & 0x80000000u) {                        /* DRAW */
             bm_draw_slot((w >> 25) & 63u, w);
             return;
+        }
+        if(BLIT_MODEL_SQTAB && (w>>28)==6u){
+            if((w&0x0ffe0000u)||(w&65535u)>30000u){bm_lerr=1;return;}
+            bm_sq_count=(w&65535u)+1u;bm_sq_alpha=(w>>16)&1u;return;
         }
         if ((w >> 28) == 2u) {                        /* TAB：下一个字是表地址 */
             bm_ltab = (w & 0xFFFFu) + 1u;
@@ -267,7 +285,7 @@ uint32_t blit_model_rd(uint32_t off)
     case 0x98: return bm_brecip;
     case 0x9C: return bm_bbin;
     case 0xA0: return BLIT_MODEL_FRAMES_DONE(bm_frames);
-    case 0xBC: return BLIT_MODEL_WIN > 1280u ? (3u | 4u | (45u << 8)) : 1u;   /* CAPS2: [0] add [2] 2560 window [15:8] bands */
+    case 0xBC: return BLIT_MODEL_WIN > 1280u ? (3u | 4u | (BLIT_MODEL_SQTAB?8u:0u) | (45u << 8)) : 1u;   /* CAPS2: [0] add [2] 2560 window [15:8] bands */
     case 0x38: return bm_lptr;
     case 0x3C: return bm_lend;
     case 0x40: return 0;
@@ -329,7 +347,7 @@ static void blit_model_reset(void)
     bm_lctx[BM_L_KEY] = 0xF81Fu;
     bm_lptr = bm_lend = bm_lerr = bm_lhdr = bm_lmask = bm_lwords = bm_ltab = 0;
     memset(bm_cvalid, 0, sizeof bm_cvalid);
-    bm_chit = bm_cmiss = 0;
+    bm_chit = bm_cmiss = 0;bm_sq_count=bm_sq_items=bm_sq_commands=0;
     bm_bgeo = (30u << 16) | 1280u; bm_brecip = 209716u; bm_bbin = 0x03000000u | 18u;
     bm_band_on = bm_band_fb = bm_band_w8 = bm_frames = bm_berr = bm_fault = bm_spin = 0;
     bm_band_cmds = bm_band_other = 0;

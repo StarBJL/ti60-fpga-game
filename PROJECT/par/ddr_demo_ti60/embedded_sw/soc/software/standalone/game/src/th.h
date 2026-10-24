@@ -24,7 +24,7 @@
 #define TH_PF_W      384
 #define TH_PF_H      448
 
-#define TH_MAX_BULLETS 16384        /* 压力模式用得到；普通难度一般几百到两千 */
+#define TH_MAX_BULLETS 99999        /* 压力模式用得到；普通难度一般几百到两千 */
 #define TH_MAX_SHOTS   256
 #define TH_MAX_ENEMIES 64
 #define TH_MAX_ITEMS   1024
@@ -176,7 +176,7 @@ typedef struct Th {
     int dbuf;
     int dcount[TH_DRAW_BUFS][TBK_COUNT];
     /* 每个桶一张表，容量都是 TH_MAX_BULLETS：弹幕循环直接写进去（不再先写临时表再按桶搬一遍）。
-     * 3 x 9 x 16384 x 8 B = 3.4 MB，在 DDR 的 .bss 里 */
+     * 3 x 9 x 99999 x 8 B = 21.6 MB，在独立 DDR .stressbss 中 */
     GfxItem draw[TH_DRAW_BUFS][TBK_COUNT][TH_MAX_BULLETS];
     int32_t bot_fx, bot_fy;
     uint32_t prof[3];               /* 上一 tick（th_clock 时钟数）：出弹 + Boss + 杂兵 / 自机弹 + 弹幕循环 / 道具 + 特效 */         /* 自动驾驶：上一 tick 弹幕循环里顺便算出的近处子弹斥力 */

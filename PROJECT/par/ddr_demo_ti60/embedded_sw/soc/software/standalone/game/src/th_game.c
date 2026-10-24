@@ -71,7 +71,7 @@ void th_bullet_sprite(ThBullet *b)
 ThBullet *th_fire(Th *t, int32_t x, int32_t y, uint16_t ang, int spd, int kind, int color)
 {
     ThBullet *b;
-    if (t->nbullets >= (t->diff == TH_STRESS ? t->stress_cap : TH_MAX_BULLETS)) { ++t->dropped; return 0; }
+    if (t->nbullets >= (t->diff == TH_STRESS ? t->stress_cap : 16384)) { ++t->dropped; return 0; }
     b = &t->bullets[t->nbullets++];
     t->sfx |= TS_BIT(TS_FIRE);
     memset(b, 0, sizeof *b);

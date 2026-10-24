@@ -51,7 +51,7 @@ typedef struct {
  *   bg : background + gems, sort : enemy draw order, enemies : enemies + player,
  *   pbullets : player bullets, particles : particles + hurt border
  */
-typedef struct { uint32_t total, seeds, hud, seeds_n, bg, sort, enemies, pbullets, particles; } RenderSplit;
+typedef struct { uint32_t total, seeds, hud, seeds_n, bg, sort, enemies, pbullets, particles, locator; } RenderSplit;
 /* 下面的计时、A/B 开关和 'y' 剖析只在调试版（make STATS=1 → SPROUT_STATS=1）里有；
  * 发行版固定 render_sort_keys = render_seed_table = 1，统计面板（'f'）也不编译。 */
 #if SPROUT_STATS

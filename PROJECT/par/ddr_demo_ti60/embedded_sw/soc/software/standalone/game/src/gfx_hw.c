@@ -144,6 +144,7 @@ static void hw_copy_list_hw(const GfxHwTarget *t, const Sprite *sprites, const G
 
     for (i = 0; i < (int)LIST_PRE; i++) pre[i] = 0u;
     i = 0;
+    if(dma)blit_band_admit((uint32_t)n);
     blit_list_draw_ctx(fb, pitch, (cmd & BLIT_KEY) != 0u);
     while (i < n) {
         const int end = n - i > LIST_CHUNK ? i + LIST_CHUNK : n;
@@ -259,6 +260,7 @@ static int hw_copy_table(void *context, const Sprite *sprites, int nsprites,
         nsprites <= 0 || nsprites > (int)BLIT_L_SLOTS || (a & 3u) ||
         t->pitch * (uint32_t)(BLIT_MAX_H + 1) > BLIT_L_MAX_OFF + 1u)
         return 0;
+    blit_band_admit((uint32_t)n);
     blit_list_draw_ctx(t->fb, t->pitch, (cmd & BLIT_KEY) != 0u);
     for (s = 0; s < nsprites; s++) {               /* 槽号 = 精灵号 */
         const Sprite *sp = &sprites[s];

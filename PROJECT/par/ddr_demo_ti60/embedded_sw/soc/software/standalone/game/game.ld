@@ -27,6 +27,7 @@ MEMORY
   ram  (wxai!r) : ORIGIN = 0x00001000, LENGTH = 15M
   snd  (r)      : ORIGIN = 0x02000000, LENGTH = 16M
   art  (rw)     : ORIGIN = 0x04000000, LENGTH = 32M
+  stress (rw)   : ORIGIN = 0x06000000, LENGTH = 32M
 }
 
 PHDRS
@@ -173,6 +174,16 @@ SECTIONS
   } >snd AT>snd :snd
 
   /* 1.5x danmaku art (th_art.c ART_BIG): big buffers above the band bins, not loaded */
+  /* Initialized explicitly by game_init/th_init. Never downloaded or cleared
+     by startup. The DDR AXI address space is 28 bits (256 MiB). */
+  .stressbss (NOLOAD) : ALIGN(256)
+  {
+    __stress_start = .;
+    *(.stressbss .stressbss.*)
+    __stress_end = .;
+  } >stress :NONE
+  ASSERT(__stress_end <= 0x08000000, "stress pools overlap band bins")
+
   .artbss (NOLOAD) : ALIGN(64)
   {
     *(.artbss .artbss.*)

@@ -1,5 +1,7 @@
 # Ti60 R5 工程入口 / Project entry
 
+当前测试版本：**R5.5-PRESSURE-99999**。请使用 `BOARD_TEST/r5_5/ti60_r5_5.bit` + `ti60_r5_5_debug.elf`，并重启上位机。详细条件和待填上板表见 [R5.5 说明](docs/R5_5_PRESSURE.md)。
+
 请先阅读 [中文说明](README.md) 或 [English README](README_EN.md)。
 
 - 上板文件：[BOARD_TEST](BOARD_TEST/START_HERE.txt)；必须使用配套 R5 bit + ELF。

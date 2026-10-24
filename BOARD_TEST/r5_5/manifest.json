@@ -1,0 +1,240 @@
+{
+  "version": "TI60-R5.5-PRESSURE-99999",
+  "created_utc": "2026-10-24T08:24:09.847552+00:00",
+  "project_root": "/home/user/fpga_contest/1025/Ti60_R5_DUALVIDEO",
+  "hardware": {
+    "tool": "Efinity 2026.1.132.4.5",
+    "device": "Ti60F225",
+    "timing_model": "I3",
+    "core_hz": 200000000,
+    "pixel_hz": 74375000,
+    "video_revision": 328193,
+    "motion_revision": 131073,
+    "motion_min_px": 1,
+    "pnr": {
+      "seed": 2,
+      "placer_effort_level": 4,
+      "optimization_level": "TIMING_2",
+      "retiming": 0
+    },
+    "post_route_slack": {
+      "core_clk": {
+        "setup_ns": 0.224,
+        "hold_ns": 0.026
+      },
+      "pll_fb_clk": {
+        "setup_ns": 4.016,
+        "hold_ns": 0.027
+      },
+      "sdram_clk": {
+        "setup_ns": 0.496,
+        "hold_ns": 0.024
+      },
+      "rx_cal_clk": {
+        "setup_ns": 0.451,
+        "hold_ns": 0.026
+      },
+      "tx_cal_clk": {
+        "setup_ns": 0.386,
+        "hold_ns": 0.097
+      },
+      "tx_cal_clk_90edge": {
+        "setup_ns": 0.395,
+        "hold_ns": 0.072
+      },
+      "hdmi_tx_slow_clk": {
+        "setup_ns": 7.094,
+        "hold_ns": 0.042
+      }
+    },
+    "all_reported_setup_hold_passed": true,
+    "resources": {
+      "xlr": {
+        "used": 58568,
+        "capacity": 60800
+      },
+      "ram_blocks": {
+        "used": 253,
+        "capacity": 256
+      },
+      "dsp": {
+        "used": 32,
+        "capacity": 160
+      }
+    }
+  },
+  "memory_regions_bytes": {
+    "debug": {
+      "ram": 9308784,
+      "snd": 10123520,
+      "art": 13067392,
+      "stress": 30918820
+    },
+    "release": {
+      "ram": 9236208,
+      "snd": 10123520,
+      "art": 13067392,
+      "stress": 30918820
+    }
+  },
+  "elf_symbols": {
+    "debug": {
+      "game": {
+        "address": 125547264,
+        "bytes": 6034852
+      },
+      "squares": {
+        "address": 2558464,
+        "bytes": 799992
+      },
+      "th": {
+        "address": 100663296,
+        "bytes": 24883748
+      }
+    },
+    "release": {
+      "game": {
+        "address": 125547264,
+        "bytes": 6034852
+      },
+      "squares": {
+        "address": 2519296,
+        "bytes": 799992
+      },
+      "th": {
+        "address": 100663296,
+        "bytes": 24883748
+      }
+    }
+  },
+  "source_sha256": {
+    "PROJECT/rtl/blit/square_motion.v": "836db1e740f102668be26c027e33a1292a9923c77ac1000cdb89322c7aea6fd3",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th.h": "a030bb608c4018927135a42e1cd929297e957cfccbffc4658f776caabdc70b0a",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c": "6c88e68bb2282ce5f94cc258bdb821ce7efc805c0c570398ef6171766e43d321",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control_runtime.h": "0540dc66eb6baa5b30ab0ba14682f7b9568914d61751755c16fcd45ada3f8544",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/gfx_hw.c": "f2d2eb858be6d289f8b9b51da595bef0306fefb5b24c0797ed0dd282f2e1c6c4",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_game.c": "7a27ac54860c2837891807c98974a16cff136e08e890570eb4a28f3b20cdb41b",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/render.h": "9a3a48b6997021f3f6bdbd1033fb0b6d4450607b8de871a2bae2dcd09816a2d1",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/demo.h": "c78c98ea926d16ecfef2411fb3839e84ac0f32a2868c7db02ff385db85ac0f1c",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/demo.c": "e4e95d29d01b7a05ec92ecec19cd3cb14eb4c33e30fcd001e133061d64501b70",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/blit.h": "d31bed38e557e51598d006cb400f3a67abcfb40e873b5f13fb51f6104c3a7007",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/stress_sizes.c": "ff2489da9e6c0537c911d7d6e4f6b621576a58e7a86542db766303a25a1d4f92",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hero_locator.h": "67bb11428370c156dd0d018e291839baaa3e1fd72f8f6e44312ba8c2aa2444c0",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/render.c": "f36c6b8ec6a8e29b9f3acfbf3e74b363ea318509b4221e68b7fa0ba3faa7c0d0",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/blit.c": "6e8b7515c7feafc75b64b5abb44b98a8ef150ca9aabaf1f49d1ceb38f704ad61",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game.c": "a48958f7ca40a262f3d2d013108fedb86e6bcc5cff33eee5dead3cfce91124fc",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game.h": "000f736ace5be4e9d2ccd58e5ed7bb009e32ee22508ef9bb42f287f388c5cfcc",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/sprout_config.h": "445b419c8690ac79e9e98935b29979bcb1b84db68d7a34cc0792dfbd350ae845",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/tools/blit_model.h": "c0cb43abffa8b4d5d4df12db896d83c6fb76cb5485925413fb3914811d6d5251",
+    "tools/control_panel/serial_ports.py": "bc295188ba2a9453212c4b79315b0fe02b27bb5e0653d5e8c5a32546b2b48483",
+    "tools/control_panel/index.html": "ccf570874177d04410532d751a6c8a2391838b970d29b7c29d6deb6085235922",
+    "tools/control_panel/app.js": "827ce65f634aa0149a365391f208f450c5d1db54086a49616aa34be3dc4dc30a",
+    "tools/control_panel/server.py": "7235e0e010ebca179604f7503af9907ca253100f71c6e126b413d98de6ddfc69",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/game.ld": "c2487252a6c28b063559a935902b5eb9a762e44d2d5aead4a9ce598878980559",
+    "build_hardware.py": "1a8b9de32587e1baa9326e43429a8394f2ab8967660c76e8b1693009e8bcefb9",
+    "build_software.py": "14b9a7747e90f1fa9d6143927d0052b74d80ba8a4b5476c82920f73abd7081ab",
+    "README.md": "5e9067ad2fb7806564953b649c1641b4c6ef706e05d3ab7de6b7135ffa1ab641",
+    "README_EN.md": "a352d625c86acddfed3f717ca19291fa6cd4471e61ee4a616842bfd34d95117c",
+    "START_HERE.md": "22a393c968484bf1484cbfe90c9a63e49a67bdcefe09b33b05984b87430b05d3",
+    "docs/R5_5_PRESSURE.md": "8f4695f2927f4da360a33732fa70e230cccefa280f1f1cff0e435739b084c4fb",
+    "verification/r4/test_merge_gameplay.c": "f16311f24bf9bcda497ab25f04d082f4f21fe0e39ede749f91978642a6a84629",
+    "verification/r4/test_merge_visual.c": "10683b96362ceab178cde711f29e7bd885b386f34241e1de476af8d36fba86c0",
+    "verification/r4/test_th_sizes.c": "38a22ec8c9c9bc05638c63f4ca8962896ebedabdc9c01ee5e2f1bdc57987f1d0",
+    "verification/r5/test_main.c": "7dfbe4e59f58d3a0ccb3132fb67781dfcdb8a7b2cc5d274f79b919c2facafc58",
+    "PROJECT/rtl/define.v": "dd4555c207bb7009d00f5f4c4d325affa885f5551c1cf6f41d27f692bac8d8a3",
+    "PROJECT/rtl/ddr3_example_top.v": "e20a88f39cf2c84b24a1cf630b2cc8720bcef03745a71006cbac1990c3bb8056",
+    "PROJECT/rtl/common/simple_dual_port_ram.v": "ecb40539c1a25bcf4917c6d492767d90886316f286b4f26ecb63f008c721ca2a",
+    "PROJECT/rtl/common/Ddr_Write.v": "b4f6e9776d027899f2f4912e215a7153c6913bee4c02ce70409aab3ede8f712f",
+    "PROJECT/rtl/common/Ddr_Read.v": "c5b5fc28ed8cd974f5d116a0cb70f1c64963996092a459583df671e85a8bc16e",
+    "PROJECT/rtl/audio/audio_mixer.v": "90668149f16aa5ac026c8c1563d07edad3db2796afb3996b7f4c169ab38d8223",
+    "PROJECT/rtl/ddr3_controller/lb2_axi_clk.v": "093c020259988cbcc2b250a17b6a785c31f5bd98a4df6e356e64a79b1ec6f982",
+    "PROJECT/rtl/ddr3_controller/ddr3_top.v": "5fd49b04f9c289133b923fcc33296b032f2ad9253af688b013df1967e496dd4a",
+    "PROJECT/rtl/ddr3_controller/ddr3_parameter.vh": "cd058bc67e692dcc0a99bde4fe680f0df1fc311ed1f134f0279a6789961a2a0d",
+    "PROJECT/rtl/hdmi/dvi_encoder.v": "62f7852c391e0cf971820b1e8d53055f6cd8f6e3470ea2a70fe6ff065bae4e9e",
+    "PROJECT/rtl/hdmi/hdmi_island.v": "6d60c568b5bff96abd5c6f6e3bd2e08b9cd17bbd7bcc49a9a68e98c5bd54925a",
+    "PROJECT/rtl/hdmi/hdmi_fb.v": "9fbeb5cabdf33163da707e35836530f7e0dccda8afe252cfa92e1e8294ef5cbf",
+    "PROJECT/rtl/hdmi/encode.v": "0de29b0f1da83b85249823799c907b298c291518738d7b01889985a27d03de51",
+    "PROJECT/rtl/input/input_hub.v": "1ca83bc9cc5db7b7af8e51da4856e12e2245a8f0ba00a6171f9a1a3f76dc1967",
+    "PROJECT/rtl/memory_test/data_gen.v": "47cc71f62a4ad1a8fd10e2388263ac22d9482d2583fc50783931dd4386885b61",
+    "PROJECT/rtl/memory_test/axi4_m_gen.v": "16daded0790e415c6a6f1353b97e82ad68553149a9201962f742e68119753b1e",
+    "PROJECT/rtl/memory_test/check.v": "f05c279b17b9b634e4a4a4b664cd30442983248ae15993cae03cc0c8d244c09d",
+    "PROJECT/rtl/memory_test/addr_gen.v": "91029bec7f2b0a8eff57805732cdabca60cd2fe77bcf2f16f3b4388c5471edb3",
+    "PROJECT/rtl/memory_test/rd_drive.v": "5d178d49417179c6db321449c8a3779cb7d1c46248ea6064f690abf56d48b709",
+    "PROJECT/rtl/memory_test/memory_test.v": "1b905e911fc0453cb3496916c092ec4f808fc235c3dba28be9f124712f75e2e4",
+    "PROJECT/rtl/memory_test/wr_drive.v": "138a910d48312c78c5825d3f5942bb8f5687ad0e2513e972efcdf6acc1c77e83",
+    "PROJECT/rtl/memory_test/ddrtest_statistic.v": "e004a83dd0a58be3f828c18d5d0fd8d53fb1bf3d22b177b3902653d05099e0f9",
+    "PROJECT/rtl/memory_test/PrbsAnyGenerator.v": "5a0421c745236c1acfa876d9beffd662690baa49baa08c8f7b90e1bb0cd37c60",
+    "PROJECT/rtl/memory_test/test_seq.v": "7e48b7a363b54c071c3b6f17335276502f324bfc4d81b2d0ae685e21320c6f25",
+    "PROJECT/rtl/memory_test/axi4_onlym_gen.v": "64e867802b53dfd5fa9a34aa7b3e3c89858a3020954a63befbad4db9cf65e045",
+    "PROJECT/rtl/memory_test/len_gen.v": "59c23a6f0384d78587677fe2a0ec070b1eabd11e4d5853cbe063d2cbb64db290",
+    "PROJECT/rtl/blit/blit_axi_wide.v": "93488229f6acbe81b5f9a78f6fb7c934e0d16386829ef92801006bc04e8b6de7",
+    "PROJECT/rtl/blit/blit_axi_rd_arb.v": "f78b5279ebc101930d21c28cea581ffef5bae1ba396fcd933307ea10299c8359",
+    "PROJECT/rtl/blit/blit_engine.v": "15177cf0f84668b798320f8586e8a7299e4dea4e3897226babd3597e5f31634f",
+    "PROJECT/rtl/blit/motion_axi_arb.v": "ca43c842c553c03a68677f229caa495790517f8829d11942e509de4a4d56ffc9",
+    "PROJECT/rtl/common/efx_fifo_v2.3/efx_fifo_wrapper.v": "63e824ebc3c4293ab5808519a7e9322f12f6700231d1fca30be0367420e61c19",
+    "PROJECT/rtl/ddr3_controller/memory_bus_ctl/memory_bus_ctl.v": "cb7b2498d9612b6978d09a059ed6fddc909700986bbc099c62f00980f7b5c55d",
+    "PROJECT/rtl/ddr3_controller/local_bus_ctl/local_bus_ctl.v": "a3a97a8c5c3da29318df090d84f5292a5bc8d5abb9e051f80478b568056e4cf3",
+    "PROJECT/rtl/ddr3_controller/common/simple_dual_port_ram.v": "66cb376b6cf6bddaff66b73456417fc561a2a74330822feec49ffb1527ce9c98",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_phy_if.v": "91ba41274e4d2b25d336661be8444b5e2fc2ccd7b0bef383bd1dff1b9b152c31",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_phy_wrcal.v": "4cd5f5c5f1c0aa4a6d4caae1df15ae97863240cb680f0a956782c9e762fd3abb",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_phy_rdlvl_dqs.v": "45fc0f1ac4b12d9f993a5bfd335f31a6e929f55a01c60e79641e733f09d2f8a6",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_mpr_rdlvl.v": "db1922363adece86e57dd87e3b828c63e832997bf4687517abdd78ebf1de6367",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_phy_wrlvl.v": "1c84a0d63071372202d1c33e28c79532da6cf087c2d0ec8e80b6185673a34e0c",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_calibration_ini.v": "64b819a7e4f7d0966203cf47aaef55b29eecc6d76a9db36b372719e2adf9410a",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/phy_ctl.v": "d59329e8844f20eadcea6f78a7d360e4d509e9b05a1497f8c293ea1c0e90e4b5",
+    "PROJECT/rtl/ddr3_controller/axi4_bus_ctl/axi4_bus_ctl.v": "f4145b3920b2666396a5161122bef7ba1b1bdb56aba8504e0c08214ae8237c0e",
+    "PROJECT/rtl/ddr3_controller/axi4_bus_ctl/axi_upsizer.v": "03c25e7276781d9c22f4cbd7b25b76b6317ed7083874a7c94b052a0abd1188e0",
+    "PROJECT/rtl/ddr3_controller/common/efx_fifo_v2.3/efx_fifo_wrapper.v": "040558d9dafd6d7f4c6610b8cd8040cdedc3f95b58a6f31f32dbd7429182eb98",
+    "PROJECT/rtl/memory_test/common/bit1_delaym.v": "b23b263afff2030a91f55581de231be546775b3739c1953e5769671eecbd42b5",
+    "PROJECT/rtl/memory_test/common/efx_fifo_wrapper.v": "0d9ce9aa70296cdbb14abde3759181583f92ee4db7a07b8e03bfb4cabac366d7",
+    "PROJECT/rtl/memory_test/common/divider.v": "f7353321eeac4578d116859cb311944cb06f23e20e59219248514cd480a96aac",
+    "PROJECT/rtl/memory_test/common/PrbsAnyGenerator.v": "e34dc0c5e5741b3b550f97063865ce18db7f3ac2d625f8055c343c572758e659",
+    "PROJECT/par/ddr_demo_ti60/ddr_demo_ti60.xml": "3dca26da8bed74ef59e7e23cd391b508759779ce21e82a65beacb8ebcd9fa6b0",
+    "PROJECT/par/ddr_demo_ti60/ddr_demo_ti60.peri.xml": "b9d59ad5a6c756ef62b70c33c339c3dd8311d0ad9d8722e80a07baadf3ce688a",
+    "PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc": "83195a3d56b5d107bf494a789585ed4c64fed81f172e58eefc684b2778e6dc27"
+  },
+  "constraints_sha256": {
+    "PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc": "83195a3d56b5d107bf494a789585ed4c64fed81f172e58eefc684b2778e6dc27"
+  },
+  "validation": "verification/r5_5/validation.json",
+  "physical_board_programmed": false,
+  "physical_fps_measured": false,
+  "artifacts": {
+    "ti60_r5_5_release.elf": {
+      "bytes": 10549668,
+      "sha256": "e1dade1be4bc5e43abe6dee17c9fee462324bbd89fc9823f08c626d2758229c2"
+    },
+    "ti60_r5_5_debug.elf": {
+      "bytes": 10588432,
+      "sha256": "f813a86fc3fe1ec30259ffbeefe41bf6ccd4721b41cb1251978f687fa3cd425f"
+    },
+    "README.txt": {
+      "bytes": 1327,
+      "sha256": "7e78b57061f2017405f624f42b6402a510f535896f99e6d449f4e5aecbce2e21"
+    },
+    "ti60_r5_5_debug.launch": {
+      "bytes": 7032,
+      "sha256": "84f7e2ef0cd81016657231f30c0175b716f14472e817188afef9156a36672927"
+    },
+    "ti60_r5_5.bit": {
+      "bytes": 2846550,
+      "sha256": "274a2b10755e8de5077eae25fc775481b246740aa2479aad0a67de75c3a849a5"
+    },
+    "reports/ddr_demo_ti60.timing.rpt": {
+      "bytes": 680539,
+      "sha256": "730148f4b9b141d5fd8d1ac920e2180d84dd60053ce5c6bd5f75e5f455ec8e77"
+    },
+    "reports/ddr_demo_ti60.place.rpt": {
+      "bytes": 2455,
+      "sha256": "6ba5c6727cb1b3eca4a4744390c64bbbb083bae3ef056117da97505946e5d97d"
+    },
+    "reports/ddr_demo_ti60.hier_util.rpt": {
+      "bytes": 91862,
+      "sha256": "cdd5c08fa3910b2574096cca63839e76525823126900d1f4f5828240f1a89c8d"
+    },
+    "reports/ddr_demo_ti60.cdc.rpt": {
+      "bytes": 291,
+      "sha256": "394642e8f9a0b15c964840a08630a09938073254b4bc12fb56412fefbf582529"
+    }
+  }
+}

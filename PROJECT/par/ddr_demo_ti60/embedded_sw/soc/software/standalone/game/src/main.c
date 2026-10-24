@@ -168,8 +168,13 @@ static void view_begin_th_hd(Gfx *gfx, GfxHwTarget *t, int hw, uint32_t fb)
     else    gfx_begin_stride(gfx, (Pixel *)fb, (int)disp_w, (int)disp_h, (int)(disp_pitch / 2u));
 }
 
-static Game game;
-static Th   th;                          /* 东方式弹幕（开机场景，th.h） */
+#ifdef __riscv
+#define STRESS_POOL __attribute__((section(".stressbss"),aligned(256)))
+#else
+#define STRESS_POOL __attribute__((aligned(256)))
+#endif
+static Game game STRESS_POOL;
+static Th   th STRESS_POOL;                          /* 东方式弹幕（开机场景，th.h） */
 
 static inline uint32_t now(void) { return clint_getTimeLow(BSP_CLINT); }
 
@@ -204,11 +209,12 @@ static void tx_pump(void)
 
 static void tx_printf(const char *fmt, ...)
 {
-    char line[512];
+    char line[1024];
     va_list ap;
     va_start(ap, fmt);
-    mini_vsnprintf(line, sizeof(line), fmt, ap);
+    int n=mini_vsnprintf(line, sizeof(line), fmt, ap);
     va_end(ap);
+    if(n<0||(unsigned)n>=sizeof(line)){++tx_dropped;return;}
     tx_puts(line);
 }
 
@@ -1297,7 +1303,7 @@ typedef struct {                 /* one frame */
     uint32_t qend, qpeak;        /* queue entries at the end of submit / max seen */
     uint32_t seeds, hud, scene;  /* submit + qstall split by render_game (render_split) */
     uint32_t seeds_n;            /* hostile seeds drawn */
-    uint32_t sc[5];              /* scene split: bg+gems sort enemies pbullets particles */
+    uint32_t sc[6];              /* scene split: bg+gems sort enemies pbullets particles */
     uint32_t lg[4];              /* logic split (game_split): enemies pbullets hostile rest */
     uint32_t logic_peak;
     int      ticked;
@@ -1310,7 +1316,7 @@ typedef struct {                 /* sums over one window */
     uint32_t vsync, logic, logic_max, submit, qstall, tail, draw_max;
     uint32_t qend, qpeak;
     uint32_t seeds, hud, scene, seeds_n;
-    uint32_t sc[5], lg[4];
+    uint32_t sc[6], lg[4];
     uint32_t hdmi0, busy0, rb0, wb0, cmds0, stalls0;
     uint32_t lwords0, lkicks0, lwraps0;
     uint32_t chit0, cmiss0;      /* engine source cache PERF_CHIT / PERF_CMISS */
@@ -1332,7 +1338,7 @@ typedef struct {                 /* results: us per frame (logic: per tick) */
     uint32_t rd_busy, wr_busy;   /* engine AXI bytes / engine busy time */
     uint32_t seeds, hud, scene;  /* submit split, us per frame */
     uint32_t seeds_n, seed_ns;   /* seeds per frame, ns per seed */
-    uint32_t sc[5], lg[4];       /* scene split us per frame, logic split us per tick */
+    uint32_t sc[6], lg[4];       /* scene split us per frame, logic split us per tick */
     uint32_t lwords, lkicks, lwraps; /* command list: words / LIST_END writes per frame, wraps */
     uint32_t chit, cmiss, chit_pct;  /* source cache line requests per frame, hit % */
     uint32_t wb_pct, ld_pct, st_pct[BLIT_ST_N]; /* share of engine busy: W beats, command loads, stalls */
@@ -1399,7 +1405,7 @@ static void win_add(Win *w, const Frame *f)
     w->hud    += f->hud;
     w->scene  += f->scene;
     w->seeds_n += f->seeds_n;
-    { int k; for (k = 0; k < 5; k++) w->sc[k] += f->sc[k]; }
+    { int k; for (k = 0; k < 6; k++) w->sc[k] += f->sc[k]; }
     if (f->qpeak > w->qpeak) w->qpeak = f->qpeak;
     if (draw > w->draw_max)  w->draw_max = draw;
     if (f->ticked) {
@@ -1472,7 +1478,7 @@ static void win_end(const Win *w, uint32_t t, WinStats *s)
     s->hud     = per_us(w->hud, n);
     s->scene   = per_us(w->scene, n);
     s->seeds_n = n ? (w->seeds_n + n / 2u) / n : 0u;
-    { int k; for (k = 0; k < 5; k++) s->sc[k] = per_us(w->sc[k], n);
+    { int k; for (k = 0; k < 6; k++) s->sc[k] = per_us(w->sc[k], n);
              for (k = 0; k < 4; k++) s->lg[k] = per_us(w->lg[k], w->ticks); }
     s->seed_ns = w->seeds_n ? (uint32_t)((uint64_t)w->seeds * 1000u / TICKS_PER_US / w->seeds_n) : 0u;
     s->qend   = n ? (w->qend + n / 2u) / n : 0u;
@@ -1562,8 +1568,8 @@ static void print_telemetry(const WinStats *s){
       id,s->el_us,s->fps10,s->logic10,s->present10,s->repeat10,s->scan10,s->prs,s->video_delta,s->audio_delta,tx_dropped);
     tx_printf("P4 seq=%u logic_us=%u logic_max_us=%u submit_us=%u wait_us=%u work_us=%u work_max_us=%u over=%u busy=%u phase1_us=%u bands_us=%u profile=%d\r\n",
       id,s->logic,s->logic_max,s->submit,s->qstall+s->tail,s->loop_work_us,s->work_max_us,s->over_budget,s->blt,s->bp[BLIT_BP_P1]/BLIT_CLK_MHZ,s->bp[BLIT_BP_BAND]/BLIT_CLK_MHZ,SPROUT_STATS);
-    tx_printf("C4 seq=%u font_hit=%u font_miss=%u font_reset=%u label_hit=%u label_miss=%u font_pixels=%u track=%s w=%u h=%u auto=%d density=%d stress_auto=%d tone=%d volume=%d bank_sounds=%d mixer=%d audio_ctrl=%u stats=%d verbose=%d music_auto=%d music_index=%d music_total=10\r\n",
-      id,fs.hits,fs.misses,fs.resets,fs.label_hits,fs.label_misses,fs.used_pixels,aud_name(aud_bgm_current()),disp_w,disp_h,autoplay,th_stress_dens(&th),th.stress_auto,aud.tone,aud.master,aud.nsnd,aud.mixer,HDMI_REG(0x20),show_stats,report_verbose,music_follow_scene(),music_index());
+    tx_printf("C4 seq=%u font_hit=%u font_miss=%u font_reset=%u label_hit=%u label_miss=%u font_pixels=%u track=%s w=%u h=%u auto=%d density=%d stress_auto=%d tone=%d volume=%d bank_sounds=%d mixer=%d audio_ctrl=%u stats=%d verbose=%d music_auto=%d music_index=%d music_total=10 pressure_supported=1 motion_min_px=%d player_shots=%d locator_us=%u enemy_us=%u player_logic_us=%u hostile_logic_us=%u hud_us=%u band_splits=%u band_overflow=%u\r\n",
+      id,fs.hits,fs.misses,fs.resets,fs.label_hits,fs.label_misses,fs.used_pixels,aud_name(aud_bgm_current()),disp_w,disp_h,autoplay,th_stress_dens(&th),th.stress_auto,aud.tone,aud.master,aud.nsnd,aud.mixer,HDMI_REG(0x20),show_stats,report_verbose,music_follow_scene(),music_index(),demo_motion_min_size(),scene==SCENE_GAME?game.player_active:scene==SCENE_TH?th.shots_alive:0,s->sc[5],s->sc[2],s->lg[1],s->lg[2],s->hud,s->bsplits,hw_avail?((blit_rd(BLIT_R_STATUS)>>6)&1u):0u);
 }
 
 /* Physical scan statistics: independent of render-loop FPS, audio ABI untouched. */
@@ -1620,6 +1626,7 @@ static void print_window(const WinStats *s, const RenderInfo *info, const Gfx *g
     tx_printf("  submit split: seeds %u (%u seeds, %u ns each, %s %s) hud %u scene %u\r\n",
               s->seeds, s->seeds_n, s->seed_ns, seed_mode_name[seed_mode()],
               render_seed_table ? "table" : "pool", s->hud, s->scene);
+    tx_printf("  locator: %u us (separate from enemies); player shots %d; band splits %u\r\n",s->sc[5],game.player_active,s->bsplits);
     tx_printf("  scene split: bg+gems %u sort %u (%s) enemies %u pbullets %u particles %u"
               " | logic split: enemies %u pbullets %u hostile %u rest %u\r\n",
               s->sc[0], s->sc[1], render_sort_keys ? "keys" : "structs", s->sc[2], s->sc[3], s->sc[4],
@@ -1801,7 +1808,7 @@ int main(void)
     GfxHwTarget hw_target;
 
     bsp_init();
-    bsp_printf("\r\n=== TI60-R5.3-MUSIC-CONTROL-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
+    bsp_printf("\r\n=== TI60-R5.5-MUSIC-CONTROL-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
                (int)(BSP_CLINT_HZ / 1000000u));
 
     if (hdmi_id() != HDMI_ID_VALUE)
@@ -1884,7 +1891,7 @@ int main(void)
 #endif
     demo_geometry((int)disp_w,(int)disp_h);
     demo_init(IMG_ADDR);
-    tx_printf("[MOT2 available %d, packed square table %d, native square load max 30000]\r\n",
+    tx_printf("[MOT2 available %d, packed square table %d, native square load max 99999]\r\n",
               demo_motion_available(),hw_avail && (blit_rd(BLIT_R_CAPS2)&8u)!=0);
     game_init(&game, 0xC0FFEEu);
     {
@@ -1914,7 +1921,7 @@ int main(void)
     }
     last_req = fb_addr[0];
     print_help();
-    tx_puts("Squares: @ native 720p 20000; ,/. -/+100 (max30000); ! CPU/HW motion; % table/calls; & exact A/B. Audio: ( tone, ) volume, / audition.\r\n");
+    tx_puts("Squares: @ native 720p 20000; ,/. -/+100 (max99999); ! CPU/HW motion; % table/calls; & exact A/B. Audio: ( tone, ) volume, / audition.\r\n");
 #if SPROUT_STATS
     tx_puts("UART report every second:\r\n"
             "  us/frame: logic = game update (max = worst tick), submit = drawing / queueing\r\n"
@@ -2069,7 +2076,7 @@ int main(void)
             f.seeds_n = render_split.seeds_n;
             f.sc[0] = render_split.bg;      f.sc[1] = render_split.sort;
             f.sc[2] = render_split.enemies; f.sc[3] = render_split.pbullets;
-            f.sc[4] = render_split.particles;
+            f.sc[4] = render_split.particles; f.sc[5] = render_split.locator;
         }
         f.scene = t2 - t1 > f.seeds + f.hud ? t2 - t1 - f.seeds - f.hud : 0u;
 #endif

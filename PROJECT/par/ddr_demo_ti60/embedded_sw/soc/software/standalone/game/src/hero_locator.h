@@ -105,7 +105,7 @@ static int locator_cover(uint64_t *left,const uint32_t *rows,int size,int x,int 
     for(int sy=start;sy<end;sy++)if(rows[sy]&&left[y+sy]){
         uint64_t row=x<0?(uint64_t)rows[sy]>>-x:(uint64_t)rows[sy]<<x;
         uint64_t hit=left[y+sy]&row;
-        if(hit){n+=(int)loc_bits(hit);left[y+sy]&=~hit;}
+        if(hit){left[y+sy]&=~hit;if(!left[y+sy])++n;}
     }
     return n;
 }
@@ -114,30 +114,32 @@ static void prepare_player_locator(const Game *g){
     int bob=g->moving?(g->ticks/7)%2:0,cx=g->x/FIX,cy=g->y/FIX;
     int ox=cx-LOC_X,oy=cy-LOC_Y-bob,total=0,covered=0,count=0;
     locator_pose(g);memcpy(left,loc_actor,sizeof left);total=loc_actor_total;
-    for(int i=0;i<MAX_BULLETS&&covered<total;i++)if(g->bullets[i].active){
+    int live_rows=0;for(int y=0;y<LOC_H;y++)live_rows+=left[y]!=0;
+    for(int i=0;i<MAX_BULLETS&&live_rows>0;i++)if(g->bullets[i].active){
         const Bullet *b=&g->bullets[i];int style=(unsigned)b->style<8u?b->style:0;
-        covered+=locator_cover(left,loc_laser_rows[style],CARROT_LASER_SIZE,b->x/FIX-CARROT_LASER_SIZE/2-ox,b->y/FIX-CARROT_LASER_SIZE/2-oy);
+        live_rows-=locator_cover(left,loc_laser_rows[style],CARROT_LASER_SIZE,b->x/FIX-CARROT_LASER_SIZE/2-ox,b->y/FIX-CARROT_LASER_SIZE/2-oy);
     }
-    const GfxItem *items;int n=game_seed_draw(g,&items),half=game_seed_half(g),size=half*2+1;
+    const GfxItem *items;int n=game_seed_draw(g,&items),half=game_seed_half(g),size=game_seed_extent(g);
     int cached=n>=0&&g->occlusion_x==cx&&g->occlusion_y==cy&&g->occlusion_half==half&&!g->occlusion_near_overflow;
     const uint32_t (*rows)[25]=loc_seed_rows[g->limit_mode?0:1];
     if(n>=0){
         int end=cached?g->occlusion_near_n:n;
-        for(int i=0;i<end&&covered<total;i++){
+        for(int i=0;i<end&&live_rows>0;i++){
             const GfxItem *b=&items[cached?g->occlusion_near[i]:i];
             if(b->x<=ox-size||b->x>=ox+LOC_W||b->y<=oy-size||b->y>=oy+LOC_H)continue;
             int style=(unsigned)b->sprite<4u?b->sprite:0;++count;
-            covered+=locator_cover(left,rows[style],size,b->x-ox,b->y-oy);
+            live_rows-=locator_cover(left,rows[style],size,b->x-ox,b->y-oy);
         }
     }else{
         int end=game_hostile_used(g);const Bullet *pool=end?game_hostile_at(g,0):0;
-        for(int i=0;i<end&&covered<total;i++)if(pool[i].active){
+        for(int i=0;i<end&&live_rows>0;i++)if(pool[i].active){
             const Bullet *b=&pool[i];int x=b->x/FIX-half,y=b->y/FIX-half;
             if(x<=ox-size||x>=ox+LOC_W||y<=oy-size||y>=oy+LOC_H)continue;
             int style=(unsigned)b->style<4u?b->style:0;++count;
-            covered+=locator_cover(left,rows[style],size,x-ox,y-oy);
+            live_rows-=locator_cover(left,rows[style],size,x-ox,y-oy);
         }
     }
+    covered=total;for(int y=0;y<LOC_H;y++)covered-=(int)loc_bits(left[y]);
     int changed=loc_game!=g||loc_ticks!=g->ticks||loc_visual!=g->visual_ticks||loc_x!=cx||loc_y!=cy||
         loc_previous_cover!=covered||loc_previous_total!=total||loc_phase!=(int)g->phase;
     if(loc_game!=g||g->ticks<loc_ticks||g->phase==TITLE||g->phase==STRESS_SELECT){

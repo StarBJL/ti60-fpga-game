@@ -1,6 +1,7 @@
 "use strict";
 const $=id=>document.getElementById(id);
 const pendingCommands=new Map();let statusSynced=false;
+let pressureCapability=-1;
 let presetCatalog=[],presetCatalogError="",presetRequestPending=false,presetRequestedOperation=null;
 let token="",cursor=0,connected=false,compatible=false,dualvideo=false,currentScene=-1,snapshot=null,lastAck=0,queue=Promise.resolve(),polling=false,held=0,lastHeld=-1,lastError="";
 const tracks={bgm_title:"像素晨光",bgm_menu2:"星灯菜单",bgm_stage1:"云端疾行",bgm_stage2:"月下航线",bgm_boss1:"赤色风暴",bgm_boss2:"终幕回响",bgm_garden:"萝卜田野",bgm_garden2:"森林夜行",bgm_stress:"压力脉冲",bgm_stress2:"数字方阵","?":"未播放"};
@@ -93,16 +94,20 @@ $("mark").addEventListener("click",async()=>{try{if(!connected)throw new Error("
 $("clearView").addEventListener("click",()=>{$("log").textContent="";notice("已清空显示；磁盘记录继续保留。");});
 document.querySelectorAll("a[href^='/api/export']").forEach(a=>a.addEventListener("click",e=>{if(!snapshot?.record){e.preventDefault();notice("连接后才会建立记录文件。","error");}}));
 function updateScene(scene){
-  if(scene===currentScene)return;currentScene=scene;
+  const extended=!!snapshot?.state.pressure_supported;
+  if(scene===currentScene&&pressureCapability===extended)return;currentScene=scene;pressureCapability=extended;
   document.querySelectorAll("[data-scene]").forEach(b=>b.classList.toggle("selected",Number(b.dataset.scene)===scene));
   $("imagePeriodField").classList.toggle("hidden",scene!==3);
   $("carrotTier").classList.toggle("hidden",scene!==1);$("densityControls").classList.toggle("hidden",scene!==0);
   const choices=scene===0?[[75,"75% · 小"],[100,"100% · 原尺寸"],[125,"125% · 大"],[150,"150% · 特大"]]:[[9,"9 px · 小"],[13,"13 px · 标准"],[17,"17 px · 大"],[25,"25 px · 特大"]];
+  if(extended)choices.unshift([1,"1 px"],[3,"3 px"],[6,"6 px"]);
+  const squares=(extended?[0,1,3,6,8,12,16,24,32,40]:[0,6,8,12,16,24,32,40]);
+  $("squareSize").replaceChildren(...squares.map(value=>{const o=document.createElement("option");o.value=value;o.textContent=value?`${value} px`:"随机 6–40 px";return o;}));
   $("bulletSize").replaceChildren(...choices.map(([value,text])=>{const option=document.createElement("option");option.value=value;option.textContent=text;return option;}));
-  $("targetCount").max=scene===2?30000:scene===0?16384:40000;
+  $("targetCount").max=extended?99999:scene===2?30000:scene===0?16384:40000;
   $("targetCaption").textContent=scene===2?"方块数量":"敌弹上限";
   $("sceneHint").textContent=sceneNames[scene]||"等待读取场景";
-  $("quantityNote").textContent=scene===2?"1–30,000 个；固定尺寸与原随机尺寸均使用同一对象表。":scene===0?"1–16,384 颗上限；调节上限会关闭自动负载，密度倍率独立设置。":"1–40,000 颗上限；需要先进入萝卜自定义压力档。";
+  $("quantityNote").textContent=extended?(scene===2?"1–99,999 个；容量上限不代表稳定 60 帧上限。":"1–99,999 颗；先进入压力模式。萝卜压力关闭角色射击，普通游戏保留射击与技能。") : scene===2?"1–30,000 个；固定尺寸与原随机尺寸均使用同一对象表。":scene===0?"1–16,384 颗上限；调节上限会关闭自动负载，密度倍率独立设置。":"1–40,000 颗上限；需要先进入萝卜自定义压力档。";
 }
 function number(id,value,unit="",decimals=1){$(id).textContent=value===undefined||value===null?"—":Number(value).toFixed(decimals)+unit;}
 function configuringPreset(){return presetRequestPending||["applying","verifying"].includes(snapshot?.preset?.status);}
@@ -194,6 +199,7 @@ function render(data){
   }
   const bandButton=document.querySelector('[data-command="key"][data-value="53"]');
   if(state.submit_mode!==undefined&&state.submit_mode!==2)bandButton.textContent="分带未生效：需要 DDR 硬件列表";
+  if(state.motion_min_px>1&&state.square>0&&state.square<state.motion_min_px){$("engineWarning").textContent="当前 bit 的硬件运动最小尺寸为 6px。小方块正在由 CPU 更新；加载 R5.5 bit 后可使用硬件运动。";$("motion").disabled=true;}
   const revision=state.video_rev===328193?"R5.2.1 HDMI 修正版":state.video_rev?`视频修订 ${state.video_rev}`:"未确认 HDMI 修正版 bit";
   $("audioState").textContent=`${revision}；音库 ${state.bank_sounds??"—"} 个，混音器${on(state.mixer)}，测试音${on(state.tone)}。测试音直接由 HDMI 模块产生；开启时不播放音乐。`;
   $("newRecord").disabled=!connected||configuring;$("mark").disabled=!connected;
@@ -219,8 +225,9 @@ function render(data){
     number("liveCount",s.count,"",0);number("liveTarget",s.target,"",0);number("workMs",s.work_us/1000," ms",2);number("maxMs",s.work_max_us/1000," ms",2);number("videoUf",s.video_uf,"",0);number("audioUf",s.audio_uf,"",0);
     const values=[s.logic_us||0,s.submit_us||0,s.wait_us||0],total=values.reduce((a,b)=>a+b,0)||1;
     [...$("costBar").children].forEach((e,i)=>e.style.width=values[i]/total*100+"%");$("costText").textContent=values.map(x=>(x/1000).toFixed(2)).join(" / ")+" ms";
-    $("conditionLine").textContent=`渲染 ${s.render_w||s.w||1280}×${s.render_h||s.h||720}　输出 ${s.output_w||s.w||1280}×${s.output_h||s.h||720}　${s.hw?"硬件":"CPU"}绘制　透明${s.alpha?"开":"关"}　同步${s.vsync?"开":"关"}　${s.scene===2?"方块 "+(s.square||"随机")+"px":"弹体 "+s.bullet+(s.scene===0?"%":"px")}　步长 ${s.step}　超预算 ${s.over||0} 帧`;
+    $("conditionLine").textContent=`渲染 ${s.render_w||s.w||1280}×${s.render_h||s.h||720}　输出 ${s.output_w||s.w||1280}×${s.output_h||s.h||720}　${s.hw?"硬件":"CPU"}绘制　透明${s.alpha?"开":"关"}　同步${s.vsync?"开":"关"}　${s.scene===2?"方块 "+(s.square||"随机")+"px":"弹体 "+s.bullet+(s.scene===0&&s.bullet>6?"%":"px")}　步长 ${s.step}　超预算 ${s.over||0} 帧`;
     $("conditionLine").textContent+="\n"+engineText(s);
+    $("pressureMetrics").textContent=s.pressure_supported?`角色子弹 ${s.player_shots??"—"}；轮廓计算 ${s.locator_us??"—"} μs，敌人与角色绘制 ${s.enemy_us??"—"} μs，玩家子弹逻辑 ${s.player_logic_us??"—"} μs，敌弹逻辑 ${s.hostile_logic_us??"—"} μs；分带提前结束 ${s.band_splits??"—"} 次，桶溢出 ${s.band_overflow??"—"}。`:"新增小尺寸与 99,999 容量需 R5.5 ELF；旧固件保留其原上限。";
     $("fontLine").textContent=`字体累计命中 ${s.font_hit} / 生成 ${s.font_miss} / 重置 ${s.font_reset}；静态文字命中 ${s.label_hit} / 生成 ${s.label_miss}。`;
   }
   renderPresetState(data);

@@ -8,9 +8,11 @@
 #define DEMO_CLOCK() clint_getTimeLow(BSP_CLINT)
 static int scene_w=1280,scene_h=720,scene_bottom=676;
 static int motion_ok,motion_on=1,motion_fault,table_on=1;
-static uint32_t tick_cycles,table_frames;
+static uint32_t tick_cycles,table_frames,motion_cycles;
+#define MOT_BATCH 29984 /* 32-object multiple, <= old hardware 30000 cap */
 static uint32_t square_revision;
-static int fixed_square_size;
+static int fixed_square_size,motion_min_px=6;
+int demo_motion_min_size(void){return motion_min_px;}
 int demo_square_size(void){return fixed_square_size;}
 static const Pixel square_palette[8]={
  RGB565(240,103,84),RGB565(63,181,217),RGB565(181,225,111),RGB565(242,190,93),
@@ -18,9 +20,9 @@ static const Pixel square_palette[8]={
 void demo_geometry(int w,int h){scene_w=w;scene_h=h;scene_bottom=h-44;}
 int demo_motion_toggle(void){if(motion_ok&&!motion_fault)motion_on=!motion_on;return demo_motion_enabled();}
 int demo_motion_available(void){return motion_ok;}
-int demo_motion_enabled(void){return motion_ok&&motion_on&&!motion_fault;}
+int demo_motion_enabled(void){return motion_ok&&motion_on&&!motion_fault&&(!fixed_square_size||fixed_square_size>=motion_min_px);}
 int demo_motion_error(void){return motion_fault;}
-unsigned demo_motion_cycles(void){return motion_ok?MOT_REG(0x18):0;}
+unsigned demo_motion_cycles(void){return motion_cycles;}
 unsigned demo_motion_sequence(void){return motion_ok?MOT_REG(0x1c):0;}
 unsigned demo_tick_cycles(void){return tick_cycles;}
 unsigned demo_table_frames(void){return table_frames;}
@@ -102,8 +104,10 @@ void demo_init(uint32_t img_base)
         square_pixels[i+1]=square_pixels[i]+size*size;
         square_alpha_pixels[i+1]=square_alpha_pixels[i]+((i&1)?size*size:0u);
     }
-    motion_ok=MOT_REG(0)==0x4d4f5432u && MOT_REG(4)==0x00020000u &&
-              MOT_REG(0x38)==(uint32_t)scene_w && MOT_REG(0x3c)==((uint32_t)BOT_Y<<16|TOP_H) && MOT_REG(0x40)>=DEMO_MAX_SQUARES;
+    motion_ok=MOT_REG(0)==0x4d4f5432u && (MOT_REG(4)&0xffff0000u)==0x00020000u &&
+              MOT_REG(0x38)==(uint32_t)scene_w && MOT_REG(0x3c)==((uint32_t)BOT_Y<<16|TOP_H) && MOT_REG(0x40)>=MOT_BATCH;
+    unsigned min_px=motion_ok?MOT_REG(0x44)&65535u:0;
+    motion_min_px=min_px>=1&&min_px<=6?(int)min_px:6;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -160,7 +164,7 @@ void demo_reset_squares(void)
 }
 
 int demo_set_square_size(int pixels){
-    if(pixels && (pixels<6||pixels>40))return 0;
+    if(pixels!=0&&pixels!=1&&pixels!=3&&(pixels<6||pixels>40))return 0;
     if(blit_st.depth)blit_wait();
     if(motion_ok&&(MOT_REG(8)&1u))return 0;
     blit_dcache_invalidate();fixed_square_size=pixels;
@@ -178,7 +182,7 @@ int demo_set_square_size(int pixels){
 
 static void square_cpu_step(int count)
 {
-    int i;blit_dcache_invalidate();
+    int i;motion_cycles=0;blit_dcache_invalidate();
     for(i=0;i<count;i++){
         Square *s=&squares[i];uint32_t m=s->motion;int size=(m>>16)&255;
         int x=(s->xy&65535u)+(int8_t)m,y=(s->xy>>16)+(int8_t)(m>>8);
@@ -193,10 +197,15 @@ static void square_cpu_step(int count)
 static int square_hw_step(int count)
 {
     uint32_t t,st;
-    blit_fence();MOT_REG(0x0c)=(uint32_t)(uintptr_t)squares;MOT_REG(0x10)=(uint32_t)count;
-    MOT_REG(0x14)=1;t=DEMO_CLOCK();
-    do{st=MOT_REG(8);if(DEMO_CLOCK()-t>BSP_CLINT_HZ){motion_fault=1;return 0;}}while(st&1u);
-    if((st&14u)!=2u){motion_fault=1;return 0;}
+    motion_cycles=0;blit_fence();
+    for(int offset=0;offset<count;){
+        int n=count-offset;if(n>MOT_BATCH)n=MOT_BATCH;
+        MOT_REG(0x0c)=(uint32_t)(uintptr_t)(squares+offset);MOT_REG(0x10)=(uint32_t)n;
+        MOT_REG(0x14)=1;t=DEMO_CLOCK();
+        do{st=MOT_REG(8);if(DEMO_CLOCK()-t>BSP_CLINT_HZ){motion_fault=1;return 0;}}while(st&1u);
+        if((st&14u)!=2u){motion_fault=1;return 0;}
+        motion_cycles+=MOT_REG(0x18);offset+=n;
+    }
     return 1;
 }
 void demo_squares_tick(int count)
@@ -214,7 +223,7 @@ void demo_squares_tick(int count)
 int demo_motion_benchmark(int count,unsigned *cpu,unsigned *hardware)
 {
     uint32_t t;int i,ok=1;if(!motion_ok||motion_fault)return -1;
-    if(count<1||count>DEMO_MAX_SQUARES)return -1;
+    if(count<1||count>DEMO_MAX_SQUARES||(fixed_square_size&&fixed_square_size<motion_min_px))return -1;
     if(blit_st.depth)blit_wait();blit_dcache_invalidate();
     memcpy(benchmark_snapshot,squares,sizeof squares);
     t=DEMO_CLOCK();square_cpu_step(count);*cpu=DEMO_CLOCK()-t;
@@ -249,8 +258,14 @@ void demo_squares_render(Gfx *g, RenderInfo info, int count)
         const GfxHwTarget *t=(const GfxHwTarget *)g->context;
         uint32_t *p;
         blit_list_draw_ctx(t->fb,t->pitch,0);
-        p=blit_list_reserve(2);p[0]=0x60000000u|(info.alpha_fx?0x10000u:0u)|(uint32_t)count;
-        p[1]=(uint32_t)(uintptr_t)squares;blit_list_commit(p+2);++table_frames;
+        for(int offset=0;offset<count;){
+            /* Even chunks preserve SQTAB's odd/even Alpha pattern. */
+            int n=count-offset;if(n>MOT_BATCH)n=MOT_BATCH;
+            blit_band_admit((uint32_t)n);
+            p=blit_list_reserve(2);p[0]=0x60000000u|(info.alpha_fx?0x10000u:0u)|(uint32_t)n;
+            p[1]=(uint32_t)(uintptr_t)(squares+offset);blit_list_commit(p+2);offset+=n;
+        }
+        ++table_frames;
         BLIT_STAT(blit_st.cmds+=(uint32_t)count);
         g->fills+=(uint32_t)count-(info.alpha_fx?(uint32_t)count/2u:0u);
         g->pixels_written+=square_pixels[count];
@@ -268,7 +283,7 @@ void demo_squares_render(Gfx *g, RenderInfo info, int count)
              motion_fault?"错误":demo_motion_enabled()?"硬件":"处理器",(unsigned)(tick_cycles/(BSP_CLINT_HZ/1000000u)),
              info.alpha_fx?" 透明开启":" 透明关闭");
     overlay(g, info, "720p 运动方块压力测试", detail);
-    gfx_text(g,800,scene_h-36,"逗号减100 句号加100 上限30000",1,CREAM);
+    gfx_text(g,800,scene_h-36,"逗号减100 句号加100 上限99999",1,CREAM);
 }
 
 void demo_images_render(Gfx *g, RenderInfo info, uint32_t frame, int period)

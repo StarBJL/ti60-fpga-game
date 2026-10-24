@@ -529,7 +529,7 @@ static void finish(void)
     printf("pad: %u packets, %u bad (want 2 / 1), autoplay switched off by the pad: %u\n",
            pad_packets, pad_errors, pad_msgs);
     if (pad_packets != 2u || pad_errors != 1u || !pad_msgs) ++errors;
-    assert(game.skill_casts>0);assert(game.stress_bullet_target==14011);assert(sq_count==1100);assert(count_step==100);assert(demo_square_size()==0);
+    assert(game.skill_casts==0&&game.player_active==0); /* pressure suppresses player volleys */assert(game.stress_bullet_target==14011);assert(sq_count==1100);assert(count_step==100);assert(demo_square_size()==0);
     printf("R3 skill casts %d; native scenes and controls exercised\n",game.skill_casts);
     printf("video model fullframes 720=%u 1080=%u; render canvas=%ux%u\n",video_frames[0],video_frames[1],disp_w,disp_h);
     assert(video_frames[0]>50 && video_frames[1]>20 && disp_w==1280 && disp_h==720);

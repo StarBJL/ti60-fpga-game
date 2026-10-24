@@ -9,9 +9,13 @@ int main(void){
  th_set_view(1);th_art_init();th_init(&t,417);th_start(&t,TH_STRESS);th_stress_set_auto(&t,0);
  for(int i=0;i<360;i++){t.invuln=100000;th_tick(&t,0,0,1);}
  assert(t.nbullets>0);uint32_t before=hash(&t,offsetof(Th,dbuf));
- const int scales[]={75,100,125,150,100};
- for(int k=0;k<5;k++){
+ const int scales[]={1,3,6,75,100,125,150,100};
+ for(int k=0;k<8;k++){
   assert(th_pressure_scale_set(scales[k]));th_rebuild_draw(&t);assert(hash(&t,offsetof(Th,dbuf))==before);
+  if(scales[k]<=6)for(int b=0;b<TBK_COUNT;b++)for(int a=0;a<th_bspr_n[b];a++){
+    const Sprite *p=&th_stress_bspr[b][a];assert(p->width==scales[k]&&p->height==scales[k]);
+    int visible=0;for(int x=0;x<p->width*p->height;x++)visible+=p->pixels[x]!=COLOR_KEY;assert(visible);
+  }
   for(int b=0;b<TBK_COUNT;b++)for(int j=0;j<t.dcount[t.dbuf][b];j++){
    GfxItem *it=&t.draw[t.dbuf][b][j];const Sprite *s=&th_stress_bspr[b][it->sprite];
    assert(it->x>=0&&it->y>=0&&it->x+s->width<=1280&&it->y+s->height<=720);

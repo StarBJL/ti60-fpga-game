@@ -17,7 +17,7 @@
 #ifndef MAX_HOSTILE_BULLETS
 /* 4096 so stress tier 3 has room on the board (no heap growth there);
  * normal mode still only uses the first 1024 slots (see game.c). */
-#define MAX_HOSTILE_BULLETS 40000
+#define MAX_HOSTILE_BULLETS 99999
 #endif
 #ifndef MAX_GEMS
 #define MAX_GEMS 192

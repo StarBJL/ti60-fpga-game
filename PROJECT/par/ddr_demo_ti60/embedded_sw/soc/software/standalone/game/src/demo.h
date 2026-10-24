@@ -12,10 +12,11 @@
 #include "gfx.h"
 #include "render.h"
 
-#define DEMO_MAX_SQUARES 30000
+#define DEMO_MAX_SQUARES 99999
 void demo_geometry(int width,int height);
 int demo_motion_toggle(void);
 int demo_motion_available(void);
+int demo_motion_min_size(void);
 int demo_motion_enabled(void);
 int demo_motion_error(void);
 unsigned demo_motion_cycles(void);

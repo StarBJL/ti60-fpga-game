@@ -19,7 +19,7 @@ typedef enum { TITLE, STRESS_SELECT, PLAYING, PAUSED, UPGRADE, DEFEAT } Phase;
 //压力测试等级
 typedef enum { STRESS_LOW=1, STRESS_MEDIUM=2, STRESS_HIGH=3, STRESS_CUSTOM=4 } StressTier;
 #define GAME_STRESS_BULLET_STEP 1000
-#define GAME_OCCLUSION_NEAR_MAX 256
+#define GAME_OCCLUSION_NEAR_MAX MAX_HOSTILE_BULLETS
 //事件的枚举
 typedef enum { EVENT_START, EVENT_HORDE, EVENT_BOSS, EVENT_UPGRADE } Event;
 typedef enum { RAPID, POWER, BOOTS, VITALITY, MAGNET, MULTISHOT, NOVA, UPGRADE_COUNT } Upgrade;
@@ -145,6 +145,7 @@ int game_player_count(const Game *game);
 int game_total_bullets(const Game *game);
 int game_appearance_level(const Game *game);
 int game_seed_half(const Game *game);
+int game_seed_extent(const Game *game);
 /* Stress artwork size only: collision radii, trajectories and counts unchanged.
  * Caller must fence pending GPU work before changing any draw-table geometry. */
 int game_set_seed_size(Game *game,int pixels);

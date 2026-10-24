@@ -1,0 +1,7 @@
+engine pass 0 cycles 170014
+engine pass 1 cycles 169605
+PASS MOT2 n=10047 mode=1 fault=0 cycles=344984 reads=628 responses=628
+- /data/users/user/codex_tmp/ti60_r55_work/Ti60_R5_DUALVIDEO/verification/r5_5/motion/tb.sv:98: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel
+- Verilator: $finish at 2ms; walltime 0.161 s; speed 11.562 ms/s
+- Verilator: cpu 0.161 s on 1 threads; allocated 5 MB

@@ -48,7 +48,7 @@ static void skills(void){
     assert(UPGRADE_COUNT==7&&strlen(game_upgrade_line(NOVA,2))>0);
 }
 static void tiers_and_geometry(void){
-    const int cap[]={0,1024,2048,4096,40000};
+    const int cap[]={0,1024,2048,4096,MAX_HOSTILE_BULLETS};
     for(int tier=1;tier<=4;tier++){
         game_start_stress(&g,417,tier);assert(game_hostile_slots(&g)==cap[tier]);
         assert(game_appearance_level(&g)==(tier>=3?7:1)&&g.shots==(tier>=3?4:1));
@@ -65,7 +65,7 @@ static void tiers_and_geometry(void){
     }
     game_set_stress_bullets(&g,14000);assert(game_hostile_slots(&g)==14000);
     game_set_stress_bullets(&g,1);assert(game_hostile_slots(&g)==1&&g.hostile_active<=1);
-    game_set_stress_bullets(&g,99999);assert(game_hostile_slots(&g)==40000);
+    game_set_stress_bullets(&g,99999);assert(game_hostile_slots(&g)==MAX_HOSTILE_BULLETS);
     /* The two previous DMA tables cannot be overwritten by one more tick. */
     const GfxItem *old;game_seed_draw(&g,&old);size_t bytes=(size_t)g.seed_draw_n*sizeof *old;
     GfxItem *copy=malloc(bytes?bytes:1);memcpy(copy,old,bytes);

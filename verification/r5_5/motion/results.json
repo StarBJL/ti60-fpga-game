@@ -1,0 +1,50 @@
+[
+  {
+    "count": 29984,
+    "mode": 1,
+    "fault": 0,
+    "kind": "one",
+    "seconds": 0.44,
+    "log": "engine pass 0 cycles 505040\nengine pass 1 cycles 504565\nPASS MOT2 n=29984 mode=1 fault=0 cycles=1014970 reads=1874 responses=1874\n- /data/users/user/codex_tmp/ti60_r55_work/Ti60_R5_DUALVIDEO/verification/r5_5/motion/tb.sv:98: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel\n- Verilator: $finish at 5ms; walltime 0.440 s; speed 12.445 ms/s\n- Verilator: cpu 0.440 s on 1 threads; allocated 5 MB"
+  },
+  {
+    "count": 29984,
+    "mode": 1,
+    "fault": 0,
+    "kind": "three",
+    "seconds": 0.4,
+    "log": "engine pass 0 cycles 512519\nengine pass 1 cycles 512683\nPASS MOT2 n=29984 mode=1 fault=0 cycles=1030567 reads=1874 responses=1874\n- /data/users/user/codex_tmp/ti60_r55_work/Ti60_R5_DUALVIDEO/verification/r5_5/motion/tb.sv:98: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel\n- Verilator: $finish at 6ms; walltime 0.400 s; speed 13.925 ms/s\n- Verilator: cpu 0.400 s on 1 threads; allocated 5 MB"
+  },
+  {
+    "count": 10047,
+    "mode": 1,
+    "fault": 0,
+    "kind": "one",
+    "seconds": 0.16,
+    "log": "engine pass 0 cycles 170014\nengine pass 1 cycles 169605\nPASS MOT2 n=10047 mode=1 fault=0 cycles=344984 reads=628 responses=628\n- /data/users/user/codex_tmp/ti60_r55_work/Ti60_R5_DUALVIDEO/verification/r5_5/motion/tb.sv:98: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel\n- Verilator: $finish at 2ms; walltime 0.161 s; speed 11.562 ms/s\n- Verilator: cpu 0.161 s on 1 threads; allocated 5 MB"
+  },
+  {
+    "count": 33,
+    "mode": 1,
+    "fault": 0,
+    "kind": "edges",
+    "seconds": 0.04,
+    "log": "engine pass 0 cycles 1499\nengine pass 1 cycles 1475\nPASS MOT2 n=33 mode=1 fault=0 cycles=8339 reads=4 responses=4\n- /data/users/user/codex_tmp/ti60_r55_work/Ti60_R5_DUALVIDEO/verification/r5_5/motion/tb.sv:98: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel\n- Verilator: $finish at 45us; walltime 0.035 s; speed 1.300 ms/s\n- Verilator: cpu 0.035 s on 1 threads; allocated 5 MB"
+  },
+  {
+    "count": 33,
+    "mode": 1,
+    "fault": 1,
+    "kind": "one",
+    "seconds": 0.04,
+    "log": "engine pass 0 cycles 974\nPASS MOT2 n=33 mode=1 fault=1 cycles=1031 reads=1 responses=0\n- /data/users/user/codex_tmp/ti60_r55_work/Ti60_R5_DUALVIDEO/verification/r5_5/motion/tb.sv:98: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel\n- Verilator: $finish at 6us; walltime 0.033 s; speed 168.024 us/s\n- Verilator: cpu 0.033 s on 1 threads; allocated 5 MB"
+  },
+  {
+    "count": 33,
+    "mode": 1,
+    "fault": 2,
+    "kind": "three",
+    "seconds": 0.04,
+    "log": "engine pass 0 cycles 1439\nPASS MOT2 n=33 mode=1 fault=2 cycles=1496 reads=1 responses=1\n- /data/users/user/codex_tmp/ti60_r55_work/Ti60_R5_DUALVIDEO/verification/r5_5/motion/tb.sv:98: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel\n- Verilator: $finish at 8us; walltime 0.034 s; speed 240.580 us/s\n- Verilator: cpu 0.034 s on 1 threads; allocated 5 MB"
+  }
+]

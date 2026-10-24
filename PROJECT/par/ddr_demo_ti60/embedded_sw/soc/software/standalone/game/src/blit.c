@@ -173,8 +173,21 @@ uint32_t *blit_list_wrap(uint32_t need)
 #define LSET(i, bit, v) do { uint32_t v_ = (v); \
     if (c[i] != v_) { c[i] = v_; *p++ = v_; m |= (bit); } } while (0)
 
+/* Budget assumes every record could touch the same scan band. Once full,
+ * finish this band pass and append ordinary draws, preserving blend order.
+ * Do not start another BANDS pass: the hardware does not reload prior pixels. */
+void blit_band_admit(uint32_t records)
+{
+    if(!blit_st.band_open)return;
+    const uint32_t capacity=1u<<(BLIT_BAND_BIN_SHIFT-5u);
+    if(records>capacity-blit_st.band_records){
+        band_close();++blit_st.bsplits;blit_list_kick();
+    }else blit_st.band_records+=records;
+}
+
 void blit_list_fill(uint32_t dst, uint32_t dstr, uint32_t size, uint32_t color, uint32_t cmd)
 {
+    blit_band_admit(1);
     uint32_t *c = blit_st.lctx, *p = blit_list_reserve(5), *h = p++, m = 0;
     LSET(0, BLIT_LF_DST,   dst);
     LSET(1, BLIT_LF_DSTR,  dstr);
@@ -188,6 +201,7 @@ void blit_list_fill(uint32_t dst, uint32_t dstr, uint32_t size, uint32_t color, 
 void blit_list_copy(uint32_t dst, uint32_t dstr, uint32_t src, uint32_t sstr,
                     uint32_t size, uint32_t cmd, uint32_t a, uint32_t astr)
 {
+    blit_band_admit(1);
     uint32_t *c = blit_st.lctx, *p = blit_list_reserve(10), *h = p++, m = 0;
     LSET(0, BLIT_LF_DST,  dst);
     LSET(1, BLIT_LF_DSTR, dstr);
@@ -309,6 +323,7 @@ int blit_band_begin(uint32_t fb, uint32_t pitch, uint32_t rows)
     p[0] = BLIT_L_BANDS;
     p[1] = fb;
     blit_st.lwp = p + 2;
+    blit_st.band_records = 0;
     blit_st.band_open = 1;
     return 1;
 }

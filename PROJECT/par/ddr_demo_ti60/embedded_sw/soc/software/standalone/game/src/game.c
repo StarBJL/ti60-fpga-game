@@ -366,11 +366,12 @@ int game_appearance_level(const Game *g) {
 static int pressure_seed_size=13;
 int game_seed_size(void){return pressure_seed_size;}
 int game_set_seed_size(Game *g,int pixels){
-    if(pixels!=9&&pixels!=13&&pixels!=17&&pixels!=25)return 0;
+    if(pixels!=1&&pixels!=3&&pixels!=6&&pixels!=9&&pixels!=13&&pixels!=17&&pixels!=25)return 0;
     pressure_seed_size=pixels;g->seed_draw_ok=0;g->occlusion_near_n=0;
     g->occlusion_near_overflow=1;return 1;
 }
 int game_seed_half(const Game *g) { return g->limit_mode?pressure_seed_size/2:GAME_NORMAL_SEED_HALF; }
+int game_seed_extent(const Game *g) { return g->limit_mode?pressure_seed_size:2*GAME_NORMAL_SEED_HALF+1; }
 int game_hostile_used(const Game *g) { return g->hostile_used; }
 int game_seed_draw(const Game *g, const GfxItem **items) {
     *items=g->seed_draw[g->seed_draw_buf];
@@ -734,7 +735,7 @@ static uint32_t gclock(void) { return game_clock ? game_clock() : 0u; }
 
 void game_tick(Game *g, Input in) {
     int i,j,mx,my,vx,vy,seconds,n_hostile,hostile_used,n_draw=0,n_clip=0,n_player=0;
-    const int seed_half=game_seed_half(g),seed_size=seed_half*2+1;
+    const int seed_half=game_seed_half(g),seed_size=game_seed_extent(g);
     Bullet *hostile_pool;
     const int seed_buf=(g->seed_draw_buf+1)%3;
     GfxItem *seed_draw=g->seed_draw[seed_buf];   /* 写另一张，上一帧的表引擎可能还在读 */
@@ -826,6 +827,10 @@ void game_tick(Game *g, Input in) {
     }
 
     t1=gclock(); GSPLIT(enemies,t1-t); t=t1;
+    /* Pressure measures hostile objects only: no player shots, damage to
+     * emitters, kill particles, gems or skill volleys. Normal gameplay retains
+     * automatic dual guns and the active skill. Starting stress resets the pool. */
+    if (!g->limit_mode) {
     if (g->fire_timer) --g->fire_timer;
     if (!g->fire_timer) shoot(g);
     if(in.pressed&KEY_SKILL)cast_nova(g);
@@ -857,6 +862,7 @@ void game_tick(Game *g, Input in) {
             }
         }
         if(b->active)++n_player;
+    }
     }
     g->player_active=n_player;
     t1=gclock(); GSPLIT(pbullets,t1-t); t=t1;

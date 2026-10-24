@@ -1,5 +1,7 @@
 # Ti60 R5：RISC-V + FPGA 2D 游戏渲染引擎
 
+最新压力测试修订：**R5.5**，容量 99,999、小尺寸、压力无枪火、轮廓优化与独立计时。使用说明、日志结论和后续时序优化见 [R5.5 压力测试说明](docs/R5_5_PRESSURE.md)。配套 bit / ELF 在 `BOARD_TEST/r5_5/`。实际 FPS 仍待上板测试。
+
 **R5.3 软件更新：** [完整说明与 R2 对照](docs/R5_3_SETTINGS_MUSIC.md)。全 10 首切换、人物轮廓缓存、自动演示循环优化与更明确的加速状态。新 ELF 在 `BOARD_TEST/r5_3`，继续配套已验证的 R5.2.1 bit；上板性能恢复幅度待复测。完整包见 `dist/Ti60_R5_3_MUSIC_PERF.tar.xz`。
 
 **2026-10-24 R5.2 音视频硬件基线： [BOARD_TEST/r5_2](BOARD_TEST/r5_2) 的新 bit / ELF。** 修复 HDMI 音频子包位序、同步边沿；加入加速状态遥测及恢复按钮。见 [问题证据、修复和复测步骤](docs/BOARD_FIX_R5_2.md)。下文 R5 数字及根目录旧二进制是历史基线，不代表 R5.2 的实际板上验收。最新 Linux / Windows 源码上位机页脚应显示 `R5.2-BOARD-FIX`；原预编译 Windows EXE 是旧版。

@@ -101,7 +101,7 @@ int main(void){
     fixture(0,7,40);g.invincible=10000;game_tick(&g,(Input){0});reference();assert(render_locator_info().used_near_cache);
     int cov=render_locator_info().covered;g.occlusion_near_overflow=1;reference();assert(render_locator_info().covered==cov);
     g.seed_draw_ok=0;reference();assert(render_locator_info().covered==cov);
-    fixture(1,7,400);g.invincible=10000;game_tick(&g,(Input){0});assert(g.occlusion_near_overflow);reference();
+    fixture(1,7,400);g.invincible=10000;game_tick(&g,(Input){0});assert(!g.occlusion_near_overflow);reference();assert(render_locator_info().used_near_cache);
     fixture(1,7,256);for(int k=0;k<256;k++)g.hostile[k]=g.hostile[0];reference();cov=render_locator_info().covered;
     g.hostile_used=1;reference();assert(render_locator_info().covered==cov);
     fixture(0,7,0);for(int k=0;k<MAX_BULLETS;k++)g.bullets[k]=(Bullet){1,(612+k%10*5)*FIX,(345+k/10*4)*FIX,0,0,100,0,k%8};reference();
@@ -133,11 +133,16 @@ int main(void){
     fixture(0,1,0);g.phase=TITLE;frame(2,1);dump("title.rgb565");g.phase=STRESS_SELECT;frame(2,1);dump("stress_menu.rgb565");
     g.phase=UPGRADE;g.level=7;g.choices[0]=NOVA;g.choices[1]=MULTISHOT;g.choices[2]=POWER;frame(2,1);dump("upgrade.rgb565");
     g.phase=PAUSED;frame(2,1);dump("pause.rgb565");
-    {const int sizes[]={9,13,17,25};for(int i=0;i<4;i++){
+    {const int sizes[]={1,3,6,9,13,17,25};for(int i=0;i<7;i++){
         fixture(1,7,400);assert(game_set_seed_size(&g,sizes[i]));assert(render_set_pressure_size(sizes[i]));
         reference();compare_modes();char p[64];sprintf(p,"pressure_size_%d.rgb565",sizes[i]);dump(p);
         assert(render_projectile_asset(1,0)->width==sizes[i]);
     }game_set_seed_size(&g,13);render_set_pressure_size(13);}
-    puts("PASS all four carrot visual sizes: independent locator coverage and backend equality");
+    fixture(1,7,0);assert(game_set_seed_size(&g,1));assert(render_set_pressure_size(1));
+    g.hostile_used=g.hostile_active=MAX_HOSTILE_BULLETS;
+    for(int i=0;i<MAX_HOSTILE_BULLETS;i++)g.hostile[i]=(Bullet){1,(60+i%1160)*FIX,(140+(i/1160)%480)*FIX,0,0,1000,0,i%4};
+    g.invincible=10000;game_tick(&g,(Input){0});assert(g.seed_draw_n==99999);compare_modes();
+    puts("PASS 99999 visible bullets: exact backend pixel equality, including slots above 65535");
+    puts("PASS all seven carrot visual sizes: independent locator coverage and backend equality");
     puts("PASS native 720p render and framebuffer guards; APB/list/DDR-table/LIST_WORD exact frame equality, CPU/HW alpha tolerance, 40K full frame, title/menus/upgrade/pause exports");return 0;
 }

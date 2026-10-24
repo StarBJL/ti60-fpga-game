@@ -282,12 +282,12 @@ enum { BLIT_ST_WSTALL, BLIT_ST_AWWAIT, BLIT_ST_AWSTALL, BLIT_ST_ARSTALL,
 #define BLIT_BAND_MAX_PITCH 1280u       /* 带缓冲一行最多这么多字节（旧位流；CAPS2[2] 时 2560） */
 #define BLIT_BAND_MAX_BANDS 32u         /* 旧位流；新位流看 CAPS2[15:8]（45 = 720 行） */
 #define BLIT_BAND_KOFF      (1u << 31)
-/* 桶区：默认放在 0x03000000（程序 / 帧缓冲 / 图片之上），每带 256 KB = 8192 条命令 */
+/* 桶区：0x08000000..0x0ACFFFFF，每带 1 MiB = 32768 条命令；45 带 45 MiB */
 #ifndef BLIT_BAND_BIN_BASE
-#define BLIT_BAND_BIN_BASE  0x03000000u
+#define BLIT_BAND_BIN_BASE  0x08000000u
 #endif
 #ifndef BLIT_BAND_BIN_SHIFT
-#define BLIT_BAND_BIN_SHIFT 18u
+#define BLIT_BAND_BIN_SHIFT 20u
 #endif
 /* 开一帧分带之前列表缓冲里至少要剩这么多字，不够就先回到开头（否则帧中途回绕会把这一帧拆开） */
 /* 2026-10-11（200 MHz 实测）：原来是缓冲的一半，可用空间只有一半，流水时每秒回绕 10 次左右，
@@ -507,6 +507,7 @@ typedef struct {
     uint32_t  band_max_pitch;  /* @band_max_pitch：分带帧最大行距（字节）：1280 或 2560（CAPS2[2]）。 */
     uint32_t  band_max_bands;  /* @band_max_bands：分带帧最多几带：32 或 CAPS2[15:8]（45）。 */
     int       band;       /* @band：1 = gfx_hw 的每一帧用 BANDS..ENDB 包起来（blit_set_band）。 */
+    uint32_t  band_records; /* upper bound in any bin; independent of debug stats */
     int       band_open;  /* @band_open：BANDS 已写、ENDB 还没写（这一帧正在录）。 */
     uint32_t  band_geo;   /* @band_geo：当前 BAND_GEO 寄存器值（行距 | 带数 << 16 | KOFF）。 */
     uint32_t  band_koff;  /* @band_koff：BLIT_BAND_KOFF 或 0（K 通路开关，A/B 用）。 */
@@ -600,6 +601,7 @@ int  blit_band_begin(uint32_t fb, uint32_t pitch, uint32_t rows);
 /* 一帧结束：写 ENDB 并发布（blit_st.bseq 加 1 = 这一帧的序号）。没有打开的帧时什么也不做。
  * blit_wait() / blit_busy() / 列表缓冲回绕会自动提前结束打开的帧（之后的命令直接画，画面不变）。 */
 void blit_band_end(void);
+void blit_band_admit(uint32_t records);
 /* 序号为 seq 的分带帧是否已经画完并全部写回 DDR（可以翻页）。只读一个寄存器，不等待：
  * 主循环用它实现"引擎画第 N 帧时 CPU 已经在录第 N+1 帧"。 */
 static inline int blit_band_done(uint32_t seq) { return (int32_t)(blit_rd(BLIT_R_FRAMES) - seq) >= 0; }
