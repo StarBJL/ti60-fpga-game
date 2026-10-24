@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "complete_windows": 2,
+  "command_acknowledgements": 15,
+  "dropped_uart_lines": 0,
+  "model_not_hardware_fps": true
+}

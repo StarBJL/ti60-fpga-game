@@ -1,0 +1,28 @@
+INFO     : Elitestek FPGA Bitstream Generator.
+INFO     : Version: 2026.1.132.4.5 
+INFO     : Copyright (C) 2013 - 2026 Efinix, Inc. All rights reserved.
+INFO     : Compiled: Aug 31 2026.
+INFO     : Using source file "/data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/work_pnr/ddr_demo_ti60.lbf"
+INFO     : Generating HEX programming file for device "Ti60F225", family "Titanium"
+INFO     : Using periphery source file "outflow/ddr_demo_ti60.lpf"
+INFO     : Generating bit file: "outflow/ddr_demo_ti60.bit"
+INFO     : HEX Generation Options Summary:
+INFO     : 	Listing options specified to bitstream generation:
+INFO     : 	bitstream_compression                    = on
+INFO     : 	oscillator_clock_divider                 = DIV8
+INFO     : 	enable_external_master_clock             = off
+INFO     : 	spi_low_power_mode                       = on
+INFO     : 	active_capture_clk_edge                  = negedge
+INFO     : 	enable_remote_update                     = off
+INFO     : 	release_tri_then_reset                   = on
+INFO     : 	enable_seu_crc_check                     = off
+INFO     : 	seu_mode                                 = automatic
+INFO     : 	seu_wait_interval                        = 0xFFFFFF
+INFO     : 	jtag_usercode                            = 0xFFFFFFFF
+INFO     : 	io_weak_pullup                           = on
+INFO     : Finished generating "outflow/ddr_demo_ti60.hex"
+INFO     : Elitestek Bitstream Generator took 0.539696775 seconds [FlowMsg::StageDuration]
+INFO     :     Elitestek Bitstream Generator took 0.48 seconds (approximately) in total CPU time [FlowMsg::StageDuration::CPUTime]
+INFO     : Elitestek Bitstream Generator virtual memory usage: begin = 35.492 MB, end = 170.796 MB, delta = 135.304 MB [FlowMsg::VMUsage]
+INFO     : Elitestek Bitstream Generator resident set memory usage: begin = 15.66 MB, end = 155.364 MB, delta = 139.704 MB [FlowMsg::RSSUsage]
+INFO     :     Elitestek Bitstream Generator peak resident set memory usage = 166.748 MB [FlowMsg::RSSUsage::Peak]

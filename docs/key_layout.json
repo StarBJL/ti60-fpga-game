@@ -1,0 +1,206 @@
+{
+  "matrix": [
+    {
+      "key": "S1",
+      "row": 0,
+      "column": 0,
+      "base": "场景",
+      "fn": "菜单",
+      "base_action": "scene",
+      "fn_action": "menu"
+    },
+    {
+      "key": "S2",
+      "row": 0,
+      "column": 1,
+      "base": "↑ 上移",
+      "fn": "选项 1",
+      "base_action": "up",
+      "fn_action": "pick1"
+    },
+    {
+      "key": "S3",
+      "row": 0,
+      "column": 2,
+      "base": "射击",
+      "fn": "选项 2",
+      "base_action": "shot",
+      "fn_action": "pick2"
+    },
+    {
+      "key": "S4",
+      "row": 0,
+      "column": 3,
+      "base": "Fn",
+      "fn": "Fn",
+      "base_action": "fn",
+      "fn_action": "fn"
+    },
+    {
+      "key": "S5",
+      "row": 1,
+      "column": 0,
+      "base": "← 左移",
+      "fn": "选项 3",
+      "base_action": "left",
+      "fn_action": "pick3"
+    },
+    {
+      "key": "S6",
+      "row": 1,
+      "column": 1,
+      "base": "↓ 下移",
+      "fn": "重新开始",
+      "base_action": "down",
+      "fn_action": "restart"
+    },
+    {
+      "key": "S7",
+      "row": 1,
+      "column": 2,
+      "base": "右移 →",
+      "fn": "自动演示",
+      "base_action": "right",
+      "fn_action": "auto"
+    },
+    {
+      "key": "S8",
+      "row": 1,
+      "column": 3,
+      "base": "技能 / Bomb",
+      "fn": "Alpha",
+      "base_action": "skill",
+      "fn_action": "alpha"
+    },
+    {
+      "key": "S9",
+      "row": 2,
+      "column": 0,
+      "base": "数量 −",
+      "fn": "音量 −",
+      "base_action": "minus",
+      "fn_action": "volume-"
+    },
+    {
+      "key": "S10",
+      "row": 2,
+      "column": 1,
+      "base": "数量 +",
+      "fn": "音量 +",
+      "base_action": "plus",
+      "fn_action": "volume+"
+    },
+    {
+      "key": "S11",
+      "row": 2,
+      "column": 2,
+      "base": "步长 100/10/1",
+      "fn": "统计面板",
+      "base_action": "step",
+      "fn_action": "stats"
+    },
+    {
+      "key": "S12",
+      "row": 2,
+      "column": 3,
+      "base": "尺寸档位",
+      "fn": "CPU / HW",
+      "base_action": "size",
+      "fn_action": "backend"
+    },
+    {
+      "key": "S13",
+      "row": 3,
+      "column": 0,
+      "base": "开始 / 暂停",
+      "fn": "VSync",
+      "base_action": "start",
+      "fn_action": "vsync"
+    },
+    {
+      "key": "S14",
+      "row": 3,
+      "column": 1,
+      "base": "压力模式",
+      "fn": "BGM 开关",
+      "base_action": "stress",
+      "fn_action": "bgm"
+    },
+    {
+      "key": "S15",
+      "row": 3,
+      "column": 2,
+      "base": "720 / 1080",
+      "fn": "下一曲",
+      "base_action": "resolution",
+      "fn_action": "music"
+    },
+    {
+      "key": "S16",
+      "row": 3,
+      "column": 3,
+      "base": "慢速",
+      "fn": "状态",
+      "base_action": "slow",
+      "fn_action": "status"
+    }
+  ],
+  "pins": [
+    {
+      "signal": "R0",
+      "j7": 2,
+      "net": "LVDS_P3",
+      "ball": "B1",
+      "gpio": "GPIOL_P_17"
+    },
+    {
+      "signal": "R1",
+      "j7": 4,
+      "net": "LVDS_N3",
+      "ball": "C2",
+      "gpio": "GPIOL_N_17"
+    },
+    {
+      "signal": "R2",
+      "j7": 8,
+      "net": "LVDS_P1",
+      "ball": "F1",
+      "gpio": "GPIOL_P_14"
+    },
+    {
+      "signal": "R3",
+      "j7": 10,
+      "net": "LVDS_N1",
+      "ball": "F2",
+      "gpio": "GPIOL_N_14"
+    },
+    {
+      "signal": "C0",
+      "j7": 20,
+      "net": "LVDS_P4",
+      "ball": "D1",
+      "gpio": "GPIOL_P_16"
+    },
+    {
+      "signal": "C1",
+      "j7": 22,
+      "net": "LVDS_N4",
+      "ball": "C1",
+      "gpio": "GPIOL_N_16"
+    },
+    {
+      "signal": "C2",
+      "j7": 26,
+      "net": "LVDS_P2",
+      "ball": "B2",
+      "gpio": "GPIOL_P_18"
+    },
+    {
+      "signal": "C3",
+      "j7": 28,
+      "net": "LVDS_N2",
+      "ball": "A2",
+      "gpio": "GPIOL_N_18"
+    }
+  ]
+}

@@ -1,0 +1,820 @@
+CellSiteInst {
+  cell: "clk_25m"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_08_CLK1_P"
+}
+CellSiteInst {
+  cell: "ddr_addr[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_05_CDI31"
+}
+CellSiteInst {
+  cell: "ddr_addr[10]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_08_CLK11_P"
+}
+CellSiteInst {
+  cell: "ddr_addr[11]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_03_CDI27"
+}
+CellSiteInst {
+  cell: "ddr_addr[12]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_01_EXTFB"
+}
+CellSiteInst {
+  cell: "ddr_addr[13]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_04_CDI29"
+}
+CellSiteInst {
+  cell: "ddr_addr[14]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_06_CDI20"
+}
+CellSiteInst {
+  cell: "ddr_addr[15]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_11_CDI11"
+}
+CellSiteInst {
+  cell: "ddr_addr[1]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_01_CDI23"
+}
+CellSiteInst {
+  cell: "ddr_addr[2]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_04_CDI28"
+}
+CellSiteInst {
+  cell: "ddr_addr[3]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_04"
+}
+CellSiteInst {
+  cell: "ddr_addr[4]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_00_PLLIN0"
+}
+CellSiteInst {
+  cell: "ddr_addr[5]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_11_CDI10"
+}
+CellSiteInst {
+  cell: "ddr_addr[6]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_03_CDI26"
+}
+CellSiteInst {
+  cell: "ddr_addr[7]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_06_CDI21"
+}
+CellSiteInst {
+  cell: "ddr_addr[8]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_00_CDI22"
+}
+CellSiteInst {
+  cell: "ddr_addr[9]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_07"
+}
+CellSiteInst {
+  cell: "ddr_ba[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_06_CDI9"
+}
+CellSiteInst {
+  cell: "ddr_ba[1]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_10_CLK12_N"
+}
+CellSiteInst {
+  cell: "ddr_ba[2]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_07"
+}
+CellSiteInst {
+  cell: "ddr_cas_n"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_02_CDI25"
+}
+CellSiteInst {
+  cell: "ddr_ck_N"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_09_CLK10_N"
+}
+CellSiteInst {
+  cell: "ddr_ck_P"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_09_CLK10_P"
+}
+CellSiteInst {
+  cell: "ddr_cke[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_09_CLK13_N"
+}
+CellSiteInst {
+  cell: "ddr_cs_n[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_08_CLK14_N"
+}
+CellSiteInst {
+  cell: "ddr_dm_hi[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_10_CLK12_P"
+}
+CellSiteInst {
+  cell: "ddr_dm_hi[1]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_07_CLK15_P"
+}
+CellSiteInst {
+  cell: "ddr_dq[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_12_CDI12"
+}
+CellSiteInst {
+  cell: "ddr_dq[10]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_01_EXTFB"
+}
+CellSiteInst {
+  cell: "ddr_dq[11]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_08_CLK14_P"
+}
+CellSiteInst {
+  cell: "ddr_dq[12]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_01"
+}
+CellSiteInst {
+  cell: "ddr_dq[13]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_03_CDI6"
+}
+CellSiteInst {
+  cell: "ddr_dq[14]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_00_PLLIN1"
+}
+CellSiteInst {
+  cell: "ddr_dq[15]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_00"
+}
+CellSiteInst {
+  cell: "ddr_dq[1]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_13_CDI15"
+}
+CellSiteInst {
+  cell: "ddr_dq[2]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_14_CDI16"
+}
+CellSiteInst {
+  cell: "ddr_dq[3]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_12_CDI13"
+}
+CellSiteInst {
+  cell: "ddr_dq[4]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_17"
+}
+CellSiteInst {
+  cell: "ddr_dq[5]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_13_CDI14"
+}
+CellSiteInst {
+  cell: "ddr_dq[6]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_14_CDI17"
+}
+CellSiteInst {
+  cell: "ddr_dq[7]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_17_PLLIN1"
+}
+CellSiteInst {
+  cell: "ddr_dq[8]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_07_CLK15_N"
+}
+CellSiteInst {
+  cell: "ddr_dq[9]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_03_CDI7"
+}
+CellSiteInst {
+  cell: "ddr_dqs[0]_N"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_15_CDI19"
+}
+CellSiteInst {
+  cell: "ddr_dqs[0]_P"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_15_CDI18"
+}
+CellSiteInst {
+  cell: "ddr_dqs[1]_N"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_N_02_CDI5"
+}
+CellSiteInst {
+  cell: "ddr_dqs[1]_P"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_02_CDI4"
+}
+CellSiteInst {
+  cell: "ddr_odt[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOB_P_06_CDI8"
+}
+CellSiteInst {
+  cell: "ddr_ras_n"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_02_CDI24"
+}
+CellSiteInst {
+  cell: "ddr_reset_n"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_08_CLK11_N"
+}
+CellSiteInst {
+  cell: "ddr_we_n"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_05_CDI30"
+}
+CellSiteInst {
+  cell: "i_arstn"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_07"
+}
+CellSiteInst {
+  cell: "io_jtag_tck"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_15"
+}
+CellSiteInst {
+  cell: "io_jtag_tdi"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_12"
+}
+CellSiteInst {
+  cell: "io_jtag_tdo"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_16"
+}
+CellSiteInst {
+  cell: "io_jtag_tms"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_19"
+}
+CellSiteInst {
+  cell: "keyboard_rx"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_11_PLLIN2"
+}
+CellSiteInst {
+  cell: "keyboard_tx"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_09"
+}
+CellSiteInst {
+  cell: "matrix_col[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_16"
+}
+CellSiteInst {
+  cell: "matrix_col[1]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_N_16"
+}
+CellSiteInst {
+  cell: "matrix_col[2]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_18_PLLIN0"
+}
+CellSiteInst {
+  cell: "matrix_col[3]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_N_18"
+}
+CellSiteInst {
+  cell: "matrix_row[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_17_EXTFB"
+}
+CellSiteInst {
+  cell: "matrix_row[1]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_N_17"
+}
+CellSiteInst {
+  cell: "matrix_row[2]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_14"
+}
+CellSiteInst {
+  cell: "matrix_row[3]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_N_14"
+}
+CellSiteInst {
+  cell: "soc_gpio[0]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_27"
+}
+CellSiteInst {
+  cell: "soc_gpio[1]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_24"
+}
+CellSiteInst {
+  cell: "soc_gpio[2]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_12"
+}
+CellSiteInst {
+  cell: "soc_gpio[3]"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_02_CSI"
+}
+CellSiteInst {
+  cell: "system_spi_0_io_data_0"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_03_CDI0"
+}
+CellSiteInst {
+  cell: "system_spi_0_io_data_1"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_N_03_CDI1"
+}
+CellSiteInst {
+  cell: "system_spi_0_io_sclk_write"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_N_01_CCK"
+}
+CellSiteInst {
+  cell: "system_spi_0_io_ss"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_P_01_SSL_N"
+}
+CellSiteInst {
+  cell: "system_uart_0_io_rxd"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOL_02"
+}
+CellSiteInst {
+  cell: "system_uart_0_io_txd"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_28"
+}
+CellSiteInst {
+  cell: "tmds_clk_TXN"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_10_CLK9_N"
+}
+CellSiteInst {
+  cell: "tmds_clk_TXP"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_10_CLK9_P"
+}
+CellSiteInst {
+  cell: "tmds_data0_TXN"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_13"
+}
+CellSiteInst {
+  cell: "tmds_data0_TXP"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_13"
+}
+CellSiteInst {
+  cell: "tmds_data1_TXN"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_11_CLK8_N"
+}
+CellSiteInst {
+  cell: "tmds_data1_TXP"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_11_CLK8_P"
+}
+CellSiteInst {
+  cell: "tmds_data2_TXN"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_N_12"
+}
+CellSiteInst {
+  cell: "tmds_data2_TXP"
+  block_and_site_inst: "PKG_PIN/PKG_PIN_INOUT"
+  block_inst: "GPIOR_P_12"
+}
+CellSiteInst {
+  cell: "DDR3_PLL~PLL"
+  block_and_site_inst: "PLL/PLL_SLOT0"
+  block_inst: "PLL_TR0"
+}
+CellSiteInst {
+  cell: "clk_25m~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_08"
+}
+CellSiteInst {
+  cell: "ddr_addr[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOR_PN_05"
+}
+CellSiteInst {
+  cell: "ddr_addr[10]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_08"
+}
+CellSiteInst {
+  cell: "ddr_addr[11]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOR_PN_03"
+}
+CellSiteInst {
+  cell: "ddr_addr[12]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_01"
+}
+CellSiteInst {
+  cell: "ddr_addr[13]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOR_PN_04"
+}
+CellSiteInst {
+  cell: "ddr_addr[14]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_06"
+}
+CellSiteInst {
+  cell: "ddr_addr[15]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_11"
+}
+CellSiteInst {
+  cell: "ddr_addr[1]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOR_PN_01"
+}
+CellSiteInst {
+  cell: "ddr_addr[2]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_04"
+}
+CellSiteInst {
+  cell: "ddr_addr[3]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_04"
+}
+CellSiteInst {
+  cell: "ddr_addr[4]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_00"
+}
+CellSiteInst {
+  cell: "ddr_addr[5]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_11"
+}
+CellSiteInst {
+  cell: "ddr_addr[6]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_03"
+}
+CellSiteInst {
+  cell: "ddr_addr[7]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOR_PN_06"
+}
+CellSiteInst {
+  cell: "ddr_addr[8]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOR_PN_00"
+}
+CellSiteInst {
+  cell: "ddr_addr[9]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOR_PN_07"
+}
+CellSiteInst {
+  cell: "ddr_ba[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_06"
+}
+CellSiteInst {
+  cell: "ddr_ba[1]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_10"
+}
+CellSiteInst {
+  cell: "ddr_ba[2]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_07"
+}
+CellSiteInst {
+  cell: "ddr_cas_n~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOR_PN_02"
+}
+CellSiteInst {
+  cell: "ddr_cke[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_09"
+}
+CellSiteInst {
+  cell: "ddr_ck~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_09"
+}
+CellSiteInst {
+  cell: "ddr_cs_n[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_08"
+}
+CellSiteInst {
+  cell: "ddr_dm[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_10"
+}
+CellSiteInst {
+  cell: "ddr_dm[1]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_07"
+}
+CellSiteInst {
+  cell: "ddr_dq[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_12"
+}
+CellSiteInst {
+  cell: "ddr_dq[10]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_01"
+}
+CellSiteInst {
+  cell: "ddr_dq[11]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_08"
+}
+CellSiteInst {
+  cell: "ddr_dq[12]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_01"
+}
+CellSiteInst {
+  cell: "ddr_dq[13]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_03"
+}
+CellSiteInst {
+  cell: "ddr_dq[14]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_00"
+}
+CellSiteInst {
+  cell: "ddr_dq[15]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_00"
+}
+CellSiteInst {
+  cell: "ddr_dq[1]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_13"
+}
+CellSiteInst {
+  cell: "ddr_dq[2]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_14"
+}
+CellSiteInst {
+  cell: "ddr_dq[3]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_12"
+}
+CellSiteInst {
+  cell: "ddr_dq[4]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_17"
+}
+CellSiteInst {
+  cell: "ddr_dq[5]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_13"
+}
+CellSiteInst {
+  cell: "ddr_dq[6]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_14"
+}
+CellSiteInst {
+  cell: "ddr_dq[7]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_17"
+}
+CellSiteInst {
+  cell: "ddr_dq[8]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_07"
+}
+CellSiteInst {
+  cell: "ddr_dq[9]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOB_PN_03"
+}
+CellSiteInst {
+  cell: "ddr_dqs[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_15"
+}
+CellSiteInst {
+  cell: "ddr_dqs[1]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_02"
+}
+CellSiteInst {
+  cell: "ddr_odt[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOB_PN_06"
+}
+CellSiteInst {
+  cell: "ddr_ras_n~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_02"
+}
+CellSiteInst {
+  cell: "ddr_reset_n~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOR_PN_08"
+}
+CellSiteInst {
+  cell: "ddr_we_n~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_05"
+}
+CellSiteInst {
+  cell: "i_arstn~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOL_07"
+}
+CellSiteInst {
+  cell: "io_jtag_tck~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOR_15"
+}
+CellSiteInst {
+  cell: "io_jtag_tdi~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOR_12"
+}
+CellSiteInst {
+  cell: "io_jtag_tdo~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOR_16"
+}
+CellSiteInst {
+  cell: "io_jtag_tms~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOR_19"
+}
+CellSiteInst {
+  cell: "keyboard_rx~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOL_11"
+}
+CellSiteInst {
+  cell: "keyboard_tx~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOL_09"
+}
+CellSiteInst {
+  cell: "matrix_col[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_16"
+}
+CellSiteInst {
+  cell: "matrix_col[1]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOL_PN_16"
+}
+CellSiteInst {
+  cell: "matrix_col[2]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_18"
+}
+CellSiteInst {
+  cell: "matrix_col[3]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOL_PN_18"
+}
+CellSiteInst {
+  cell: "matrix_row[0]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_17"
+}
+CellSiteInst {
+  cell: "matrix_row[1]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOL_PN_17"
+}
+CellSiteInst {
+  cell: "matrix_row[2]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_14"
+}
+CellSiteInst {
+  cell: "matrix_row[3]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOL_PN_14"
+}
+CellSiteInst {
+  cell: "pll_hdmi~PLL"
+  block_and_site_inst: "PLL/PLL_SLOT0"
+  block_inst: "PLL_BR0"
+}
+CellSiteInst {
+  cell: "pll_inst1~PLL"
+  block_and_site_inst: "PLL/PLL_SLOT0"
+  block_inst: "PLL_TL0"
+}
+CellSiteInst {
+  cell: "soc_gpio[0]~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOR_27"
+}
+CellSiteInst {
+  cell: "soc_gpio[1]~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOR_24"
+}
+CellSiteInst {
+  cell: "soc_gpio[2]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_12"
+}
+CellSiteInst {
+  cell: "soc_gpio[3]~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_02"
+}
+CellSiteInst {
+  cell: "system_spi_0_io_data_0~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_03"
+}
+CellSiteInst {
+  cell: "system_spi_0_io_data_1~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOL_PN_03"
+}
+CellSiteInst {
+  cell: "system_spi_0_io_sclk_write~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT1"
+  block_inst: "GPIOL_PN_01"
+}
+CellSiteInst {
+  cell: "system_spi_0_io_ss~GPIO"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOL_PN_01"
+}
+CellSiteInst {
+  cell: "system_uart_0_io_rxd~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOL_02"
+}
+CellSiteInst {
+  cell: "system_uart_0_io_txd~GPIO"
+  block_and_site_inst: "HVIO/HVIO_SLOT0"
+  block_inst: "GPIOR_28"
+}
+CellSiteInst {
+  cell: "tmds_clk~LVDS"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_10"
+}
+CellSiteInst {
+  cell: "tmds_data0~LVDS"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_13"
+}
+CellSiteInst {
+  cell: "tmds_data1~LVDS"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_11"
+}
+CellSiteInst {
+  cell: "tmds_data2~LVDS"
+  block_and_site_inst: "HSIO/HSIO_SLOT0"
+  block_inst: "GPIOR_PN_12"
+}

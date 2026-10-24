@@ -1,0 +1,29 @@
+# placeholder sounds written by wav2bank.py --demo
+shot           demo/shot.wav
+enemy_fire     demo/enemy_fire.wav
+hit            demo/hit.wav
+kill           demo/kill.wav
+graze          demo/graze.wav
+item           demo/item.wav
+powerup        demo/powerup.wav
+extend         demo/extend.wav
+bomb_get       demo/bomb_get.wav
+bomb           demo/bomb.wav
+death          demo/death.wav
+spell          demo/spell.wav
+capture        demo/capture.wav
+phase          demo/phase.wav
+boss_dead      demo/boss_dead.wav
+warning        demo/warning.wav
+timeout        demo/timeout.wav
+select         demo/select.wav
+ok             demo/ok.wav
+pause          demo/pause.wav
+clear          demo/clear.wav
+over           demo/over.wav
+laser          demo/laser.wav
+bgm_title      demo/bgm_title.wav   loop=auto
+bgm_stage1     demo/bgm_stage1.wav   loop=auto
+bgm_boss1      demo/bgm_boss1.wav   loop=auto
+bgm_stage2     demo/bgm_stage2.wav   loop=auto
+bgm_boss2      demo/bgm_boss2.wav   loop=auto

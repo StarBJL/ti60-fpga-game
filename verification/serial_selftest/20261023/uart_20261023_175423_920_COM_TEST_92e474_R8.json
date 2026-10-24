@@ -1,0 +1,12 @@
+{
+    "session":  "uart_20261023_175423_920_COM_TEST_92e474_R8",
+    "hardware_label":  "R8",
+    "port":  "COM_TEST",
+    "baud":  115200,
+    "started":  "2026-10-23T17:54:23.9204546+08:00",
+    "updated":  "2026-10-23T17:54:24.0171652+08:00",
+    "connected":  false,
+    "bytes_received":  15,
+    "raw_log":  "D:\\FPGA_competition\\Ti60_720p_MERGE_R2_ZH_FULL\\verification\\serial_selftest\\20261023\\uart_20261023_175423_920_COM_TEST_92e474_R8.txt",
+    "command_log":  "D:\\FPGA_competition\\Ti60_720p_MERGE_R2_ZH_FULL\\verification\\serial_selftest\\20261023\\uart_20261023_175423_920_COM_TEST_92e474_R8.events.tsv"
+}

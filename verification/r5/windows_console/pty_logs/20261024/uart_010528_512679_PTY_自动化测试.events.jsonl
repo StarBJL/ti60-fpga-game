@@ -1,0 +1,68 @@
+{"time": "2026-10-23T16:05:28.516+00:00", "action": "RECORD_START", "port": "/dev/pts/1", "baud": 115200, "label": "PTY 自动化测试"}
+{"time": "2026-10-23T16:05:28.824+00:00", "action": "TX", "id": 1, "command": "status", "value": null, "wire": ":1 status"}
+{"time": "2026-10-23T16:05:28.872+00:00", "action": "TX", "id": 2, "command": "resolution", "value": 1, "wire": ":2 resolution 1"}
+{"time": "2026-10-23T16:05:29.372+00:00", "action": "TX", "id": 3, "command": "resolution", "value": 0, "wire": ":3 resolution 0"}
+{"time": "2026-10-23T16:05:29.872+00:00", "action": "TX", "id": 4, "command": "step", "value": 1, "wire": ":4 step 1"}
+{"time": "2026-10-23T16:05:29.905+00:00", "action": "TX", "id": 5, "command": "count", "value": 1000, "wire": ":5 count 1000"}
+{"time": "2026-10-23T16:05:29.938+00:00", "action": "TX", "id": 6, "command": "delta", "value": 1, "wire": ":6 delta 1"}
+{"time": "2026-10-23T16:05:30.371+00:00", "action": "TX", "id": 7, "command": "step", "value": 10, "wire": ":7 step 10"}
+{"time": "2026-10-23T16:05:30.405+00:00", "action": "TX", "id": 8, "command": "delta", "value": -1, "wire": ":8 delta -1"}
+{"time": "2026-10-23T16:05:30.871+00:00", "action": "TX", "id": 9, "command": "step", "value": 100, "wire": ":9 step 100"}
+{"time": "2026-10-23T16:05:30.904+00:00", "action": "TX", "id": 10, "command": "delta", "value": 1, "wire": ":10 delta 1"}
+{"time": "2026-10-23T16:05:31.372+00:00", "action": "TX", "id": 11, "command": "move", "value": 0, "wire": ":11 move 0"}
+{"time": "2026-10-23T16:05:31.387+00:00", "action": "TX", "id": 12, "command": "scene", "value": 1, "wire": ":12 scene 1"}
+{"time": "2026-10-23T16:05:31.871+00:00", "action": "TX", "id": 13, "command": "stress", "value": 4, "wire": ":13 stress 4"}
+{"time": "2026-10-23T16:05:31.887+00:00", "action": "TX", "id": 14, "command": "bullet", "value": 25, "wire": ":14 bullet 25"}
+{"time": "2026-10-23T16:05:31.905+00:00", "action": "TX", "id": 15, "command": "skill", "value": null, "wire": ":15 skill"}
+{"time": "2026-10-23T16:05:31.938+00:00", "action": "TX", "id": 16, "command": "move", "value": 0, "wire": ":16 move 0"}
+{"time": "2026-10-23T16:05:31.953+00:00", "action": "TX", "id": 17, "command": "scene", "value": 0, "wire": ":17 scene 0"}
+{"time": "2026-10-23T16:05:32.338+00:00", "action": "TX", "id": 18, "command": "bullet", "value": 150, "wire": ":18 bullet 150"}
+{"time": "2026-10-23T16:05:32.371+00:00", "action": "TX", "id": 19, "command": "move", "value": 0, "wire": ":19 move 0"}
+{"time": "2026-10-23T16:05:32.386+00:00", "action": "TX", "id": 20, "command": "scene", "value": 2, "wire": ":20 scene 2"}
+{"time": "2026-10-23T16:05:32.838+00:00", "action": "TX", "id": 21, "command": "square", "value": 40, "wire": ":21 square 40"}
+{"time": "2026-10-23T16:05:32.871+00:00", "action": "TX", "id": 22, "command": "move", "value": 0, "wire": ":22 move 0"}
+{"time": "2026-10-23T16:05:32.887+00:00", "action": "TX", "id": 23, "command": "move", "value": 8, "wire": ":23 move 8"}
+{"time": "2026-10-23T16:05:32.887+00:00", "action": "TX", "id": 24, "command": "move", "value": 24, "wire": ":24 move 24"}
+{"time": "2026-10-23T16:05:32.919+00:00", "action": "TX", "id": 25, "command": "move", "value": 24, "wire": ":25 move 24"}
+{"time": "2026-10-23T16:05:33.019+00:00", "action": "TX", "id": 26, "command": "move", "value": 24, "wire": ":26 move 24"}
+{"time": "2026-10-23T16:05:33.094+00:00", "action": "TX", "id": 27, "command": "move", "value": 16, "wire": ":27 move 16"}
+{"time": "2026-10-23T16:05:33.119+00:00", "action": "TX", "id": 28, "command": "move", "value": 16, "wire": ":28 move 16"}
+{"time": "2026-10-23T16:05:33.219+00:00", "action": "TX", "id": 29, "command": "move", "value": 16, "wire": ":29 move 16"}
+{"time": "2026-10-23T16:05:33.236+00:00", "action": "TX", "id": 30, "command": "move", "value": 0, "wire": ":30 move 0"}
+{"time": "2026-10-23T16:05:33.320+00:00", "action": "TX", "id": 31, "command": "move", "value": 0, "wire": ":31 move 0"}
+{"time": "2026-10-23T16:05:33.379+00:00", "action": "TX", "id": 32, "command": "move", "value": 1, "wire": ":32 move 1"}
+{"time": "2026-10-23T16:05:33.419+00:00", "action": "TX", "id": 33, "command": "move", "value": 1, "wire": ":33 move 1"}
+{"time": "2026-10-23T16:05:33.500+00:00", "action": "TX", "id": 34, "command": "move", "value": 0, "wire": ":34 move 0"}
+{"time": "2026-10-23T16:05:33.519+00:00", "action": "TX", "id": 35, "command": "move", "value": 0, "wire": ":35 move 0"}
+{"time": "2026-10-23T16:05:33.619+00:00", "action": "TX", "id": 36, "command": "move", "value": 0, "wire": ":36 move 0"}
+{"time": "2026-10-23T16:05:33.703+00:00", "action": "TX", "id": 37, "command": "resolution", "value": 1, "wire": ":37 resolution 1"}
+{"time": "2026-10-23T16:05:33.720+00:00", "action": "TX", "id": 38, "command": "move", "value": 0, "wire": ":38 move 0"}
+{"time": "2026-10-23T16:05:33.819+00:00", "action": "TX", "id": 39, "command": "move", "value": 0, "wire": ":39 move 0"}
+{"time": "2026-10-23T16:05:33.838+00:00", "action": "TX", "id": 40, "command": "resolution", "value": 0, "wire": ":40 resolution 0"}
+{"time": "2026-10-23T16:05:33.919+00:00", "action": "TX", "id": 41, "command": "move", "value": 0, "wire": ":41 move 0"}
+{"time": "2026-10-23T16:05:34.019+00:00", "action": "TX", "id": 42, "command": "move", "value": 0, "wire": ":42 move 0"}
+{"time": "2026-10-23T16:05:34.119+00:00", "action": "TX", "id": 43, "command": "move", "value": 0, "wire": ":43 move 0"}
+{"time": "2026-10-23T16:05:34.219+00:00", "action": "TX", "id": 44, "command": "move", "value": 0, "wire": ":44 move 0"}
+{"time": "2026-10-23T16:05:34.320+00:00", "action": "TX", "id": 45, "command": "move", "value": 0, "wire": ":45 move 0"}
+{"time": "2026-10-23T16:05:34.337+00:00", "action": "TX", "id": 46, "command": "step", "value": 10, "wire": ":46 step 10"}
+{"time": "2026-10-23T16:05:34.419+00:00", "action": "TX", "id": 47, "command": "move", "value": 0, "wire": ":47 move 0"}
+{"time": "2026-10-23T16:05:34.459+00:00", "action": "TX", "id": 48, "command": "step", "value": 1, "wire": ":48 step 1"}
+{"time": "2026-10-23T16:05:34.519+00:00", "action": "TX", "id": 49, "command": "move", "value": 0, "wire": ":49 move 0"}
+{"time": "2026-10-23T16:05:34.581+00:00", "action": "TX", "id": 50, "command": "step", "value": 100, "wire": ":50 step 100"}
+{"time": "2026-10-23T16:05:34.604+00:00", "action": "TX", "id": 51, "command": "next", "value": null, "wire": ":51 next"}
+{"time": "2026-10-23T16:05:34.620+00:00", "action": "TX", "id": 52, "command": "move", "value": 0, "wire": ":52 move 0"}
+{"time": "2026-10-23T16:05:34.637+00:00", "action": "TX", "id": 53, "command": "bgm", "value": 0, "wire": ":53 bgm 0"}
+{"time": "2026-10-23T16:05:34.671+00:00", "action": "TX", "id": 54, "command": "bgm", "value": 1, "wire": ":54 bgm 1"}
+{"time": "2026-10-23T16:05:34.704+00:00", "action": "MARK", "text": "浏览器回归：100/10/1、尺寸、组合键、音乐"}
+{"time": "2026-10-23T16:05:34.720+00:00", "action": "TX", "id": 55, "command": "move", "value": 0, "wire": ":55 move 0"}
+{"time": "2026-10-23T16:05:34.739+00:00", "action": "TX", "id": 56, "command": "move", "value": 0, "wire": ":56 move 0"}
+{"time": "2026-10-23T16:05:34.820+00:00", "action": "TX", "id": 57, "command": "move", "value": 0, "wire": ":57 move 0"}
+{"time": "2026-10-23T16:05:34.919+00:00", "action": "TX", "id": 58, "command": "move", "value": 0, "wire": ":58 move 0"}
+{"time": "2026-10-23T16:05:35.019+00:00", "action": "TX", "id": 59, "command": "move", "value": 0, "wire": ":59 move 0"}
+{"time": "2026-10-23T16:05:35.119+00:00", "action": "TX", "id": 60, "command": "move", "value": 0, "wire": ":60 move 0"}
+{"time": "2026-10-23T16:05:35.219+00:00", "action": "TX", "id": 61, "command": "move", "value": 0, "wire": ":61 move 0"}
+{"time": "2026-10-23T16:05:35.319+00:00", "action": "TX", "id": 62, "command": "move", "value": 0, "wire": ":62 move 0"}
+{"time": "2026-10-23T16:05:35.371+00:00", "action": "TX", "id": 63, "command": "move", "value": 0, "wire": ":63 move 0"}
+{"time": "2026-10-23T16:05:35.387+00:00", "action": "TX", "id": 64, "command": "move", "value": 0, "wire": ":64 move 0"}
+{"time": "2026-10-23T16:05:35.387+00:00", "action": "DISCONNECT"}
+{"time": "2026-10-23T16:05:35.387+00:00", "action": "RECORD_END"}

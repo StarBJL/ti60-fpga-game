@@ -1,0 +1,40 @@
+{"time": "2026-10-23T15:13:07.368+00:00", "action": "RECORD_START", "port": "/dev/pts/0", "baud": 115200, "label": "PTY 自动化测试"}
+{"time": "2026-10-23T15:13:07.767+00:00", "action": "TX", "id": 1, "command": "step", "value": 1, "wire": ":1 step 1"}
+{"time": "2026-10-23T15:13:07.800+00:00", "action": "TX", "id": 2, "command": "count", "value": 1000, "wire": ":2 count 1000"}
+{"time": "2026-10-23T15:13:07.833+00:00", "action": "TX", "id": 3, "command": "delta", "value": 1, "wire": ":3 delta 1"}
+{"time": "2026-10-23T15:13:08.266+00:00", "action": "TX", "id": 4, "command": "step", "value": 10, "wire": ":4 step 10"}
+{"time": "2026-10-23T15:13:08.299+00:00", "action": "TX", "id": 5, "command": "delta", "value": -1, "wire": ":5 delta -1"}
+{"time": "2026-10-23T15:13:08.765+00:00", "action": "TX", "id": 6, "command": "step", "value": 100, "wire": ":6 step 100"}
+{"time": "2026-10-23T15:13:08.799+00:00", "action": "TX", "id": 7, "command": "delta", "value": 1, "wire": ":7 delta 1"}
+{"time": "2026-10-23T15:13:09.266+00:00", "action": "TX", "id": 8, "command": "move", "value": 0, "wire": ":8 move 0"}
+{"time": "2026-10-23T15:13:09.281+00:00", "action": "TX", "id": 9, "command": "scene", "value": 1, "wire": ":9 scene 1"}
+{"time": "2026-10-23T15:13:09.766+00:00", "action": "TX", "id": 10, "command": "stress", "value": 4, "wire": ":10 stress 4"}
+{"time": "2026-10-23T15:13:09.781+00:00", "action": "TX", "id": 11, "command": "bullet", "value": 25, "wire": ":11 bullet 25"}
+{"time": "2026-10-23T15:13:09.799+00:00", "action": "TX", "id": 12, "command": "skill", "value": null, "wire": ":12 skill"}
+{"time": "2026-10-23T15:13:09.832+00:00", "action": "TX", "id": 13, "command": "move", "value": 0, "wire": ":13 move 0"}
+{"time": "2026-10-23T15:13:09.848+00:00", "action": "TX", "id": 14, "command": "scene", "value": 0, "wire": ":14 scene 0"}
+{"time": "2026-10-23T15:13:10.233+00:00", "action": "TX", "id": 15, "command": "bullet", "value": 150, "wire": ":15 bullet 150"}
+{"time": "2026-10-23T15:13:10.265+00:00", "action": "TX", "id": 16, "command": "move", "value": 0, "wire": ":16 move 0"}
+{"time": "2026-10-23T15:13:10.281+00:00", "action": "TX", "id": 17, "command": "scene", "value": 2, "wire": ":17 scene 2"}
+{"time": "2026-10-23T15:13:10.734+00:00", "action": "TX", "id": 18, "command": "square", "value": 40, "wire": ":18 square 40"}
+{"time": "2026-10-23T15:13:10.765+00:00", "action": "TX", "id": 19, "command": "move", "value": 0, "wire": ":19 move 0"}
+{"time": "2026-10-23T15:13:10.781+00:00", "action": "TX", "id": 20, "command": "move", "value": 8, "wire": ":20 move 8"}
+{"time": "2026-10-23T15:13:10.781+00:00", "action": "TX", "id": 21, "command": "move", "value": 24, "wire": ":21 move 24"}
+{"time": "2026-10-23T15:13:10.816+00:00", "action": "TX", "id": 22, "command": "move", "value": 24, "wire": ":22 move 24"}
+{"time": "2026-10-23T15:13:10.916+00:00", "action": "TX", "id": 23, "command": "move", "value": 24, "wire": ":23 move 24"}
+{"time": "2026-10-23T15:13:10.989+00:00", "action": "TX", "id": 24, "command": "move", "value": 16, "wire": ":24 move 16"}
+{"time": "2026-10-23T15:13:11.016+00:00", "action": "TX", "id": 25, "command": "move", "value": 16, "wire": ":25 move 16"}
+{"time": "2026-10-23T15:13:11.116+00:00", "action": "TX", "id": 26, "command": "move", "value": 16, "wire": ":26 move 16"}
+{"time": "2026-10-23T15:13:11.130+00:00", "action": "TX", "id": 27, "command": "move", "value": 0, "wire": ":27 move 0"}
+{"time": "2026-10-23T15:13:11.272+00:00", "action": "TX", "id": 28, "command": "move", "value": 1, "wire": ":28 move 1"}
+{"time": "2026-10-23T15:13:11.316+00:00", "action": "TX", "id": 29, "command": "move", "value": 1, "wire": ":29 move 1"}
+{"time": "2026-10-23T15:13:11.394+00:00", "action": "TX", "id": 30, "command": "move", "value": 0, "wire": ":30 move 0"}
+{"time": "2026-10-23T15:13:11.616+00:00", "action": "TX", "id": 31, "command": "next", "value": null, "wire": ":31 next"}
+{"time": "2026-10-23T15:13:11.648+00:00", "action": "TX", "id": 32, "command": "bgm", "value": 0, "wire": ":32 bgm 0"}
+{"time": "2026-10-23T15:13:11.682+00:00", "action": "TX", "id": 33, "command": "bgm", "value": 1, "wire": ":33 bgm 1"}
+{"time": "2026-10-23T15:13:11.715+00:00", "action": "MARK", "text": "浏览器回归：100/10/1、尺寸、组合键、音乐"}
+{"time": "2026-10-23T15:13:11.750+00:00", "action": "TX", "id": 34, "command": "move", "value": 0, "wire": ":34 move 0"}
+{"time": "2026-10-23T15:13:12.316+00:00", "action": "TX", "id": 35, "command": "move", "value": 0, "wire": ":35 move 0"}
+{"time": "2026-10-23T15:13:12.331+00:00", "action": "TX", "id": 36, "command": "move", "value": 0, "wire": ":36 move 0"}
+{"time": "2026-10-23T15:13:12.331+00:00", "action": "DISCONNECT"}
+{"time": "2026-10-23T15:13:12.332+00:00", "action": "RECORD_END"}

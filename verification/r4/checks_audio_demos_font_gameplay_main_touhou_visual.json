@@ -1,0 +1,42 @@
+[
+  {
+    "name": "gameplay",
+    "passed": true,
+    "log": "gameplay.log"
+  },
+  {
+    "name": "visual",
+    "passed": true,
+    "log": "visual.log"
+  },
+  {
+    "name": "audio",
+    "passed": true,
+    "log": "audio.log"
+  },
+  {
+    "name": "font",
+    "passed": true,
+    "log": "font.log"
+  },
+  {
+    "name": "demos",
+    "passed": true,
+    "log": "demos.log"
+  },
+  {
+    "name": "touhou",
+    "passed": true,
+    "log": "touhou.log"
+  },
+  {
+    "name": "main",
+    "passed": true,
+    "log": "main.log"
+  },
+  {
+    "name": "all_screen_glyphs",
+    "passed": true,
+    "count": 275
+  }
+]

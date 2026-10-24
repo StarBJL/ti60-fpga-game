@@ -1,0 +1,9 @@
+band frame 0 ok: 74808 cycles = phase 1 1424 + bands 73252 (flush/clear 28264), 266 bin records, K beats 1376 (K busy 2667)
+additive overlap ok (band)
+additive overlap ok (direct)
+back-to-back band frames ok (144773 cycles)
+band geometry 640 B x 96 rows at 0x44000 ok
+band geometry 2560 B x 96 rows ok (3 frames)
+band geometry 256 B x 720 rows ok (2 frames)
+band mode ok (12 frames, bad record flag, bin overflow flag)
+TEST_PASS integrated credit conservation {"cache_fill": 1958, "cycles": 859052, "hardware_test": false, "issue_pop_same_cycle": 3773, "max_descriptors": 17, "max_list_reserved": 32, "max_reserved": 511, "reserved": 0, "result": "PASS"}

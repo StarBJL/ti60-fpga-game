@@ -1,0 +1,14 @@
+visual 0 ol fallbacks, duplicate union and player-laser coverage
+PASS 80/65 hysteresis, four-step fade, replay stability, hidden body at full fade, 3 distinct outline buffers and gameplay immutability
+PASS all four carrot visual sizes: independent locator coverage and backend equality
+PASS native 720p render and framebuffer guards; APB/list/DDR-table/LIST_WORD exact frame equality, CPU/HW alpha tolerance, 40K full frame, title/menus/upgrade/pause exports
+
+control 0 PASS atomic protocol, malformed/overflow frames, 100/10/1 steps, held and short-tap edges, release timeout, physical packet counters unchanged
+
+th_sizes 0 SS Touhou stress 75%: 72 bullets, state hash 7d2eb2cd, guard intact
+PASS Touhou stress 100%: 72 bullets, state hash 7d2eb2cd, guard intact
+PASS Touhou stress 125%: 72 bullets, state hash 7d2eb2cd, guard intact
+PASS Touhou stress 150%: 72 bullets, state hash 7d2eb2cd, guard intact
+PASS Touhou stress 100%: 72 bullets, state hash 7d2eb2cd, guard intact
+PASS stress display scaling changes neither gameplay nor collision, normal mode uses original art
+

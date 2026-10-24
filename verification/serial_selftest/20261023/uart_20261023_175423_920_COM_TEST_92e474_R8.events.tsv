@@ -1,0 +1,6 @@
+time_china	action	detail
+2026-10-23T17:54:23.9204546+08:00	NEW_RECORD	COM_TEST 115200 8N1; hardware_label=R8 (user-entered); receive-only until an explicit button/Send
+2026-10-23T17:54:23.9561980+08:00	TX	char=h hex=68
+2026-10-23T17:54:23.9561980+08:00	TX	char=% hex=25
+2026-10-23T17:54:23.9572067+08:00	TX	char=& hex=26
+2026-10-23T17:54:23.9596427+08:00	DISCONNECT	selftest complete

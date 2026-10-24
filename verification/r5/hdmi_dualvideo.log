@@ -1,0 +1,7 @@
+FRAME_PASS 1 mode=0 pixels=921600
+MODE_COMMIT 1 at 32724359000
+FRAME_PASS 2 mode=1 pixels=2073600
+MODE_COMMIT 0 at 66003222000
+FRAME_PASS 3 mode=0 pixels=921600
+TEST_PASS: 720->1080->720 asynchronous clocks, 3 full canvases, nearest pixels, AVI VIC/checksum; AR=21600 R=1382400
+hdmi_dualvideo_tb.sv:129: $finish called at 82526805000 (1ps)

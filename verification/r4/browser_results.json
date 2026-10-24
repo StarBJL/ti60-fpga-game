@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "fixture": "PTY, synthetic telemetry; not hardware performance",
+  "checks": [
+    "disconnected controls",
+    "protocol identification",
+    "100/10/1 step arithmetic",
+    "scene switch",
+    "carrot and Touhou sizes",
+    "square size",
+    "held combinations and release",
+    "blur release",
+    "music toggle/next",
+    "mark",
+    "CSV export",
+    "desktop/mobile layout",
+    "disconnect"
+  ],
+  "commands": 53,
+  "console_errors": []
+}

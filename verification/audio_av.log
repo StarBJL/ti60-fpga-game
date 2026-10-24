@@ -1,0 +1,6 @@
+[av] mixer -> HDMI, 4 frames of 69 lines
+  av: 473 samples (86 leading silence), 387 match the mixer model; mixer bursts 128
+  av: AUD_UF 0, mixer SAMPLES 507 MISSES 8
+  av: 10 ACR, spacing 24614..25408 clocks
+  av: AVI x5, AIF x5
+PASS

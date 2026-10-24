@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "offline_file": true,
+  "checks": [
+    "16 keys",
+    "100/10/1 step",
+    "increase/decrease",
+    "mode switch demo",
+    "Fn layer/music",
+    "reset",
+    "search F9",
+    "category filter",
+    "1280px/390px no page overflow",
+    "light/dark",
+    "no console errors"
+  ],
+  "dimensions": [
+    {
+      "width": 1280,
+      "height": 960,
+      "scheme": "light",
+      "scroll": 1280,
+      "client": 1280
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "scheme": "light",
+      "scroll": 390,
+      "client": 390
+    },
+    {
+      "width": 1280,
+      "height": 960,
+      "scheme": "dark",
+      "scroll": 1280,
+      "client": 1280
+    }
+  ],
+  "errors": []
+}

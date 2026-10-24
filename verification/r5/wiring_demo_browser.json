@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "errors": [],
+  "desktop": {
+    "client": 1440,
+    "scroll": 1440
+  },
+  "mobile": {
+    "client": 390,
+    "scroll": 390
+  },
+  "photo_unmodified": true,
+  "rendering": "native SVG + browser screenshot",
+  "pin_order": "top 39..1, bottom 40..2",
+  "matrix_rows": [
+    2,
+    4,
+    8,
+    10
+  ],
+  "matrix_columns": [
+    20,
+    22,
+    26,
+    28
+  ]
+}

@@ -1,0 +1,118 @@
+[
+  {
+    "path": "D:\\FPGA_competition\\Ti60_720p_SQUARE20K_MERGE\\logs\\20261023\\uart_20261023_103109_659_COM5_ec5a3a_720P20K.txt",
+    "lines": 7263,
+    "ab": [
+      "[square A/B count 20000 exact PASS CPU 1388246 cycles HW wall 463760 cycles engine 463512 cycles; speedup x2.9]",
+      "[square A/B count 20000 exact PASS CPU 1388292 cycles HW wall 463768 cycles engine 463502 cycles; speedup x2.9]",
+      "[square A/B count 20000 exact PASS CPU 1388112 cycles HW wall 463404 cycles engine 463132 cycles; speedup x2.9]"
+    ],
+    "audio_first": [
+      "audio: mixer | voices 0000 | sent 9012273 underflow 9012265 | mixed 72 miss 0 fetch 0 clip 0 | bank 28 sounds 2074 KB | vol 256 | danmaku events with a sound: 23 of 23"
+    ],
+    "audio_last": [
+      "audio: mixer TONE | voices 0001 | sent 35236439 underflow 9012265 | mixed 20219430 miss 199 fetch 1285731 clip 0 | bank 28 sounds 2074 KB | vol 0 bgm"
+    ],
+    "fps_windows": {
+      "None": {
+        "n": 24,
+        "min": 27.7,
+        "max": 61.2,
+        "median": 60.1
+      },
+      "motion CPU": {
+        "n": 65,
+        "min": 20.0,
+        "max": 20.0,
+        "median": 20.0
+      },
+      "motion HW": {
+        "n": 193,
+        "min": 0.9,
+        "max": 30.1,
+        "median": 29.6
+      },
+      "[square packed table off]": {
+        "n": 53,
+        "min": 15.0,
+        "max": 15.0,
+        "median": 15.0
+      },
+      "[square packed table ON]": {
+        "n": 185,
+        "min": 0.9,
+        "max": 60.1,
+        "median": 60.1
+      }
+    }
+  },
+  {
+    "path": "D:\\FPGA_competition\\Ti60_720p_SQUARE20K_MERGE\\logs\\20261023\\uart_20261023_131516_611_COM5_8572e2_720P20K.txt",
+    "lines": 39,
+    "ab": [],
+    "audio_first": [
+      "audio: mixer | voices 0006 | sent 10191723 underflow 9011886 | mixed 1179901 miss 439 fetch 112313 clip 0 | bank 28 sounds 2074 KB | vol 256 bgm"
+    ],
+    "audio_last": [
+      "audio: mixer | voices 0006 | sent 10289156 underflow 9011886 | mixed 1277334 miss 487 fetch 121092 clip 0 | bank 28 sounds 2074 KB | vol 256 bgm"
+    ],
+    "fps_windows": {
+      "None": {
+        "n": 3,
+        "min": 60.1,
+        "max": 60.1,
+        "median": 60.1
+      }
+    }
+  },
+  {
+    "path": "D:\\FPGA_competition\\Ti60_720p_SQUARE20K_MERGE\\logs\\20261023\\uart_20261023_131519_395_COM5_3f9ff9_720P20K.txt",
+    "lines": 1723,
+    "ab": [],
+    "audio_first": [
+      "audio: mixer | voices 0002 | sent 10337877 underflow 9011886 | mixed 1326055 miss 518 fetch 125789 clip 0 | bank 28 sounds 2074 KB | vol 256 bgm"
+    ],
+    "audio_last": [
+      "audio: mixer | voices 0000 | sent 16886740 underflow 9011886 | mixed 7542395 miss 1411 fetch 431499 clip 0 | bank 28 sounds 2074 KB | vol 256"
+    ],
+    "fps_windows": {
+      "None": {
+        "n": 130,
+        "min": 28.6,
+        "max": 61.8,
+        "median": 60.1
+      }
+    }
+  },
+  {
+    "path": "D:\\FPGA_competition\\Ti60_720p_SQUARE20K_MERGE\\logs\\20261023\\uart_20261023_132010_452_COM5_7a3003_720P20K.txt",
+    "lines": 714,
+    "ab": [],
+    "audio_first": [
+      "audio: mixer | voices 0000 | sent 24296736 underflow 9011886 | mixed 14952391 miss 2104 fetch 618140 clip 2 | bank 28 sounds 2074 KB | vol 256"
+    ],
+    "audio_last": [
+      "audio: mixer TONE | voices 0002 | sent 27077324 underflow 9011886 | mixed 17382362 miss 2105 fetch 747916 clip 2 | bank 28 sounds 2074 KB | vol 128 bgm"
+    ],
+    "fps_windows": {
+      "None": {
+        "n": 26,
+        "min": 20.0,
+        "max": 60.9,
+        "median": 60.1
+      },
+      "motion CPU": {
+        "n": 4,
+        "min": 15.0,
+        "max": 30.1,
+        "median": 22.5
+      },
+      "motion HW": {
+        "n": 21,
+        "min": 30.0,
+        "max": 60.1,
+        "median": 60.1
+      }
+    }
+  }
+]

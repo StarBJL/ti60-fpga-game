@@ -1,0 +1,12 @@
+{
+  "platform": "win32",
+  "windows_executed": true,
+  "serial_device_opened": false,
+  "passed": true,
+  "checks": [
+    "packaged UI assets",
+    "loopback API",
+    "Unicode/space log path",
+    "no serial auto-connect"
+  ]
+}

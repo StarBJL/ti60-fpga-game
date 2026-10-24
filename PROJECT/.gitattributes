@@ -1,0 +1,4 @@
+# Keep generated binary IP data byte-for-byte identical on every computer.
+*.bin binary
+*.pickle binary
+*.xcx binary

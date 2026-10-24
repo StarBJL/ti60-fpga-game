@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "reason": "GitHub REST rejected exact-size 55.9 MB text tree and 43.7 MB binary blob requests with HTTP 422 input too large; original files are preserved losslessly.",
+  "files": [
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.v",
+      "size": 55888638,
+      "sha256": "48f438f482e466066dc774e4e2a1075fa7720f90f98ca05dc249c670bda47956",
+      "git_sha": "c9df440a0ab372b441ac28cbbb9d058d3e3cddf5",
+      "mode": "100644",
+      "archive_size": 6920302,
+      "archive_sha256": "9b668b26f61c0558c0517661281bc018775778eb596b25c958a425a685a507cd",
+      "parts": [
+        {
+          "path": ".github_large_files/48f438f482e466066dc774e4e2a1075fa7720f90f98ca05dc249c670bda47956/part000.gz",
+          "size": 6920302,
+          "sha256": "9b668b26f61c0558c0517661281bc018775778eb596b25c958a425a685a507cd"
+        }
+      ]
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.bin",
+      "size": 43673856,
+      "sha256": "e61671628df2178945bf3ef9012111baa5bbb232c964aab65e951cdb93400680",
+      "git_sha": "a1552556c43e8d482d5e8bc9da553add6c25f179",
+      "mode": "100755",
+      "archive_size": 8699813,
+      "archive_sha256": "6f0c5299b8ceecb1a11668f3573725b797b692c9fa083c9bd38ecc283b5ef318",
+      "parts": [
+        {
+          "path": ".github_large_files/e61671628df2178945bf3ef9012111baa5bbb232c964aab65e951cdb93400680/part000.gz",
+          "size": 8699813,
+          "sha256": "6f0c5299b8ceecb1a11668f3573725b797b692c9fa083c9bd38ecc283b5ef318"
+        }
+      ]
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.bin",
+      "size": 43673856,
+      "sha256": "0f44ae91cae0adb7c009554e71b1d4bacbb95e9417fa5bc1811b840356e699e6",
+      "git_sha": "62e739c949cb896af57a39d87829b315c2d1c52c",
+      "mode": "100755",
+      "archive_size": 8680319,
+      "archive_sha256": "d51747c93823c6c4625954d6dc77d957aa4be9bd44688b3c1e6913de48d1eaee",
+      "parts": [
+        {
+          "path": ".github_large_files/0f44ae91cae0adb7c009554e71b1d4bacbb95e9417fa5bc1811b840356e699e6/part000.gz",
+          "size": 8680319,
+          "sha256": "d51747c93823c6c4625954d6dc77d957aa4be9bd44688b3c1e6913de48d1eaee"
+        }
+      ]
+    }
+  ]
+}

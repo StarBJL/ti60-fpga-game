@@ -1,0 +1,8 @@
+{
+  "platform": "linux",
+  "test": "bootstrap in Unicode/space environment directory",
+  "fresh_install_exit": 0,
+  "offline_recheck_exit": 0,
+  "system_python_exit": 0,
+  "windows_executed": false
+}

@@ -1,0 +1,4 @@
+PASS independent opaque-pixel reference: 896 level/heading/bob/mode combinations, idle poses and hollow union outlines
+PASS near-index cache, overflow/table/pool fallbacks, duplicate union and player-laser coverage
+PASS 80/65 hysteresis, four-step fade, replay stability, hidden body at full fade, 3 distinct outline buffers and gameplay immutability
+PASS native 720p render and framebuffer guards; APB/list/DDR-table/LIST_WORD exact frame equality, CPU/HW alpha tolerance, 40K full frame, title/menus/upgrade/pause exports

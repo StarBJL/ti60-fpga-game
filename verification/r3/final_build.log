@@ -1,0 +1,2 @@
+debug : /data/users/user/codex_tmp/ti60_r19_merge/Ti60_720p_MERGE_R3_R19_FULL/BOARD_TEST/720p_merge_r3_debug.elf ; log: /data/users/user/codex_tmp/ti60_r19_merge/Ti60_720p_MERGE_R3_R19_FULL/verification/r3/build_debug.log
+release : /data/users/user/codex_tmp/ti60_r19_merge/Ti60_720p_MERGE_R3_R19_FULL/BOARD_TEST/720p_merge_r3_release.elf ; log: /data/users/user/codex_tmp/ti60_r19_merge/Ti60_720p_MERGE_R3_R19_FULL/verification/r3/build_release.log

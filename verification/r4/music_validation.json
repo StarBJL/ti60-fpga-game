@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "bank_bytes": 10123520,
+  "sound_entries": 33,
+  "unchanged_sound_effects": 23,
+  "original_bgm_tracks": 10,
+  "distinct_tracks": true,
+  "loop_endpoints_zero": true,
+  "peak_samples": {
+    "bgm_menu2": 23592,
+    "bgm_garden2": 23592,
+    "bgm_stress2": 23592,
+    "bgm_boss2": 23592,
+    "bgm_garden": 23592,
+    "bgm_stress": 23592,
+    "bgm_boss1": 23592,
+    "bgm_title": 23592,
+    "bgm_stage2": 23592,
+    "bgm_stage1": 23592
+  },
+  "board_listening_tested": false
+}

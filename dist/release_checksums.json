@@ -1,0 +1,12 @@
+{
+  "Ti60_R5_BOARD_TEST.zip": {
+    "path": "dist/Ti60_R5_BOARD_TEST.zip",
+    "bytes": 19127783,
+    "sha256": "140bbd01323a2b390c866b454aed205084db0c918f281db3d923b40c7307d09f"
+  },
+  "Ti60_R5_Windows_Console.zip": {
+    "path": "dist/Ti60_R5_Windows_Console.zip",
+    "bytes": 8827790,
+    "sha256": "375c265f2e91ccfc7c8b0feccf69473a9759829ba4005f14dee873bfec121f8d"
+  }
+}

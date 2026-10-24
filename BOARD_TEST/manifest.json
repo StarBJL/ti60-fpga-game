@@ -1,0 +1,326 @@
+{
+  "version": "TI60-R5-DUALVIDEO-20261024",
+  "created_utc": "2026-10-23T16:56:57.327527+00:00",
+  "project_root": "/home/user/fpga_contest/1025/Ti60_R5_DUALVIDEO",
+  "repository": "https://github.com/18971355314bjl-gif/ti60-fpga-game",
+  "repository_visibility": "private",
+  "validation_status": "target_build_and_offline_checks_passed_board_pending",
+  "board_downloaded": false,
+  "board_fps_measured": false,
+  "hardware": {
+    "device": "Ti60F225",
+    "timing_model": "I3",
+    "tool": "Efinity 2026.1.132.4.5",
+    "core_hz": 200000000,
+    "pixel_hz": 74375000,
+    "resources": {
+      "xlr": {
+        "used": 58518,
+        "capacity": 60800
+      },
+      "ram_blocks": {
+        "used": 253,
+        "capacity": 256
+      },
+      "dsp": {
+        "used": 32,
+        "capacity": 160
+      }
+    },
+    "post_route_slack": {
+      "core_clk": {
+        "setup_ns": 0.118,
+        "hold_ns": 0.028
+      },
+      "pll_fb_clk": {
+        "setup_ns": 3.373,
+        "hold_ns": 0.03
+      },
+      "sdram_clk": {
+        "setup_ns": 0.321,
+        "hold_ns": 0.039
+      },
+      "rx_cal_clk": {
+        "setup_ns": 0.321,
+        "hold_ns": 0.034
+      },
+      "tx_cal_clk": {
+        "setup_ns": 0.308,
+        "hold_ns": 0.097
+      },
+      "tx_cal_clk_90edge": {
+        "setup_ns": 0.313,
+        "hold_ns": 0.069
+      },
+      "hdmi_tx_slow_clk": {
+        "setup_ns": 6.89,
+        "hold_ns": 0.048
+      }
+    },
+    "all_reported_setup_hold_passed": true,
+    "blitter_ram_baseline": 85,
+    "blitter_ram_r5": 81,
+    "new_scaler_ram": 3,
+    "new_uart_ram": 1,
+    "alpha_pixels_per_cycle": 2
+  },
+  "video_modes": [
+    {
+      "id": 0,
+      "hdmi": "1280x720p",
+      "nominal_hz": 60,
+      "actual_hz": 60.101010101010104,
+      "vic": 4
+    },
+    {
+      "id": 1,
+      "hdmi": "1920x1080p",
+      "nominal_hz": 30,
+      "actual_hz": 30.050505050505052,
+      "vic": 34
+    }
+  ],
+  "render_canvas": [
+    1280,
+    720
+  ],
+  "scaling_1080": "3:2 nearest neighbour; not native 1080 rendering",
+  "logic_target_hz": 60,
+  "capacity_limits": {
+    "carrot_bullets": 40000,
+    "touhou_bullets": 16384,
+    "squares": 30000,
+    "meaning": "allocation caps, not measured stable FPS limits"
+  },
+  "matrix": {
+    "rows_j7": [
+      2,
+      4,
+      8,
+      10
+    ],
+    "columns_j7": [
+      20,
+      22,
+      26,
+      28
+    ],
+    "bank": "1B",
+    "vccio": 1.8,
+    "requires_adapter_same_number_continuity_check": true,
+    "keypad_header_order_must_be_measured": true
+  },
+  "ch9350": {
+    "mode": "downstream USB host, state 2",
+    "baud": 115200,
+    "uart_logic_v": 3.3,
+    "tx_to_fpga_rx_j7": 32,
+    "rx_from_fpga_tx_j7": 34,
+    "module_supply_v": 5,
+    "board_tested": false
+  },
+  "windows": {
+    "ci_passed": true,
+    "ci_url": "https://github.com/18971355314bjl-gif/ti60-fpga-game/actions/runs/39987343020",
+    "platform": "Windows Server 2025 x64 / Python 3.12.10",
+    "physical_usb_tested": false
+  },
+  "memory_regions_bytes": {
+    "debug": {
+      "ram": 11908896,
+      "snd": 10123520,
+      "art": 13067392
+    },
+    "release": {
+      "ram": 11836064,
+      "snd": 10123520,
+      "art": 13067392
+    }
+  },
+  "artifacts": {
+    "ti60_r5.bit": {
+      "path": "BOARD_TEST/ti60_r5.bit",
+      "bytes": 2811948,
+      "sha256": "25dc85470b3f73f929ef75c60eb06880a7c46533f30c26820a40eb5def85ac83"
+    },
+    "ti60_r5_debug.elf": {
+      "path": "BOARD_TEST/ti60_r5_debug.elf",
+      "bytes": 10583696,
+      "sha256": "e74107306f63935e43472430a8399b9a1b9206ff34903b99b471ceb37cab1dc4"
+    },
+    "ti60_r5_release.elf": {
+      "path": "BOARD_TEST/ti60_r5_release.elf",
+      "bytes": 10540712,
+      "sha256": "e265190092cfb1b096489842108502c0a53d734826bb52c05d72bb92119d58c1"
+    },
+    "ti60_r5_debug.launch": {
+      "path": "BOARD_TEST/ti60_r5_debug.launch",
+      "bytes": 7011,
+      "sha256": "3551607d1df39dceb9ef678e1a40d5301e8270303e7d5e8354f8461bf53d1639"
+    },
+    "Ti60_R5_Windows_Console.zip": {
+      "path": "dist/Ti60_R5_Windows_Console.zip",
+      "bytes": 8827790,
+      "sha256": "375c265f2e91ccfc7c8b0feccf69473a9759829ba4005f14dee873bfec121f8d"
+    },
+    "Ti60Control.exe": {
+      "path": "dist/windows/Ti60Control.exe",
+      "bytes": 9022769,
+      "sha256": "36e66a1788e11b466eafec3a56f8e155c9d2124db7615ec92c998ee73587eb70"
+    }
+  },
+  "reports": {
+    "ddr_demo_ti60.timing.rpt": {
+      "path": "BOARD_TEST/reports/ddr_demo_ti60.timing.rpt",
+      "bytes": 725670,
+      "sha256": "d1fcd307d996ebece0d3b3a68262eb1bde425e80468a45c65d5319d095131b7c"
+    },
+    "ddr_demo_ti60.hier_util.rpt": {
+      "path": "BOARD_TEST/reports/ddr_demo_ti60.hier_util.rpt",
+      "bytes": 91862,
+      "sha256": "f6e3121550dc3830c491de000569d4fec3aca2ccd59c53ac824b8110a71c934e"
+    },
+    "ddr_demo_ti60.map.v": {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.v",
+      "bytes": 55888638,
+      "sha256": "48f438f482e466066dc774e4e2a1075fa7720f90f98ca05dc249c670bda47956"
+    },
+    "blit_hdmi_validation.json": {
+      "path": "verification/r5/blit_hdmi_validation.json",
+      "bytes": 7730,
+      "sha256": "e8bed6b31e8c1406d0c3f6858d30e400be016e6d74c09b5ea13a74b70057f6bf"
+    },
+    "checks_control_main.json": {
+      "path": "verification/r5/checks_control_main.json",
+      "bytes": 229,
+      "sha256": "9f267f498920297db94d0c2f652306e3e751528b4689d8ff9a53e3d9a78c5ed6"
+    },
+    "windows_ci_validation.json": {
+      "path": "verification/r5/windows_console/windows_ci_validation.json",
+      "bytes": 1160,
+      "sha256": "6e6e76e995183fa55ddc432331695d047ec102e8b88cf18d61658a020ad0c4f1"
+    }
+  },
+  "source_sha256": {
+    "PROJECT/par/ddr_demo_ti60/ddr_demo_ti60.peri.xml": "b9d59ad5a6c756ef62b70c33c339c3dd8311d0ad9d8722e80a07baadf3ce688a",
+    "PROJECT/par/ddr_demo_ti60/ddr_demo_ti60.xml": "f950605397c00ac263845f06006b825ac3d305e9b7efc2871b01686154d68ae3",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/audio.c": "4a4900dfa2d22c1cd716a741ebafdeac513cd759c9c08f4dd938a4d6efbe1bbb",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/audio.h": "3cf158473326f5f97c6851a611ece39932e8e2d167ee81f0c2773674ef08e285",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/blit.c": "60aa8e56d1b168751b95bdb3d73a8f62daf2b28ffbb355ceb474ab20aa985550",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/blit.h": "cedfce4e7f6ba421a02a2e22fb549122a31c256ce7dc741d712c0695d6b76b60",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/carrot_geometry.h": "dc59ee4d807bb494d2c7658181917b779c4f32aaf8c86aaf488a0c80fd0f4948",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.c": "5226cc35ec5e1e4522b51e04c4c7fccfb1a7874d03888171eda950c09cbfe526",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.h": "c9a0b51eb1ca3e3fb45cc7cc29ff8555c1c136b8c4dcab1599ea1888c812246d",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control_runtime.h": "6840c4a229aa7c3258a7c2457050f81a649c9adad3d9ca660a7a744649781fd2",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/demo.c": "c1b16acc53d61b5382c39d0535cd8869af60bd4f0fdea78468f46725a0e4ee36",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/demo.h": "1e526d5a36392e78cbd7a035bc925f1aff1ce18b297808e00213ca54bdb8b1a9",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game.c": "447cfb47cee51bd0f01b85bfb8f8eca812076cb1925f4dc3edb089c5f20d5fb7",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game.h": "3f56f4c7122caaa35da4f075e4d730600d944a5c6d0e7cd1fb3cc8c783ed5f8b",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game_sound.c": "2b538abc6c0cfd615d157e2a90b29c0fab562bc8b6d36a4a5790287b0c1b73c8",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game_sound.h": "06ad520d536b8ed60a53c6ddab4acc14dd749221b796215c1a16b0cb71934b09",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/gfx.c": "836c2723c49d5f16f5eaf6f0579c50c1f2ddb7e5027a2bd7072e1260ad7e8b8f",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/gfx.h": "826b282eeca0e98470babd03215caabfe1fed33d37d0b71e2f560c6da7247db1",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/gfx_hw.c": "3d4546577f0489f6d53a648d7fbd23746df813b85a23906f9f08a911443dbc7f",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/gfx_hw.h": "b169fc89d74a94b76abd186710888b9f2bca4cb97ce5dc2060edc2d5e78c0e80",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hdmi_fb.h": "27b4ade45968529db638b4ec1f2f24c32d18f2cea92d7fb1e16bf8e46fb3fb24",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hero_art_data.h": "4349440e6f129c2ff5b10b128855ebc6f93d58053f116a770a33053aa5783ff9",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hero_evolution.h": "0da91086d493241906b0a7e5582cd8e6da068471df2fbe8e76dfb78043327cea",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hero_locator.h": "a2bf815a30ac7f8981f1c9b29dc56e69bbce46a19b5e7256c4a571ac1e637615",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.c": "b89c68c2dc2273e3f2e281696c302caee875066eb19306d668ed141015c041ca",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.h": "2d653657c39439674d1c9cdb3cd26e85522628fb308fa150ff78a62400120083",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_runtime.h": "099a98b12c4decfd49a20d7a4a77139adccda8a2b04af7afe654a73530c94a47",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c": "0f590fa38cf6d722da73cfd2932bb6f212df751a6f220faff92970e74049edc6",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/mini_snprintf.c": "6ea3c09bc1076c944ac35d82992c1b9ab7e561ebf6c68ab5ae614f233adf7d31",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/mini_snprintf.h": "b937d34f76dd05407f9bb09095ed6a316e337b5a9ce3c04c840f4a3b89ff762e",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/music.c": "dd496e39d62e5d806a65d9d66a34797c030d49d1cf8e1b13e63179269170ced9",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/music.h": "dd00cf74fc22fbe2aa30034b2b3759e4a5a1f519e8c314456c57b6d0a1851e46",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/pad.c": "4f99b928c4cff93a827137bd2c3ac8031fc0380e01275c6eb7addd6df692018f",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/pad.h": "e49278f231371386fa0e901db7d1f7dbd7cdd7232095c1c3f3acd34208fd1c11",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/render.c": "f41d87ae4e66702f3289b3c4b5ed7ac66fe5aa6887cc9fe87ff1d73464aa0894",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/render.h": "76eb459c11939fc51f5684a6baa8d966b4e65a558920b8ed6765bfb848b51945",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/sprout_config.h": "44be087c10baf91da1537aacb05ef635228c95bfece96aa9e88679f9ec59f587",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/stress_sizes.c": "abe9d959dbf52c47ebe8cb9b8475392960a64cc1ecde1b8a1670a7991ee6749b",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th.h": "f1d2ae0bb71777d2ac51441e183e9ed27de3c2687b7f17a3bbe67c3d558de955",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_art.c": "cedd29ec97429e8e65ec064ff68eca1bbb06742ec1d30bd55c40c48fe148161b",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_game.c": "e329da8942f9ad6851fa239abb4108d8ad3ee89b82155d21586abc76b9e9afc2",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_pattern.c": "aee90fae102c3fb48eee8e039c41e662bf887ca301a8ec1422d789ce38f3feed",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_pix.c": "5297fcef4be94bc28b9e5dcb8553d7f2f39881d4af97dbdf01bcdf61a1894a74",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_render.c": "c4dee059b3f137791cb5697e8ba43d2bb07b65f9471a5f47d36bb31aeeb40dc9",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_sound.c": "4f01baa63012d6ac26ab874496969784f213111d117ab410c8f8d206fc86d393",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_sound.h": "1182784ca9ec91c4323968585d5b60b5cbc0712db150494ce4e802de891b37e6",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_stage2.c": "dac0feb883fc426c32dc9bb30d688feeae54c6cd78f99b09dba3aafa45035375",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_tab.c": "9dee618e76d489f5b116ba66efba1d3f0e14d13a0c365820c9650ab3b38fea8f",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/userDef.h": "f90578de192816ca1f5744928b0b43d061e6550a83a1938149fd60ac54e0b2f8",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/weapon_pose.h": "684453f653feab94e3a15b2870343954efa333152edf5bbd647e072bb6f24543",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/weapon_units.h": "40c776e922d47246636dd0829c7ff7070b2bedd68e066a09446a4d7b7f715447",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/zh_font_data.h": "96061d6f9614da33928596eefeadf5b4fd8752c2fe1cea9518fd086ce61d7b8f",
+    "PROJECT/par/ddr_demo_ti60/ip/soc/soc.v": "654a1921274a4c4231b13ef3727db1c4e76ea076b460bcd5c536177b4464413c",
+    "PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc": "83195a3d56b5d107bf494a789585ed4c64fed81f172e58eefc684b2778e6dc27",
+    "PROJECT/rtl/audio/audio_mixer.v": "90668149f16aa5ac026c8c1563d07edad3db2796afb3996b7f4c169ab38d8223",
+    "PROJECT/rtl/blit/blit_axi_rd_arb.v": "f78b5279ebc101930d21c28cea581ffef5bae1ba396fcd933307ea10299c8359",
+    "PROJECT/rtl/blit/blit_axi_wide.v": "93488229f6acbe81b5f9a78f6fb7c934e0d16386829ef92801006bc04e8b6de7",
+    "PROJECT/rtl/blit/blit_engine.v": "15177cf0f84668b798320f8586e8a7299e4dea4e3897226babd3597e5f31634f",
+    "PROJECT/rtl/blit/motion_axi_arb.v": "ca43c842c553c03a68677f229caa495790517f8829d11942e509de4a4d56ffc9",
+    "PROJECT/rtl/blit/square_motion.v": "a3eff1d314367caacb9b57791ccb4e5e4c918ebdade490da46f5884e9f67feb9",
+    "PROJECT/rtl/common/Ddr_Read.v": "c5b5fc28ed8cd974f5d116a0cb70f1c64963996092a459583df671e85a8bc16e",
+    "PROJECT/rtl/common/Ddr_Write.v": "b4f6e9776d027899f2f4912e215a7153c6913bee4c02ce70409aab3ede8f712f",
+    "PROJECT/rtl/common/efx_fifo_v2.3/efx_fifo_wrapper.v": "63e824ebc3c4293ab5808519a7e9322f12f6700231d1fca30be0367420e61c19",
+    "PROJECT/rtl/common/simple_dual_port_ram.v": "ecb40539c1a25bcf4917c6d492767d90886316f286b4f26ecb63f008c721ca2a",
+    "PROJECT/rtl/ddr3_controller/axi4_bus_ctl/axi4_bus_ctl.v": "f4145b3920b2666396a5161122bef7ba1b1bdb56aba8504e0c08214ae8237c0e",
+    "PROJECT/rtl/ddr3_controller/axi4_bus_ctl/axi_upsizer.v": "03c25e7276781d9c22f4cbd7b25b76b6317ed7083874a7c94b052a0abd1188e0",
+    "PROJECT/rtl/ddr3_controller/common/efx_fifo_v2.3/efx_fifo_wrapper.v": "040558d9dafd6d7f4c6610b8cd8040cdedc3f95b58a6f31f32dbd7429182eb98",
+    "PROJECT/rtl/ddr3_controller/common/simple_dual_port_ram.v": "66cb376b6cf6bddaff66b73456417fc561a2a74330822feec49ffb1527ce9c98",
+    "PROJECT/rtl/ddr3_controller/ddr3_parameter.vh": "cd058bc67e692dcc0a99bde4fe680f0df1fc311ed1f134f0279a6789961a2a0d",
+    "PROJECT/rtl/ddr3_controller/ddr3_top.v": "5fd49b04f9c289133b923fcc33296b032f2ad9253af688b013df1967e496dd4a",
+    "PROJECT/rtl/ddr3_controller/lb2_axi_clk.v": "093c020259988cbcc2b250a17b6a785c31f5bd98a4df6e356e64a79b1ec6f982",
+    "PROJECT/rtl/ddr3_controller/local_bus_ctl/local_bus_ctl.v": "a3a97a8c5c3da29318df090d84f5292a5bc8d5abb9e051f80478b568056e4cf3",
+    "PROJECT/rtl/ddr3_controller/memory_bus_ctl/memory_bus_ctl.v": "cb7b2498d9612b6978d09a059ed6fddc909700986bbc099c62f00980f7b5c55d",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_calibration_ini.v": "64b819a7e4f7d0966203cf47aaef55b29eecc6d76a9db36b372719e2adf9410a",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_mpr_rdlvl.v": "db1922363adece86e57dd87e3b828c63e832997bf4687517abdd78ebf1de6367",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_phy_if.v": "91ba41274e4d2b25d336661be8444b5e2fc2ccd7b0bef383bd1dff1b9b152c31",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_phy_rdlvl_dqs.v": "45fc0f1ac4b12d9f993a5bfd335f31a6e929f55a01c60e79641e733f09d2f8a6",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_phy_wrcal.v": "4cd5f5c5f1c0aa4a6d4caae1df15ae97863240cb680f0a956782c9e762fd3abb",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/ddr_phy_wrlvl.v": "1c84a0d63071372202d1c33e28c79532da6cf087c2d0ec8e80b6185673a34e0c",
+    "PROJECT/rtl/ddr3_controller/phy_ctl/phy_ctl.v": "d59329e8844f20eadcea6f78a7d360e4d509e9b05a1497f8c293ea1c0e90e4b5",
+    "PROJECT/rtl/ddr3_example_top.v": "e20a88f39cf2c84b24a1cf630b2cc8720bcef03745a71006cbac1990c3bb8056",
+    "PROJECT/rtl/define.v": "dd4555c207bb7009d00f5f4c4d325affa885f5551c1cf6f41d27f692bac8d8a3",
+    "PROJECT/rtl/hdmi/dvi_encoder.v": "62f7852c391e0cf971820b1e8d53055f6cd8f6e3470ea2a70fe6ff065bae4e9e",
+    "PROJECT/rtl/hdmi/encode.v": "0de29b0f1da83b85249823799c907b298c291518738d7b01889985a27d03de51",
+    "PROJECT/rtl/hdmi/hdmi_fb.v": "6b4e2c9e249b9c4454a05c9e2784576f437e85f8241561f993caa957f47b3b7d",
+    "PROJECT/rtl/hdmi/hdmi_island.v": "1ffdb03722ba026cfa39b3aebcd2ea783903aa7c859f111e8842ed0c4327591d",
+    "PROJECT/rtl/input/input_hub.v": "1ca83bc9cc5db7b7af8e51da4856e12e2245a8f0ba00a6171f9a1a3f76dc1967",
+    "PROJECT/rtl/memory_test/PrbsAnyGenerator.v": "5a0421c745236c1acfa876d9beffd662690baa49baa08c8f7b90e1bb0cd37c60",
+    "PROJECT/rtl/memory_test/addr_gen.v": "91029bec7f2b0a8eff57805732cdabca60cd2fe77bcf2f16f3b4388c5471edb3",
+    "PROJECT/rtl/memory_test/axi4_m_gen.v": "16daded0790e415c6a6f1353b97e82ad68553149a9201962f742e68119753b1e",
+    "PROJECT/rtl/memory_test/axi4_onlym_gen.v": "64e867802b53dfd5fa9a34aa7b3e3c89858a3020954a63befbad4db9cf65e045",
+    "PROJECT/rtl/memory_test/check.v": "f05c279b17b9b634e4a4a4b664cd30442983248ae15993cae03cc0c8d244c09d",
+    "PROJECT/rtl/memory_test/common/PrbsAnyGenerator.v": "e34dc0c5e5741b3b550f97063865ce18db7f3ac2d625f8055c343c572758e659",
+    "PROJECT/rtl/memory_test/common/bit1_delaym.v": "b23b263afff2030a91f55581de231be546775b3739c1953e5769671eecbd42b5",
+    "PROJECT/rtl/memory_test/common/divider.v": "f7353321eeac4578d116859cb311944cb06f23e20e59219248514cd480a96aac",
+    "PROJECT/rtl/memory_test/common/efx_fifo_wrapper.v": "0d9ce9aa70296cdbb14abde3759181583f92ee4db7a07b8e03bfb4cabac366d7",
+    "PROJECT/rtl/memory_test/data_gen.v": "47cc71f62a4ad1a8fd10e2388263ac22d9482d2583fc50783931dd4386885b61",
+    "PROJECT/rtl/memory_test/ddrtest_statistic.v": "e004a83dd0a58be3f828c18d5d0fd8d53fb1bf3d22b177b3902653d05099e0f9",
+    "PROJECT/rtl/memory_test/len_gen.v": "59c23a6f0384d78587677fe2a0ec070b1eabd11e4d5853cbe063d2cbb64db290",
+    "PROJECT/rtl/memory_test/memory_test.v": "1b905e911fc0453cb3496916c092ec4f808fc235c3dba28be9f124712f75e2e4",
+    "PROJECT/rtl/memory_test/rd_drive.v": "5d178d49417179c6db321449c8a3779cb7d1c46248ea6064f690abf56d48b709",
+    "PROJECT/rtl/memory_test/test_seq.v": "7e48b7a363b54c071c3b6f17335276502f324bfc4d81b2d0ae685e21320c6f25",
+    "PROJECT/rtl/memory_test/wr_drive.v": "138a910d48312c78c5825d3f5942bb8f5687ad0e2513e972efcdf6acc1c77e83",
+    "tools/control_panel/Ti60Control.spec": "7ec0ffa4e1fe047a149bc2f25f97ffb15a4c34ff1b25ee76a1ee0994f62d975a",
+    "tools/control_panel/app.js": "9cca92d7243c8c49abbc2ab286bf074d3ec0f715b75636b3abd954b4b807bd65",
+    "tools/control_panel/bootstrap.py": "745464e28ddd6cd931d4f09c5ff6701ae83645e292ce03065b781a99ce390621",
+    "tools/control_panel/build_windows.py": "06f3a80e9d7c93035aa97bb1ef680eb7deca033246fd2a90a908236e60d3b300",
+    "tools/control_panel/export_windows_artifact.py": "c7afdee9e9a2aab9ecef6348309a822291f34abfd3f130af954f5516af56090c",
+    "tools/control_panel/index.html": "155030f0f1433955f9d690f6ed26db8d4034800278bc3cf64118e1cda6d7bc9d",
+    "tools/control_panel/requirements-build.txt": "3170943aed74e3a39ef5f646e1224161f89e9b6f9c6550ddcb07b886ac8d6b7b",
+    "tools/control_panel/requirements.txt": "0b81718d1cbe8a7696e45a9388c9205272b5e345cd79d0cf1ccfb7a9fd1925e9",
+    "tools/control_panel/server.py": "9741cbb31f5d498ea2bb54df23d9a1bcbd4deb53cb07c369b93f72bd0a2454bc",
+    "tools/control_panel/style.css": "e9b263ed60711f2f8734b98fb5bac4ee08f3811b0d826d1451691d078c2d1744",
+    "tools/control_panel/windows-control.yml": "d311736c5f175c412a924a6c25e6716fe7f6e22d7b7608fd01f6e5a4b09ea1f4"
+  },
+  "known_limits": [
+    "Nondefault LIMIT=2/2/128 with long DDR latency reproduces inherited wide-band deadlock in both R4 and R5; shipped defaults pass.",
+    "Diode-less matrix can ghost; ambiguous rectangles are rejected until release.",
+    "CH9350 state-2 silent unplug cannot be inferred from idle time; verify real-module disconnect behavior.",
+    "No R5 on-board FPS, HDMI sink, sound or electrical measurements have been claimed."
+  ]
+}

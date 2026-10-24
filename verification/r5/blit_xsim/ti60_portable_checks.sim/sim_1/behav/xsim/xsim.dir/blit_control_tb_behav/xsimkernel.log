@@ -1,0 +1,7 @@
+Running: xsim.dir/blit_control_tb_behav/xsimk -simmode gui -wdb blit_control_tb_behav.wdb -simrunnum 0 -socket 54019
+Design successfully loaded
+Design Loading Memory Usage: 34396 KB (Peak: 34404 KB)
+Design Loading CPU Usage: 20 ms
+Simulation completed
+Simulation Memory Usage: 120492 KB (Peak: 173664 KB)
+Simulation CPU Usage: 30 ms

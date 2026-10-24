@@ -1,0 +1,176 @@
+
+=== 720P-R4-CONTROL-LINUX-20261023 Sapphire RV32IM @ 100 MHz ===
+hdmi_fb found, RES=2d00500, frames=0
+display 1280x720 (pitch 2560 B); carrot, squares and images use the native full framebuffer
+BitBlt engine found, CAPS=bf0a0908 (command queue 256, command list yes)
+framebuffers: 1000000 1200000 1400000 (1843200 bytes each, RGB565), demo pictures at 1600000
+build: GFX_CPU_WORD_FILL=1 AUTOPLAY=1 VSYNC=1 HW=1 FONT_ATLAS=1 optimized
+build: STATS=1 (measurement build), engine source cache ON
+  D$ probe, ns per 64 B line on the 2nd pass over S KB (hit ~90, miss ~740): 2K 625 4K 312 8K 156 16K 78 32K 39 64K 19 128K 9
+Benchmark, same gfx calls on both backends (DDR, write-through D$):
+[enemy draw order: original sort reading the enemy structs]
+  full-screen fill : CPU     20 us 30720 MB/s  | HW     20 us 30720 MB/s  = 1.0x
+  full-screen copy : CPU     20 us 30720 MB/s  | HW     20 us 30720 MB/s  = 1.0x
+  full-screen alpha: CPU     20 us 30720 MB/s  | HW     20 us 30720 MB/s  = 1.0x
+  2000 x 8x8 fills : CPU     20 us 12800 MB/s  | HW     29 us 8827 MB/s  = 0.6x
+  2000 x 9x9 keyed sprites (HW): queued = CPU time, done = engine finished too
+    APB  gfx_blit calls queued     29 us =    14 ns/cmd, done     49 us =    24 ns/cmd | list words 0 kicks 0
+    APB  gfx_blit_list  queued     29 us =    14 ns/cmd, done     49 us =    24 ns/cmd | list words 0 kicks 0
+    DDR  gfx_blit calls queued     20 us =    10 ns/cmd, done     40 us =    20 ns/cmd | list words 4005 kicks 126
+    DDR  gfx_blit_list  queued     20 us =    10 ns/cmd, done     40 us =    20 ns/cmd | list words 2007 kicks 32
+    WORD gfx_blit_list  queued     29 us =    14 ns/cmd, done     49 us =    24 ns/cmd | list words 2000 kicks 0
+  memory access cost, ns per operation (2000 ops each; engine idle / engine busy copying):
+       10 /    10  empty loop
+       10 /    10  DDR store same word
+       10 /    10  DDR store sequential
+       10 /    10  DDR load hit
+       10 /    10  DDR load miss (64 B stride)
+       10 /    10  APB write
+      310 /   310  APB read
+       10 /    10  OCR store
+       10 /    10  OCR load
+  engine LIMIT (rd/wr bursts, rd words): CPU store ns, CPU miss ns (engine busy) | full copy us | 2000 sprites us
+    rd 16 wr 128 words 1024: store    20  miss     0 | copy     20 | sprites     29
+    rd  8 wr  16 words 1024: store    20  miss     0 | copy     20 | sprites     29
+    rd  4 wr   8 words 1024: store    20  miss     0 | copy     20 | sprites     29
+    rd  2 wr   8 words 1024: store    20  miss     0 | copy     20 | sprites     29
+    rd  2 wr   2 words 1024: store    20  miss     0 | copy     20 | sprites     29
+    rd  1 wr   1 words 1024: store    20  miss     0 | copy     20 | sprites     29
+    rd 16 wr 128 words  256: store    20  miss     0 | copy     20 | sprites     29
+    rd 16 wr 128 words  128: store    20  miss     0 | copy     20 | sprites     29
+    rd 16 wr 128 words   64: store    20  miss     0 | copy     20 | sprites     29
+    rd 16 wr 128 words   32: store    20  miss     0 | copy     20 | sprites     29
+    rd 16 wr 128 words   16: store    20  miss     0 | copy     20 | sprites     29
+engine LIMIT read words in flight: 64 (makefile LIMITW)
+band mode (engine CAPS[31]): ON - frames composed on chip, pipelined flips (4 framebuffers)
+danmaku art drawn in 0 ms, view 1280x720 native (x1.5, '#' = 640x480) (Th state 4052 KB, sprite pools 2287 KB)
+audio: no HDMI audio in this bitstream | danmaku events with a sound: 0 of 23
+[MOT2 available 0, packed square table 0, native square load max 30000]
+R4: :id command [value] LF; [/] bullet size; {/} square size; + / - selected step 100/10/1; backslash next BGM; semicolon BGM on/off.
+Carrot: J/j ring skill; ~ sort diagnostic (debug); other scene keys unchanged.
+
+danmaku (boot scene): tools/pc_pad.py = real held keys (arrows, Z shot, X bomb, Shift slow, Esc pause);
+      UART: wasd move (latched, auto shot), 1 bomb, 2 slow on/off, Enter ok, p pause,
+      r restart, m title, l stress demo, - + stress level (manual), * stress AUTO (keeps 60 fps), b autoplay demo
+keys: wasd/arrows move, x stop, Enter/Space start, p pause, r restart,
+      1 2 3 pick, l stress menu, m menu, f stats, b autoplay, v vsync,
+      t colour bars, e alpha effects, h help,
+      k seeds: calls -> list (APB) -> hwlist (DDR command list) -> hwword (LIST_WORD)
+      o i engine LIMIT: max outstanding read / write bursts (smaller = CPU waits less for DDR)
+      u   engine LIMIT: max read words in flight 1024/512/256/128/64/32/16
+      ~   enemy draw order (j/J outside carrot): key-array sort / original struct sort (same order, A/B speed)
+      z   seeds: draw table written by game logic / walk the bullet pool again (same picture)
+      y   one-shot seed profile: walk / build / submit / tiny / full, engine idle and busy
+      q   HW frame order: submit -> logic while the engine draws -> wait / logic -> submit -> wait
+      0   engine source cache (16 KB BRAM, copies w <= 64) on / off
+      9   hwlist seeds: engine reads the seed table (TAB) / CPU writes one word per seed
+      8   one-shot engine profile (hwlist): bg / seeds / frame / rest, engine alone, stall split
+      7   128-bit wide path (opaque aligned COPY/FILL >= 128 px): off / on, write batch 0/64/128/256
+      6   wide path read words in flight 256/128/64/512/1024/32
+      5   band mode (frames composed on chip 16 rows at a time + pipelined frames) on / off
+      4   band mode K path (8 px/clk sprites and fills) on / off
+      g CPU/BitBlt backend, c auto compare, n next scene (game/squares/images),
+      - + demo load, # danmaku 1280x720 native (x1.5) / 640x480 (720p bitstream)
+sound: , HDMI 1 kHz test tone on/off, . volume 256/128/64/0 + status, / play the next bank sound
+Squares: @ native 720p 20000; ,/. -/+100 (max30000); ! CPU/HW motion; % table/calls; & exact A/B. Audio: ( tone, ) volume, / audition.
+UART report every second:
+  us/frame: logic = game update (max = worst tick), submit = drawing / queueing
+  without qstall, qstall = waiting for a free queue slot, tail_wait = last command
+  -> engine idle, vsync_wait = waiting for the flip, other = UART + stats
+[backend: BitBlt engine]
+[vsync OFF: uncapped, measures raw CPU render rate]
+[autoplay OFF: pad]
+S4 id=0 epoch=4 scene=0 phase=1 step=100 count=16384 cap=16384 bullet=100 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=0 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+[danmaku view: 640x480, art redrawn in 0 ms, sprite pools 1047 KB]
+[danmaku view: 1280x720 native (960x720 x1.5), art redrawn in 0 ms, sprite pools 2287 KB]
+[band mode OFF: every command drawn directly in DDR]
+[band mode ON: frames composed 16 rows at a time on chip, CPU records the next frame meanwhile]
+[frame order: logic, submit, wait (serial)]
+[frame order (HW): submit, then logic while the engine draws, then wait]
+[backend: CPU]
+[backend: BitBlt engine]
+[engine profile needs the BitBlt backend and the game scene]
+[seed profile needs the BitBlt backend and the game scene]
+[seeds: 1 APB LIST_WORD write per seed, other commands via APB registers]
+[seeds: one gfx_blit call per seed]
+[seeds: batched draw list, gfx_blit_list -> APB DST+CMD per seed]
+[HW command list: every command -> DDR list, 1 word per seed, LIST_END kicks]
+[band K path OFF: sprites / fills on the 2 px/clk path]
+[band K path ON: cached copies and fills at 8 px/clk]
+[engine source cache OFF]
+[engine source cache ON (copies w <= 64)]
+S4 id=0 epoch=5 scene=0 phase=1 step=100 count=16284 cap=16384 bullet=100 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=0 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+S4 id=0 epoch=6 scene=0 phase=1 step=100 count=16384 cap=16384 bullet=100 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=0 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+[danmaku stress: AUTO, keeps every frame under 16667 us]
+[danmaku stress: manual x16 (- + to change)]
+S4 id=0 epoch=7 scene=1 phase=0 step=100 count=1024 cap=40000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=0 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+S4 id=0 epoch=9 scene=1 phase=2 step=100 count=40000 cap=40000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=0 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=101 ok=1 code=ok
+S4 id=101 epoch=11 scene=1 phase=2 step=1 count=40000 cap=40000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=101 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=102 ok=1 code=ok
+S4 id=102 epoch=12 scene=1 phase=2 step=1 count=14000 cap=40000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=102 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=103 ok=1 code=ok
+S4 id=103 epoch=13 scene=1 phase=2 step=1 count=14001 cap=40000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=103 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=104 ok=1 code=ok
+S4 id=104 epoch=14 scene=1 phase=2 step=10 count=14001 cap=40000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=104 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=105 ok=1 code=ok
+S4 id=105 epoch=15 scene=1 phase=2 step=10 count=14011 cap=40000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=105 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=106 ok=1 code=ok
+S4 id=106 epoch=16 scene=1 phase=2 step=10 count=14011 cap=40000 bullet=25 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=106 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=107 ok=1 code=ok
+S4 id=107 epoch=17 scene=1 phase=2 step=10 count=14011 cap=40000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=107 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+S4 id=0 epoch=18 scene=2 phase=0 step=10 count=256 cap=30000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=0 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+S4 id=0 epoch=20 scene=2 phase=0 step=10 count=246 cap=30000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=0 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+S4 id=0 epoch=21 scene=2 phase=0 step=10 count=256 cap=30000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=0 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=108 ok=1 code=ok
+S4 id=108 epoch=22 scene=2 phase=0 step=10 count=256 cap=30000 bullet=13 square=8 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=108 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=109 ok=1 code=ok
+S4 id=109 epoch=23 scene=2 phase=0 step=10 count=1000 cap=30000 bullet=13 square=8 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=109 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=110 ok=1 code=ok
+S4 id=110 epoch=24 scene=2 phase=0 step=100 count=1000 cap=30000 bullet=13 square=8 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=110 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=111 ok=1 code=ok
+S4 id=111 epoch=25 scene=2 phase=0 step=100 count=1100 cap=30000 bullet=13 square=8 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=111 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=112 ok=1 code=ok
+S4 id=112 epoch=26 scene=2 phase=0 step=100 count=1100 cap=30000 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=112 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+S4 id=0 epoch=27 scene=3 phase=0 step=100 count=3 cap=3 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=0 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=113 ok=1 code=ok
+S4 id=113 epoch=29 scene=3 phase=0 step=100 count=3 cap=3 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=113 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=114 ok=1 code=ok
+S4 id=114 epoch=30 scene=3 phase=0 step=100 count=3 cap=3 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=114 bgm=0 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+ACK id=115 ok=1 code=ok
+S4 id=115 epoch=31 scene=3 phase=0 step=100 count=3 cap=3 bullet=13 square=0 alpha=1 vsync=0 hw=1 auto=0 stats=1
+A4 id=115 bgm=1 track=? volume=256 tone=0 motion=0 table=1 stress_auto=0 density=16 verbose=0 period=20
+[vsync ON: capped at 60 FPS]
+[alpha effects OFF: original opaque drawing]
+[alpha effects ON: shadows, dim, panels, ghost]
+M4 seq=1 epoch=31 scene=3 phase=0 count=3 target=3 step=100 bullet=13 square=0 alpha=1 vsync=1 hw=1 motion=0 table=1 bgm=1
+F4 seq=1 elapsed_us=1014685 render10=601 logic10=601 present10=601 repeat10=0 scan10=601 valid=1 video_uf=0 audio_uf=0 drops=0
+P4 seq=1 logic_us=20 logic_max_us=20 submit_us=20 wait_us=2882 work_us=2923 work_max_us=8706 over=0 busy=0 phase1_us=0 bands_us=0 profile=1
+C4 seq=1 font_hit=452472 font_miss=2349 font_reset=1 label_hit=3448 label_miss=13 font_pixels=190880 track=? w=1280 h=720 auto=0 density=16 stress_auto=0
+M4 seq=2 epoch=31 scene=3 phase=0 count=3 target=3 step=100 bullet=13 square=0 alpha=1 vsync=1 hw=1 motion=0 table=1 bgm=1
+F4 seq=2 elapsed_us=1015749 render10=601 logic10=601 present10=601 repeat10=0 scan10=601 valid=1 video_uf=0 audio_uf=0 drops=0
+P4 seq=2 logic_us=20 logic_max_us=20 submit_us=20 wait_us=3116 work_us=3156 work_max_us=8520 over=0 busy=0 phase1_us=0 bands_us=0 profile=1
+C4 seq=2 font_hit=455949 font_miss=2349 font_reset=1 label_hit=3448 label_miss=13 font_pixels=190880 track=? w=1280 h=720 auto=0 density=16 stress_auto=0

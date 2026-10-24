@@ -1,0 +1,12 @@
+{
+    "session":  "uart_20261023_175423_643_COM_TEST_d73cef_R7A",
+    "hardware_label":  "R7A",
+    "port":  "COM_TEST",
+    "baud":  115200,
+    "started":  "2026-10-23T17:54:23.6478295+08:00",
+    "updated":  "2026-10-23T17:54:23.9194449+08:00",
+    "connected":  false,
+    "bytes_received":  71,
+    "raw_log":  "D:\\FPGA_competition\\Ti60_720p_MERGE_R2_ZH_FULL\\verification\\serial_selftest\\20261023\\uart_20261023_175423_643_COM_TEST_d73cef_R7A.txt",
+    "command_log":  "D:\\FPGA_competition\\Ti60_720p_MERGE_R2_ZH_FULL\\verification\\serial_selftest\\20261023\\uart_20261023_175423_643_COM_TEST_d73cef_R7A.events.tsv"
+}

@@ -1,0 +1,9 @@
+{
+  "instructions": 720217,
+  "loads": 40005,
+  "stores": 40003,
+  "return": 512,
+  "count": 20000,
+  "exact": true,
+  "scope": "Production RV32 ELF; instruction count only, no cache/DDR/cycle timing model."
+}

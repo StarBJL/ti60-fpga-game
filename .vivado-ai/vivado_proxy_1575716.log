@@ -1,0 +1,25 @@
+2026/10/24 01:00:04.630110 vivado-proxy: starting PID=1575716 host=user-Precision-7875-Tower go=go1.25.11 GOARCH=amd64 GOOS=linux
+2026/10/24 01:00:04.631638 vivado-proxy: listening on 127.0.0.1:39729
+2026/10/24 01:00:04.631714 vivado-proxy: MCP_PROXY_PORT_DIR unset — running without connection authentication (loopback only)
+2026/10/24 01:00:04.632585 vivado-proxy: spawning: [/home/user/.local/share/amd-ross/bin/vivado-2021.2 -mode tcl -log .vivado-ai/vivado_71204610_054ccfd6.log -journal .vivado-ai/vivado_71204610_054ccfd6.jou -notrace -source .vivado-ai/init_71204610_054ccfd6.tcl]
+2026/10/24 01:00:04.633146 vivado-proxy: child PID 1575727
+2026/10/24 01:00:04.633528 vivado-proxy: HELLO handshake complete, protocol v3
+2026/10/24 01:00:04.633550 vivado-proxy: output stream client connected from 127.0.0.1:56624
+2026/10/24 01:00:04.633650 vivado-proxy: output stream resuming from stdout=0 stderr=0
+2026/10/24 01:00:19.741019 vivado-proxy: WARNING message-limit probe got no reply in 5s — cannot confirm command markers will keep being emitted
+2026/10/24 01:00:23.798137 vivado-proxy: HELLO handshake complete, protocol v3
+2026/10/24 01:00:23.798365 vivado-proxy: config webserver_url = http://localhost:40363
+2026/10/24 01:00:23.798378 vivado-proxy: config log_file_path = /data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/.vivado-ai/vivado_71204610_054ccfd6.log
+2026/10/24 01:00:47.767355 vivado-proxy: exec [nonvxpojh8uf] req=vivado-20261024-010004-85414467-8cefc14b-cmd-1 version -short; help launch_simulation; help create_project
+2026/10/24 01:01:31.120498 vivado-proxy: exec [vkub6n13st1e] req=vivado-20261024-010004-85414467-8cefc14b-cmd-2 version -short
+2026/10/24 01:04:37.972729 vivado-proxy: exec [pzxsjq6lqlyf] req=vivado-20261024-010004-85414467-8cefc14b-cmd-3 create_project ti60_portable_checks ./verification/r5/blit_xsim; add_files ./PROJECT/rtl/blit/blit_engine.v; add_files -fileset sim_1 ./verification/r5/blit_control_tb.sv; set_property top blit_control_tb [get_filesets sim_1]; set_property target_simulator XSim [current_project]; set_property xsim.simulate.runtime 200us [get_filesets sim_1]; update_compile_order -fileset sim_1; list [get_property target_simulator [current_project]] [get_property top [get_filesets sim_1]] [get_files -of_objects [get_filesets sim_1]]
+2026/10/24 01:04:51.636125 vivado-proxy: exec [fg7t23inv558] req=vivado-20261024-010004-85414467-8cefc14b-cmd-4 launch_simulation -simset sim_1 -mode behavioral
+2026/10/24 01:04:53.216203 vivado-proxy: HELLO handshake complete, protocol v3
+2026/10/24 01:04:53.216897 vivado-proxy: HELLO handshake complete, protocol v3
+2026/10/24 01:06:27.682501 vivado-proxy: exec [97iady503vy4] req=vivado-20261024-010004-85414467-8cefc14b-cmd-5 close_sim; add_files -fileset sim_1 ./verification/r5/blit_alpha_tb.sv; set_property top blit_alpha_tb [get_filesets sim_1]; set_property xsim.simulate.runtime 250us [get_filesets sim_1]; update_compile_order -fileset sim_1
+2026/10/24 01:07:11.391080 vivado-proxy: exec [l7bfivj3m46x] req=vivado-20261024-010004-85414467-8cefc14b-cmd-6 launch_simulation -mode behavioral -simset sim_1
+2026/10/24 01:07:13.216573 vivado-proxy: HELLO handshake complete, protocol v3
+2026/10/24 01:07:13.217030 vivado-proxy: HELLO handshake complete, protocol v3
+2026/10/24 01:07:27.692495 vivado-proxy: exec [3smehfe6q1q2] req=vivado-20261024-010004-85414467-8cefc14b-cmd-7 launch_simulation -mode behavioral -simset sim_1
+2026/10/24 01:09:42.689260 vivado-proxy: exec [hs4a2inubbik] req=vivado-20261024-010004-85414467-8cefc14b-cmd-8 close_sim; set_property top blit_control_tb [get_filesets sim_1]; set_property xsim.simulate.runtime 200us [get_filesets sim_1]
+2026/10/24 01:09:44.635428 vivado-proxy: exec [2mxma8czpdga] req=vivado-20261024-010004-85414467-8cefc14b-cmd-9 launch_simulation -simset sim_1 -mode behavioral

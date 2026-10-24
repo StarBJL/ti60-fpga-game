@@ -1,0 +1,320 @@
+[
+  {
+    "id": 1,
+    "command": "status",
+    "value": null,
+    "time": 370378.593281468
+  },
+  {
+    "id": 2,
+    "command": "step",
+    "value": 1,
+    "time": 370378.637736621
+  },
+  {
+    "id": 3,
+    "command": "count",
+    "value": 1000,
+    "time": 370378.670821595
+  },
+  {
+    "id": 4,
+    "command": "delta",
+    "value": 1,
+    "time": 370378.704420288
+  },
+  {
+    "id": 5,
+    "command": "step",
+    "value": 10,
+    "time": 370379.137861955
+  },
+  {
+    "id": 6,
+    "command": "delta",
+    "value": -1,
+    "time": 370379.170967009
+  },
+  {
+    "id": 7,
+    "command": "step",
+    "value": 100,
+    "time": 370379.637892259
+  },
+  {
+    "id": 8,
+    "command": "delta",
+    "value": 1,
+    "time": 370379.670888302
+  },
+  {
+    "id": 9,
+    "command": "move",
+    "value": 0,
+    "time": 370380.138050612
+  },
+  {
+    "id": 10,
+    "command": "scene",
+    "value": 1,
+    "time": 370380.152533261
+  },
+  {
+    "id": 11,
+    "command": "stress",
+    "value": 4,
+    "time": 370380.638196006
+  },
+  {
+    "id": 12,
+    "command": "bullet",
+    "value": 25,
+    "time": 370380.652571036
+  },
+  {
+    "id": 13,
+    "command": "skill",
+    "value": null,
+    "time": 370380.670432108
+  },
+  {
+    "id": 14,
+    "command": "move",
+    "value": 0,
+    "time": 370380.703715164
+  },
+  {
+    "id": 15,
+    "command": "scene",
+    "value": 0,
+    "time": 370380.71902262
+  },
+  {
+    "id": 16,
+    "command": "bullet",
+    "value": 150,
+    "time": 370381.10572085
+  },
+  {
+    "id": 17,
+    "command": "move",
+    "value": 0,
+    "time": 370381.13796228
+  },
+  {
+    "id": 18,
+    "command": "scene",
+    "value": 2,
+    "time": 370381.153554396
+  },
+  {
+    "id": 19,
+    "command": "square",
+    "value": 40,
+    "time": 370381.605647461
+  },
+  {
+    "id": 20,
+    "command": "move",
+    "value": 0,
+    "time": 370381.637604932
+  },
+  {
+    "id": 21,
+    "command": "move",
+    "value": 8,
+    "time": 370381.653591469
+  },
+  {
+    "id": 22,
+    "command": "move",
+    "value": 24,
+    "time": 370381.654498547
+  },
+  {
+    "id": 23,
+    "command": "move",
+    "value": 24,
+    "time": 370381.687359762
+  },
+  {
+    "id": 24,
+    "command": "move",
+    "value": 24,
+    "time": 370381.787700135
+  },
+  {
+    "id": 25,
+    "command": "move",
+    "value": 16,
+    "time": 370381.860932199
+  },
+  {
+    "id": 26,
+    "command": "move",
+    "value": 16,
+    "time": 370381.887258866
+  },
+  {
+    "id": 27,
+    "command": "move",
+    "value": 16,
+    "time": 370381.987331776
+  },
+  {
+    "id": 28,
+    "command": "move",
+    "value": 0,
+    "time": 370382.001524528
+  },
+  {
+    "id": 29,
+    "command": "move",
+    "value": 0,
+    "time": 370382.088196503
+  },
+  {
+    "id": 30,
+    "command": "move",
+    "value": 1,
+    "time": 370382.143132654
+  },
+  {
+    "id": 31,
+    "command": "move",
+    "value": 1,
+    "time": 370382.187475992
+  },
+  {
+    "id": 32,
+    "command": "move",
+    "value": 0,
+    "time": 370382.264480931
+  },
+  {
+    "id": 33,
+    "command": "move",
+    "value": 0,
+    "time": 370382.287485658
+  },
+  {
+    "id": 34,
+    "command": "move",
+    "value": 0,
+    "time": 370382.387428826
+  },
+  {
+    "id": 35,
+    "command": "step",
+    "value": 10,
+    "time": 370382.467326361
+  },
+  {
+    "id": 36,
+    "command": "move",
+    "value": 0,
+    "time": 370382.487179741
+  },
+  {
+    "id": 37,
+    "command": "move",
+    "value": 0,
+    "time": 370382.588105698
+  },
+  {
+    "id": 38,
+    "command": "step",
+    "value": 1,
+    "time": 370382.592210492
+  },
+  {
+    "id": 39,
+    "command": "move",
+    "value": 0,
+    "time": 370382.687461781
+  },
+  {
+    "id": 40,
+    "command": "step",
+    "value": 100,
+    "time": 370382.70985048
+  },
+  {
+    "id": 41,
+    "command": "next",
+    "value": null,
+    "time": 370382.737965735
+  },
+  {
+    "id": 42,
+    "command": "bgm",
+    "value": 0,
+    "time": 370382.771209944
+  },
+  {
+    "id": 43,
+    "command": "move",
+    "value": 0,
+    "time": 370382.787157173
+  },
+  {
+    "id": 44,
+    "command": "bgm",
+    "value": 1,
+    "time": 370382.804355808
+  },
+  {
+    "id": 45,
+    "command": "move",
+    "value": 0,
+    "time": 370382.871453835
+  },
+  {
+    "id": 46,
+    "command": "move",
+    "value": 0,
+    "time": 370382.905962209
+  },
+  {
+    "id": 47,
+    "command": "move",
+    "value": 0,
+    "time": 370382.987286217
+  },
+  {
+    "id": 48,
+    "command": "move",
+    "value": 0,
+    "time": 370383.08762626
+  },
+  {
+    "id": 49,
+    "command": "move",
+    "value": 0,
+    "time": 370383.187731177
+  },
+  {
+    "id": 50,
+    "command": "move",
+    "value": 0,
+    "time": 370383.287375695
+  },
+  {
+    "id": 51,
+    "command": "move",
+    "value": 0,
+    "time": 370383.38759495
+  },
+  {
+    "id": 52,
+    "command": "move",
+    "value": 0,
+    "time": 370383.453682657
+  },
+  {
+    "id": 53,
+    "command": "move",
+    "value": 0,
+    "time": 370383.469362903
+  }
+]

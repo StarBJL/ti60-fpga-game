@@ -1,0 +1,3 @@
+pixel_fill n=24 cycles=267 cycles_per_cmd=11.12 AR=0 AW=24 rbeats=0 wbeats=24 PASS
+bullet_copy n=24 cycles=1717 cycles_per_cmd=71.54 AR=216 AW=225 rbeats=1176 wbeats=1080 PASS
+bullet_alpha n=24 cycles=2876 cycles_per_cmd=119.83 AR=441 AW=225 rbeats=2256 wbeats=1080 PASS

@@ -1,0 +1,2 @@
+debug : /data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/BOARD_TEST/720p_r4_debug.elf ; log: /data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/build_debug.log
+release : /data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/BOARD_TEST/720p_r4_release.elf ; log: /data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/build_release.log

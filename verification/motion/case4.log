@@ -1,0 +1,4 @@
+engine pass 0 cycles 621878
+engine pass 1 cycles 621699
+PASS MOT2 n=30000 mode=1 fault=0 cycles=1248942 reads=1876 responses=1876
+D:\FPGA_competition\Ti60_720p_MERGE_R2_ZH_FULL\verification\motion\tb.sv:98: $finish called at 6744286800 (1ps)

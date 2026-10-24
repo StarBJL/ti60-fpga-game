@@ -1,0 +1,11 @@
+{
+  "reserved": 0,
+  "cycles": 859052,
+  "max_reserved": 511,
+  "max_descriptors": 17,
+  "max_list_reserved": 32,
+  "issue_pop_same_cycle": 3773,
+  "cache_fill": 1958,
+  "result": "PASS",
+  "hardware_test": false
+}

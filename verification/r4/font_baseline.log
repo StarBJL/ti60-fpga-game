@@ -1,0 +1,12 @@
+frame=0 publish=60 waits=1 resets=1 copies=109 pool=45120
+frame=1 publish=59 waits=1 resets=1 copies=109 pool=80608
+frame=2 publish=59 waits=1 resets=1 copies=109 pool=110720
+frame=3 publish=60 waits=2 resets=2 copies=109 pool=31232
+frame=4 publish=59 waits=1 resets=1 copies=109 pool=72896
+frame=5 publish=59 waits=1 resets=1 copies=109 pool=110720
+frame=6 publish=60 waits=2 resets=2 copies=109 pool=31232
+frame=7 publish=59 waits=1 resets=1 copies=109 pool=72896
+frame=8 publish=59 waits=1 resets=1 copies=109 pool=110720
+frame=9 publish=60 waits=2 resets=2 copies=109 pool=31232
+frame=10 publish=59 waits=1 resets=1 copies=109 pool=72896
+frame=11 publish=59 waits=1 resets=1 copies=109 pool=110720

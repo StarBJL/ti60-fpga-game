@@ -1,0 +1,17 @@
+[
+  {
+    "name": "gameplay",
+    "passed": true,
+    "log": "gameplay.log"
+  },
+  {
+    "name": "visual",
+    "passed": true,
+    "log": "visual.log"
+  },
+  {
+    "name": "all_screen_glyphs",
+    "passed": true,
+    "count": 269
+  }
+]

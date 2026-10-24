@@ -1,0 +1,72 @@
+{
+  "status": "passed",
+  "board_downloaded": false,
+  "board_fps_measured": false,
+  "checks": {
+    "audio": {
+      "name": "audio",
+      "passed": true,
+      "log": "audio.log"
+    },
+    "font": {
+      "name": "font",
+      "passed": true,
+      "log": "font.log"
+    },
+    "demos": {
+      "name": "demos",
+      "passed": true,
+      "log": "demos.log"
+    },
+    "touhou": {
+      "name": "touhou",
+      "passed": true,
+      "log": "touhou.log"
+    },
+    "main": {
+      "name": "main",
+      "passed": true,
+      "log": "main.log"
+    },
+    "all_screen_glyphs": {
+      "name": "all_screen_glyphs",
+      "passed": true,
+      "count": 269
+    },
+    "gameplay": {
+      "name": "gameplay",
+      "passed": true,
+      "log": "gameplay.log"
+    },
+    "visual": {
+      "name": "visual",
+      "passed": true,
+      "log": "visual.log"
+    }
+  },
+  "rv32_cpu_motion": {
+    "instructions": 1080299,
+    "loads": 60005,
+    "stores": 60003,
+    "return": 768,
+    "count": 30000,
+    "exact": true,
+    "scope": "New production RV32 ELF; instruction emulation, not FPGA timing or FPS"
+  },
+  "ram_used_bytes": {
+    "debug": 12105680,
+    "release": 12031584
+  },
+  "input_preservation": {
+    "r19": {
+      "file_count": 1197,
+      "unchanged": true
+    },
+    "r2": {
+      "file_count": 1007,
+      "unchanged": true
+    }
+  },
+  "bitstream_identical_to_r2": true,
+  "windows_serial_gui_tested": false
+}

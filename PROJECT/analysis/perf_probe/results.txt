@@ -1,0 +1,9 @@
+Host counts only; not FPGA timing. Bullet bytes=32 pool bytes=131072
+ALLOC occupied=0 fire=1 attempts=640 checked=640 dropped=0 after=640
+ALLOC occupied=3900 fire=1 attempts=640 checked=1822720 dropped=444 after=4096
+ALLOC occupied=4096 fire=1 attempts=640 checked=2621440 dropped=640 after=4096
+ALLOC occupied=4096 fire=0 attempts=0 checked=0 dropped=0 after=4096
+RENDER shots=0 stats=1 fx=1 cmds=3876 fill=3614 blit=130 alpha=132 tiny_fill=3602 pixels=513292
+RENDER shots=4000 stats=1 fx=1 cmds=7980 fill=3718 blit=4130 alpha=132 tiny_fill=3706 pixels=837396
+RENDER shots=4000 stats=0 fx=1 cmds=6159 fill=1900 blit=4130 alpha=129 tiny_fill=1892 pixels=809483
+RENDER shots=4000 stats=0 fx=0 cmds=6288 fill=2158 blit=4130 alpha=0 tiny_fill=1892 pixels=800993

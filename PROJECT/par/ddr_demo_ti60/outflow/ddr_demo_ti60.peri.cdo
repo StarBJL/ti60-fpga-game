@@ -1,0 +1,79 @@
+CellDelayOverride {
+  Cell: "pll_inst1~PLL"
+  DelayOverride {
+    from: "CLKIN[3]"
+    to: "CLKOUT0"
+    Type: "CLK_TO_Q"
+    value_min: -1183
+    value_max: -2093
+  }
+  DelayOverride {
+    from: "CLKIN[3]"
+    to: "CLKOUT1"
+    Type: "CLK_TO_Q"
+    value_min: -1183
+    value_max: -2093
+  }
+}
+CellDelayOverride {
+  Cell: "DDR3_PLL~PLL"
+  DelayOverride {
+    from: "CLKIN[3]"
+    to: "CLKOUT0"
+    Type: "CLK_TO_Q"
+    value_min: -854
+    value_max: -1513
+  }
+  DelayOverride {
+    from: "CLKIN[3]"
+    to: "CLKOUT1"
+    Type: "CLK_TO_Q"
+    value_min: -854
+    value_max: -1513
+  }
+  DelayOverride {
+    from: "CLKIN[3]"
+    to: "CLKOUT2"
+    Type: "CLK_TO_Q"
+    value_min: -854
+    value_max: -1513
+  }
+  DelayOverride {
+    from: "CLKIN[3]"
+    to: "CLKOUT3"
+    Type: "CLK_TO_Q"
+    value_min: -854
+    value_max: -1513
+  }
+  DelayOverride {
+    from: "CLKIN[3]"
+    to: "CLKOUT4"
+    Type: "CLK_TO_Q"
+    value_min: -854
+    value_max: -1513
+  }
+}
+CellDelayOverride {
+  Cell: "pll_hdmi~PLL"
+  DelayOverride {
+    from: "CLKIN[3]"
+    to: "CLKOUT0"
+    Type: "CLK_TO_Q"
+    value_min: 0
+    value_max: 0
+  }
+  DelayOverride {
+    from: "CLKIN[3]"
+    to: "CLKOUT1"
+    Type: "CLK_TO_Q"
+    value_min: 0
+    value_max: 0
+  }
+  DelayOverride {
+    from: "CLKIN[3]"
+    to: "CLKOUT2"
+    Type: "CLK_TO_Q"
+    value_min: 0
+    value_max: 0
+  }
+}

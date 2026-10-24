@@ -1,5 +1,9 @@
 # Ti60 R5 Windows / Linux control console
 
+已交付独立 Windows 程序：`dist/windows/Ti60Control.exe`，双击同目录 `Start_Ti60Control.cmd`；完整包为 `dist/Ti60_R5_Windows_Console.zip`。它已在 Windows Server 2025 x64 / Python 3.12.10 的 [GitHub Actions 构建](https://github.com/18971355314bjl-gif/ti60-fpga-game/actions/runs/39987343020) 中通过原生 CMD、六项移植测试和 EXE 启动 / HTTP 资源检查。真实 USB 串口、用户的 Windows 10/11 与板卡行为仍待补测。
+
+EXE SHA256：`36e66a1788e11b466eafec3a56f8e155c9d2124db7615ec92c998ee73587eb70`。ZIP SHA256：`375c265f2e91ccfc7c8b0feccf69473a9759829ba4005f14dee873bfec121f8d`。机器可读证据位于 `verification/r5/windows_console/windows_ci_validation.json`。
+
 ## 中文：如何运行
 
 本上位机是本机 Python 串口服务加浏览器界面。Windows 使用 `COM3`、`COM12` 等设备名，Linux 使用 `/dev/ttyUSB0`、`/dev/ttyACM0` 等路径。服务器只监听 `127.0.0.1`，默认自动选择空闲端口。启动程序不会自动打开串口或向 FPGA 发送命令。
@@ -57,11 +61,11 @@ Start_Control_Panel.cmd --check
 
 将整个 `dist/windows` 文件夹交给用户。运行 `Start_Ti60Control.cmd` 会打开浏览器；也可手动 `Ti60Control.exe --open`。目标机器无需另装 Python。打包保留终端窗口以显示错误，不隐藏失败信息。构建脚本只能在 Windows 运行；PyInstaller 不支持从 Linux 直接交叉生成 Windows EXE。参考 [PyInstaller 官方说明](https://pypi.org/project/pyinstaller/6.16.0/) 和 [spec / usage 文档](https://pyinstaller.org/en/stable/usage.html)。
 
-`tools/control_panel/windows-control.yml` 提供手动 GitHub Actions 模板；放到 `.github/workflows/windows-control.yml` 后，可在 Windows Runner 上执行同一构建。模板本身不会执行工作流，也不会上传任何串口日志。
+`tools/control_panel/windows-control.yml` 提供手动 GitHub Actions 模板；放到 `.github/workflows/windows-control.yml` 后，可在 Windows Runner 上执行同一构建。模板本身不会执行工作流，也不会上传任何串口日志。仓库 `.github/workflows/windows-control.yml` 已启用常规 build / test / upload-artifact，权限为 contents: read，不会自动推送分支。此次经核验的发行文件另保留在历史私有分支 `windows-artifact-39987343020`，用于记录交付来源；最终主分支不包含传输分块。
 
 ### 已验证与待补测
 
-本轮执行环境为 Linux；未在 Windows 操作系统或真实 FPGA 板卡上验证 Windows 驱动、原生 CMD、EXE 或 HDMI 重新锁定。以下结果区分清楚：
+本地回归执行环境为 Linux，随后已使用 Windows Server 2025 CI 真实构建并执行原生 CMD 与 EXE。用户电脑 USB 驱动与真实 FPGA / HDMI 未测。以下结果区分清楚：
 
 | 项目 | 状态 / 证据 |
 | --- | --- |
@@ -74,7 +78,7 @@ Start_Control_Panel.cmd --check
 | 100/10/1、尺寸、组合键/失焦释放、音乐、按钮/F9、CSV、桌面/手机布局 | 浏览器回归通过，无页面错误 |
 | 隔离环境启动：中文空格目录、首次安装、离线复查 | 见 `verification/r5/windows_console/bootstrap_results.json` |
 | Windows 10/11 原生启动与 USB 串口驱动 | **待用户补测** |
-| Windows EXE 构建、首次启动、杀毒软件行为 | **待 Windows 构建/补测** |
+| Windows EXE 构建、首次启动、HTTP/UI 静态资源 | **Windows Server 2025 CI 通过**；用户杀毒软件行为仍待补测 |
 | 真板两模式、掉电/重连、长时间压力、掉帧/欠流 | **待用户补测** |
 
 ## English: operation and scope
@@ -89,4 +93,4 @@ Source runs save to `logs/r5`; packaged runs save to `%LOCALAPPDATA%\Ti60R5\logs
 
 To package, run `Build_Windows_Control_Panel.cmd` **on Windows**. It produces `dist/windows/Ti60Control.exe` plus a launcher. PyInstaller bundles the runtime and UI assets; no Python installation is required on the target PC. A manual Windows GitHub Actions template is included under `tools/control_panel/windows-control.yml`.
 
-Validation performed here: six portability/protocol tests and a Chrome + real Linux PTY browser regression with 64 commands, including both output-mode buttons, F9, step arithmetic, held-key release, size controls, music, export, and responsive layout. The fixture explicitly labels its synthetic telemetry. Native Windows CMD/EXE, Windows USB drivers, and physical FPGA/HDMI behavior are **not yet tested**. Add those results after on-board validation; do not report fixture frame rates as hardware performance.
+Validation performed here: six portability/protocol tests and a Chrome + real Linux PTY browser regression with 64 commands, including both output-mode buttons, F9, step arithmetic, held-key release, size controls, music, export, and responsive layout. The fixture explicitly labels its synthetic telemetry. The standalone EXE has subsequently been built and executed on **Windows Server 2025 x64 / Python 3.12.10 CI**: native CMD bootstrap, six portability tests, and packaged HTTP/UI smoke checks passed. Use `dist/windows/Start_Ti60Control.cmd`, or download `dist/Ti60_R5_Windows_Console.zip`. Evidence: `verification/r5/windows_console/windows_ci_validation.json`. Actual Windows 10/11 USB drivers and physical FPGA/HDMI behavior remain **untested**. Add those results after on-board validation; do not report fixture frame rates as hardware performance.

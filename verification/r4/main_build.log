@@ -1,0 +1,36 @@
+In file included from /data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/test_main.c:85:
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c: In function ‘view_begin’:
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c:149:35: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  149 |     else    gfx_begin_stride(gfx, (Pixel *)(fb + view_off), SCREEN_W, SCREEN_H, (int)(disp_pitch / 2u));
+      |                                   ^
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c: In function ‘view_begin_th_hd’:
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c:167:35: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  167 |     else    gfx_begin_stride(gfx, (Pixel *)fb, (int)disp_w, (int)disp_h, (int)(disp_pitch / 2u));
+      |                                   ^
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c: In function ‘bandwidth_test’:
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c:825:18: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  825 |     src.pixels = (const Pixel *)fb_addr[2];
+      |                  ^
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c: In function ‘cache_probe’:
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c:875:34: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  875 |     volatile uint32_t *const p = (volatile uint32_t *)addr;
+      |                                  ^
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c: In function ‘mem_bench’:
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c:903:36: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  903 |     volatile uint32_t *const far = (volatile uint32_t *)fb_src;
+      |                                    ^
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c: In function ‘limit_bench’:
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c:977:36: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  977 |     volatile uint32_t *const far = (volatile uint32_t *)fb_src;
+      |                                    ^
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c: In function ‘view_apply’:
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c:1760:43: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+ 1760 |     for (i = 0; i < FB_COUNT; i++) memset((void *)fb_addr[i], 0, disp_bytes);
+      |                                           ^
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c: In function ‘game_main’:
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c:1818:43: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+ 1818 |     for (i = 0; i < FB_COUNT; i++) memset((void *)fb_addr[i], 0, disp_bytes);   /* 黑边：只在开机清一次 */
+      |                                           ^
+/data/users/user/codex_tmp/ti60_r4_work/Ti60_720p_R4_CONTROL_LINUX/verification/r4/../../PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c:1877:12: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+ 1877 |     memset((void *)fb_addr[0], 0, disp_bytes);
+      |            ^

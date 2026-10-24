@@ -1,0 +1,11 @@
+{
+  "started": "2026-10-23T16:05:28.516+00:00",
+  "port": "/dev/pts/1",
+  "baud": 115200,
+  "label": "PTY 自动化测试",
+  "files": {
+    "raw": "/data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/verification/r5/windows_console/pty_logs/20261024/uart_010528_512679_PTY_自动化测试.txt",
+    "events": "/data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/verification/r5/windows_console/pty_logs/20261024/uart_010528_512679_PTY_自动化测试.events.jsonl",
+    "metrics": "/data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/verification/r5/windows_console/pty_logs/20261024/uart_010528_512679_PTY_自动化测试.csv"
+  }
+}

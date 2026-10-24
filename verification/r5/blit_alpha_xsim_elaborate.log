@@ -1,0 +1,35 @@
+Vivado Simulator v2021.2
+Copyright 1986-1999, 2001-2021 Xilinx, Inc. All Rights Reserved.
+Running: /data/tools/Xilinx_2021.2_native_test/Vivado/2021.2/bin/unwrapped/lnx64.o/xelab --incr --debug typical --relax --mt 8 -L xil_defaultlib -L uvm -L unisims_ver -L unimacro_ver -L secureip --snapshot blit_alpha_tb_behav xil_defaultlib.blit_alpha_tb xil_defaultlib.glbl -log elaborate.log 
+Using 8 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+WARNING: [VRFC 10-3091] actual bit length 3 differs from formal bit length 4 for port 'count' [/data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/PROJECT/rtl/blit/blit_engine.v:1164]
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module xil_defaultlib.blit_rfifo(DW=213)
+Compiling module xil_defaultlib.blit_rfifo(DW=123)
+Compiling module xil_defaultlib.blit_rfifo(DW=70)
+Compiling module xil_defaultlib.blit_rfifo(DW=23)
+Compiling module xil_defaultlib.blit_ram(DW=18,AW=9)
+Compiling module xil_defaultlib.blit_fifo(AW=9)
+Compiling module xil_defaultlib.blit_ram(DW=32,AW=9)
+Compiling module xil_defaultlib.blit_rfifo(DW=128,AW=2)
+Compiling module xil_defaultlib.blit_ram(DW=32)
+Compiling module xil_defaultlib.blit_ram
+Compiling module xil_defaultlib.blit_ram(DW=8)
+Compiling module xil_defaultlib.blit_rfifo(AW=5)
+Compiling module xil_defaultlib.blit_ram(DW=84,AW=6)
+Compiling module xil_defaultlib.blit_fifo(DW=36,AW=9)
+Compiling module xil_defaultlib.blit_rfifo(DW=213,AW=1)
+Compiling module xil_defaultlib.blit_rfifo(DW=83,AW=2)
+Compiling module xil_defaultlib.blit_add565
+Compiling module xil_defaultlib.blit_ram(AW=9)
+Compiling module xil_defaultlib.blit_win_lane
+Compiling module xil_defaultlib.blit_win
+Compiling module xil_defaultlib.blit_engine_default
+Compiling module xil_defaultlib.blit_alpha_tb
+Compiling module xil_defaultlib.glbl
+Built simulation snapshot blit_alpha_tb_behav
