@@ -1,0 +1,38 @@
+[
+  {
+    "device": "/dev/ttyUSB2",
+    "description": "Quad RS232-HS - Quad RS232-HS",
+    "label": "FT4232H 通道 C · Ti60 V4 日志口候选",
+    "role": "ti60_uart_candidate",
+    "channel": "C",
+    "vid": 1027,
+    "pid": 24593,
+    "serial_number": null,
+    "location": "3-4:1.2",
+    "recommended": true
+  },
+  {
+    "device": "/dev/ttyUSB0",
+    "description": "Quad RS232-HS - Quad RS232-HS",
+    "label": "FT4232H 通道 A · 非 Ti60 V4 日志口",
+    "role": "ftdi_non_uart",
+    "channel": "A",
+    "vid": 1027,
+    "pid": 24593,
+    "serial_number": null,
+    "location": "3-4:1.0",
+    "recommended": false
+  },
+  {
+    "device": "/dev/ttyUSB3",
+    "description": "Quad RS232-HS - Quad RS232-HS",
+    "label": "FT4232H 通道 D · 非 Ti60 V4 日志口",
+    "role": "ftdi_non_uart",
+    "channel": "D",
+    "vid": 1027,
+    "pid": 24593,
+    "serial_number": null,
+    "location": "3-4:1.3",
+    "recommended": false
+  }
+]

@@ -61,7 +61,25 @@ $("setCount").addEventListener("click",()=>{const n=Number($("targetCount").valu
 $("stressStart").addEventListener("click",()=>cmd("stress",currentScene===1?Number($("carrotTier").value):0));
 $("volume").addEventListener("input",e=>$("volumeText").textContent=Math.round(e.target.value/256*100)+"%");
 $("volume").addEventListener("change",e=>cmd("volume",Number(e.target.value)));
-async function refreshPorts(){try{const p=await api("/api/ports");$("ports").replaceChildren(...p.map(port=>{const e=document.createElement("option");e.value=port.device;e.label=port.description;return e;}));if(!$("port").value&&p.length)$("port").value=p[0].device;notice(p.length?`发现 ${p.length} 个串口。选择端口后再连接。`:"未发现串口，可手动输入设备路径；连接前确认设备已上电。");}catch(e){notice(e.message,"error");}}
+let availablePorts=[],portsRefreshGeneration=0,portInputEpoch=0;
+function portHint(){
+  const p=availablePorts.find(p=>p.device===$("port").value.trim());
+  $("portInfo").textContent=p ? `${p.label||p.description}${p.location?" · USB "+p.location:""}` : "可手动填写串口路径；设备编号会随 USB 插拔变化。";
+}
+async function refreshPorts(){
+  const generation=++portsRefreshGeneration,epoch=portInputEpoch,initialValue=$("port").value;
+  try{
+    const ports=await api("/api/ports");if(generation!==portsRefreshGeneration)return;availablePorts=ports;
+    $("ports").replaceChildren(...ports.map(port=>{const e=document.createElement("option");e.value=port.device;e.label=port.label||port.description;return e;}));
+    const candidates=ports.filter(p=>p.recommended);
+    if(!initialValue&&epoch===portInputEpoch&&!$("port").value&&!connected&&candidates.length===1)$("port").value=candidates[0].device;
+    portHint();
+    if(candidates.length===1)notice(`日志口候选：${candidates[0].device}（FT4232H 通道 C）。选择后点击连接；固件由收到的数据确认。`);
+    else if(candidates.length>1)notice(`发现 ${candidates.length} 个通道 C，未自动选择。请按 USB 位置或序列号选择开发板。`);
+    else notice(ports.length?"没有确定的 Ti60 日志口候选，未自动选择。请核对通道 C 或手动填写串口。":"未发现 USB 串口，可手动填写设备路径并刷新。");
+  }catch(e){notice(e.message,"error");}
+}
+$("port").addEventListener("input",()=>{++portInputEpoch;portHint();});
 $("refreshPorts").addEventListener("click",refreshPorts);
 $("connect").addEventListener("click",async()=>{
   try{await api("/api/connect",{port:$("port").value.trim(),baud:Number($("baud").value),label:$("recordLabel").value});cursor=0;lastAck=0;lastError="";statusSynced=false;pendingCommands.clear();$("log").textContent="";notice("串口已连接，正在被动识别固件。旧版固件可记录日志，扩展控制需 R4 / R5；分辨率切换需 R5 配套 bit。");await poll();}catch(e){notice(e.message,"error");}
@@ -87,6 +105,8 @@ function updateScene(scene){
 function number(id,value,unit="",decimals=1){$(id).textContent=value===undefined||value===null?"—":Number(value).toFixed(decimals)+unit;}
 function render(data){
   snapshot=data;connected=data.connected;compatible=data.compatible;dualvideo=!!data.dualvideo;token=data.token;const state=data.state;
+  if(connected&&data.port){$("port").value=data.port;portHint();}
+  $("consoleVersion").textContent=data.console_version||"旧版服务（重启后加载端口修复）";
   $("connectionBadge").textContent=!connected?"串口未连接":compatible?(String(state.firmware||"").includes("PTY")?"伪终端测试 · 非实板":(dualvideo?"R5 已连接":"兼容协议已连接")):"已连接 · 识别中";
   $("connectionBadge").className="badge "+(connected?(compatible?"online":"warning"):"");
   $("connect").disabled=connected;$("disconnect").disabled=!connected;$("help").disabled=!connected;$("port").disabled=connected;$("baud").disabled=connected;

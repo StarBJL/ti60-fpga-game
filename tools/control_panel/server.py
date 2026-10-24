@@ -11,6 +11,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import argparse, csv, io, json, mimetypes, os, re, secrets, sys, threading, time, urllib.parse, webbrowser
 
+from serial_ports import CONSOLE_VERSION, enumerate_ports
+
 HERE=Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parent))
 ROOT=Path(sys.executable).resolve().parent if getattr(sys,'frozen',False) else HERE.parents[1]
 def default_log_root():
@@ -87,9 +89,7 @@ class Session:
         self.lock=threading.RLock();self.serial=None;self.reader=None;self.running=False;self.collector=Collector();self.error='';self.port='';self.baud=115200;self.request_id=0;self.log_root=Path(log_root);self.record=None;self.files={};self.label='R5-CONSOLE';self.keyboard_until=0;self.keyboard_mask=0
     @staticmethod
     def ports():
-        try:
-            from serial.tools import list_ports
-            return [{'device':p.device,'description':p.description} for p in list_ports.comports()]
+        try:return enumerate_ports()
         except ImportError:return []
     def event(self,action,**fields):
         if self.files:
@@ -114,6 +114,11 @@ class Session:
             return self.record
     def connect(self,port,baud=115200,label=None):
         if not isinstance(port,str) or not port or len(port)>256:raise ValueError('请选择或填写串口')
+        # Re-enumerate before opening a known FTDI channel: USB numbers may
+        # have changed since refresh. Never probe JTAG by sending serial data.
+        info=next((p for p in self.ports() if p['device']==port),None)
+        if info and info.get('role')=='ftdi_non_uart':
+            raise ValueError(info['label']+'。请选择 FT4232H 通道 C 的日志口。')
         if baud not in (38400,57600,115200,300000):raise ValueError('不支持的波特率')
         try:import serial
         except ImportError:raise ValueError('缺少 pyserial：请使用 Start_Control_Panel.cmd / .sh，或用当前 Python 安装 requirements.txt')
@@ -187,7 +192,7 @@ class Session:
         if self.reader and self.reader is not threading.current_thread():self.reader.join(timeout=1)
     def snapshot(self,after=0):
         with self.lock:
-            return {'connected':self.serial is not None,'compatible':self.collector.compatible,'dualvideo':self.collector.dualvideo,'port':self.port,'baud':self.baud,'error':self.error,'record':self.record,'label':self.label,'cursor':self.collector.cursor,'state':dict(self.collector.state),'lines':[x for x in self.collector.lines if x['id']>after],'samples':list(self.collector.samples)[-180:],'acks':list(self.collector.acks)[-20:]}
+            return {'console_version':CONSOLE_VERSION,'connected':self.serial is not None,'compatible':self.collector.compatible,'dualvideo':self.collector.dualvideo,'port':self.port,'baud':self.baud,'error':self.error,'record':self.record,'label':self.label,'cursor':self.collector.cursor,'state':dict(self.collector.state),'lines':[x for x in self.collector.lines if x['id']>after],'samples':list(self.collector.samples)[-180:],'acks':list(self.collector.acks)[-20:]}
     def export(self,kind):
         with self.lock:
             if not self.record or kind not in self.record:raise ValueError('还没有可以导出的记录')

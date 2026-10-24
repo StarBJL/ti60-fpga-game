@@ -38,6 +38,8 @@ const {chromium} = require('/home/user/.cache/codex-runtimes/codex-primary-runti
  await page.screenshot({path:path.join(out,'console_pty_test.png'),fullPage:true});
  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);assert(!overflow,'desktop horizontal overflow');
  await page.setViewportSize({width:390,height:844});await page.waitForTimeout(350);assert(!await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),'mobile horizontal overflow');await page.screenshot({path:path.join(out,'console_mobile.png'),fullPage:true});
+ await page.reload();await page.waitForFunction(port=>document.querySelector('#port').value===port,fixture.port);
+ assert(await page.locator('#port').isDisabled(),'connected port identity survives page reload');
  await page.locator('#disconnect').click();await page.waitForFunction(()=>document.getElementById('connectionBadge').textContent==='串口未连接');
  assert(await page.locator('#increase').isDisabled());assert(!errors.length,errors.join('\n'));
  const sent=JSON.parse(fs.readFileSync(path.join(out,'pty_commands.json'),'utf8'));

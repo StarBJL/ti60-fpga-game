@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "fixture": "PTY, synthetic telemetry; not hardware performance",
+  "checks": [
+    "disconnected controls",
+    "protocol identification",
+    "V5 capability-gated output switch",
+    "720p60/1080p30 buttons",
+    "F9 output switch",
+    "100/10/1 step arithmetic",
+    "scene switch",
+    "carrot and Touhou sizes",
+    "square size",
+    "held combinations and release",
+    "blur release",
+    "music toggle/next",
+    "mark",
+    "CSV export",
+    "desktop/mobile layout",
+    "disconnect"
+  ],
+  "commands": 66,
+  "console_errors": []
+}
