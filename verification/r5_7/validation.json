@@ -106,5 +106,12 @@
   "new_board_fps_measured": false,
   "monitor_1080_blackout_resolved": false,
   "480p_implemented": false,
-  "windows_ci": "pending"
+  "windows_ci_at_packaging": "pending",
+  "windows_ci": {
+    "status": "completed",
+    "conclusion": "success",
+    "run_id": 40107371841,
+    "source_commit": "6f400de24692eebeffb0305bfd0cfcefea95cd78",
+    "url": "https://github.com/18971355314bjl-gif/ti60-fpga-game/actions/runs/40107371841"
+  }
 }

@@ -890,6 +890,10 @@
       "sha256": "96a624b692e396fd22067261c12a09b95b74ce8e4383e394d404a430eb962a03"
     },
     {
+      "path": "verification/r5_7/github_delivery.json",
+      "sha256": "0e0b6fe87868d9fee0dc7069d356dc821b6e5e2b6ff5e409c757e31b84d7491a"
+    },
+    {
       "path": "verification/r5_7/github_paths.json",
       "sha256": "3b253aa3bf6145bfdff7608d2a098ae021c6ecdd9ea31213f8ff86a93bc4df76"
     },
@@ -1223,7 +1227,7 @@
     },
     {
       "path": "verification/r5_7/validation.json",
-      "sha256": "7916a70f39a041361b4a4f04ad625f13ac36d69780023bfc56b119fa26f54d2a"
+      "sha256": "6a99c4c169277d1708216316907a589723f62e9197ed16b6a582d2c2f9b8888d"
     },
     {
       "path": "verification/r5_7/video_200/build.log",

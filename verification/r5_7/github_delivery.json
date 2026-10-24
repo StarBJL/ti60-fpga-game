@@ -1,0 +1,20 @@
+{
+  "implementation_commit": "6f400de24692eebeffb0305bfd0cfcefea95cd78",
+  "repository": "https://github.com/18971355314bjl-gif/ti60-fpga-game",
+  "windows_ci": {
+    "id": 40107371841,
+    "head_sha": "6f400de24692eebeffb0305bfd0cfcefea95cd78",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/18971355314bjl-gif/ti60-fpga-game/actions/runs/40107371841",
+    "artifact_id": 12564812728,
+    "artifact_sha256": "beda5a8331d9d1df1b533d6ab33fff51d788ce1aeda16afc3c7cd5315a9525c9"
+  },
+  "github_artifact_transport": "Six SHA256-checked 2MiB parts; restore with python tools/restore_r57_package.py",
+  "bit_files_verified": 3,
+  "elf_files_restored_and_verified": 6,
+  "video720_behavior_preserved": true,
+  "monitor1080_blackout_resolved": false,
+  "mode480_implemented": false,
+  "physical_board_retested": false
+}
