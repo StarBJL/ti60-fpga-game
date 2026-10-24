@@ -1,0 +1,39 @@
+{
+  "path": "dist/Ti60_R5_2_BOARD_FIX.zip",
+  "bytes": 18568802,
+  "sha256": "9aa58d452a5626e96e0321231966c6c5d6b594352d091f4301b54a530f29fb61",
+  "artifacts": {
+    "README.txt": {
+      "bytes": 1079,
+      "sha256": "88edeef265d76ace51f9062053b0f0825b1f5c854445681ef78f09e92e4f9b5a"
+    },
+    "reports/ddr_demo_ti60.hier_util.rpt": {
+      "bytes": 91862,
+      "sha256": "fe29e7cbcab8755e12a0e650c303f9b61c34a3087abac4241e8e757aa9fcf9e6"
+    },
+    "reports/ddr_demo_ti60.place.rpt": {
+      "bytes": 2455,
+      "sha256": "04cbdeeb20ed8ba469154804ee0e452c0665f4335bc646da629858d42f20e1b1"
+    },
+    "reports/ddr_demo_ti60.timing.rpt": {
+      "bytes": 697803,
+      "sha256": "7e9418a258eaeb5e3c7384b647f7c8d703cf0600ca12c7a7ba7f866efc35147c"
+    },
+    "ti60_r5_2.bit": {
+      "bytes": 2841363,
+      "sha256": "8d2d7b1c7acb884b79b9728088a72f06f7e05a93f67a4b29001f36b3c9a7caea"
+    },
+    "ti60_r5_2_debug.elf": {
+      "bytes": 10583688,
+      "sha256": "d47f84edbd24ff73545e72b2251c5e434040b1f2dbcab06825a56d450750c560"
+    },
+    "ti60_r5_2_debug.launch": {
+      "bytes": 7032,
+      "sha256": "2988bfda5fd57e4bc8fc533a1a125a21b2d77f97aa58bf54a242e81ccd6112c5"
+    },
+    "ti60_r5_2_release.elf": {
+      "bytes": 10544920,
+      "sha256": "9ca2f97d47dcc4a249088cb660a03cc5fe0ffc0d56a7598b73732b792939252f"
+    }
+  }
+}

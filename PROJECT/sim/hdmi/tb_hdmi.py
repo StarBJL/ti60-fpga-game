@@ -271,7 +271,9 @@ class TB:
 
     def sync_levels(s, h, v):
         hs = 1 if H_ACT + H_FP <= h < H_ACT + H_FP + H_SYNC else 0
-        vs = 1 if s.v_act + V_FP <= v < s.v_act + V_FP + V_SYNC else 0
+        vss, vse = s.v_act + V_FP, s.v_act + V_FP + V_SYNC
+        vs = int((v == vss-1 and h >= H_ACT+H_FP) or
+                 (vss <= v < vse-1) or (v == vse-1 and h < H_ACT+H_FP))
         if POL:
             return hs, vs                        # positive polarity (720p)
         return 1 - hs, 1 - vs                    # negative polarity
@@ -423,14 +425,14 @@ class TB:
                 if sb[0] or sb[3]:
                     err('low audio byte not zero')
                 b6 = sb[6]
-                cl, cr = (b6 >> 4) & 1, (b6 >> 5) & 1
-                if b6 & 0x0F:
+                cl, cr = (b6 >> 2) & 1, (b6 >> 6) & 1
+                if b6 & 0x33:
                     err('V/U bits set')
                 if cl != cr:
                     err('C bits differ')
                 pl = (bin(L).count('1') + cl) & 1
                 pr = (bin(R).count('1') + cr) & 1
-                if (b6 >> 6) & 1 != pl or (b6 >> 7) & 1 != pr:
+                if (b6 >> 3) & 1 != pl or (b6 >> 7) & 1 != pr:
                     err('audio parity')
                 s.rx.append((L, R, (hdr[2] >> (4 + j)) & 1, cl))
                 s.rx_t.append(s.t)

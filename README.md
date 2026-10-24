@@ -1,5 +1,7 @@
 # Ti60 R5：RISC-V + FPGA 2D 游戏渲染引擎
 
+**2026-10-24 R5.2 上板修复：优先使用 [BOARD_TEST/r5_2](BOARD_TEST/r5_2) 的新 bit / ELF。** 修复 HDMI 音频子包位序、同步边沿；加入加速状态遥测及恢复按钮。见 [问题证据、修复和复测步骤](docs/BOARD_FIX_R5_2.md)。下文 R5 数字及根目录旧二进制是历史基线，不代表 R5.2 的实际板上验收。最新 Linux / Windows 源码上位机页脚应显示 `R5.2-BOARD-FIX`；原预编译 Windows EXE 是旧版。
+
 [English](README_EN.md) · [按键与接线 HTML](docs/INPUT_GUIDE.html) · [照片方向接线图](docs/WIRING_DEMO.html) · [赛题对应说明](docs/CONTEST_MAPPING_ZH.md) · [待填实板测试表](docs/BOARD_TEST_PLAN.csv)
 
 本工程用于全国大学生嵌入式芯片与系统设计竞赛易灵思 **赛题二：基于 RISC-V 与 FPGA 异构架构的 2D 图形渲染加速引擎**。Sapphire RISC-V 执行游戏逻辑，定制 BitBlt 引擎通过 AXI4 直接读写 DDR3，完成图块拷贝、纯色填充、透明色去背与 Alpha 混合，HDMI 输出图像及声音。

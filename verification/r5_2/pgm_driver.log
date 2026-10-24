@@ -1,0 +1,4 @@
+Efinity: /home/user/fpga_contest/vivado/efinity-2026.1.132-linux-x64/efinity/2026.1 ; flow: pgm ; log: /data/users/user/codex_tmp/ti60_board_fix/Ti60_R5_DUALVIDEO/verification/r5_2/efinity_pgm.log
+All setup and hold clock relationships pass; worst slack: 0.022 ns
+Built: /data/users/user/codex_tmp/ti60_board_fix/Ti60_R5_DUALVIDEO/BOARD_TEST/r5_2/ti60_r5_2.bit SHA256: 8d2d7b1c7acb884b79b9728088a72f06f7e05a93f67a4b29001f36b3c9a7caea
+Completed. Inspect timing reports before board use. No device was programmed.

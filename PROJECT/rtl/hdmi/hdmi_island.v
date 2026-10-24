@@ -322,13 +322,16 @@ module hdmi_island #(
                         (kcnt == 3'd2) ? 4'b0011 : (kcnt == 3'd3) ? 4'b0111 : 4'b1111;
     wire [23:0] h_aud = {kbb & kpres, 4'b0000, 3'b000, 1'b0, kpres, 8'h02};
     // byte 6 = {P_R, P_L, C_R, C_L, U_R, U_L, V_R, V_L}; P = even parity over 24 data bits + V U C
-    wire [55:0] s_aud0 = {^{kr0, kcb[0]}, ^{kl0, kcb[0]}, kcb[0], kcb[0], 4'b0000,
+    // HDMI 1.4 table 5-13, SB6[7:0] = PR,CR,UR,VR,PL,CL,UL,VL.
+    // Each channel has its own 4-bit nibble; grouping both parity bits
+    // together corrupts channel status / validity at the receiver.
+    wire [55:0] s_aud0 = {^{kr0, kcb[0]}, kcb[0], 2'b00, ^{kl0, kcb[0]}, kcb[0], 2'b00,
                           kr0, 8'h00, kl0, 8'h00};
-    wire [55:0] s_aud1 = {^{kr1, kcb[1]}, ^{kl1, kcb[1]}, kcb[1], kcb[1], 4'b0000,
+    wire [55:0] s_aud1 = {^{kr1, kcb[1]}, kcb[1], 2'b00, ^{kl1, kcb[1]}, kcb[1], 2'b00,
                           kr1, 8'h00, kl1, 8'h00};
-    wire [55:0] s_aud2 = {^{kr2, kcb[2]}, ^{kl2, kcb[2]}, kcb[2], kcb[2], 4'b0000,
+    wire [55:0] s_aud2 = {^{kr2, kcb[2]}, kcb[2], 2'b00, ^{kl2, kcb[2]}, kcb[2], 2'b00,
                           kr2, 8'h00, kl2, 8'h00};
-    wire [55:0] s_aud3 = {^{kr3, kcb[3]}, ^{kl3, kcb[3]}, kcb[3], kcb[3], 4'b0000,
+    wire [55:0] s_aud3 = {^{kr3, kcb[3]}, kcb[3], 2'b00, ^{kl3, kcb[3]}, kcb[3], 2'b00,
                           kr3, 8'h00, kl3, 8'h00};
 
     // ACR: SB0 0, SB1-3 CTS[19:0], SB4-6 N[19:0] (same in all four subpackets)

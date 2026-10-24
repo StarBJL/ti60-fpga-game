@@ -1,0 +1,2 @@
+Running: efx_run_pnr.py ddr_demo_ti60 --prj /data/users/user/codex_tmp/ti60_board_fix/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/ddr_demo_ti60.xml --family Titanium --device Ti60F225 --timing_model I3 --dir /data/users/user/codex_tmp/ti60_board_fix/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/ip/soc --output_dir outflow --work_dir work_pnr --opt sdc_file=sdc/ddr3.sdc
+[92m   pnr :	PASS [0m

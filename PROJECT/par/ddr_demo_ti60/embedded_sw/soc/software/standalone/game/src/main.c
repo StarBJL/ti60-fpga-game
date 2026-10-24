@@ -305,7 +305,7 @@ static uint32_t pend_fb, pend_seq;
 static void print_help(void)
 {
     tx_puts("R4: :id command [value] LF; [/] bullet size; {/} square size; + / - selected step 100/10/1; backslash next BGM; semicolon BGM on/off.\r\n");
-    tx_puts("Carrot: J/j ring skill; ~ sort diagnostic (debug); other scene keys unchanged.\r\n");
+    tx_puts("R5.2: :id fast LF restores acceleration; :id bars 0/1 LF selects test bars. Carrot: J/j ring skill; ~ sort diagnostic (debug); other scene keys unchanged.\r\n");
     tx_puts("\r\ndanmaku (boot scene): tools/pc_pad.py = real held keys (arrows, Z shot, X bomb, Shift slow, Esc pause);\r\n"
             "      UART: wasd move (latched, auto shot), 1 bomb, 2 slow on/off, Enter ok, p pause,\r\n"
             "      r restart, m title, l stress demo, - + stress level (manual), * stress AUTO (keeps 60 fps), b autoplay demo\r\n"
@@ -321,7 +321,7 @@ static void print_help(void)
 static void print_help(void)
 {
     tx_puts("R4: :id command [value] LF; [/] bullet size; {/} square size; + / - selected step 100/10/1; backslash next BGM; semicolon BGM on/off.\r\n");
-    tx_puts("Carrot: J/j ring skill; ~ sort diagnostic (debug); other scene keys unchanged.\r\n");
+    tx_puts("R5.2: :id fast LF restores acceleration; :id bars 0/1 LF selects test bars. Carrot: J/j ring skill; ~ sort diagnostic (debug); other scene keys unchanged.\r\n");
     tx_puts("\r\ndanmaku (boot scene): tools/pc_pad.py = real held keys (arrows, Z shot, X bomb, Shift slow, Esc pause);\r\n"
             "      UART: wasd move (latched, auto shot), 1 bomb, 2 slow on/off, Enter ok, p pause,\r\n"
             "      r restart, m title, l stress demo, - + stress level (manual), * stress AUTO (keeps 60 fps), b autoplay demo\r\n"
@@ -1550,15 +1550,17 @@ static int measurement_scene=-1,measurement_phase=-1;
 static void print_telemetry(const WinStats *s){
     unsigned id=++telemetry_seq;int count=scene==SCENE_SQUARES?sq_count:scene==SCENE_GAME?game_hostile_count(&game):scene==SCENE_TH?th.nbullets:3;
     GfxFontStats fs=gfx_font_stats();
-    tx_printf("M4 seq=%u epoch=%u scene=%d phase=%d count=%d target=%d step=%d bullet=%d square=%d alpha=%d vsync=%d hw=%d motion=%d table=%d bgm=%d\r\n",
+    tx_printf("M4 seq=%u epoch=%u scene=%d phase=%d count=%d target=%d step=%d bullet=%d square=%d alpha=%d vsync=%d hw=%d motion=%d table=%d bgm=%d submit_mode=%d band=%d cache=%d overlap=%d overlap_active=%d seed_table=%d seed_build=%d sort=%d kpath=%d rd_bursts=%u wr_bursts=%u rd_words=%u wide=%u\r\n",
       id,settings_epoch,scene,scene==SCENE_TH?th.mode:scene==SCENE_GAME?game.phase:0,count,control_limit(),count_step,
-      scene==SCENE_TH?th_pressure_scale():game_seed_size(),demo_square_size(),alpha_fx,vsync,use_hw,demo_motion_enabled(),demo_table_enabled(),music_enabled());
+      scene==SCENE_TH?th_pressure_scale():game_seed_size(),demo_square_size(),alpha_fx,vsync,use_hw,demo_motion_enabled(),demo_table_enabled(),music_enabled(),
+      seed_mode(),blit_st.band,!!blit_st.cflag,overlap,use_hw&&overlap&&scene!=SCENE_SQUARES&&!hdmi_mode_1080(),
+      blit_st.has_table,render_seed_table,render_sort_keys,!blit_st.band_koff,blit_st.rd_max,blit_st.wr_max,blit_st.rw_max,blit_st.wide);
     tx_printf("F4 seq=%u elapsed_us=%u render10=%u logic10=%u present10=%u repeat10=%u scan10=%u valid=%u video_uf=%u audio_uf=%u drops=%u\r\n",
       id,s->el_us,s->fps10,s->logic10,s->present10,s->repeat10,s->scan10,s->prs,s->video_delta,s->audio_delta,tx_dropped);
     tx_printf("P4 seq=%u logic_us=%u logic_max_us=%u submit_us=%u wait_us=%u work_us=%u work_max_us=%u over=%u busy=%u phase1_us=%u bands_us=%u profile=%d\r\n",
       id,s->logic,s->logic_max,s->submit,s->qstall+s->tail,s->loop_work_us,s->work_max_us,s->over_budget,s->blt,s->bp[BLIT_BP_P1]/BLIT_CLK_MHZ,s->bp[BLIT_BP_BAND]/BLIT_CLK_MHZ,SPROUT_STATS);
-    tx_printf("C4 seq=%u font_hit=%u font_miss=%u font_reset=%u label_hit=%u label_miss=%u font_pixels=%u track=%s w=%u h=%u auto=%d density=%d stress_auto=%d\r\n",
-      id,fs.hits,fs.misses,fs.resets,fs.label_hits,fs.label_misses,fs.used_pixels,aud_name(aud_bgm_current()),disp_w,disp_h,autoplay,th_stress_dens(&th),th.stress_auto);
+    tx_printf("C4 seq=%u font_hit=%u font_miss=%u font_reset=%u label_hit=%u label_miss=%u font_pixels=%u track=%s w=%u h=%u auto=%d density=%d stress_auto=%d tone=%d volume=%d bank_sounds=%d mixer=%d audio_ctrl=%u\r\n",
+      id,fs.hits,fs.misses,fs.resets,fs.label_hits,fs.label_misses,fs.used_pixels,aud_name(aud_bgm_current()),disp_w,disp_h,autoplay,th_stress_dens(&th),th.stress_auto,aud.tone,aud.master,aud.nsnd,aud.mixer,HDMI_REG(0x20));
 }
 
 /* Physical scan statistics: independent of render-loop FPS, audio ABI untouched. */
@@ -1796,7 +1798,7 @@ int main(void)
     GfxHwTarget hw_target;
 
     bsp_init();
-    bsp_printf("\r\n=== TI60-R5-DUALVIDEO-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
+    bsp_printf("\r\n=== TI60-R5.2-DUALVIDEO-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
                (int)(BSP_CLINT_HZ / 1000000u));
 
     if (hdmi_id() != HDMI_ID_VALUE)

@@ -1,0 +1,10 @@
+test_commands (__main__.ConsoleTests.test_commands) ... ok
+test_firmware_trace (__main__.ConsoleTests.test_firmware_trace) ... ok
+test_fragments (__main__.ConsoleTests.test_fragments) ... ok
+test_no_legacy_injection (__main__.ConsoleTests.test_no_legacy_injection) ... ok
+test_state_target (__main__.ConsoleTests.test_state_target) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.006s
+
+OK

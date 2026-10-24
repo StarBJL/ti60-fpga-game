@@ -183,6 +183,11 @@ module hdmi_fb_top #(
     wire hs0 = (h_cnt >= out_hss) && (h_cnt < out_hse);
     wire vs0 = (v_cnt >= out_vss) && (v_cnt < out_vse);
     wire vb0 = (v_cnt >= out_vact);
+    // CTA progressive timing: the VSYNC edges coincide with the leading
+    // HSYNC edge in blanking, not the beginning of the active-coordinate row.
+    // Keep vs0 for the existing internal DMA flush / frame latch interval.
+    wire vs_tx0 = (v_cnt == out_vss - 1'b1) ? (h_cnt >= out_hss) :
+                  (v_cnt == out_vse - 1'b1) ? (h_cnt < out_hss) : vs0;
 
     // stage-1 registered timing
     reg        de1, hs1, vs1, vb1, hodd1, uf1;
@@ -266,7 +271,7 @@ module hdmi_fb_top #(
         end else begin
             de1   <= de0;
             hs1   <= hs0;
-            vs1   <= vs0;
+            vs1   <= vs_tx0;
             vb1   <= vb0;
             hodd1 <= mode_1080 ? scale_x==2 : h_cnt[0];
             uf1   <= word_start ? uf0 : uf_word;
@@ -553,6 +558,7 @@ module hdmi_fb_top #(
             6'h14:   apb_prdata = {29'd0,(mode_req^mode_ack_s[1]),mode_ack_s[1],mode_req}; // +50
             6'h15:   apb_prdata = DUAL_MODE ? 32'h56494435 : 32'd0; // +54 VID5
             6'h16:   apb_prdata = {V_ACT16,H_ACT16}; // +58 internal canvas
+            6'h17:   apb_prdata = 32'h00050201; // +5c R5.2.1 HDMI audio / VSYNC repair
             default: apb_prdata = 32'd0;
         endcase
     end

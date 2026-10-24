@@ -22,9 +22,9 @@ def default_log_root():
         return base/'Ti60R5'/'logs'
     return ROOT/'logs/r5'
 
-COMMANDS={'status','scene','start','pause','restart','menu','stress','skill','pick','move','stop','step','delta','count','bullet','square','period','density','auto','vsync','alpha','backend','motion','table','bgm','next','volume','tone','stats','verbose','bench','key','resolution'}
-NO_ARGUMENT={'status','start','pause','restart','menu','skill','stop','next','bench'}
-FIELDS=['timestamp','boot','seq','epoch','scene','phase','count','target','step','bullet','square','alpha','vsync','hw','motion','table','bgm','track','resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','elapsed_us','render_fps','logic_hz','present_fps','repeat_fps','scan_hz','valid','video_uf','audio_uf','logic_us','logic_max_us','submit_us','wait_us','work_us','work_max_us','over','busy','phase1_us','bands_us','profile','font_hit','font_miss','font_reset','label_hit','label_miss','drops']
+COMMANDS={'status','scene','start','pause','restart','menu','stress','skill','pick','move','stop','step','delta','count','bullet','square','period','density','auto','vsync','alpha','backend','motion','table','bgm','next','volume','tone','stats','verbose','bench','key','resolution','fast','bars','volume_delta'}
+NO_ARGUMENT={'status','start','pause','restart','menu','skill','stop','next','bench','fast'}
+FIELDS=['timestamp','boot','seq','epoch','scene','phase','count','target','step','bullet','square','alpha','vsync','hw','motion','table','bgm','track','resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','elapsed_us','render_fps','logic_hz','present_fps','repeat_fps','scan_hz','valid','video_uf','audio_uf','logic_us','logic_max_us','submit_us','wait_us','work_us','work_max_us','over','busy','phase1_us','bands_us','profile','font_hit','font_miss','font_reset','label_hit','label_miss','drops','submit_mode','band','cache','overlap','overlap_active','seed_table','seed_build','sort','kpath','rd_bursts','wr_bursts','rd_words','wide','video_rev','bars','tone','volume','bank_sounds','mixer','audio_ctrl']
 def utc():return datetime.now(timezone.utc).isoformat(timespec='milliseconds')
 def parse_values(line):
     result={}
@@ -40,6 +40,8 @@ def command_wire(request_id,name,value=None):
     if name=='step' and value not in (1,10,100):raise ValueError('步长只能是 1、10 或 100')
     if name=='delta' and value not in (-1,1):raise ValueError('增减方向无效')
     if name=='move' and not 0<=value<=1023:raise ValueError('按键状态无效')
+    if name=='volume_delta' and value not in (-1,1):raise ValueError('音量步进方向只能为 -1 或 1')
+    if name=='bars' and value not in (0,1):raise ValueError('彩条状态只能为 0 或 1')
     if name=='resolution' and value not in (0,1):raise ValueError('输出模式只能为 0（720P60）或 1（1080P30）')
     return f':{request_id} {name} {value}\n'.encode('ascii')
 
@@ -53,7 +55,7 @@ class Collector:
             self.state['firmware']=line.strip('= ')
         if line.startswith(('R4:','R5:')):self.compatible=True
         tag=line.split(' ',1)[0]
-        if tag in ('S4','A4','V5'):
+        if tag in ('S4','A4','V5','E5'):
             self.compatible=True;values=parse_values(line)
             if tag=='V5':
                 self.dualvideo=values.get('supported')==1
@@ -71,7 +73,7 @@ class Collector:
         self.state.update({k:v for k,v in data.items() if k not in ('seq','epoch')})
         if set(self.parts[seq])!={'M4','F4','P4','C4'}:return None
         row={'timestamp':utc(),'boot':self.boot}
-        for key in ('resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending'):
+        for key in ('resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','video_rev','bars'):
             if key in self.state:row[key]=self.state[key]
         for part in ('M4','F4','P4','C4'):row.update(self.parts[seq][part])
         for raw,name in [('render10','render_fps'),('logic10','logic_hz'),('present10','present_fps'),('repeat10','repeat_fps'),('scan10','scan_hz')]:
@@ -164,6 +166,8 @@ class Session:
         if not self.serial:raise ValueError('串口尚未连接')
         if not self.collector.compatible:raise ValueError('尚未识别到 R4 / R5 控制协议。请等待遥测或点击“读取帮助”；旧固件只记录日志，不发送扩展命令。')
         if name=='resolution' and not self.collector.dualvideo:raise ValueError('分辨率切换需要 R5 固件与配套 bit；旧 R4 仅支持原有功能')
+        if name in ('fast','bars') and not self.collector.state.get('accel_supported'):raise ValueError('此功能需要 R5.2 固件；请先下载配套 ELF')
+        if name=='volume_delta' and not self.collector.state.get('volume_step_supported'):raise ValueError('音量增减按钮需要包含 volume_step_supported 的新固件')
         self.request_id=(self.request_id+1)%1000000000
         wire=command_wire(self.request_id,name,value)
         self.serial.write(wire);self.event('TX',id=self.request_id,command=name,value=value,wire=wire.decode().strip())

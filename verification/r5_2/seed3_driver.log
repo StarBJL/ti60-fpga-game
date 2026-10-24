@@ -1,0 +1,2 @@
+Efinity: /home/user/fpga_contest/vivado/efinity-2026.1.132-linux-x64/efinity/2026.1 ; flow: pnr ; log: /data/users/user/codex_tmp/ti60_board_fix/Ti60_R5_DUALVIDEO/verification/r5/efinity_pnr.log
+Timing failed or incomplete: candidate bit is NOT promoted to BOARD_TEST. [('core_clk', '-0.540')]

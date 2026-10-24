@@ -1,0 +1,2 @@
+debug : /data/users/user/codex_tmp/ti60_board_fix/Ti60_R5_DUALVIDEO/BOARD_TEST/r5_2/ti60_r5_2_debug.elf ; log: /data/users/user/codex_tmp/ti60_board_fix/Ti60_R5_DUALVIDEO/verification/r5_2/build_debug.log
+release : /data/users/user/codex_tmp/ti60_board_fix/Ti60_R5_DUALVIDEO/BOARD_TEST/r5_2/ti60_r5_2_release.elf ; log: /data/users/user/codex_tmp/ti60_board_fix/Ti60_R5_DUALVIDEO/verification/r5_2/build_release.log

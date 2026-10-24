@@ -414,8 +414,33 @@ static const struct { uint32_t ms; unsigned char c; } script[] = {
 static unsigned script_i,video_active,video_frames[2];
 static uint32_t piped_polls, polls, band_iters, max_pend_age, pad_msgs;
 
+static int finishing;
 static void finish(void)
 {
+    finishing=1;
+    int keep_scene=scene,keep_alpha=alpha_fx,keep_vsync=vsync;
+    int keep_bullet=game_seed_size(),keep_square=demo_square_size();
+    int keep_sq=sq_count,keep_cap=game.stress_bullet_target;
+    blit_wait();band_want=0;set_seed_mode(0);blit_set_cache(0);blit_band_set_koff(1);
+    overlap=0;render_seed_table=0;render_sort_keys=0;blit_st.has_table=0;
+    if(demo_table_enabled())demo_table_toggle();
+    ControlEvent restore={CT_FAST,0,999,0};
+    assert(control_apply(restore));
+    assert(use_hw&&seed_mode()==2&&blit_st.band&&blit_st.cflag&&!blit_st.band_koff&&overlap);
+    assert(render_seed_table&&render_sort_keys&&blit_st.has_table&&demo_table_enabled());
+    assert(scene==keep_scene&&alpha_fx==keep_alpha&&vsync==keep_vsync);
+    assert(game_seed_size()==keep_bullet&&demo_square_size()==keep_square&&sq_count==keep_sq&&game.stress_bullet_target==keep_cap);
+    ControlEvent bars={CT_BARS,1,1000,1};assert(control_apply(bars));assert(HDMI_CTRL&HDMI_CTRL_TEST);
+    bars.value=0;assert(control_apply(bars));assert(!(HDMI_CTRL&HDMI_CTRL_TEST));
+    bars.value=2;assert(!control_apply(bars));
+    ControlEvent volstep={CT_VOLUME_DELTA,-1,1001,1};aud_master(256);
+    for(int q=0;q<10;q++)assert(control_apply(volstep));assert(aud.master==128);
+    volstep.value=1;for(int q=0;q<10;q++)assert(control_apply(volstep));assert(aud.master==256);
+    assert(control_apply(volstep)&&aud.master==256);
+    volstep.value=-1;for(int q=0;q<21;q++)assert(control_apply(volstep));assert(aud.master==0);
+    volstep.value=2;assert(!control_apply(volstep));
+    puts("PASS volume +/- 5 percent, rapid relative steps, zero and full clamps");
+    puts("PASS real fast dispatcher restores accelerated path, preserves workload and gameplay; bars control validated");
     printf("mock time %u ms: hdmi frames %u, flip requests %u (latched %u), band frames %u (model %u, driver seq %u, splits %u)\n",
            mock_t / 100000u, hd_frames, flips, latches, frames_closed, bm_frames, blit_st.bseq, blit_st.bsplits);
     printf("loop polls %u, with a frame still in the engine %u (%u%%); stuck dumps %u, model fault %u lerr %u berr %u\n",
@@ -482,7 +507,7 @@ static void mock_tick(uint32_t dt)
     mock_hdmi[4] = hd_frames;
     /* engine speed changes: CPU-bound, about equal, engine-bound */
     eng_dur = ((mock_t / 40000000u) % 3u == 0u) ? 30000u : ((mock_t / 40000000u) % 3u == 1u) ? 250000u : 600000u;
-    if (mock_t / 100000u >= END_MS) finish();
+    if (mock_t / 100000u >= END_MS && !finishing) finish();
 }
 
 void bsp_init(void) { }

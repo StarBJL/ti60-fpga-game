@@ -36,6 +36,7 @@
 #define HDMI_MODE          HDMI_REG(0x50)
 #define HDMI_VIDEO_ID      HDMI_REG(0x54)
 #define HDMI_CANVAS        HDMI_REG(0x58)
+#define HDMI_VIDEO_REV     HDMI_REG(0x5c) /* R5.2.1 = 0x00050201; older bit = 0 */
 #define HDMI_VIDEO_ID_VALUE 0x56494435u
 static inline int hdmi_dual_supported(void){return HDMI_VIDEO_ID==HDMI_VIDEO_ID_VALUE;}
 static inline int hdmi_mode_1080(void){return hdmi_dual_supported() && (HDMI_MODE&2u)!=0;}

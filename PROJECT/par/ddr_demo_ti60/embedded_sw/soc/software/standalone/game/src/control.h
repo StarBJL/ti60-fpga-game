@@ -6,7 +6,7 @@ typedef enum {
  CT_SKILL,CT_PICK,CT_MOVE,CT_STOP,CT_STEP,CT_DELTA,CT_COUNT,CT_BULLET_SIZE,
  CT_SQUARE_SIZE,CT_PERIOD,CT_DENSITY,CT_AUTO,CT_VSYNC,CT_ALPHA,CT_BACKEND,CT_MOTION,
  CT_TABLE,CT_BGM,CT_NEXT_TRACK,CT_VOLUME,CT_TONE,CT_STATS,CT_VERBOSE,CT_BENCH,
- CT_RESOLUTION,CT_LEGACY,CT_INVALID
+ CT_RESOLUTION,CT_FAST,CT_BARS,CT_VOLUME_DELTA,CT_LEGACY,CT_INVALID
 } ControlType;
 typedef struct {ControlType type;int value;unsigned id;int has_value;} ControlEvent;
 typedef struct {char data[64];unsigned used;int active,overflow;} ControlParser;

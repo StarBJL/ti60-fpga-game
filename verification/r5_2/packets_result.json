@@ -1,0 +1,24 @@
+{
+  "error_categories": {},
+  "passed": true,
+  "error_count": 0,
+  "errors": [],
+  "blank_lines": {
+    "0": 5225,
+    "1": 4511
+  },
+  "packets": {
+    "0:01": 117,
+    "0:02": 5224,
+    "0:82": 7,
+    "0:84": 7,
+    "1:02": 4511,
+    "1:01": 133,
+    "1:82": 4,
+    "1:84": 4
+  },
+  "fifo_samples": 7155,
+  "tone_samples": 4797,
+  "audio_rate_hz": 47997.67906540468,
+  "hardware_tested": false
+}

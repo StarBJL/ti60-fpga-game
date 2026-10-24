@@ -1,5 +1,7 @@
 # Ti60 R5: RISC-V + FPGA 2D Game Rendering Engine
 
+**2026-10-24 R5.2 board repair: use the matched bit / ELF in [BOARD_TEST/r5_2](BOARD_TEST/r5_2).** HDMI audio status/parity packing and transmitted VSYNC alignment are corrected. Render-path settings are visible in telemetry and can be restored explicitly. See [evidence and retest procedure](docs/BOARD_FIX_R5_2.md). Original R5 results and root-level binaries below remain a historical baseline. Current source console identifies as `R5.2-BOARD-FIX`; the bundled old Windows EXE does not include this patch.
+
 [中文](README.md) · [Interactive input and wiring guide](docs/INPUT_GUIDE.html) · [Photo-oriented wiring diagram](docs/WIRING_DEMO.html) · [Contest requirements](docs/CONTEST_MAPPING_EN.md) · [Board validation worksheet](docs/BOARD_TEST_PLAN.csv)
 
 This project addresses Efinix contest topic 2: **a 2D graphics rendering accelerator based on a heterogeneous RISC-V and FPGA architecture**. A Sapphire RISC-V CPU runs game logic. A custom BitBlt engine directly accesses DDR3 over AXI4 for block copy, solid fill, color keying, and Alpha blending. HDMI carries video and audio.

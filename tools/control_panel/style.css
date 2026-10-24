@@ -6,3 +6,5 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}button:active{transform:none}}
 
 .port-info{margin:8px 0 0;overflow-wrap:anywhere}.connection #port{width:230px}
+
+.acceleration .conditions{line-height:1.8}.degraded{color:#9b431b;background:#fff2df;padding:10px;border-radius:6px}.conditions{white-space:pre-line}
