@@ -61,6 +61,7 @@ $("setCount").addEventListener("click",()=>{const n=Number($("targetCount").valu
 $("stressStart").addEventListener("click",()=>cmd("stress",currentScene===1?Number($("carrotTier").value):0));
 $("volume").addEventListener("input",e=>$("volumeText").textContent=Math.round(e.target.value/256*100)+"%");
 $("volume").addEventListener("change",e=>cmd("volume",Number(e.target.value)));
+$("musicSelect").addEventListener("change",e=>cmd("music",Number(e.target.value)));
 let availablePorts=[],portsRefreshGeneration=0,portInputEpoch=0;
 function portHint(){
   const p=availablePorts.find(p=>p.device===$("port").value.trim());
@@ -121,16 +122,25 @@ function render(data){
     button.classList.toggle("selected",dualvideo&&Number(button.dataset.resolution)===state.resolution);
   }
   $("videoState").textContent=!connected?"等待读取 R5 显示能力。":!dualvideo?"当前固件 / bit 未声明双模式输出，分辨率控制不可用。":state.pending?"切换已请求，等待硬件完成；以设备回报的输出状态为准。":`设备回报：${state.output_w||"—"}×${state.output_h||"—"}，标称 ${state.output_hz||state.nominal_hz||"—"} Hz；渲染 ${state.render_w||1280}×${state.render_h||720}。${state.bars?"当前为彩条测试。":""}扫描状态不代表显示器已锁定。`;
-  for(const id of ["restoreFast","testBarsOn","testBarsOff"])$(id).disabled=!connected||!state.accel_supported;
+  for(const id of ["restoreFast","restoreFastDiag","testBarsOn","testBarsOff"])$(id).disabled=!connected||!state.accel_supported;
   for(const id of ["volumeDown","volumeUp"])$(id).disabled=!connected||!state.volume_step_supported;
+  for(const id of ["musicSelect","musicPrev"])$(id).disabled=!connected||!state.music_supported;
+  if(state.music_supported){
+    if(document.activeElement!==$("musicSelect"))$("musicSelect").value=state.music_auto?-1:state.music_index;
+    $("musicMode").textContent=state.music_auto?"跟随场景自动配乐；点击上一首 / 下一首进入全曲库手动切换。":`手动曲目 ${(state.music_index??0)+1} / ${state.music_total||10}；切换场景仍保持所选曲目。`;
+  }else $("musicMode").textContent="当前固件只支持场景内两首备选曲；全曲库选择需要新版 ELF。";
   $("engineState").textContent=engineText(state);
   const degraded=state.accel_supported&&(!state.hw||state.submit_mode!==2||!state.band||!state.cache||!state.kpath||!state.seed_table||!state.seed_build||!state.overlap||(state.scene===2&&(!state.motion||!state.table)));
   $("engineWarning").textContent=degraded?"当前存在关闭的加速项。比较稳定 60 帧上限前，可先恢复加速配置，并保持场景、尺寸、Alpha 和同步条件一致。":state.accel_supported?"加速条件已报告。1080P 输出为 30 Hz；重叠是否实际生效由场景和分辨率决定。":"当前固件未报告完整加速项，无法判定测试基线。";
   $("engineWarning").classList.toggle("degraded",!!degraded);
   const on=x=>x===undefined?"未知":x?"开":"关";
+  const submitButton=document.querySelector('[data-command="key"][data-value="107"]');
+  submitButton.textContent=`提交路径：${["逐对象调用","APB 列表","DDR 硬件列表","APB 列表字"][state.submit_mode]||"未知"} · 切换`;
   for(const [key,field,title] of [[48,"cache","源缓存"],[53,"band","分带"],[113,"overlap","逻辑重叠"],[122,"seed_build","逻辑建表"],[126,"sort","键排序"]]){
     const b=document.querySelector(`[data-command="key"][data-value="${key}"]`);b.textContent=`${title}：${on(state[field])} · 切换`;
   }
+  const bandButton=document.querySelector('[data-command="key"][data-value="53"]');
+  if(state.submit_mode!==undefined&&state.submit_mode!==2)bandButton.textContent="分带未生效：需要 DDR 硬件列表";
   const revision=state.video_rev===328193?"R5.2.1 HDMI 修正版":state.video_rev?`视频修订 ${state.video_rev}`:"未确认 HDMI 修正版 bit";
   $("audioState").textContent=`${revision}；音库 ${state.bank_sounds??"—"} 个，混音器${on(state.mixer)}，测试音${on(state.tone)}。测试音直接由 HDMI 模块产生；开启时不播放音乐。`;
   $("newRecord").disabled=$("mark").disabled=!connected;

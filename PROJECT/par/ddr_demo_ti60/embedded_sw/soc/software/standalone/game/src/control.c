@@ -10,7 +10,7 @@ static const Command commands[]={
  {"period",CT_PERIOD,1},{"density",CT_DENSITY,1},{"auto",CT_AUTO,1},{"vsync",CT_VSYNC,1},{"alpha",CT_ALPHA,1},
  {"backend",CT_BACKEND,1},{"motion",CT_MOTION,1},{"table",CT_TABLE,1},{"bgm",CT_BGM,1},
  {"next",CT_NEXT_TRACK,0},{"volume",CT_VOLUME,1},{"tone",CT_TONE,1},{"stats",CT_STATS,1},
- {"verbose",CT_VERBOSE,1},{"bench",CT_BENCH,0},{"key",CT_LEGACY,1},{"resolution",CT_RESOLUTION,1},{"fast",CT_FAST,0},{"bars",CT_BARS,1},{"volume_delta",CT_VOLUME_DELTA,1}
+ {"verbose",CT_VERBOSE,1},{"bench",CT_BENCH,0},{"key",CT_LEGACY,1},{"resolution",CT_RESOLUTION,1},{"fast",CT_FAST,0},{"bars",CT_BARS,1},{"volume_delta",CT_VOLUME_DELTA,1},{"prev",CT_PREVIOUS_TRACK,0},{"music",CT_MUSIC_SELECT,1}
 };
 static int integer(const char **s,int *v){
     int neg=0;unsigned n=0;if(**s=='-'){neg=1;(*s)++;}

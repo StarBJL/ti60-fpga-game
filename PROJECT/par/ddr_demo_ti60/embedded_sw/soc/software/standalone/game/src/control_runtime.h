@@ -48,9 +48,9 @@ static void control_state(unsigned id){
       id,settings_epoch,scene,scene==SCENE_TH?th.mode:scene==SCENE_GAME?game.phase:0,count_step,control_limit(),
       scene==SCENE_SQUARES?DEMO_MAX_SQUARES:scene==SCENE_GAME?MAX_HOSTILE_BULLETS:scene==SCENE_TH?TH_MAX_BULLETS:3,
       scene==SCENE_TH?th_pressure_scale():game_seed_size(),demo_square_size(),alpha_fx,vsync,use_hw,autoplay,show_stats);
-    tx_printf("A4 id=%u bgm=%d track=%s volume=%d tone=%d motion=%d table=%d stress_auto=%d density=%d verbose=%d period=%d bank_sounds=%d mixer=%d audio_ctrl=%u\r\n",
+    tx_printf("A4 id=%u bgm=%d track=%s volume=%d tone=%d motion=%d table=%d stress_auto=%d density=%d verbose=%d period=%d bank_sounds=%d mixer=%d audio_ctrl=%u music_supported=1 music_auto=%d music_index=%d music_total=10\r\n",
       id,music_enabled(),aud_name(aud_bgm_current()),aud.master,aud.tone,demo_motion_enabled(),demo_table_enabled(),
-      th.stress_auto,th_stress_dens(&th),report_verbose,img_period,aud.nsnd,aud.mixer,HDMI_REG(0x20));
+      th.stress_auto,th_stress_dens(&th),report_verbose,img_period,aud.nsnd,aud.mixer,HDMI_REG(0x20),music_follow_scene(),music_index());
     control_video_state(id);control_engine_state(id);control_input_state(id);
 }
 static int control_count(int v){
@@ -110,6 +110,8 @@ static int control_apply(ControlEvent e){
     case CT_TABLE:if(v<0||v>1)return 0;control_fence();if(v!=demo_table_enabled())demo_table_toggle();break;
     case CT_BGM:if(v<0||v>1)return 0;music_enable(v);break;
     case CT_NEXT_TRACK:music_next();break;
+    case CT_PREVIOUS_TRACK:music_previous();break;
+    case CT_MUSIC_SELECT:if(!music_select(v))return 0;break;
     case CT_VOLUME:if(v<0||v>256)return 0;aud_master(v);break;
     case CT_VOLUME_DELTA:
         if(v!=-1&&v!=1)return 0;

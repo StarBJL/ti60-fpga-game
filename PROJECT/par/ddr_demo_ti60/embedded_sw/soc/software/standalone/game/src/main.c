@@ -709,8 +709,11 @@ static uint32_t bot_steer(const Game *g, uint32_t frame)
         }
     }
     slots = game_hostile_used(g);                    /* slots above are all free */
-    for (i = 0; i < slots; i++) {
-        const Bullet *b = game_hostile_at(g, 0) + i;   /* contiguous pool */
+    /* The pool cannot change during steering. Resolve its mode/capacity once,
+       rather than calling the out-of-line lookup for every hostile bullet. */
+    const Bullet *pool = slots ? game_hostile_at(g,0) : 0;
+    for (i = 0; pool && i < slots; i++) {
+        const Bullet *b = pool + i;
         int dx, dy, d2;
         if (!b || !b->active) continue;
         dx = px - b->x / FIX; dy = py - b->y / FIX;
@@ -1559,8 +1562,8 @@ static void print_telemetry(const WinStats *s){
       id,s->el_us,s->fps10,s->logic10,s->present10,s->repeat10,s->scan10,s->prs,s->video_delta,s->audio_delta,tx_dropped);
     tx_printf("P4 seq=%u logic_us=%u logic_max_us=%u submit_us=%u wait_us=%u work_us=%u work_max_us=%u over=%u busy=%u phase1_us=%u bands_us=%u profile=%d\r\n",
       id,s->logic,s->logic_max,s->submit,s->qstall+s->tail,s->loop_work_us,s->work_max_us,s->over_budget,s->blt,s->bp[BLIT_BP_P1]/BLIT_CLK_MHZ,s->bp[BLIT_BP_BAND]/BLIT_CLK_MHZ,SPROUT_STATS);
-    tx_printf("C4 seq=%u font_hit=%u font_miss=%u font_reset=%u label_hit=%u label_miss=%u font_pixels=%u track=%s w=%u h=%u auto=%d density=%d stress_auto=%d tone=%d volume=%d bank_sounds=%d mixer=%d audio_ctrl=%u\r\n",
-      id,fs.hits,fs.misses,fs.resets,fs.label_hits,fs.label_misses,fs.used_pixels,aud_name(aud_bgm_current()),disp_w,disp_h,autoplay,th_stress_dens(&th),th.stress_auto,aud.tone,aud.master,aud.nsnd,aud.mixer,HDMI_REG(0x20));
+    tx_printf("C4 seq=%u font_hit=%u font_miss=%u font_reset=%u label_hit=%u label_miss=%u font_pixels=%u track=%s w=%u h=%u auto=%d density=%d stress_auto=%d tone=%d volume=%d bank_sounds=%d mixer=%d audio_ctrl=%u stats=%d verbose=%d music_auto=%d music_index=%d music_total=10\r\n",
+      id,fs.hits,fs.misses,fs.resets,fs.label_hits,fs.label_misses,fs.used_pixels,aud_name(aud_bgm_current()),disp_w,disp_h,autoplay,th_stress_dens(&th),th.stress_auto,aud.tone,aud.master,aud.nsnd,aud.mixer,HDMI_REG(0x20),show_stats,report_verbose,music_follow_scene(),music_index());
 }
 
 /* Physical scan statistics: independent of render-loop FPS, audio ABI untouched. */
@@ -1798,7 +1801,7 @@ int main(void)
     GfxHwTarget hw_target;
 
     bsp_init();
-    bsp_printf("\r\n=== TI60-R5.2-DUALVIDEO-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
+    bsp_printf("\r\n=== TI60-R5.3-MUSIC-CONTROL-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
                (int)(BSP_CLINT_HZ / 1000000u));
 
     if (hdmi_id() != HDMI_ID_VALUE)

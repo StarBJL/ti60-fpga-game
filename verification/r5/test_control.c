@@ -6,6 +6,7 @@
 static void parse(const char *s,ControlType kind,int value){ControlEvent e;assert(control_parse(s,&e));assert(e.id==17&&e.type==kind&&e.value==value);}
 int main(void){
  parse("17 volume_delta -1",CT_VOLUME_DELTA,-1);parse("17 volume_delta 1",CT_VOLUME_DELTA,1);
+ parse("17 prev",CT_PREVIOUS_TRACK,0);parse("17 music -1",CT_MUSIC_SELECT,-1);parse("17 music 9",CT_MUSIC_SELECT,9);
  parse("17 fast",CT_FAST,0);parse("17 bars 1",CT_BARS,1);
  parse("17 step 1",CT_STEP,1);parse("17 step 10",CT_STEP,10);parse("17 step 100",CT_STEP,100);
  parse("17 delta -1",CT_DELTA,-1);parse("17 count 14001",CT_COUNT,14001);parse("17 scene 2",CT_SCENE,2);parse("17 status",CT_STATUS,0);

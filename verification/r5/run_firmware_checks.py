@@ -21,7 +21,7 @@ if __name__=='__main__':
     names=set(sys.argv[1:])
     def wanted(n):return not names or n in names
     if wanted('gameplay'):run('gameplay',[root/'verification/r4/test_merge_gameplay.c',src/'game.c'],['-DSPROUT_STATS=1'])
-    if wanted('visual'):run('visual',[root/'verification/r4/test_merge_visual.c',*[src/f for f in ['game.c','gfx.c','gfx_hw.c','blit.c','mini_snprintf.c']]],['-no-pie','-fno-pie','-DBLIT_HOST_MODEL','-DSPROUT_STATS=1','-DGFX_FONT_ATLAS_CPU_MAX_SCALE=3'])
+    if wanted('visual'):run('visual',[root/'verification/r4/test_merge_visual.c',*[src/f for f in ['game.c','gfx.c','gfx_hw.c','blit.c','mini_snprintf.c']]],['-no-pie','-fno-pie','-Wl,-Ttext-segment=0x08000000','-DBLIT_HOST_MODEL','-DSPROUT_STATS=1','-DGFX_FONT_ATLAS_CPU_MAX_SCALE=3'])
     if wanted('audio'):run('audio',[root/'verification/r4/test_audio.c',src/'game_sound.c',src/'music.c'])
     if wanted('font'):run('font',[root/'verification/test_font.c'])
     if wanted('demos'):run('demos',[root/'verification/r4/test_demos.c',src/'gfx.c',src/'mini_snprintf.c'])

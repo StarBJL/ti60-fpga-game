@@ -8,7 +8,7 @@ from pathlib import Path, PosixPath
 import re
 import sys
 
-CONSOLE_VERSION = 'R5.2-BOARD-FIX'
+CONSOLE_VERSION = 'R5.3-MUSIC-CONTROL'
 FT4232 = (0x0403, 0x6011)
 
 def channel_number(port, platform=None, sys_tty='/sys/class/tty'):

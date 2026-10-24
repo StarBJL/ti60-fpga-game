@@ -84,6 +84,19 @@ int main(void){
         for(int k=0;k<LOC_W*LOC_H;k++)if(a[k])assert(edge->pixels[k]==COLOR_KEY);
     }
     for(int level=1;level<=7;level++){fixture(0,level,0);g.weapon_idle_ticks=1000;reference();}
+    /* A previously visited pose reuses immutable pixels and produces no
+       publication/invalidation request; other in-flight pose sources survive. */
+    fixture(0,4,0);g.weapon_heading=5;locator_pose(&g);
+    const Pixel *cached=render_locator_outline_asset()->pixels;
+    Pixel stable[LOC_W*LOC_H];memcpy(stable,cached,sizeof stable);loc_dirty=0;
+    for(int h=0;h<32;h++){g.weapon_heading=h;locator_pose(&g);render_locator_outline_asset();}
+    assert(!memcmp(stable,cached,sizeof stable));loc_dirty=0;
+    g.weapon_heading=5;locator_pose(&g);
+    assert(render_locator_outline_asset()->pixels==cached&&!loc_dirty);
+    for(int cycle=0;cycle<100;cycle++)for(int h=0;h<32;h++){
+        g.weapon_heading=h;locator_pose(&g);render_locator_outline_asset();assert(!loc_dirty);
+    }
+    puts("PASS 3200 warm pose changes: no outline rebuild/publication, immutable old sources");
     puts("PASS independent opaque-pixel reference: 896 level/heading/bob/mode combinations, idle poses and hollow union outlines");
     fixture(0,7,40);g.invincible=10000;game_tick(&g,(Input){0});reference();assert(render_locator_info().used_near_cache);
     int cov=render_locator_info().covered;g.occlusion_near_overflow=1;reference();assert(render_locator_info().covered==cov);

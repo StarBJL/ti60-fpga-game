@@ -1,0 +1,228 @@
+{
+  "r2_log": {
+    "path": "/home/user/fpga_contest/1025/Ti60_720p_MERGE_R2_ZH_FULL/logs/20261023/uart_20261023_204925_104_COM5_c91971_720P-R2.txt",
+    "sha256": "11aa423119fd1c397728b3646fa8f330e7a4199c8410eb9d4d236ee3ddf52205"
+  },
+  "new_uploaded_csv": {
+    "path": "/home/user/下载/uart_141137_380372_R5-CONSOLE.csv",
+    "sha256": "257568dc56977c042d7b63412aa17949155f9fed9bbed491711b32e1d9d55095",
+    "rows": 236
+  },
+  "r2_measured_reference": {
+    "carrot_pressure": "~15900 active 13px bullets near 60 rendering FPS; manual, band+overlap, free-running, alpha on",
+    "squares": "8900 mixed-size squares, HW movement, band, alpha on, free-running: 90 reported samples averaging 59.71 rendering FPS"
+  },
+  "new_windows": [
+    {
+      "seq_from": 20,
+      "seq_to": 31,
+      "windows": 12,
+      "settings": {
+        "scene": "1",
+        "target": "14000",
+        "bullet": "13",
+        "square": "0",
+        "alpha": "1",
+        "vsync": "1",
+        "hw": "1",
+        "motion": "1",
+        "table": "1",
+        "submit_mode": "2",
+        "band": "1",
+        "cache": "1",
+        "overlap": "1",
+        "overlap_active": "1"
+      },
+      "mean": {
+        "render_fps": 32.016666666666666,
+        "present_fps": 32.016666666666666,
+        "logic_us": 12224.0,
+        "submit_us": 6030.5,
+        "wait_us": 4.833333333333333,
+        "work_us": 18260.166666666668,
+        "bands_us": 9331.25
+      }
+    },
+    {
+      "seq_from": 36,
+      "seq_to": 68,
+      "windows": 33,
+      "settings": {
+        "scene": "1",
+        "target": "14000",
+        "bullet": "13",
+        "square": "0",
+        "alpha": "1",
+        "vsync": "1",
+        "hw": "1",
+        "motion": "1",
+        "table": "1",
+        "submit_mode": "2",
+        "band": "1",
+        "cache": "1",
+        "overlap": "1",
+        "overlap_active": "1"
+      },
+      "mean": {
+        "render_fps": 30.05757575757576,
+        "present_fps": 30.05757575757576,
+        "logic_us": 23627.303030303032,
+        "submit_us": 6023.787878787879,
+        "wait_us": 5.0,
+        "work_us": 29656.969696969696,
+        "bands_us": 8951.121212121212
+      }
+    },
+    {
+      "seq_from": 117,
+      "seq_to": 135,
+      "windows": 19,
+      "settings": {
+        "scene": "2",
+        "target": "14000",
+        "bullet": "13",
+        "square": "0",
+        "alpha": "1",
+        "vsync": "0",
+        "hw": "1",
+        "motion": "1",
+        "table": "1",
+        "submit_mode": "2",
+        "band": "1",
+        "cache": "1",
+        "overlap": "1",
+        "overlap_active": "0"
+      },
+      "mean": {
+        "render_fps": 40.747368421052634,
+        "present_fps": 40.747368421052634,
+        "logic_us": 1644.3684210526317,
+        "submit_us": 926.6842105263158,
+        "wait_us": 21897.947368421053,
+        "work_us": 24470.0,
+        "bands_us": 19112.526315789473
+      }
+    },
+    {
+      "seq_from": 136,
+      "seq_to": 146,
+      "windows": 11,
+      "settings": {
+        "scene": "2",
+        "target": "12000",
+        "bullet": "13",
+        "square": "0",
+        "alpha": "1",
+        "vsync": "0",
+        "hw": "1",
+        "motion": "1",
+        "table": "1",
+        "submit_mode": "2",
+        "band": "1",
+        "cache": "1",
+        "overlap": "1",
+        "overlap_active": "0"
+      },
+      "mean": {
+        "render_fps": 46.554545454545455,
+        "present_fps": 46.554545454545455,
+        "logic_us": 1412.8181818181818,
+        "submit_us": 923.2727272727273,
+        "wait_us": 19076.909090909092,
+        "work_us": 21413.727272727272,
+        "bands_us": 16744.363636363636
+      }
+    },
+    {
+      "seq_from": 155,
+      "seq_to": 161,
+      "windows": 7,
+      "settings": {
+        "scene": "2",
+        "target": "12000",
+        "bullet": "13",
+        "square": "0",
+        "alpha": "0",
+        "vsync": "0",
+        "hw": "1",
+        "motion": "0",
+        "table": "1",
+        "submit_mode": "2",
+        "band": "1",
+        "cache": "1",
+        "overlap": "1",
+        "overlap_active": "0"
+      },
+      "mean": {
+        "render_fps": 61.65714285714286,
+        "present_fps": 60.1,
+        "logic_us": 4200.285714285715,
+        "submit_us": 1337.857142857143,
+        "wait_us": 10717.142857142857,
+        "work_us": 16150.0,
+        "bands_us": 8824.285714285714
+      }
+    },
+    {
+      "seq_from": 167,
+      "seq_to": 173,
+      "windows": 7,
+      "settings": {
+        "scene": "2",
+        "target": "13000",
+        "bullet": "13",
+        "square": "0",
+        "alpha": "0",
+        "vsync": "0",
+        "hw": "1",
+        "motion": "0",
+        "table": "1",
+        "submit_mode": "2",
+        "band": "1",
+        "cache": "1",
+        "overlap": "1",
+        "overlap_active": "0"
+      },
+      "mean": {
+        "render_fps": 57.5,
+        "present_fps": 57.5,
+        "logic_us": 4547.571428571428,
+        "submit_us": 1342.7142857142858,
+        "wait_us": 11425.857142857143,
+        "work_us": 17317.428571428572,
+        "bands_us": 9330.857142857143
+      }
+    },
+    {
+      "seq_from": 238,
+      "seq_to": 244,
+      "windows": 7,
+      "settings": {
+        "scene": "2",
+        "target": "13000",
+        "bullet": "13",
+        "square": "0",
+        "alpha": "1",
+        "vsync": "0",
+        "hw": "1",
+        "motion": "0",
+        "table": "1",
+        "submit_mode": "3",
+        "band": "0",
+        "cache": "1",
+        "overlap": "1",
+        "overlap_active": "0"
+      },
+      "mean": {
+        "render_fps": 19.17142857142857,
+        "present_fps": 19.17142857142857,
+        "logic_us": 4546.285714285715,
+        "submit_us": 40386.71428571428,
+        "wait_us": 7144.285714285715,
+        "work_us": 52078.857142857145,
+        "bands_us": 0.0
+      }
+    }
+  ],
+  "qualification": "Different object counts and some settings: this is diagnostic evidence, not a measured R5.3 throughput claim. New samples at 8900 squares/15000-16000 carrot bullets with identical settings are required."
+}

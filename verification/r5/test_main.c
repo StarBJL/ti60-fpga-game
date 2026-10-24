@@ -414,10 +414,87 @@ static const struct { uint32_t ms; unsigned char c; } script[] = {
 static unsigned script_i,video_active,video_frames[2];
 static uint32_t piped_polls, polls, band_iters, max_pend_age, pad_msgs;
 
+static uint32_t bot_steer_reference(const Game *g, uint32_t frame)
+{
+    static const int8_t wander[8][2] = {
+        {1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1} };
+    int px = g->x / FIX, py = g->y / FIX, i, slots;
+    int32_t fx = 0, fy = 0;
+    int best = 220 * 220, gx = 0, gy = 0, have_gem = 0;
+    uint32_t held = 0;
+
+    for (i = 0; i < MAX_ENEMIES; i++) {
+        const Enemy *e = &g->enemies[i];
+        int dx, dy, d2;
+        if (!e->active) continue;
+        dx = px - e->x / FIX; dy = py - e->y / FIX;
+        if (iabs(dx) > 150 || iabs(dy) > 150) continue;
+        d2 = dx * dx + dy * dy;
+        if (d2 > 150 * 150) continue;
+        if (d2 < 64) d2 = 64;
+        {
+            int w = e->kind == 3 ? 3 : 1;
+            fx += (dx * 65536 / d2) * w;
+            fy += (dy * 65536 / d2) * w;
+        }
+    }
+    slots = game_hostile_used(g);                    /* slots above are all free */
+    for (i = 0; i < slots; i++) {
+        const Bullet *b = game_hostile_at(g, 0) + i;   /* contiguous pool */
+        int dx, dy, d2;
+        if (!b || !b->active) continue;
+        dx = px - b->x / FIX; dy = py - b->y / FIX;
+        if (iabs(dx) > 110 || iabs(dy) > 110) continue;
+        d2 = dx * dx + dy * dy;
+        if (d2 > 110 * 110) continue;
+        if (d2 < 64) d2 = 64;
+        fx += (dx * 65536 / d2) * 3;
+        fy += (dy * 65536 / d2) * 3;
+    }
+    for (i = 0; i < MAX_GEMS; i++) {
+        const Gem *m = &g->gems[i];
+        int dx, dy, d2;
+        if (!m->active) continue;
+        dx = m->x / FIX - px; dy = m->y / FIX - py;
+        if (iabs(dx) > 220 || iabs(dy) > 220) continue;
+        d2 = dx * dx + dy * dy;
+        if (d2 < best) { best = d2; gx = dx; gy = dy; have_gem = 1; }
+    }
+    if (have_gem) {
+        int n = iabs(gx) + iabs(gy) + 1;
+        fx += gx * 700 / n;
+        fy += gy * 700 / n;
+    }
+    /* wander + centre pull + walls */
+    {
+        const int8_t *w = wander[(frame / 90u) & 7u];
+        fx += w[0] * 350; fy += w[1] * 350;
+    }
+    fx += (640 - px) * 3;
+    fy += (378 - py) * 3;
+    if (px < 105)  fx += (105 - px) * 40;
+    if (px > 1175) fx -= (px - 1175) * 40;
+    if (py < 180) fy += (180 - py) * 40;
+    if (py > 577) fy -= (py - 577) * 40;
+
+    if (fx >  300) held |= KEY_RIGHT;
+    if (fx < -300) held |= KEY_LEFT;
+    if (fy >  300) held |= KEY_DOWN;
+    if (fy < -300) held |= KEY_UP;
+    return held;
+}
+
 static int finishing;
 static void finish(void)
 {
     finishing=1;
+    int old_x=game.x,old_y=game.y;
+    for(unsigned trial=0;trial<64;trial++){
+        game.x=(100+(trial*173)%1080)*FIX;game.y=(180+(trial*59)%400)*FIX;
+        assert(bot_steer(&game,trial*97)==bot_steer_reference(&game,trial*97));
+    }
+    game.x=old_x;game.y=old_y;
+    puts("PASS autoplay optimization: exact held-key equality to previous algorithm over 64 positions/frames");
     int keep_scene=scene,keep_alpha=alpha_fx,keep_vsync=vsync;
     int keep_bullet=game_seed_size(),keep_square=demo_square_size();
     int keep_sq=sq_count,keep_cap=game.stress_bullet_target;

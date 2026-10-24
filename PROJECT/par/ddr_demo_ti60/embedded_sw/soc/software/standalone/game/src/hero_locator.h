@@ -6,11 +6,17 @@
 #define LOC_Y CARROT_LOC_Y
 static uint64_t loc_body_rows[7][LOC_H],loc_actor[LOC_H];
 static uint32_t loc_seed_rows[2][4][25],loc_laser_rows[8][CARROT_LASER_SIZE];
-/* A source stays immutable while hardware consumes the previous frame.
- * R2 may record a new frame while two older frames still reference sources.
- * Three rotating buffers match the R2 seed-table lifetime. */
-static Pixel loc_outline_pixels[3][LOC_W*LOC_H] __attribute__((aligned(64)));
-static Sprite loc_outline[3];
+/* Immutable lazy cache for all seven appearances and 32 aim headings plus
+ * idle. DDR/BSS storage, not FPGA block RAM. Once published, an outline is
+ * never overwritten during normal play; frames in flight may retain it.
+ * This avoids rebuilding ~8.5 KiB and invalidating the source cache whenever
+ * the weapon returns to a previously seen pose. */
+#define LOC_POSES (7*33)
+static Pixel loc_outline_pixels[LOC_POSES][LOC_W*LOC_H] __attribute__((aligned(64)));
+static Sprite loc_outline[LOC_POSES];
+static uint64_t loc_pose_rows[LOC_POSES][LOC_H];
+static uint16_t loc_pose_total[LOC_POSES];
+static uint8_t loc_pose_valid[LOC_POSES],loc_outline_valid[LOC_POSES];
 static int loc_buffer,loc_level,loc_heading,loc_idle,loc_dirty,loc_shape_dirty,loc_actor_total;
 static RenderLocatorInfo loc_info;
 static const Game *loc_game;
@@ -42,13 +48,22 @@ static void init_player_locator(void){
     }
     for(s=0;s<8;s++)for(y=0;y<CARROT_LASER_SIZE;y++)for(x=0;x<CARROT_LASER_SIZE;x++)
         if(laser_sprites[s].pixels[y*CARROT_LASER_SIZE+x]!=COLOR_KEY)loc_laser_rows[s][y]|=1u<<x;
-    for(s=0;s<3;s++)loc_outline[s]=(Sprite){LOC_W,LOC_H,loc_outline_pixels[s],0};
+    memset(loc_pose_valid,0,sizeof loc_pose_valid);
+    memset(loc_outline_valid,0,sizeof loc_outline_valid);
+    for(s=0;s<LOC_POSES;s++)loc_outline[s]=(Sprite){LOC_W,LOC_H,loc_outline_pixels[s],0};
     loc_level=0;render_locator_reset();
 }
 static void locator_pose(const Game *g){
     int level=game_appearance_level(g),idle=g->weapon_idle_ticks>30,h=g->weapon_heading&31;
     if(level==loc_level&&idle==loc_idle&&(idle||h==loc_heading))return;
     loc_level=level;loc_idle=idle;loc_heading=h;
+    loc_buffer=(level-1)*33+(idle?32:h);
+    if(loc_pose_valid[loc_buffer]){
+        memcpy(loc_actor,loc_pose_rows[loc_buffer],sizeof loc_actor);
+        loc_actor_total=loc_pose_total[loc_buffer];
+        loc_shape_dirty=!loc_outline_valid[loc_buffer];
+        return;
+    }
     memcpy(loc_actor,loc_body_rows[level-1],sizeof loc_actor);
     for(int k=0;k<2;k++){
         WeaponPose p=weapon_pose(g,k,idle);
@@ -61,6 +76,9 @@ static void locator_pose(const Game *g){
     }
     loc_actor_total=0;
     for(int y=0;y<LOC_H;y++)loc_actor_total+=(int)loc_bits(loc_actor[y]);
+    memcpy(loc_pose_rows[loc_buffer],loc_actor,sizeof loc_actor);
+    loc_pose_total[loc_buffer]=(uint16_t)loc_actor_total;
+    loc_pose_valid[loc_buffer]=1;
     loc_shape_dirty=1;
 }
 static void locator_build_outline(void){
@@ -72,7 +90,7 @@ static void locator_build_outline(void){
         (y?loc_actor[y-1]:0)|(y+1<LOC_H?loc_actor[y+1]:0))&~loc_actor[y]&limit;
     for(int y=0;y<LOC_H;y++)edge2[y]=((edge1[y]<<1)|(edge1[y]>>1)|
         (y?edge1[y-1]:0)|(y+1<LOC_H?edge1[y+1]:0))&~loc_actor[y]&~edge1[y]&limit;
-    loc_buffer=(loc_buffer+1)%3;
+    loc_outline_valid[loc_buffer]=1;
     loc_dirty=1;
     for(int y=0;y<LOC_H;y++)for(int x=0;x<LOC_W;x++){
         uint64_t bit=(uint64_t)1<<x;

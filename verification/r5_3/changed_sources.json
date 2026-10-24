@@ -1,0 +1,97 @@
+[
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c",
+    "old_sha256": "3ac89671c1a3c08c1bedeb58fe3908d12d36e0d6d941c0208604414d239c54ef",
+    "new_sha256": "a8972f751aa47a4578c18de3b1df90a2e1dfba71c9eac61dd68d14cafcbcd7d3"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.c",
+    "old_sha256": "087719593782aca88ff6b2298a35d9bad6c5df5eb7d99ffe9d8a1babfd6f4edf",
+    "new_sha256": "1a4523db748fee190dab6836f9221ff0e099315b0fee2ac52f37ff5db4115cf7"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.h",
+    "old_sha256": "a41d61166ec4856d483d615d9595970e90876629125e39672fd60eaa819ad1b5",
+    "new_sha256": "6d4e0dd604b35ca48e256444e33e3cff512b596c12c20614069369affba12223"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control_runtime.h",
+    "old_sha256": "a7ff4d628e64c48488f938eadae6413bfe0410517903e8af0ca42ae6e45387b6",
+    "new_sha256": "8ca6807b9d10c733dddbc779955205dbb7aad254bd3e9cd2c302727e8e1a3174"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/music.c",
+    "old_sha256": "dd496e39d62e5d806a65d9d66a34797c030d49d1cf8e1b13e63179269170ced9",
+    "new_sha256": "e916d2c14d819f1a1f1d35c24d63c31a680c043437d87f4275395756a05f966b"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/music.h",
+    "old_sha256": "dd00cf74fc22fbe2aa30034b2b3759e4a5a1f519e8c314456c57b6d0a1851e46",
+    "new_sha256": "11f535163066eb84b47115f74ca3d348fa3cecbdbc07a269b07b9505012722be"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hero_locator.h",
+    "old_sha256": "a2bf815a30ac7f8981f1c9b29dc56e69bbce46a19b5e7256c4a571ac1e637615",
+    "new_sha256": "b8a813b0daa0cc2a3dc4fdbda7d5a928c22f6dc523c03e43b9f3b141bf8486dc"
+  },
+  {
+    "path": "tools/control_panel/server.py",
+    "old_sha256": "20b63df7e2213a854b40353ffb4e1cc3ed97daa1125bb5b39d6f8148530e0d47",
+    "new_sha256": "4a6a035c87de4aca6595dbbec176927490f939b8cbb8ee0145307219ecefe9ba"
+  },
+  {
+    "path": "tools/control_panel/serial_ports.py",
+    "old_sha256": "2fa29079844e44141ef10fbd7a0f2ea70683249993eca9217aed64f35d0ae445",
+    "new_sha256": "66a7eb580e44a34180193957cf738461e21d0130e7fb17b1bf47dab4647cf3ea"
+  },
+  {
+    "path": "tools/control_panel/app.js",
+    "old_sha256": "df936aa670911731b85db8251f5132068362c542e2935b4b64be6373241149f5",
+    "new_sha256": "3b2a99624350f896439dc160775096a9939eb0a7d17fac69593de3157d7c7e5e"
+  },
+  {
+    "path": "tools/control_panel/index.html",
+    "old_sha256": "8267ed56474fe127aa2395bcd3707cd66a0276784780f53c50a636f8e066d177",
+    "new_sha256": "c03ae2fc5ed89c5d279ef789f4d841c04e192bd3ee3eb988ccd3e5f73aafc074"
+  },
+  {
+    "path": "build_software.py",
+    "old_sha256": "3caf1bdfcad93ec75cf4f82132083e9a6ddc80830d01265a834587a73bb9b58a",
+    "new_sha256": "5bdfd8c4b3858e0080ccd76e081736354e510aed6033859af5d0c5cd9e7e44ff"
+  },
+  {
+    "path": "README.md",
+    "old_sha256": "84ef74a92d258745ffdfc2250f9c722e5131f913e26ead350aaf403c31a2a1ba",
+    "new_sha256": "ad9088db8d7d0115cdcd443a791ab8717937914c799b7e5e334a8af06b288d0b"
+  },
+  {
+    "path": "README_EN.md",
+    "old_sha256": "3dc62b73e3efad0c2e7f024fd43839e2e2318c1992c9c478eca6904c9669bae3",
+    "new_sha256": "cec9f98014ae001255c7621cd4885436a6b5e94e0520b84fd36a3bb9e1987f38"
+  },
+  {
+    "path": "docs/R5_3_SETTINGS_MUSIC.md",
+    "old_sha256": null,
+    "new_sha256": "ee908b658d599696152e9ac79687d42c95fafafdc28ffaf733ba2ae59db6039d"
+  },
+  {
+    "path": "verification/r5/test_control.c",
+    "old_sha256": "09f90f4be7ff903f5dc49dd95b892a914b263803c94da3d1681ac15031569c72",
+    "new_sha256": "01f2bd223324ca683f016269722a4c4687097496f5d46d5c6fd275e60a557ac2"
+  },
+  {
+    "path": "verification/r5/test_main.c",
+    "old_sha256": "0a0ad71cda95af309ac253eb9aa34ae562ab801ee7781ead98ed7a932c920511",
+    "new_sha256": "7efeec544547b2261494d4604830a899a198ef8e3bdc67d25edb70d00d99e3f8"
+  },
+  {
+    "path": "verification/r5/run_firmware_checks.py",
+    "old_sha256": "7bca21c129a8db7bd8e3a3c3f737a2195de9d3a636cdb20264c52937299a03ee",
+    "new_sha256": "7b08f26d1ad0516ee2d75103185d5dcfb680eb88151368f4794ff01ea44c3e62"
+  },
+  {
+    "path": "verification/r4/test_merge_visual.c",
+    "old_sha256": "f5b1d99dcb2d888be2bfd16144e50c37405298cb1e9b34d413959e89b89adc31",
+    "new_sha256": "827856c17665349a4692c50e39bdadcdddf0608c3e74b148e6f2f9f5a7052bba"
+  }
+]
