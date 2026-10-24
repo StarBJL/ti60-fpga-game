@@ -31,6 +31,33 @@ uint32_t th_rand(Th *t)
     return t->rng = x ? x : 0x1234567u;
 }
 
+const ThPlayer *th_player(const Th *t,int player){return player==t->actor_index?&t->actor:&t->party[player];}
+static void th_context(Th *t,int player){
+    if(player==t->actor_index)return;
+    t->party[t->actor_index]=t->actor;t->actor=t->party[player];t->actor_index=player;
+}
+static int th_living(const Th *t){int n=0;for(int i=0;i<t->player_count;i++)n+=!th_player(t,i)->out;return n;}
+static int th_nearest(const Th *t,int32_t x,int32_t y){
+    int best=0;uint32_t distance=~0u;
+    for(int i=0;i<t->player_count;i++){const ThPlayer *p=th_player(t,i);if(p->out)continue;
+        int dx=(p->px-x)/256,dy=(p->py-y)/256;uint32_t d=(uint32_t)(dx*dx+dy*dy);
+        if(d<distance){distance=d;best=i;}}
+    return best;
+}
+static void th_team_award(Th *t,uint32_t score){
+    int previous=t->actor_index,n=th_living(t);if(!n)return;
+    uint32_t each=score/(unsigned)n,remainder=score%(unsigned)n;
+    for(int i=0;i<t->player_count;i++)if(!th_player(t,i)->out){th_context(t,i);t->score+=each+(remainder?1u:0u);if(remainder)--remainder;}
+    th_context(t,previous);
+}
+void th_coop_enable(Th *t,int n){
+    if(n<1)n=1;if(n>TH_PLAYERS)n=TH_PLAYERS;if(t->diff==TH_STRESS)n=1;
+    th_context(t,0);t->player_count=n;t->party[0]=t->actor;
+    for(int i=1;i<n;i++){
+        t->party[i]=t->actor;t->party[i].px=t->px+(i==1?-64:64)*256;
+        for(int k=0;k<4;k++){t->party[i].opt_x[k]=t->party[i].px;t->party[i].opt_y[k]=t->party[i].py;}
+    }
+}
 uint16_t th_atan2(int32_t dy, int32_t dx)
 {
     uint32_t ax = (uint32_t)(dx < 0 ? -dx : dx), ay = (uint32_t)(dy < 0 ? -dy : dy);
@@ -75,7 +102,7 @@ ThBullet *th_fire(Th *t, int32_t x, int32_t y, uint16_t ang, int spd, int kind, 
     b = &t->bullets[t->nbullets++];
     t->sfx |= TS_BIT(TS_FIRE);
     memset(b, 0, sizeof *b);
-    b->x = x; b->y = y; b->ang = ang; b->spd = (int16_t)spd;
+    b->pad2=0;b->x = x; b->y = y; b->ang = ang; b->spd = (int16_t)spd;
     b->vx = (int16_t)((spd * th_cos(ang)) >> 14);
     b->vy = (int16_t)((spd * th_sin(ang)) >> 14);
     b->kind = (uint8_t)kind; b->color = (uint8_t)color;
@@ -389,11 +416,14 @@ void th_spawn_boss(Th *t, int mid)
 static void stage_reset(Th *t, int keep_player)
 {
     /* the fields kept (Th is megabytes: never copy it whole - the stack is 16 KB) */
+    ThPlayer saved[TH_PLAYERS];int players=t->player_count>0?t->player_count:1;
+    th_context(t,0);for(int i=0;i<players;i++)saved[i]=*th_player(t,i);
     const uint32_t rng = t->rng, hi = t->hiscore, tk = t->tick, score = t->score;
     const int diff = t->diff, dens = t->dens, ss = t->start_stage, lives = t->lives, bombs = t->bombs;
     const int power = t->power, graze = t->graze, pts = t->points_got;
     memset(t, 0, offsetof(Th, dbuf));
-    t->rng = rng; t->hiscore = hi; t->tick = tk;
+    t->rng = rng; t->hiscore = hi; t->tick = tk;t->player_count=players;
+    if(keep_player){t->actor=saved[0];for(int i=0;i<players;i++)t->party[i]=saved[i];}
     if (keep_player) {
         t->diff = diff; t->dens = dens; t->start_stage = ss;
         t->lives = lives; t->bombs = bombs; t->power = power; t->score = score;
@@ -416,6 +446,7 @@ void th_start_stage(Th *t, int diff, int stage)
         int i;
         for (i = 0; i < 4; i++) { t->opt_x[i] = t->px; t->opt_y[i] = t->py; }
     }
+    th_coop_enable(t,diff==TH_STRESS?1:t->player_count);
 }
 
 void th_start(Th *t, int diff) { th_start_stage(t, diff, 0); }
@@ -434,6 +465,11 @@ static void next_stage(Th *t)
         int i;
         for (i = 0; i < 4; i++) { t->opt_x[i] = t->px; t->opt_y[i] = t->py; }
     }
+    for(int p=1;p<t->player_count;p++){
+        th_context(t,p);t->px=PX(TH_PF_W/2+(p==1?-64:64));t->py=PX(400);t->invuln=60;
+        for(int k=0;k<4;k++){t->opt_x[k]=t->px;t->opt_y[k]=t->py;}
+    }
+    th_context(t,0);
 }
 
 /* ---------------------------------------------------------------- player */
@@ -443,7 +479,8 @@ static void player_die(Th *t)
     th_explode(t, t->px, t->py, TC_RED, 1);
     th_ghost(t, &th_spr_player[1], t->px, t->py, -PX(1), 45);
     t->sfx |= TS_BIT(TS_DEATH);
-    if (--t->lives < 0) { t->lives = 0; t->mode = TH_OVER; t->respawn_t = 0; t->sfx |= TS_BIT(TS_OVER); return; }
+    if (--t->lives < 0) { t->lives = 0;t->out=1;t->respawn_t=0;
+        if(!th_living(t)){t->mode=TH_OVER;t->sfx|=TS_BIT(TS_OVER);}return; }
     for (i = 0; i < 5; i++) th_drop(t, i == 0 && t->power >= 100 ? TI_BIGP : TI_POWER, t->px, t->py - PX(32));
     t->power = t->power > 100 ? t->power - 100 : 0;
     t->bombs = 3;
@@ -468,7 +505,7 @@ static void player_bomb(Th *t)
 
 static void player_hit(Th *t)
 {
-    if (t->invuln || t->bomb_t || t->dying || t->invincible) return;
+    if (t->out || t->invuln || t->bomb_t || t->dying || t->invincible) return;
     t->dying = 8;                                         /* deathbomb window */
 }
 
@@ -488,11 +525,12 @@ static const int8_t opt_off_f[5][4][2] = {
 static void shot_spawn(Th *t, int32_t x, int32_t y, int32_t vx, int32_t vy, int dmg, int kind, int target)
 {
     int i;
-    for (i = 0; i < TH_MAX_SHOTS; i++) {
+    int start=t->player_count>1?t->actor_index*256:0,end=start+256;
+    for (i = start; i < end; i++) {
         ThShot *s = &t->shots[i];
         if (s->active) continue;
         s->active = 1; s->x = x; s->y = y; s->vx = vx; s->vy = vy;
-        s->dmg = (int16_t)dmg; s->kind = (uint8_t)kind; s->target = (int16_t)target;
+        s->dmg = (int16_t)dmg; s->kind = (uint8_t)kind; s->target = (int16_t)target;s->owner=(uint8_t)t->actor_index;
         return;
     }
 }
@@ -518,6 +556,7 @@ static int nearest_target(const Th *t, int32_t x, int32_t y)
 
 static void player_update(Th *t)
 {
+    if(t->out)return;
     const uint32_t h = t->held;
     int32_t sp = (h & PAD_SLOW) ? PX(2) : PX(4) + 128;
     int32_t dx = 0, dy = 0, n, i;
@@ -598,6 +637,7 @@ static void shots_update(Th *t)
         ThShot *s = &t->shots[i];
         int hit = 0;
         if (!s->active) continue;
+        th_context(t,s->owner<t->player_count?s->owner:0);
         if (s->target >= 0) {                              /* homing amulet: steer to the target */
             int32_t tx = 0, ty = 0, ok = 0;
             if (s->target == TH_MAX_ENEMIES) { if (t->boss.active) { tx = t->boss.x; ty = t->boss.y; ok = 1; } }
@@ -640,6 +680,7 @@ static void enemies_update(Th *t)
     for (i = 0; i < TH_MAX_ENEMIES; i++) {
         ThEnemy *e = &t->enemies[i];
         if (!e->active) continue;
+        if(t->player_count>1)th_context(t,th_nearest(t,e->x,e->y));
         ++e->timer;
         if (e->fn) e->fn(t, e);
         if (!e->active) continue;
@@ -649,11 +690,13 @@ static void enemies_update(Th *t)
             e->active = 0;
             continue;
         }
-        if (t->bomb_t && e->y > 0) enemy_damage(t, e, 8);
+        if(e->y>0)for(int pi=0;pi<t->player_count&&e->active;pi++)if(th_player(t,pi)->bomb_t){th_context(t,pi);enemy_damage(t,e,8);}
         if (!e->active) continue;
         {
-            int32_t dx = e->x - t->px, dy = e->y - t->py;
-            if (dx > -PX(10) && dx < PX(10) && dy > -PX(10) && dy < PX(10)) player_hit(t);
+            for(int pi=0;pi<t->player_count;pi++){
+                th_context(t,pi);int32_t dx=e->x-t->px,dy=e->y-t->py;
+                if(dx>-PX(10)&&dx<PX(10)&&dy>-PX(10)&&dy<PX(10))player_hit(t);
+            }
         }
         ++t->enemies_alive;
     }
@@ -662,13 +705,15 @@ static void enemies_update(Th *t)
 static void items_update(Th *t)
 {
     int i;
-    const int all = t->py < PX(POC_Y) || t->bomb_t > 100;
+
     for (i = 0; i < t->nitems; i++) {
         ThItem *it = &t->items[i];
+        if(t->player_count>1)th_context(t,th_nearest(t,it->x,it->y));
+        const int all=t->py<PX(POC_Y)||t->bomb_t>100;
         int32_t dx, dy;
         if (all && t->mode == TH_PLAY && !t->dying) it->autoc = 1;
         dx = t->px - it->x; dy = t->py - it->y;
-        if (it->autoc && !t->dying) {                      /* fly to the player */
+        if (it->autoc && !t->dying && !t->out) {                      /* fly to the player */
             uint16_t a = th_atan2(dy, dx);
             int sp = it->kind == TI_STAR ? PX(10) : PX(8);
             it->x += (sp * th_cos(a)) >> 14;
@@ -679,7 +724,7 @@ static void items_update(Th *t)
             it->y += it->vy;
             if (it->y > PX(TH_PF_H + 16)) { *it = t->items[--t->nitems]; --i; continue; }
         }
-        if (dx > -PX(20) && dx < PX(20) && dy > -PX(20) && dy < PX(20) && !t->dying) {
+        if (dx > -PX(20) && dx < PX(20) && dy > -PX(20) && dy < PX(20) && !t->dying && !t->out) {
             const int kind = it->kind, autoc = it->autoc, p0 = t->power;
             const int32_t iy = it->y;
             t->sfx |= TS_BIT(kind == TI_LIFE ? TS_EXTEND : kind == TI_BOMB ? TS_BOMBGET : TS_ITEM);
@@ -737,18 +782,23 @@ static void phantoms_update(Th *t)
         if ((uint32_t)(p->x + PX(40)) > (uint32_t)PX(TH_PF_W + 80) || (uint32_t)(p->y + PX(40)) > (uint32_t)PX(TH_PF_H + 80)) {
             *p = t->phantoms[--t->nphantoms]; --i; continue;
         }
-        dx = p->x - px; dy = p->y - py;
+        for(int pi=0;pi<t->player_count;pi++){
+        th_context(t,pi);if(t->out)continue;
+        int can_hit=!(t->invuln||t->bomb_t||t->dying||t->invincible)&&t->mode==TH_PLAY;
+        dx = p->x - t->px; dy = p->y - t->py;
         if (th_phantom_alpha(p) >= 150 && (uint32_t)(dx + PX(30)) < (uint32_t)PX(60) && (uint32_t)(dy + PX(30)) < (uint32_t)PX(60)) {
             const int32_t ex = dx >> 4, ey = dy >> 4, d2 = ex * ex + ey * ey;
             const int32_t r = (int32_t)th_bk_half[p->bk] * 8 + PLAYER_R * 16, g = r + GRAZE_R * 16;
-            if (d2 < r * r && can_hit) hit = 1;
-            else if (d2 < g * g && !p->grazed && t->mode == TH_PLAY && !t->dying) {
-                p->grazed = 1; ++t->graze; t->score += 500; t->sfx |= TS_BIT(TS_GRAZE);
+            if (d2 < r * r && can_hit) hit |= 1<<pi;
+            else if (d2 < g * g && !(p->grazed&(1u<<pi)) && t->mode == TH_PLAY && !t->dying) {
+                p->grazed |= 1u<<pi; ++t->graze; t->score += 500; t->sfx |= TS_BIT(TS_GRAZE);
                 th_fx(t, TF_SPARK, TC_WHITE, p->x, p->y, -dx >> 3, -dy >> 3, 12);
             }
         }
+        }
     }
-    if (hit) player_hit(t);
+    for(int pi=0;pi<t->player_count;pi++)if(hit&(1<<pi)){th_context(t,pi);player_hit(t);}
+    th_context(t,0);
 }
 
 static void lasers_update(Th *t)
@@ -778,26 +828,31 @@ static void lasers_update(Th *t)
             }
         }
         /* collision with the player (the core only: ~60 % of the width) */
+        for(int pi=0;pi<t->player_count;pi++){
+        th_context(t,pi);if(t->out)continue;
+        int can_hit=!(t->invuln||t->bomb_t||t->dying||t->invincible)&&t->mode==TH_PLAY;
         dx = t->px - l->x; dy = t->py - l->y;
         if (l->kind == TL_COMET) {
-            if (dx > -PX(6) && dx < PX(6) && dy > -PX(6) && dy < PX(6) && can_hit) hit = 1;
+            if (dx > -PX(6) && dx < PX(6) && dy > -PX(6) && dy < PX(6) && can_hit) hit |= 1<<pi;
         } else if (act >= 0 && l->w * 2 >= l->wmax) {
             const int32_t half = (int32_t)l->w * TH_ONE * 3 / 10;
             if (l->kind == TL_PILLAR) {
-                if (dx > -half && dx < half && can_hit) hit = 1;
+                if (dx > -half && dx < half && can_hit) hit |= 1<<pi;
             } else {
                 const int32_t along = (int32_t)(((int64_t)dx * th_cos(l->ang) + (int64_t)dy * th_sin(l->ang)) >> 14);
                 const int32_t perp  = (int32_t)(((int64_t)-dx * th_sin(l->ang) + (int64_t)dy * th_cos(l->ang)) >> 14);
                 if (along >= 0 && along <= (int32_t)l->len * TH_ONE) {
-                    if (perp > -half && perp < half && can_hit) hit = 1;
+                    if (perp > -half && perp < half && can_hit) hit |= 1<<pi;
                     else if (perp > -half - PX(16) && perp < half + PX(16) && (l->t & 7) == 0 && t->mode == TH_PLAY) {
                         ++t->graze; t->score += 200; t->sfx |= TS_BIT(TS_GRAZE);   /* grazing a laser: every 8 ticks */
                     }
                 }
             }
         }
+        }
     }
-    if (hit) player_hit(t);
+    for(int pi=0;pi<t->player_count;pi++)if(hit&(1<<pi)){th_context(t,pi);player_hit(t);}
+    th_context(t,0);
 }
 
 /* ---------------------------------------------------------------- bullets (hot loop) */
@@ -853,22 +908,23 @@ static void bullets_update(Th *t)
             --i;
             continue;
         }
-        /* player: hit + graze (Q4 units, only when close); the bot's dodge force too */
-        dx = x - px; dy = y - py;
-        if ((uint32_t)(dx + PX(40)) < (uint32_t)PX(80) && (uint32_t)(dy + PX(40)) < (uint32_t)PX(80)) {
-            int32_t ex = dx >> 4, ey = dy >> 4, d2 = ex * ex + ey * ey;
-            int32_t r = brad16[q->kind] + PLAYER_R * 16, g = r + GRAZE_R * 16;
-            if (d2 < r * r && can_hit) hit = 1;
-            else if (d2 < g * g && !(q->flags & TBF_GRAZED) && can_graze) {
-                q->flags |= TBF_GRAZED;
-                ++t->graze;
-                t->sfx |= TS_BIT(TS_GRAZE);
-                t->score += 500;
-                th_fx(t, TF_SPARK, TC_WHITE, x, y, -dx >> 3, -dy >> 3, 12);
-            }
-            if (bot) {
-                const int32_t pdx = -dx >> 8, pdy = -dy >> 8, pd2 = pdx * pdx + pdy * pdy;
-                if (pd2 && pd2 < 40 * 40) { bfx += pdx * 2048 / pd2; bfy += pdy * 2048 / pd2; }
+        /* Shared projectile movement, independent player hit/graze states. */
+        for(int pi=0;pi<t->player_count;pi++){
+            const ThPlayer *pl=th_player(t,pi);if(pl->out)continue;
+            int32_t dx=x-pl->px,dy=y-pl->py;
+            if((uint32_t)(dx+PX(40))<(uint32_t)PX(80)&&(uint32_t)(dy+PX(40))<(uint32_t)PX(80)){
+                int32_t ex=dx>>4,ey=dy>>4,d2=ex*ex+ey*ey;
+                int32_t radius=brad16[q->kind]+PLAYER_R*16,graze=radius+GRAZE_R*16;
+                int can=!(pl->invuln||pl->bomb_t||pl->dying||t->invincible)&&t->mode==TH_PLAY;
+                unsigned bit=1u<<pi;int grazed=t->player_count>1?(q->pad2&bit):(q->flags&TBF_GRAZED);
+                if(d2<radius*radius&&can)hit|=bit;
+                else if(d2<graze*graze&&!grazed&&t->mode==TH_PLAY&&!pl->dying){
+                    q->pad2|=bit;if(pi==0)q->flags|=TBF_GRAZED;
+                    th_context(t,pi);++t->graze;t->score+=500;t->sfx|=TS_BIT(TS_GRAZE);
+                    th_fx(t,TF_SPARK,TC_WHITE,x,y,-dx>>3,-dy>>3,12);
+                }
+                if(bot&&pi==0){const int32_t pdx=-dx>>8,pdy=-dy>>8,pd2=pdx*pdx+pdy*pdy;
+                    if(pd2&&pd2<40*40){bfx+=pdx*2048/pd2;bfy+=pdy*2048/pd2;}}
             }
         }
         /* draw item, only if fully on screen: straight into its bucket's table */
@@ -887,7 +943,8 @@ static void bullets_update(Th *t)
     }
     t->nbullets = n;
     if (n > t->peak_bullets) t->peak_bullets = n;
-    if (hit) player_hit(t);
+    for(int pi=0;pi<t->player_count;pi++)if(hit&(1<<pi)){th_context(t,pi);player_hit(t);}
+    th_context(t,0);
     t->bot_fx = bfx; t->bot_fy = bfy;
     t->drawn = 0;
     for (j = 0; j < TBK_COUNT; j++) { t->dcount[d][j] = cnt[j]; t->drawn += cnt[j]; }
@@ -975,11 +1032,11 @@ static void boss_update(Th *t)
         int32_t dx = b->x - t->px, dy = b->y - t->py;
         if (dx > -PX(16) && dx < PX(16) && dy > -PX(20) && dy < PX(20)) player_hit(t);
     }
-    if (t->bomb_t) boss_damage(t, 2);
+    {int previous=t->actor_index;for(int pi=0;pi<t->player_count;pi++)if(th_player(t,pi)->bomb_t){th_context(t,pi);boss_damage(t,2);}th_context(t,previous);}
     if (b->hp <= 0 || b->phase_tick > ph->time_s * 60 + 60) {
         const int beaten = b->hp <= 0;
         if (ph->name && beaten && !b->spell_fail) {
-            t->score += b->bonus;
+            th_team_award(t,b->bonus);
             b->captured_show = 180;
             t->sfx |= TS_BIT(TS_CAPTURE);
             b->captured_bonus = (int)b->bonus;
@@ -1027,7 +1084,7 @@ static uint32_t bot_input(Th *t)
 }
 
 /* ---------------------------------------------------------------- tick */
-void th_tick(Th *t, uint32_t held, uint32_t pressed, int bot)
+static void th_tick_core(Th *t, uint32_t held, uint32_t pressed, int bot)
 {
     ++t->tick;
     t->bot = bot;
@@ -1086,37 +1143,52 @@ void th_tick(Th *t, uint32_t held, uint32_t pressed, int bot)
     if (!(t->boss.active && t->boss.mid)) ++t->stage_tick;    /* the stage clock stops for a mid-boss */
     t->bg_y = (t->bg_y + (t->boss.active ? 96 : 160)) % PX(TH_PF_H);
     if (t->banner_t) --t->banner_t;
-    player_update(t);
+    for(int pi=0;pi<t->player_count;pi++){
+        th_context(t,pi);t->held=bot&&pi==0?bot_input(t):t->player_held[pi];t->pressed=bot?0:t->player_pressed[pi];player_update(t);
+    }
+    th_context(t,0);
     if (t->mode != TH_PLAY) return;
     {
         /* optional split of the tick (th_clock set by main.c): patterns / bullets / rest */
         const uint32_t c0 = th_clock ? th_clock() : 0u;
         uint32_t c1, c2;
         if (!t->boss_seen && !(t->boss.active && t->boss.mid)) th_stages[t->stage].timeline(t);
+        if(t->player_count>1)th_context(t,th_nearest(t,t->boss.x,t->boss.y));
         boss_update(t);
-        enemies_update(t);
+        enemies_update(t);th_context(t,0);
         c1 = th_clock ? th_clock() : 0u;
-        shots_update(t);
+        shots_update(t);th_context(t,0);
         bullets_update(t);
         if (t->nphantoms) phantoms_update(t);
         if (t->nlasers) lasers_update(t);
         if (t->moon_t) ++t->moon_t;
         c2 = th_clock ? th_clock() : 0u;
-        items_update(t);
+        items_update(t);th_context(t,0);
         fx_update(t);
         if (th_clock) {
             const uint32_t c3 = th_clock();
             t->prof[0] = c1 - c0; t->prof[1] = c2 - c1; t->prof[2] = c3 - c2;
         }
     }
-    if (t->score > t->hiscore) t->hiscore = t->score;
+    for(int pi=0;pi<t->player_count;pi++){th_context(t,pi);if(t->score>t->hiscore)t->hiscore=t->score;}
+    th_context(t,0);
     if (t->cleared_t && ++t->cleared_t > 240) {
-        t->clear_bonus = (int)(t->lives * 3000000 + t->bombs * 1000000 + t->power * 1000 + t->graze * 1000);
-        t->score += (uint32_t)t->clear_bonus;
+        t->clear_bonus=0;
+        for(int pi=0;pi<t->player_count;pi++){th_context(t,pi);int bonus=t->lives*3000000+t->bombs*1000000+t->power*1000+t->graze*1000;t->score+=(uint32_t)bonus;t->clear_bonus+=bonus;if(t->score>t->hiscore)t->hiscore=t->score;}
+        th_context(t,0);
         t->mode = TH_CLEAR;
         t->sfx |= TS_BIT(TS_CLEAR);
         t->respawn_t = 0;
     }
+}
+
+void th_tick_coop(Th *t,const uint32_t held[TH_PLAYERS],const uint32_t pressed[TH_PLAYERS],int bot){
+    if(t->player_count<1)t->player_count=1;
+    for(int i=0;i<TH_PLAYERS;i++){t->player_held[i]=held[i];t->player_pressed[i]=pressed[i];}
+    th_context(t,0);th_tick_core(t,held[0],pressed[0]|((pressed[1]|pressed[2])&PAD_PAUSE),bot);th_context(t,0);
+}
+void th_tick(Th *t,uint32_t held,uint32_t pressed,int bot){
+    uint32_t h[TH_PLAYERS]={held,0,0},p[TH_PLAYERS]={pressed,0,0};th_tick_coop(t,h,p,bot);
 }
 
 /* Rebuild current geometry without advancing time, collision or RNG; caller fenced GPU. */

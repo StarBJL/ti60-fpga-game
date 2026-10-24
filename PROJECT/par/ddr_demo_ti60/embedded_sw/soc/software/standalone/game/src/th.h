@@ -25,7 +25,7 @@
 #define TH_PF_H      448
 
 #define TH_MAX_BULLETS 99999        /* 压力模式用得到；普通难度一般几百到两千 */
-#define TH_MAX_SHOTS   256
+#define TH_MAX_SHOTS   768
 #define TH_MAX_ENEMIES 64
 #define TH_MAX_ITEMS   1024
 #define TH_MAX_FX      1536
@@ -67,7 +67,7 @@ typedef struct {
                                        热循环里不再按种类分支；星弹再加转动帧） */
 } ThBullet;                         /* 32 B */
 
-typedef struct { int32_t x, y, vx, vy; int16_t dmg; uint8_t kind, active; int16_t target; int16_t pad; } ThShot;
+typedef struct { int32_t x, y, vx, vy; int16_t dmg; uint8_t kind, active; int16_t target; uint8_t owner,pad; } ThShot;
 typedef struct { int32_t x, y, vy; uint8_t kind, active, autoc, pad; } ThItem;
 typedef struct { int32_t x, y, vx, vy; uint16_t life, total; uint8_t kind, color, active, pad; } ThFx;
 /* 半透明"残影"：被消掉的子弹、被击落的妖精、中弹的自机，用 gfx_blit_alpha 淡出（alpha 特效开着时） */
@@ -134,19 +134,24 @@ enum { TH_NORMAL, TH_LUNATIC, TH_STRESS, TH_DIFFS };
 #define TH_STAGES  2
 #define TH_MENU_N  4                /* 标题菜单：NORMAL / LUNATIC / 第 2 关练习 / STRESS */
 
+#define TH_PLAYER_FIELDS \
+    int32_t px,py; \
+    int focus,lives,bombs,power,graze,points_got,invuln,dying,bomb_t,shot_t,respawn_t; \
+    uint32_t score,hiscore; \
+    int32_t opt_x[4],opt_y[4]; \
+    int opt_focus;uint32_t held,pressed;int out;
+typedef struct {TH_PLAYER_FIELDS} ThPlayer;
+#define TH_PLAYERS 3
 typedef struct Th {
     int mode, menu, diff, dens;     /* dens：弹幕数量倍率（压力模式见 th_stress_levels） */
     int stage, start_stage;         /* 当前关（0 起）/ 这一局从哪关开始（重来用） */
     int invincible;                 /* 压力 / 演示模式：自机不死 */
     uint32_t rng, tick, stage_tick;
-    /* player */
-    int32_t px, py;
-    int focus, lives, bombs, power, graze, points_got, invuln, dying, bomb_t, shot_t, respawn_t;
-    uint32_t score, hiscore;
-    int32_t opt_x[4], opt_y[4];     /* 子机（平滑跟随） */
-    int opt_focus;                  /* 子机收拢程度 0..16 */
-    uint32_t held, pressed;         /* 本 tick 的输入（PAD_*） */
-    int bot;                        /* 自动驾驶 */
+    union {ThPlayer actor;struct {TH_PLAYER_FIELDS};};
+    ThPlayer party[TH_PLAYERS];
+    uint32_t player_held[TH_PLAYERS],player_pressed[TH_PLAYERS];
+    int player_count,actor_index;
+    int bot;
     /* objects */
     ThBullet bullets[TH_MAX_BULLETS];
     int nbullets, peak_bullets, dropped;
@@ -208,6 +213,9 @@ void th_init(Th *t, uint32_t seed);
 void th_start(Th *t, int diff);
 /* held = PAD_* bits held this tick, pressed = new presses; bot = 1: autoplay (and demo invincibility) */
 void th_tick(Th *t, uint32_t held, uint32_t pressed, int bot);
+void th_tick_coop(Th *t,const uint32_t held[TH_PLAYERS],const uint32_t pressed[TH_PLAYERS],int bot);
+void th_coop_enable(Th *t,int players);
+const ThPlayer *th_player(const Th *t,int player);
 extern uint32_t (*th_clock)(void);              /* optional (0 = off): free-running clock for t->prof */
 uint32_t th_rand(Th *t);
 ThBullet *th_fire(Th *t, int32_t x, int32_t y, uint16_t ang, int spd, int kind, int color);

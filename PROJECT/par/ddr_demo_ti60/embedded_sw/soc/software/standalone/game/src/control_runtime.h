@@ -3,6 +3,7 @@
 static ControlParser control_rx;
 static int count_step=100,report_verbose;
 static unsigned settings_epoch=1;
+static int video_trial;static uint32_t video_trial_start;
 static void set_game_limit(void);
 /* An explicit baseline restores all cross-scene A/B switches. Workload,
  * dimensions, alpha, vsync, scene, and gameplay state remain as selected. */
@@ -37,21 +38,38 @@ static void control_move(unsigned held){
 }
 static int control_limit(void){return scene==SCENE_SQUARES?sq_count:scene==SCENE_GAME?game_hostile_slots(&game):scene==SCENE_TH?th.stress_cap:3;}
 static void control_input_state(unsigned id);
+static unsigned video_trial_left(void){
+    if(!video_trial)return 0;uint32_t elapsed=now()-video_trial_start;
+    if(elapsed>=(uint32_t)BSP_CLINT_HZ*10u)return 0;
+    return 10000u-(unsigned)((uint64_t)elapsed*1000u/BSP_CLINT_HZ);
+}
 static void control_video_state(unsigned id){
     unsigned supported=hdmi_dual_supported(),mode=supported?HDMI_MODE:0;
-    tx_printf("V5 id=%u supported=%u resolution=%u requested=%u pending=%u output_w=%u output_h=%u nominal_hz=%u render_w=1280 render_h=720 scale=%s pixel_hz=74375000 video_rev=%u bars=%u\r\n",
+    tx_printf("V5 id=%u supported=%u resolution=%u requested=%u pending=%u output_w=%u output_h=%u nominal_hz=%u render_w=1280 render_h=720 scale=%s pixel_hz=74375000 video_rev=%u bars=%u trial_supported=1 video_trial=%d trial_ms=%u\r\n",
        id,supported,(mode>>1)&1u,mode&1u,(mode>>2)&1u,(mode&2u)?1920u:1280u,(mode&2u)?1080u:720u,
-       (mode&2u)?30u:60u,(mode&2u)?"1.5":"1",supported?HDMI_VIDEO_REV:0u,(HDMI_CTRL&HDMI_CTRL_TEST)?1u:0u);
+       (mode&2u)?30u:60u,(mode&2u)?"1.5":"1",supported?HDMI_VIDEO_REV:0u,(HDMI_CTRL&HDMI_CTRL_TEST)?1u:0u,video_trial,video_trial_left());
+}
+static void control_party_line(const char *key,unsigned id){
+    int count=scene==SCENE_GAME?game.player_count:scene==SCENE_TH?th.player_count:0;
+    int life[3]={0},skill[3]={0},x[3]={0},y[3]={0};unsigned score[3]={0},held[3]={0};uint32_t time=now();
+    for(int i=0;i<3;i++){
+        held[i]=pad_source_held((unsigned)i,time,BSP_CLINT_HZ/1000u);
+        if(i>=count)continue;
+        if(scene==SCENE_GAME){const GamePlayer *p=game_player(&game,i);life[i]=p->hp;skill[i]=p->skill_cooldown;score[i]=p->kills;x[i]=p->x/FIX;y[i]=p->y/FIX;}
+        else if(scene==SCENE_TH){const ThPlayer *p=th_player(&th,i);life[i]=p->out?-1:p->lives;skill[i]=p->bombs;score[i]=p->score;x[i]=p->px/TH_ONE;y[i]=p->py/TH_ONE;}
+    }
+    tx_printf("T7 %s=%u scene=%d players=%d matrix_auto=%d p1_life=%d p1_skill=%d p1_score=%u p1_x=%d p1_y=%d p1_held=%u p2_life=%d p2_skill=%d p2_score=%u p2_x=%d p2_y=%d p2_held=%u p3_life=%d p3_skill=%d p3_score=%u p3_x=%d p3_y=%d p3_held=%u\r\n",
+       key,id,scene,count,matrix_autofire,life[0],skill[0],score[0],x[0],y[0],held[0],life[1],skill[1],score[1],x[1],y[1],held[1],life[2],skill[2],score[2],x[2],y[2],held[2]);
 }
 static void control_state(unsigned id){
     tx_printf("S4 id=%u epoch=%u scene=%d phase=%d step=%d count=%d cap=%d bullet=%d square=%d alpha=%d vsync=%d hw=%d auto=%d stats=%d\r\n",
       id,settings_epoch,scene,scene==SCENE_TH?th.mode:scene==SCENE_GAME?game.phase:0,count_step,control_limit(),
       scene==SCENE_SQUARES?DEMO_MAX_SQUARES:scene==SCENE_GAME?MAX_HOSTILE_BULLETS:scene==SCENE_TH?TH_MAX_BULLETS:3,
       scene==SCENE_TH?th_pressure_scale():game_seed_size(),demo_square_size(),alpha_fx,vsync,use_hw,autoplay,show_stats);
-    tx_printf("A4 id=%u bgm=%d track=%s volume=%d tone=%d motion=%d motion_min_px=%d table=%d stress_auto=%d density=%d verbose=%d period=%d bank_sounds=%d mixer=%d audio_ctrl=%u pressure_supported=1 music_supported=1 music_auto=%d music_index=%d music_total=10\r\n",
+    tx_printf("A4 id=%u bgm=%d track=%s volume=%d tone=%d motion=%d motion_min_px=%d table=%d stress_auto=%d density=%d verbose=%d period=%d bank_sounds=%d mixer=%d audio_ctrl=%u pressure_supported=1 music_supported=1 music_auto=%d music_index=%d music_total=10 core_hz=%u coop_supported=1\r\n",
       id,music_enabled(),aud_name(aud_bgm_current()),aud.master,aud.tone,demo_motion_enabled(),demo_motion_min_size(),demo_table_enabled(),
-      th.stress_auto,th_stress_dens(&th),report_verbose,img_period,aud.nsnd,aud.mixer,HDMI_REG(0x20),music_follow_scene(),music_index());
-    control_video_state(id);control_engine_state(id);control_input_state(id);
+      th.stress_auto,th_stress_dens(&th),report_verbose,img_period,aud.nsnd,aud.mixer,HDMI_REG(0x20),music_follow_scene(),music_index(),(unsigned)BSP_CLINT_HZ);
+    control_video_state(id);control_engine_state(id);control_input_state(id);control_party_line("id",id);
 }
 static int control_count(int v){
     if(scene==SCENE_SQUARES){control_fence();sq_count=bounded(v,1,DEMO_MAX_SQUARES);return 1;}
@@ -69,7 +87,8 @@ static int control_apply(ControlEvent e){
     case CT_BARS:if(v<0||v>1)return 0;hdmi_test_pattern(v);break;
     case CT_RESOLUTION:
         if(v<0||v>1||!hdmi_dual_supported())return 0;
-        control_fence();HDMI_MODE=(unsigned)v;break;
+        control_fence();HDMI_MODE=(unsigned)v;video_trial=v!=0;video_trial_start=now();break;
+    case CT_VIDEO_CONFIRM:if(!video_trial)return 0;video_trial=0;break;
     case CT_SCENE:
         if(v<0||v>=SCENE_COUNT)return 0;control_fence();scene=v;aud_tone(0);
         dir_x=dir_y=0;key_pressed=th_edge=0;control_move(0);view_dirty=1;th_bot_last=0;break;
@@ -131,6 +150,12 @@ static int control_apply(ControlEvent e){
     default:return 0;
     }
     if(changed){++settings_epoch;stats_reset=1;}return 1;
+}
+static void poll_video_trial(void){
+    if(video_trial&&(uint32_t)(now()-video_trial_start)>=(uint32_t)BSP_CLINT_HZ*10u){
+        video_trial=0;HDMI_MODE=0;stats_reset=1;++settings_epoch;
+        tx_puts("[video trial expired: returning to 720p]\r\n");control_video_state(0);
+    }
 }
 static int cycle_value(const int *items,int n,int current,int direction){
     int i;for(i=0;i<n&&items[i]!=current;i++);if(i==n)i=0;return items[(i+n+direction)%n];

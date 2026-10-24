@@ -27,7 +27,10 @@ typedef enum { RAPID, POWER, BOOTS, VITALITY, MAGNET, MULTISHOT, NOVA, UPGRADE_C
 
 /* kind: 0 slime, 1 runner, 2 brute, 3 root king, 4 spitter (ranged). */
 typedef struct { int active, x, y, hp, max_hp, kind, spawn, hit, id, attack_timer, volley; } Enemy;
-typedef struct { int active, x, y, vx, vy, life, damage, style; } Bullet;
+/* Q8 velocities stay within signed16 in every emitter/weapon. Life remains
+ * signed32; packed damage/style preserve all current values. 24B vs 32B. */
+typedef struct { int active, x, y; int16_t vx, vy; int life; uint16_t damage; uint8_t style,owner; } Bullet;
+typedef char bullet_is_24_bytes[sizeof(Bullet)==24?1:-1];
 typedef struct { int active, x, y, value; } Gem;
 typedef struct { int life, total, x, y, vx, vy, color, size; } Particle;
 
@@ -66,18 +69,28 @@ typedef struct {
 @Particle：特效
 */
 enum { GS_SHOT=1,GS_HIT=2,GS_KILL=4,GS_HURT=8,GS_LEVEL=16,GS_SKILL=32 };
+#define GAME_PLAYER_FIELDS \
+    int x,y,hp,max_hp,invincible; \
+    int facing,moving,aim_x,aim_y,fire_timer,fire_period,damage; \
+    int speed,shots,pickup_radius,xp,next_xp,level,kills; \
+    int hurt_flash,muzzle,upgrades[UPGRADE_COUNT],choices[3]; \
+    int skill_cooldown,skill_flash,skill_casts,player_active; \
+    int weapon_heading,weapon_burst,weapon_flash_mask,weapon_idle_ticks;
+typedef struct { GAME_PLAYER_FIELDS } GamePlayer;
+#define GAME_PLAYERS 3
 typedef struct {
+    union { GamePlayer actor; struct { GAME_PLAYER_FIELDS }; };
+    GamePlayer party[GAME_PLAYERS];
+    Input player_input[GAME_PLAYERS];
+    int player_count,actor_index,upgrade_mask,upgrade_actor;
     uint32_t sfx;
     Phase phase;
     uint32_t rng;
-    int ticks, visual_ticks, x, y, hp, max_hp, invincible;
-    int facing, moving, aim_x, aim_y, fire_timer, fire_period, damage;
-    int speed, shots, pickup_radius, xp, next_xp, level, kills;
-    int spawn_timer, next_enemy_id, enemy_count, banner, hurt_flash;
-    int muzzle, horde_left, horde_timer, horde_ticks, boss_pending, bosses_killed, limit_mode, stress_tier;
+    int ticks, visual_ticks;
+    int spawn_timer, next_enemy_id, enemy_count, banner;
+    int horde_left, horde_timer, horde_ticks, boss_pending, bosses_killed, limit_mode, stress_tier;
     int stress_bullet_target; /* tier 4: cap and firing load; all shots originate at enemies */
     Event event;
-    int upgrades[UPGRADE_COUNT], choices[3];
     Enemy enemies[MAX_ENEMIES];
     Bullet bullets[MAX_BULLETS];
     Bullet hostile[MAX_HOSTILE_BULLETS];
@@ -103,10 +116,7 @@ typedef struct {
     /* Per-enemy cached steering: no additional state or work per hostile shot. */
     int16_t walk_dx[MAX_ENEMIES], walk_dy[MAX_ENEMIES];
     uint8_t orbit_slot[MAX_ENEMIES];
-    int skill_cooldown, skill_flash, skill_casts;
-    int player_active; /* counted within the existing player update, no extra pool scan */
     int formation_x,formation_y,formation_count,formation_start,formation_span,formation_lanes;
-    int weapon_heading,weapon_burst,weapon_flash_mask,weapon_idle_ticks;
     /* Visual-only indices into the current seed draw table. Collected during
      * its existing generation, never a second full-pool scan in normal play. */
     uint32_t occlusion_near[GAME_OCCLUSION_NEAR_MAX];
@@ -124,6 +134,10 @@ void game_start_stress(Game *game, uint32_t seed, int tier);
 void game_set_stress_bullets(Game *game, int count);
 void game_start_limit(Game *game, uint32_t seed);
 void game_tick(Game *game, Input input);
+void game_tick_coop(Game *game,const Input input[GAME_PLAYERS]);
+void game_coop_enable(Game *game,int players);
+const GamePlayer *game_player(const Game *game,int player);
+int game_actor_level(const Game *game,const GamePlayer *player);
 /*
  * Optional timing of the last PLAYING game_tick(), in game_clock() ticks
  * (game_clock = 0: nothing measured). enemies: spawn director + enemy update,

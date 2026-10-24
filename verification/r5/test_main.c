@@ -533,6 +533,11 @@ static void finish(void)
     printf("R3 skill casts %d; native scenes and controls exercised\n",game.skill_casts);
     printf("video model fullframes 720=%u 1080=%u; render canvas=%ux%u\n",video_frames[0],video_frames[1],disp_w,disp_h);
     assert(video_frames[0]>50 && video_frames[1]>20 && disp_w==1280 && disp_h==720);
+    assert(control_apply((ControlEvent){CT_RESOLUTION,1,800,1}));assert(video_trial);
+    assert(control_apply((ControlEvent){CT_VIDEO_CONFIRM,0,801,0}));assert(!video_trial);
+    assert(control_apply((ControlEvent){CT_RESOLUTION,1,802,1}));video_trial_start=now()-(uint32_t)BSP_CLINT_HZ*10u-1u;
+    poll_video_trial();assert(!video_trial&&!(HDMI_MODE&1u));
+    puts("PASS 1080 trial confirm and automatic timeout return to 720p");
     printf(errors ? "FAIL (%u)\n" : "PASS\n", errors);
     if (ulog) fclose(ulog);
     exit(errors ? 1 : 0);

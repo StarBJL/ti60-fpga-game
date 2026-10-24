@@ -266,6 +266,7 @@ static void diag_text(const char *tag)
 /* Input                                                                      */
 /* ------------------------------------------------------------------------- */
 static int      dir_x, dir_y;         /* latched manual direction */
+static int player_pick[3],player_slow[3],matrix_autofire=1;
 static uint32_t key_pressed;          /* edge keys waiting for the next tick */
 static int      autoplay = AUTOPLAY_DEFAULT;
 static int      vsync    = VSYNC_DEFAULT;
@@ -673,7 +674,7 @@ static void handle_legacy_char(char c)
 
 static void poll_uart(void)
 {
-    poll_input_devices();
+    poll_input_devices();poll_video_trial();
     while (uart_readOccupancy(BSP_UART_TERMINAL)) {
         const uint8_t c = (uint8_t)uart_read(BSP_UART_TERMINAL);
         if (!pad_feed(c, now())) handle_char((char)c);   /* PC 端 pc_pad.py 的按键状态包另行处理 */
@@ -1424,7 +1425,7 @@ static uint32_t pct_of(uint32_t part, uint32_t total)
 
 static uint32_t per_us(uint32_t ticks, uint32_t n)
 {
-    return n ? ticks / (n * TICKS_PER_US) : 0u;
+    return n ? (uint32_t)((uint64_t)ticks*1000000u/((uint64_t)n*BSP_CLINT_HZ)) : 0u;
 }
 
 static void win_end(const Win *w, uint32_t t, WinStats *s)
@@ -1437,7 +1438,7 @@ static void win_end(const Win *w, uint32_t t, WinStats *s)
 
     memset(s, 0, sizeof(*s));
     if (!el) el = 1u;
-    s->el_us  = el / TICKS_PER_US ? el / TICKS_PER_US : 1u;
+    s->el_us  = per_us(el,1) ? per_us(el,1) : 1u;
     s->frames = n;
     s->logic10=(uint32_t)(((uint64_t)w->ticks*BSP_CLINT_HZ*10u+el/2u)/el);
     s->prs=w->prs&&HDMI_REG(0x4c)==0x50525332u;
@@ -1448,18 +1449,18 @@ static void win_end(const Win *w, uint32_t t, WinStats *s)
     }
     s->video_delta=hdmi_uf_cnt()-w->video0;s->audio_delta=HDMI_REG(0x2c)-w->audio0;
     s->loop_work_us=per_us(w->logic+w->submit+w->qstall+w->tail,n);
-    s->work_max_us=w->work_max/TICKS_PER_US;s->over_budget=w->over_budget;
+    s->work_max_us=per_us(w->work_max,1);s->over_budget=w->over_budget;
     s->fps10  = (uint32_t)(((uint64_t)n * BSP_CLINT_HZ * 10u + el / 2u) / el);
     s->hdmi_fps = (uint32_t)(((uint64_t)(hdmi_frame_cnt() - w->hdmi0) * BSP_CLINT_HZ + el / 2u) / el);
 
     s->vsync     = per_us(w->vsync, n);
     s->logic     = per_us(w->logic, w->ticks);
-    s->logic_max = w->logic_max / TICKS_PER_US;
+    s->logic_max = per_us(w->logic_max,1);
     s->submit    = per_us(w->submit, n);
     s->qstall    = per_us(w->qstall, n);
     s->tail      = per_us(w->tail, n);
     s->draw      = per_us(w->submit + w->qstall + w->tail, n);
-    s->draw_max  = w->draw_max / TICKS_PER_US;
+    s->draw_max  = per_us(w->draw_max,1);
     s->work      = per_us(w->logic,w->frames) + s->draw;          /* a frame that also ticks */
     s->limit10   = s->work ? 10000000u / s->work : 0u;
 
@@ -1480,7 +1481,7 @@ static void win_end(const Win *w, uint32_t t, WinStats *s)
     s->seeds_n = n ? (w->seeds_n + n / 2u) / n : 0u;
     { int k; for (k = 0; k < 6; k++) s->sc[k] = per_us(w->sc[k], n);
              for (k = 0; k < 4; k++) s->lg[k] = per_us(w->lg[k], w->ticks); }
-    s->seed_ns = w->seeds_n ? (uint32_t)((uint64_t)w->seeds * 1000u / TICKS_PER_US / w->seeds_n) : 0u;
+    s->seed_ns = w->seeds_n ? (uint32_t)((uint64_t)w->seeds * 1000000000u / ((uint64_t)BSP_CLINT_HZ*w->seeds_n)) : 0u;
     s->qend   = n ? (w->qend + n / 2u) / n : 0u;
     s->qpeak  = w->qpeak;
     s->stalls = blit_st.stalls - w->stalls0;
@@ -1520,11 +1521,11 @@ static void win_end(const Win *w, uint32_t t, WinStats *s)
         rbytes += (uint64_t)(blit_rd(BLIT_R_PERF_XRBEAT) - w->xrb0) * 16u;
         wbytes += (uint64_t)(blit_rd(BLIT_R_PERF_XWBEAT) - w->xwb0) * 16u;
     }
-    s->blt     = (uint32_t)((uint64_t)busy * 100u / ((uint64_t)s->el_us * BLIT_CLK_MHZ));
+    s->blt     = pct_of(busy,el);
     s->rd_mbs  = (uint32_t)(rbytes / s->el_us);            /* bytes per us = MB/s */
     s->wr_mbs  = (uint32_t)(wbytes / s->el_us);
-    s->rd_busy = busy ? (uint32_t)(rbytes * BLIT_CLK_MHZ / busy) : 0u;
-    s->wr_busy = busy ? (uint32_t)(wbytes * BLIT_CLK_MHZ / busy) : 0u;
+    s->rd_busy = busy ? (uint32_t)(rbytes * BSP_CLINT_HZ / busy / 1000000u) : 0u;
+    s->wr_busy = busy ? (uint32_t)(wbytes * BSP_CLINT_HZ / busy / 1000000u) : 0u;
 #endif /* SPROUT_STATS */
 }
 
@@ -1556,9 +1557,24 @@ static void th_uart_line(void)
  * Render loop, logical ticks and physical new scan frames are distinct metrics. */
 static unsigned telemetry_seq;
 static int measurement_scene=-1,measurement_phase=-1;
+static Input player_game_input(unsigned who,uint32_t time){
+    uint32_t h=pad_source_held(who,time,TICKS_PER_MS),p=pad_source_pressed(who,time,TICKS_PER_MS);Input in={0};
+    if(h&PAD_LEFT)in.held|=KEY_LEFT;if(h&PAD_RIGHT)in.held|=KEY_RIGHT;
+    if(h&PAD_UP)in.held|=KEY_UP;if(h&PAD_DOWN)in.held|=KEY_DOWN;
+    if(p&PAD_BOMB)in.pressed|=KEY_SKILL;if(p&PAD_PAUSE)in.pressed|=KEY_PAUSE;
+    if(p&(PAD_START|PAD_SHOT))in.pressed|=KEY_START;
+    if(player_pick[who]>=1&&player_pick[who]<=3)in.pressed|=KEY_PICK1<<(player_pick[who]-1);
+    player_pick[who]=0;
+    if(who==0&&!pad_active(time,TICKS_PER_MS)){
+        if(dir_x<0)in.held|=KEY_LEFT;if(dir_x>0)in.held|=KEY_RIGHT;
+        if(dir_y<0)in.held|=KEY_UP;if(dir_y>0)in.held|=KEY_DOWN;
+    }return in;
+}
+
 static void print_telemetry(const WinStats *s){
     unsigned id=++telemetry_seq;int count=scene==SCENE_SQUARES?sq_count:scene==SCENE_GAME?game_hostile_count(&game):scene==SCENE_TH?th.nbullets:3;
     GfxFontStats fs=gfx_font_stats();
+    control_party_line("seq",id);if(video_trial)control_video_state(0);
     tx_printf("M4 seq=%u epoch=%u scene=%d phase=%d count=%d target=%d step=%d bullet=%d square=%d alpha=%d vsync=%d hw=%d motion=%d table=%d bgm=%d submit_mode=%d band=%d cache=%d overlap=%d overlap_active=%d seed_table=%d seed_build=%d sort=%d kpath=%d rd_bursts=%u wr_bursts=%u rd_words=%u wide=%u\r\n",
       id,settings_epoch,scene,scene==SCENE_TH?th.mode:scene==SCENE_GAME?game.phase:0,count,control_limit(),count_step,
       scene==SCENE_TH?th_pressure_scale():game_seed_size(),demo_square_size(),alpha_fx,vsync,use_hw,demo_motion_enabled(),demo_table_enabled(),music_enabled(),
@@ -1567,9 +1583,9 @@ static void print_telemetry(const WinStats *s){
     tx_printf("F4 seq=%u elapsed_us=%u render10=%u logic10=%u present10=%u repeat10=%u scan10=%u valid=%u video_uf=%u audio_uf=%u drops=%u\r\n",
       id,s->el_us,s->fps10,s->logic10,s->present10,s->repeat10,s->scan10,s->prs,s->video_delta,s->audio_delta,tx_dropped);
     tx_printf("P4 seq=%u logic_us=%u logic_max_us=%u submit_us=%u wait_us=%u work_us=%u work_max_us=%u over=%u busy=%u phase1_us=%u bands_us=%u profile=%d\r\n",
-      id,s->logic,s->logic_max,s->submit,s->qstall+s->tail,s->loop_work_us,s->work_max_us,s->over_budget,s->blt,s->bp[BLIT_BP_P1]/BLIT_CLK_MHZ,s->bp[BLIT_BP_BAND]/BLIT_CLK_MHZ,SPROUT_STATS);
-    tx_printf("C4 seq=%u font_hit=%u font_miss=%u font_reset=%u label_hit=%u label_miss=%u font_pixels=%u track=%s w=%u h=%u auto=%d density=%d stress_auto=%d tone=%d volume=%d bank_sounds=%d mixer=%d audio_ctrl=%u stats=%d verbose=%d music_auto=%d music_index=%d music_total=10 pressure_supported=1 motion_min_px=%d player_shots=%d locator_us=%u locator_on=%d enemy_us=%u player_logic_us=%u hostile_logic_us=%u hud_us=%u band_splits=%u band_overflow=%u\r\n",
-      id,fs.hits,fs.misses,fs.resets,fs.label_hits,fs.label_misses,fs.used_pixels,aud_name(aud_bgm_current()),disp_w,disp_h,autoplay,th_stress_dens(&th),th.stress_auto,aud.tone,aud.master,aud.nsnd,aud.mixer,HDMI_REG(0x20),show_stats,report_verbose,music_follow_scene(),music_index(),demo_motion_min_size(),scene==SCENE_GAME?game.player_active:scene==SCENE_TH?th.shots_alive:0,s->sc[5],scene==SCENE_GAME&&!game.limit_mode,s->sc[2],s->lg[1],s->lg[2],s->hud,s->bsplits,hw_avail?((blit_rd(BLIT_R_STATUS)>>6)&1u):0u);
+      id,s->logic,s->logic_max,s->submit,s->qstall+s->tail,s->loop_work_us,s->work_max_us,s->over_budget,s->blt,per_us(s->bp[BLIT_BP_P1],1),per_us(s->bp[BLIT_BP_BAND],1),SPROUT_STATS);
+    tx_printf("C4 seq=%u font_hit=%u font_miss=%u font_reset=%u label_hit=%u label_miss=%u font_pixels=%u track=%s w=%u h=%u auto=%d density=%d stress_auto=%d tone=%d volume=%d bank_sounds=%d mixer=%d audio_ctrl=%u stats=%d verbose=%d music_auto=%d music_index=%d music_total=10 pressure_supported=1 motion_min_px=%d player_shots=%d locator_us=%u locator_on=%d enemy_us=%u player_logic_us=%u hostile_logic_us=%u hud_us=%u band_splits=%u band_overflow=%u core_hz=%u square_band_bound=%u players=%d\r\n",
+      id,fs.hits,fs.misses,fs.resets,fs.label_hits,fs.label_misses,fs.used_pixels,aud_name(aud_bgm_current()),disp_w,disp_h,autoplay,th_stress_dens(&th),th.stress_auto,aud.tone,aud.master,aud.nsnd,aud.mixer,HDMI_REG(0x20),show_stats,report_verbose,music_follow_scene(),music_index(),demo_motion_min_size(),scene==SCENE_GAME?game.player_active:scene==SCENE_TH?th.shots_alive:0,s->sc[5],scene==SCENE_GAME&&!game.limit_mode,s->sc[2],s->lg[1],s->lg[2],s->hud,s->bsplits,hw_avail?((blit_rd(BLIT_R_STATUS)>>6)&1u):0u,(unsigned)BSP_CLINT_HZ,demo_band_bound(),scene==SCENE_GAME?game.player_count:scene==SCENE_TH?th.player_count:0);
 }
 
 /* Physical scan statistics: independent of render-loop FPS, audio ABI untouched. */
@@ -1650,8 +1666,8 @@ static void print_window(const WinStats *s, const RenderInfo *info, const Gfx *g
         tx_printf("  band %s%s: phase1 %u us + bands %u us (write-back %u) /frame | K busy %u us, %u K beats, %u bin records /frame"
                   " | split frames %u | %s%s\r\n",
                   blit_st.band ? "ON" : "off", blit_st.band_koff ? " (K path off)" : "",
-                  s->bp[BLIT_BP_P1] / BLIT_CLK_MHZ, s->bp[BLIT_BP_BAND] / BLIT_CLK_MHZ,
-                  s->bp[BLIT_BP_FLUSH] / BLIT_CLK_MHZ, s->bp[BLIT_BP_KCLK] / BLIT_CLK_MHZ,
+                  per_us(s->bp[BLIT_BP_P1],1), per_us(s->bp[BLIT_BP_BAND],1),
+                  per_us(s->bp[BLIT_BP_FLUSH],1), per_us(s->bp[BLIT_BP_KCLK],1),
                   s->bp[BLIT_BP_KBEAT], s->bp[BLIT_BP_RECS], s->bsplits,
                   (st & BLIT_ST_BOVF) ? "BIN OVERFLOW " : "", (st & BLIT_ST_BERR) ? "BAD RECORD" : "ok");
     }
@@ -1686,7 +1702,7 @@ static void run_logic_tick(Frame *f, uint32_t frame, uint32_t *next_tick)
             th_edge = 0;
             if (pad_has_state()) {
                 held = pad_held(t0, TICKS_PER_MS);
-                pressed |= pad_pressed(t0, TICKS_PER_MS);
+                pressed |= !autoplay&&th.diff!=TH_STRESS&&th.mode==TH_PLAY?pad_source_pressed(0,t0,TICKS_PER_MS):pad_pressed(t0, TICKS_PER_MS);
                 if (autoplay && (held & (PAD_UP | PAD_DOWN | PAD_LEFT | PAD_RIGHT | PAD_SHOT))) {
                     autoplay = 0;
                     tx_puts("[autoplay OFF: pad]\r\n");
@@ -1711,7 +1727,21 @@ static void run_logic_tick(Frame *f, uint32_t frame, uint32_t *next_tick)
             /* 刚从自动演示接手：回标题选难度（演示局是无敌的） */
             if (th_bot_last && !bot && th.mode != TH_TITLE) { th.mode = TH_TITLE; th.menu = 0; th.nbullets = 0; pressed = 0; }
             th_bot_last = bot;
-            th_tick(&th, held, pressed, bot);
+            if(!bot&&th.diff!=TH_STRESS){
+                if(th.mode==TH_PLAY&&th.player_count!=3)th_coop_enable(&th,3);
+                uint32_t ph[TH_PLAYERS],pp[TH_PLAYERS];
+                for(unsigned p=0;p<TH_PLAYERS;p++){
+                    ph[p]=pad_source_held(p,t0,TICKS_PER_MS);pp[p]=pad_source_pressed(p,t0,TICKS_PER_MS);
+                    if(player_pick[p]==1)pp[p]|=PAD_BOMB;
+                    if(player_pick[p]==2)player_slow[p]=!player_slow[p];player_pick[p]=0;
+                    if(player_slow[p])ph[p]|=PAD_SLOW;if(p==2&&matrix_autofire)ph[p]|=PAD_SHOT;
+                }
+                if(!pad_active(t0,TICKS_PER_MS)){ph[0]&=~(PAD_LEFT|PAD_RIGHT|PAD_UP|PAD_DOWN);if(dir_x<0)ph[0]|=PAD_LEFT;if(dir_x>0)ph[0]|=PAD_RIGHT;if(dir_y<0)ph[0]|=PAD_UP;if(dir_y>0)ph[0]|=PAD_DOWN;}
+                /* Shared menus accept any controller. In play, legacy host
+                 * actions apply only to P1; device skill edges stay separate. */
+                pp[0]|=pressed;if(!pad_has_state())ph[0]|=PAD_SHOT;
+                th_tick_coop(&th,ph,pp,0);
+            }else th_tick(&th, held, pressed, bot);
             th_sound_tick(&th);                /* 事件位 -> 音效，状态 -> BGM */
             if (aud.bank_new) {                /* tools/load_sound.py 刚把声音库写进 DDR */
                 aud.bank_new = 0;
@@ -1720,7 +1750,7 @@ static void run_logic_tick(Frame *f, uint32_t frame, uint32_t *next_tick)
             }
         } else if (scene == SCENE_GAME) {
             {   /* pc_pad.py：方向 / 射击键一按就退出自动驾驶；Enter / Z = 开始，Esc = 暂停 */
-                const uint32_t pe = pad_pressed(t0, TICKS_PER_MS);
+                const uint32_t pe = !game.limit_mode&&game.phase==PLAYING?pad_source_pressed(0,t0,TICKS_PER_MS):pad_pressed(t0, TICKS_PER_MS);
                 if (autoplay && (pad_held(t0, TICKS_PER_MS) & (PAD_UP | PAD_DOWN | PAD_LEFT | PAD_RIGHT | PAD_SHOT))) {
                     autoplay = 0;
                     tx_puts("[autoplay OFF: pad]\r\n");
@@ -1731,15 +1761,21 @@ static void run_logic_tick(Frame *f, uint32_t frame, uint32_t *next_tick)
             }
             in = autoplay ? bot_input(&game, frame) : manual_input();
             in.pressed |= key_pressed;
+            Input party_input[GAME_PLAYERS]={in,{0},{0}};
+            if(!game.limit_mode&&!autoplay){
+                if(game.phase==PLAYING&&game.player_count!=3)game_coop_enable(&game,3);
+                for(unsigned p=0;p<GAME_PLAYERS;p++)party_input[p]=player_game_input(p,t0);
+                party_input[0].pressed|=in.pressed;
+            }
             key_pressed = 0;
 #if SPROUT_STATS
             memset(&game_split, 0, sizeof(game_split));
-            game_tick(&game, in);
+            game_tick_coop(&game, party_input);
             game_sound_tick(&game);
             f->lg[0] = game_split.enemies; f->lg[1] = game_split.pbullets;
             f->lg[2] = game_split.hostile; f->lg[3] = game_split.rest;
 #else
-            game_tick(&game, in);
+            game_tick_coop(&game, party_input);
             game_sound_tick(&game);
 #endif
         } else if (scene == SCENE_SQUARES) {
@@ -1808,7 +1844,16 @@ int main(void)
     GfxHwTarget hw_target;
 
     bsp_init();
-    bsp_printf("\r\n=== TI60-R5.6-STRESS-NO-LOCATOR-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
+#ifdef __riscv
+    /* A versioned hardware clock register prevents mixing OC bit and ELF. */
+    uint32_t clock_id=HDMI_REG(0x7c),actual_hz=HDMI_REG(0x78);
+    if(clock_id==0x434c4b37u&&actual_hz){
+        write_u32(actual_hz/(115200u*8u)-1u,BSP_UART_TERMINAL+UART_CLOCK_DIVIDER);
+        bsp_printf("Clock actual=%u Hz firmware=%u Hz\r\n",actual_hz,(unsigned)BSP_CLINT_HZ);
+        if(actual_hz!=BSP_CLINT_HZ){bsp_printf("CLOCK MISMATCH: load the matched bit and ELF.\r\n");for(;;);}
+    }else if(BSP_CLINT_HZ!=200000000u){bsp_printf("CLOCK ABI missing: OC firmware requires its matched bit.\r\n");for(;;);}
+#endif
+    bsp_printf("\r\n=== TI60-R5.7-COOP-PERF-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
                (int)(BSP_CLINT_HZ / 1000000u));
 
     if (hdmi_id() != HDMI_ID_VALUE)
@@ -2119,7 +2164,7 @@ int main(void)
         }
         f.tail += t3 - tl;
         /* 弹幕压力自动档：这一帧除了等 vsync 以外的全部时间 */
-        if (scene == SCENE_TH) th_stress_frame(&th, (t3 - ta - f.vsync) / TICKS_PER_US, hdmi_mode_1080()?2u*TH_FRAME_BUDGET_US:TH_FRAME_BUDGET_US);
+        if (scene == SCENE_TH) th_stress_frame(&th, per_us(t3-ta-f.vsync,1), hdmi_mode_1080()?2u*TH_FRAME_BUDGET_US:TH_FRAME_BUDGET_US);
         ++frame;
         /* Do not label a mixed transition window with the new configuration.
          * A phase or control change starts fresh counters after this frame. */

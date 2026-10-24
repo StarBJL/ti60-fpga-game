@@ -21,6 +21,12 @@ typedef struct { int width,height; const Pixel *pixels; const uint8_t *alpha; } 
 #define GFX_BLIT_ADD 2
 /* One entry of a batched draw list: sprites[sprite] at (x,y), see gfx_blit_list. */
 typedef struct { int16_t x,y; int32_t sprite; } GfxItem;
+/* Publish XY in one aligned word instead of two write-through halfword stores.
+ * memcpy preserves strict aliasing; all supported builds are little endian. */
+static inline void gfx_item_xy(GfxItem *item,int x,int y){
+    uint32_t xy=(uint16_t)x|((uint32_t)(uint16_t)y<<16);
+    __builtin_memcpy(item,&xy,sizeof xy);
+}
 typedef struct {
     void (*begin_frame)(void *context);
     void (*solid_fill)(void *context,int x,int y,int w,int h,Pixel color);

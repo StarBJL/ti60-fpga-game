@@ -26,7 +26,7 @@
 --Fpu false
 --L1D true
 --ddrADataWidth 128
---systemFrequency 100000000
+--systemFrequency 200000000
 --apbSlave name=io_apbSlave_0,address=0x100000,size=65536
 --dCacheWays 8
 --interrupt name=userInterruptA,id=16

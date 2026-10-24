@@ -1,0 +1,226 @@
+Running: /home/user/fpga_contest/vivado/efinity-2026.1.132-linux-x64/efinity/2026.1/bin/efx_sta --prj /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/ddr_demo_ti60.xml -t /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc.tcl -- --circuit ddr_demo_ti60 --family Titanium --device Ti60F225 --operating_conditions I3 --vdb_file outflow/ddr_demo_ti60.vdb --use_vdb_file on --prj /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/ddr_demo_ti60.xml --output_dir outflow --work_dir work_pnr --place_file outflow/ddr_demo_ti60.place --route_file outflow/ddr_demo_ti60.route --sync_file outflow/ddr_demo_ti60.interface.csv --generate_prevpr_netlist off --sdc_file=sdc/ddr3.sdc
+INFO     : Reading project database "/data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/ddr_demo_ti60.xml" [FlowMsg::ProjectDatabaseReading]
+INFO     : Maximum concurrency has been set to 12 [FlowMsg::MaxThreads]
+WARNING  : No ports matched 'clk_in'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:1] No valid pin(s) found for clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:1] Unable to run 'create_clock' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:10] No valid object(s) found for 'axi_clk'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:10] No valid pin(s) found for clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:10] Unable to run 'create_clock' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:12] No valid object(s) found for 'peripheralClk'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:12] No valid pin(s) found for clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:12] Unable to run 'create_clock' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:14] set_clock_groups: Defaulting to -exclusive since none of the required option was specified
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:15] set_clock_groups: Defaulting to -exclusive since none of the required option was specified
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:16] set_clock_groups: Defaulting to -exclusive since none of the required option was specified
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:17] set_clock_groups: Defaulting to -exclusive since none of the required option was specified
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:18] set_clock_groups: Defaulting to -exclusive since none of the required option was specified
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:55] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:55] set_output_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:55] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:56] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:56] set_output_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:56] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:57] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:57] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:57] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:58] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:58] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:58] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_RESET'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:59] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:59] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:59] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_RESET'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:60] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:60] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:60] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:61] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:61] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:61] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:62] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:62] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:62] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_UPDATE'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:63] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:63] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:63] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_UPDATE'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:64] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:64] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:64] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:65] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:65] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:65] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:66] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:66] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:66] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[14]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:106] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:106] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[14]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:107] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:107] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[15]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:108] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:108] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[15]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:109] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:109] Unable to run 'set_output_delay' constraint due to warnings found
+INFO     : SDC file 'sdc/ddr3.sdc' parsed successfully.
+INFO     : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+INFO     : Router Setup
+INFO     : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+INFO     : Routing trace digest: 10783304706054295166
+INFO     : Successfully reloaded trace from trace file
+WARNING  : No ports matched 'clk_in'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:1] No valid pin(s) found for clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:1] Unable to run 'create_clock' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:10] No valid object(s) found for 'axi_clk'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:10] No valid pin(s) found for clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:10] Unable to run 'create_clock' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:12] No valid object(s) found for 'peripheralClk'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:12] No valid pin(s) found for clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:12] Unable to run 'create_clock' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:14] set_clock_groups: Defaulting to -exclusive since none of the required option was specified
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:15] set_clock_groups: Defaulting to -exclusive since none of the required option was specified
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:16] set_clock_groups: Defaulting to -exclusive since none of the required option was specified
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:17] set_clock_groups: Defaulting to -exclusive since none of the required option was specified
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:18] set_clock_groups: Defaulting to -exclusive since none of the required option was specified
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:55] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:55] set_output_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:55] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:56] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:56] set_output_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:56] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:57] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:57] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:57] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:58] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:58] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:58] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_RESET'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:59] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:59] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:59] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_RESET'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:60] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:60] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:60] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:61] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:61] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:61] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:62] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:62] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:62] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_UPDATE'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:63] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:63] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:63] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_UPDATE'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:64] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:64] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:64] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:65] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:65] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:65] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:66] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:66] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:66] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[14]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:106] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:106] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[14]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:107] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:107] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[15]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:108] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:108] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[15]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:109] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/sdc/ddr3.sdc:109] Unable to run 'set_output_delay' constraint due to warnings found
+INFO     : SDC file 'sdc/ddr3.sdc' parsed successfully.
+           
+INFO     : Evaluating user specified Tcl script "/data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc.tcl" [FlowMsg::EvaluatingTclScript]
+INFO     : Reset timing
+INFO     : Reading SDC file /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc
+WARNING  : No ports matched 'clk_in'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:1] No valid pin(s) found for clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:1] Unable to run 'create_clock' constraint due to warnings found
+INFO     : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:2] Creating clock 'core_clk' with 1 sources
+INFO     : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:6] Creating clock 'pll_fb_clk' with 1 sources
+INFO     : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:7] Creating clock 'sdram_clk' with 1 sources
+INFO     : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:8] Creating clock 'rx_cal_clk' with 1 sources
+INFO     : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:9] Creating clock 'tx_cal_clk' with 1 sources
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:10] No valid object(s) found for 'axi_clk'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:10] No valid pin(s) found for clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:10] Unable to run 'create_clock' constraint due to warnings found
+INFO     : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:11] Creating clock 'tx_cal_clk_90edge' with 1 sources
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:12] No valid object(s) found for 'peripheralClk'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:12] No valid pin(s) found for clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:12] Unable to run 'create_clock' constraint due to warnings found
+INFO     : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:25] Creating clock 'hdmi_tx_slow_clk' with 1 sources
+INFO     : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:26] Creating clock 'hdmi_tx_fast_clk' with 1 sources
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:49] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:49] set_output_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:49] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:50] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:50] set_output_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:50] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:51] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:51] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:51] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:52] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:52] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:52] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_RESET'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:53] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:53] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:53] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_RESET'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:54] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:54] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:54] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:55] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:55] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:55] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:56] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:56] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:56] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_UPDATE'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:57] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:57] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:57] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : No ports matched 'jtag_inst1_UPDATE'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:58] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:58] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:58] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:59] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:59] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:59] Unable to run 'set_input_delay' constraint due to warnings found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:60] No clocks matched 'jtag_inst1_TCK'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:60] set_input_delay: No valid clock found for -clock
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:60] Unable to run 'set_input_delay' constraint due to warnings found
+INFO     : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:71] Creating clock 'clk_25m' with 1 sources
+WARNING  : No ports matched 'ddr_addr[14]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:100] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:100] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[14]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:101] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:101] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[15]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:102] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:102] Unable to run 'set_output_delay' constraint due to warnings found
+WARNING  : No ports matched 'ddr_addr[15]'
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:103] set_output_delay: No valid output port(s) found
+WARNING  : [SDC /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc:103] Unable to run 'set_output_delay' constraint due to warnings found
+INFO     : SDC file '/data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/cdc_no_groups.sdc' parsed successfully.
+INFO     : Write report_bus_skew report to "outflow/clock_cdc_setup.rpt" ...
+INFO     : Done printing report_bus_skew result
+INFO     : Write report_bus_skew report to "outflow/clock_cdc_hold.rpt" ...
+INFO     : Done printing report_bus_skew result
+INFO     : The entire flow of EFX_STA took 14.19741603 seconds [FlowMsg::StageDuration]
+INFO     :     The entire flow of EFX_STA took 17.11 seconds (approximately) in total CPU time [FlowMsg::StageDuration::CPUTime]
+INFO     : The entire flow of EFX_STA virtual memory usage: begin = 134.444 MB, end = 1963.512 MB, delta = 1829.068 MB [FlowMsg::VMUsage]
+INFO     : The entire flow of EFX_STA resident set memory usage: begin = 41.996 MB, end = 1788.944 MB, delta = 1746.948 MB [FlowMsg::RSSUsage]
+INFO     :     The entire flow of EFX_STA peak resident set memory usage = 1793.416 MB [FlowMsg::RSSUsage::Peak]

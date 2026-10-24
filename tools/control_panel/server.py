@@ -23,9 +23,9 @@ def default_log_root():
         return base/'Ti60R5'/'logs'
     return ROOT/'logs/r5'
 
-COMMANDS={'status','scene','start','pause','restart','menu','stress','skill','pick','move','stop','step','delta','count','bullet','square','period','density','auto','vsync','alpha','backend','motion','table','bgm','next','volume','tone','stats','verbose','bench','key','resolution','fast','bars','volume_delta','prev','music'}
-NO_ARGUMENT={'status','start','pause','restart','menu','skill','stop','next','prev','bench','fast'}
-FIELDS=['timestamp','boot','seq','epoch','scene','phase','count','target','step','bullet','square','alpha','vsync','hw','motion','table','bgm','track','resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','elapsed_us','render_fps','logic_hz','present_fps','repeat_fps','scan_hz','valid','video_uf','audio_uf','logic_us','logic_max_us','submit_us','wait_us','work_us','work_max_us','over','busy','phase1_us','bands_us','profile','font_hit','font_miss','font_reset','label_hit','label_miss','drops','submit_mode','band','cache','overlap','overlap_active','seed_table','seed_build','sort','kpath','rd_bursts','wr_bursts','rd_words','wide','video_rev','bars','tone','volume','bank_sounds','mixer','audio_ctrl','auto','density','stress_auto','stats','verbose','music_auto','music_index','music_total','r2_preset','r2_stage','r2_conditions_match','r2_initial_target','pressure_supported','motion_min_px','player_shots','locator_us','locator_on','enemy_us','player_logic_us','hostile_logic_us','hud_us','band_splits','band_overflow']
+COMMANDS={'status','scene','start','pause','restart','menu','stress','skill','pick','move','stop','step','delta','count','bullet','square','period','density','auto','vsync','alpha','backend','motion','table','bgm','next','volume','tone','stats','verbose','bench','key','resolution','fast','bars','volume_delta','prev','music','video_confirm'}
+NO_ARGUMENT={'status','start','pause','restart','menu','skill','stop','next','prev','bench','fast','video_confirm'}
+FIELDS=['timestamp','boot','seq','epoch','scene','phase','count','target','step','bullet','square','alpha','vsync','hw','motion','table','bgm','track','resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','elapsed_us','render_fps','logic_hz','present_fps','repeat_fps','scan_hz','valid','video_uf','audio_uf','logic_us','logic_max_us','submit_us','wait_us','work_us','work_max_us','over','busy','phase1_us','bands_us','profile','font_hit','font_miss','font_reset','label_hit','label_miss','drops','submit_mode','band','cache','overlap','overlap_active','seed_table','seed_build','sort','kpath','rd_bursts','wr_bursts','rd_words','wide','video_rev','bars','tone','volume','bank_sounds','mixer','audio_ctrl','auto','density','stress_auto','stats','verbose','music_auto','music_index','music_total','r2_preset','r2_stage','r2_conditions_match','r2_initial_target','pressure_supported','motion_min_px','player_shots','locator_us','locator_on','enemy_us','player_logic_us','hostile_logic_us','hud_us','band_splits','band_overflow','matrix_auto','core_hz','square_band_bound','players','video_trial','trial_ms','p1_life','p1_skill','p1_score','p1_x','p1_y','p1_held','p2_life','p2_skill','p2_score','p2_x','p2_y','p2_held','p3_life','p3_skill','p3_score','p3_x','p3_y','p3_held']
 def utc():return datetime.now(timezone.utc).isoformat(timespec='milliseconds')
 def parse_values(line):
     result={}
@@ -57,7 +57,7 @@ class Collector:
             self.state['firmware']=line.strip('= ')
         if line.startswith(('R4:','R5:')):self.compatible=True
         tag=line.split(' ',1)[0]
-        if tag in ('S4','A4','V5','E5'):
+        if tag in ('S4','A4','V5','E5') or (tag=='T7' and 'seq=' not in line):
             self.compatible=True;values=parse_values(line)
             if tag=='V5':
                 self.dualvideo=values.get('supported')==1
@@ -70,7 +70,7 @@ class Collector:
                 if len(self.responses)>32:del self.responses[next(iter(self.responses))]
             self.state.update(values);return None
         if tag=='ACK':self.acks.append(dict(parse_values(line),time=utc()));return None
-        if tag not in ('M4','F4','P4','C4'):return None
+        if tag not in ('M4','F4','P4','C4','T7'):return None
         data=parse_values(line);seq=data.get('seq')
         if not isinstance(seq,int):return None
         self.compatible=True
@@ -78,11 +78,11 @@ class Collector:
         self.parts.setdefault(seq,{})[tag]=data
         if len(self.parts)>12:del self.parts[next(iter(self.parts))]
         self.state.update({k:v for k,v in data.items() if k not in ('seq','epoch')})
-        if set(self.parts[seq])!={'M4','F4','P4','C4'}:return None
+        if not {'M4','F4','P4','C4'}.issubset(self.parts[seq]):return None
         row={'timestamp':utc(),'boot':self.boot}
-        for key in ('resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','video_rev','bars'):
+        for key in ('resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','video_rev','bars','video_trial','trial_ms'):
             if key in self.state:row[key]=self.state[key]
-        for part in ('M4','F4','P4','C4'):row.update(self.parts[seq][part])
+        for part in ('T7','M4','F4','P4','C4'):row.update(self.parts[seq].get(part,{}))
         for raw,name in [('render10','render_fps'),('logic10','logic_hz'),('present10','present_fps'),('repeat10','repeat_fps'),('scan10','scan_hz')]:
             row[name]=row.get(raw,0)/10
         if not row.get('valid'):

@@ -21,11 +21,15 @@ static int loc_buffer,loc_level,loc_heading,loc_idle,loc_dirty,loc_shape_dirty,l
 static RenderLocatorInfo loc_info;
 static const Game *loc_game;
 static int loc_ticks,loc_visual,loc_x,loc_y,loc_previous_cover,loc_previous_total,loc_phase;
+typedef struct {RenderLocatorInfo info;const Game *game;int ticks,visual,x,y,cover,total,phase;} LocatorHistory;
+static LocatorHistory locator_history[GAME_PLAYERS];
+static void locator_save(int id){locator_history[id]=(LocatorHistory){loc_info,loc_game,loc_ticks,loc_visual,loc_x,loc_y,loc_previous_cover,loc_previous_total,loc_phase};}
+static void locator_load(int id){LocatorHistory *h=&locator_history[id];loc_info=h->info;loc_game=h->game;loc_ticks=h->ticks;loc_visual=h->visual;loc_x=h->x;loc_y=h->y;loc_previous_cover=h->cover;loc_previous_total=h->total;loc_phase=h->phase;}
 static unsigned loc_bits(uint64_t v){
     return (unsigned)__builtin_popcount((uint32_t)v)+(unsigned)__builtin_popcount((uint32_t)(v>>32));
 }
 void render_locator_reset(void){
-    memset(&loc_info,0,sizeof loc_info);loc_game=0;loc_ticks=-1;
+    memset(&loc_info,0,sizeof loc_info);memset(locator_history,0,sizeof locator_history);loc_game=0;loc_ticks=-1;
 }
 RenderLocatorInfo render_locator_info(void){return loc_info;}
 static void locator_build_outline(void);
@@ -53,8 +57,8 @@ static void init_player_locator(void){
     for(s=0;s<LOC_POSES;s++)loc_outline[s]=(Sprite){LOC_W,LOC_H,loc_outline_pixels[s],0};
     loc_level=0;render_locator_reset();
 }
-static void locator_pose(const Game *g){
-    int level=game_appearance_level(g),idle=g->weapon_idle_ticks>30,h=g->weapon_heading&31;
+static void locator_pose_state(const Game *g,const GamePlayer *actor){
+    int level=game_actor_level(g,actor),idle=actor->weapon_idle_ticks>30,h=actor->weapon_heading&31;
     if(level==loc_level&&idle==loc_idle&&(idle||h==loc_heading))return;
     loc_level=level;loc_idle=idle;loc_heading=h;
     loc_buffer=(level-1)*33+(idle?32:h);
@@ -66,9 +70,9 @@ static void locator_pose(const Game *g){
     }
     memcpy(loc_actor,loc_body_rows[level-1],sizeof loc_actor);
     for(int k=0;k<2;k++){
-        WeaponPose p=weapon_pose(g,k,idle);
+        WeaponPose p=weapon_pose_player(actor,k,idle);
         const Sprite *a=render_gun_asset(level,p.heading);
-        int dx=p.x-g->x/FIX-CARROT_GUN_HALF+LOC_X,dy=p.y-g->y/FIX-CARROT_GUN_HALF+LOC_Y;
+        int dx=p.x-actor->x/FIX-CARROT_GUN_HALF+LOC_X,dy=p.y-actor->y/FIX-CARROT_GUN_HALF+LOC_Y;
         for(int y=0;y<CARROT_GUN_SIZE;y++)for(int x=0;x<CARROT_GUN_SIZE;x++)if(a->pixels[y*CARROT_GUN_SIZE+x]!=COLOR_KEY){
             int xx=x+dx,yy=y+dy;
             if((unsigned)xx<LOC_W&&(unsigned)yy<LOC_H)loc_actor[yy]|=(uint64_t)1<<xx;
@@ -109,12 +113,12 @@ static int locator_cover(uint64_t *left,const uint32_t *rows,int size,int x,int 
     }
     return n;
 }
-static void prepare_player_locator(const Game *g){
+static void prepare_player_locator_state(const Game *g,const GamePlayer *actor){
     if(g->limit_mode){render_locator_reset();return;}
     uint64_t left[LOC_H];
-    int bob=g->moving?(g->ticks/7)%2:0,cx=g->x/FIX,cy=g->y/FIX;
+    int bob=actor->moving?(g->ticks/7)%2:0,cx=actor->x/FIX,cy=actor->y/FIX;
     int ox=cx-LOC_X,oy=cy-LOC_Y-bob,total=0,covered=0,count=0;
-    locator_pose(g);memcpy(left,loc_actor,sizeof left);total=loc_actor_total;
+    locator_pose_state(g,actor);memcpy(left,loc_actor,sizeof left);total=loc_actor_total;
     int live_rows=0;for(int y=0;y<LOC_H;y++)live_rows+=left[y]!=0;
     for(int i=0;i<MAX_BULLETS&&live_rows>0;i++)if(g->bullets[i].active){
         const Bullet *b=&g->bullets[i];int style=(unsigned)b->style<8u?b->style:0;
@@ -158,3 +162,7 @@ static void prepare_player_locator(const Game *g){
     loc_game=g;loc_ticks=g->ticks;loc_visual=g->visual_ticks;loc_x=cx;loc_y=cy;
     loc_previous_cover=covered;loc_previous_total=total;loc_phase=(int)g->phase;
 }
+
+static void locator_pose(const Game *g){locator_pose_state(g,&g->actor);}
+static void prepare_player_locator_for(const Game *g,const GamePlayer *actor,int id){locator_load(id);prepare_player_locator_state(g,actor);locator_save(id);}
+static void prepare_player_locator(const Game *g){prepare_player_locator_for(g,&g->actor,0);}

@@ -1,5 +1,7 @@
 # Ti60 R5 工程入口 / Project entry
 
+当前候选 **R5.7**：先从`BOARD_TEST/r5_7`使用200MHz配套bit+debug ELF，上位机需重启。202.083333/205子目录是独立候选，禁止混用bit/ELF。详见[三人、性能、显示及下载说明](docs/R57_REPORT.html)。720P显示链路保留；1080P试切10秒未确认返回720P；480P未实现。下面是历史R5.6入口。
+
 当前版本：**R5.6-STRESS-NO-LOCATOR**。使用 R5.5 bit + `BOARD_TEST/r5_6/ti60_r5_6_debug.elf`；已烧入 R5.5 bit 时只需换 ELF。上位机重启后显示压力轮廓关闭。见 [修改与收益估算](docs/R5_6_LOCATOR_OFF.md)。
 
 请先阅读 [中文说明](README.md) 或 [English README](README_EN.md)。

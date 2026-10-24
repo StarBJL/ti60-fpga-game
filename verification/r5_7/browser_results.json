@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "physical_board": false,
+  "checks": [
+    "real PTY command ACKs",
+    "T7 three independent players",
+    "true core clock",
+    "1080 trial confirm",
+    "10-second timeout UI",
+    "R2 preset still applies",
+    "new CSV columns",
+    "no page errors"
+  ],
+  "errors": []
+}

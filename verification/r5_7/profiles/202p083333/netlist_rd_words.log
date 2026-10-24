@@ -1,0 +1,4 @@
+netlist: /data/users/user/codex_tmp/ti60_r57_work/clock_202/PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.v
+cone of u_blit/rd_words[10:0]: 100 cells, 44 inputs
+  formula: rd_words + registered increments: rdi_m rdi_x - bl_rvalid - 4 * bx_rvalid
+OK: 0 / 3000 random vectors differ

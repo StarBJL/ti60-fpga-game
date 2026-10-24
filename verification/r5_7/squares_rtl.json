@@ -1,0 +1,34 @@
+[
+  {
+    "count": 99999,
+    "size": 1,
+    "dense": false,
+    "all_batches_banded": true,
+    "passed": true,
+    "log": "PASS native 1280x720 SQTAB framebuffer exact, cycles 1511358 AR 62475 AW 107199\n- /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/squares_rtl_tb.sv:80: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel\n- Verilator: $finish at 8ms; walltime 1.460 s; speed 5.176 ms/s\n- Verilator: cpu 1.458 s on 1 threads; allocated 99 MB"
+  },
+  {
+    "count": 99999,
+    "size": 3,
+    "dense": false,
+    "all_batches_banded": true,
+    "passed": true,
+    "log": "PASS native 1280x720 SQTAB framebuffer exact, cycles 1995517 AR 68811 AW 119874\n- /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/squares_rtl_tb.sv:80: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel\n- Verilator: $finish at 10ms; walltime 1.919 s; speed 5.199 ms/s\n- Verilator: cpu 1.919 s on 1 threads; allocated 99 MB"
+  },
+  {
+    "count": 99999,
+    "size": 6,
+    "dense": false,
+    "all_batches_banded": true,
+    "passed": true,
+    "log": "PASS native 1280x720 SQTAB framebuffer exact, cycles 3196588 AR 78278 AW 138808\n- /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/squares_rtl_tb.sv:80: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel\n- Verilator: $finish at 16ms; walltime 3.022 s; speed 5.289 ms/s\n- Verilator: cpu 3.021 s on 1 threads; allocated 99 MB"
+  },
+  {
+    "count": 99999,
+    "size": 1,
+    "dense": true,
+    "all_batches_banded": false,
+    "passed": true,
+    "log": "PASS native 1280x720 SQTAB framebuffer exact, cycles 1576143 AR 62503 AW 107199\n- /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/squares_rtl_tb.sv:80: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel\n- Verilator: $finish at 8ms; walltime 1.486 s; speed 5.302 ms/s\n- Verilator: cpu 1.486 s on 1 threads; allocated 99 MB"
+  }
+]

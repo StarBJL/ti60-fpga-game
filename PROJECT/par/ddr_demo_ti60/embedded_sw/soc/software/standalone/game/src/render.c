@@ -1,4 +1,5 @@
 #include "render.h"
+#include "coop_fx.h"
 #include "mini_snprintf.h"   /* SoC port: replaces <stdio.h> snprintf (no newlib stdio/malloc) */
 #include <string.h>
 /* Native R2 720p arena with R19 carrot art and gameplay. */
@@ -429,11 +430,11 @@ static void draw_enemy(Gfx *r,const Enemy *e,int tick) {
 static void draw_player_gun(Gfx *r,const WeaponPose *p,int palette,int bob,int alpha){
     gfx_blit_alpha(r,p->x-CARROT_GUN_HALF,p->y-CARROT_GUN_HALF-bob,&gun_sprites[palette*32+p->heading],1,alpha);
 }
-static void draw_player(Gfx *r,const Game *g) {
-    int x=g->x/FIX,y=g->y/FIX,bob=g->moving ? (g->ticks/7)%2 : 0;
-    int level=game_appearance_level(g),palette=level<4?0:level<6?1:2;
-    WeaponPose p[2]={weapon_pose(g,0,g->weapon_idle_ticks>30),weapon_pose(g,1,g->weapon_idle_ticks>30)};
-    const Sprite *s=render_hero_asset(level,(g->ticks/9)&1);
+static void draw_player_at(Gfx *r,const Game *g,const GamePlayer *actor,int id) {
+    int x=actor->x/FIX,y=actor->y/FIX,bob=actor->moving ? (g->ticks/7)%2 : 0;
+    int level=game_actor_level(g,actor),palette=level<4?0:level<6?1:2;
+    WeaponPose p[2]={weapon_pose_player(actor,0,actor->weapon_idle_ticks>30),weapon_pose_player(actor,1,actor->weapon_idle_ticks>30)};
+    const Sprite *s=coop_fx_tint(render_hero_asset(level,(g->ticks/9)&1),id,r);
     int alpha=g->limit_mode?255:255-loc_info.fade;
     /* Body and both turning guns are below projectiles. Face protection only
      * affects this actor pass, never bullets. Immunity has no clearing mask. */
@@ -453,16 +454,17 @@ static void draw_player(Gfx *r,const Game *g) {
      * Front hands may overlap armour below, but cannot repaint eyes or mouth. */
     gfx_blit_part_alpha(r,x-18,y-12-bob,s,12,21,36,23,1,alpha);
     }
-    if(g->muzzle&&g->weapon_idle_ticks<=30)for(int k=0;k<2;k++)if(g->weapon_flash_mask&(1<<k)){
+    if(actor->muzzle&&actor->weapon_idle_ticks<=30)for(int k=0;k<2;k++)if(actor->weapon_flash_mask&(1<<k)){
         gfx_fill_rect(r,p[k].mx-1,p[k].my-1-bob,3,3,GOLD);
         gfx_fill_rect(r,p[k].mx,p[k].my-bob,1,1,CREAM);
     }
-    if(g->invincible && (g->ticks/6)%2)
+    if(actor->invincible && (g->ticks/6)%2)
         gfx_fill_rect(r,x-2,y+13,5,2,GOLD);
 }
-static void draw_player_locator(Gfx *r,const Game *g){
+static void draw_player(Gfx *r,const Game *g){draw_player_at(r,g,&g->actor,0);}
+static void draw_player_locator_at(Gfx *r,const Game *g,const GamePlayer *actor){
     if(g->limit_mode||!loc_info.fade)return;
-    int x=g->x/FIX,y=g->y/FIX,bob=g->moving?(g->ticks/7)%2:0;
+    int x=actor->x/FIX,y=actor->y/FIX,bob=actor->moving?(g->ticks/7)%2:0;
     const Sprite *s=render_locator_outline_asset();
     /* The interior is COLOR_KEY: no body repaint, erasure or per-bullet test.
      * The union of body and live guns avoids edges cutting through the face. */
@@ -473,6 +475,7 @@ static void draw_player_locator(Gfx *r,const Game *g){
     gfx_fill_alpha(r,x-2,y-2,5,5,CREAM,loc_info.fade);
     gfx_fill_alpha(r,x-1,y-1,3,3,RGB565(255,64,64),loc_info.fade);
 }
+static void draw_player_locator(Gfx *r,const Game *g){draw_player_locator_at(r,g,&g->actor);}
 /* 分段计时只在调试版（SPROUT_STATS=1）编译；发行版 clock_now() = 0，RSPLIT 什么也不存。 */
 #if SPROUT_STATS
 uint32_t (*render_clock)(void);
@@ -655,23 +658,25 @@ static void draw_world(Gfx *r,const Game *g,int batch) {
     t1=clock_now(); RSPLIT(bg,t1-t); t=t1;
     n=enemy_order(g,order,ys);
     t1=clock_now(); RSPLIT(sort,t1-t); t=t1;
+    int players=g->player_count>0?g->player_count:1;
     if(g->limit_mode){
-        /* Clear a previous normal-game fade once; no coverage scan, outline,
-         * hit-centre marker or per-frame silhouette work in pressure mode. */
-        if(loc_game||loc_info.total||loc_info.fade)render_locator_reset();
-        RSPLIT(locator,0);
+        if(loc_game||loc_info.total||loc_info.fade)render_locator_reset();RSPLIT(locator,0);
     }else{
-        prepare_player_locator(g);
+        for(int p=0;p<players;p++)if(players==1||game_player(g,p)->hp>0)prepare_player_locator_for(g,game_player(g,p),p);
         RSPLIT(locator,clock_now()-t);
     }
     t=clock_now();
-    shadow(r,g->x/FIX,g->y/FIX+21,14);
+    for(int p=0;p<players;p++)if(players==1||game_player(g,p)->hp>0){const GamePlayer *a=game_player(g,p);shadow(r,a->x/FIX,a->y/FIX+21,14);}
     for(i=0;i<n;i++)draw_enemy(r,&g->enemies[order[i]],g->ticks);
-    draw_player(r,g);
+    for(int p=0;p<players;p++)if(players==1||game_player(g,p)->hp>0){
+        const GamePlayer *a=game_player(g,p);if(!g->limit_mode)locator_load(p);
+        if(players>1)coop_fx_actor(r,a->x/FIX,a->y/FIX,p,g->ticks,a->moving,a->skill_flash,a->hurt_flash,fx_alpha);
+        draw_player_at(r,g,a,p);
+    }
     t1=clock_now(); RSPLIT(enemies,t1-t); t=t1;
-    for(i=0;i<MAX_BULLETS;i++) if(g->bullets[i].active) {
+    if(!g->limit_mode)for(i=0;i<MAX_BULLETS;i++) if(g->bullets[i].active) {
         const Bullet *b=&g->bullets[i]; int x=b->x/FIX,y=b->y/FIX;
-        gfx_blit(r,x-NATIVE_LASER_SIZE/2,y-NATIVE_LASER_SIZE/2,&laser_sprites[(unsigned)b->style<8u?b->style:0],1);
+        gfx_blit(r,x-NATIVE_LASER_SIZE/2,y-NATIVE_LASER_SIZE/2,coop_fx_tint(&laser_sprites[(unsigned)b->style<8u?b->style:0],g->player_count>1?b->owner:0,r),1);
     }
     t1=clock_now(); RSPLIT(pbullets,t1-t); t=t1;
     RSPLIT(seeds_n,(uint32_t)draw_seeds(r,g,batch));
@@ -680,7 +685,12 @@ static void draw_world(Gfx *r,const Game *g,int batch) {
         const Particle *p=&g->particles[i]; Pixel c=p->color==1?RED:p->color==2?GREEN:GOLD;
         gfx_fill_rect(r,p->x/FIX,p->y/FIX,p->size,p->size,c);
     }
-    if(!g->limit_mode)draw_player_locator(r,g);
+    if(!g->limit_mode){
+        for(int p=0;p<players;p++)if(players==1||game_player(g,p)->hp>0){
+            const GamePlayer *a=game_player(g,p);locator_load(p);locator_pose_state(g,a);draw_player_locator_at(r,g,a);
+        }
+        locator_load(0);
+    }
     if(g->hurt_flash) gfx_border(r,20,90,1240,576,3,RED);
     RSPLIT(particles,clock_now()-t);
 }
@@ -688,12 +698,22 @@ static void draw_world(Gfx *r,const Game *g,int batch) {
 /* Native 1280x720 UI. World sprites remain proportionate; no framebuffer stretch. */
 static void hud(Gfx *r,const Game *g,RenderInfo info) {
     char t[160];int sec=g->ticks/60,budget=(int)((int64_t)info.work_us*100/16667);
+    if(g->player_count>1){
+        gfx_fill_rect(r,0,0,1280,87,INK);
+        for(int p=0;p<g->player_count;p++){
+            const GamePlayer *a=game_player(g,p);int x=20+p*420;Pixel color=coop_fx_color(p);
+            snprintf(t,sizeof t,"P%d %s  LV %d",p+1,p==0?"UART":p==1?"USB":"KEYPAD",a->level);gfx_text(r,x,8,t,2,color);
+            snprintf(t,sizeof t,"HP %d/%d  XP %d/%d",a->hp,a->max_hp,a->xp,a->next_xp);gfx_text(r,x,34,t,1,CREAM);
+            gfx_fill_rect(r,x,53,380,8,EDGE);gfx_fill_rect(r,x,53,a->max_hp?380*a->hp/a->max_hp:0,8,color);
+            snprintf(t,sizeof t,"%s %d.%ds  KILLS %d",a->hp>0?"SKILL":"OUT",a->skill_cooldown/60,(a->skill_cooldown%60)/6,a->kills);gfx_text(r,x,67,t,1,MUTED);
+        }
+    }else{
     gfx_fill_rect(r,0,0,1280,87,INK);
-    gfx_text(r,24,12,"萝卜求生",3,CREAM);
+    gfx_label(r,24,12,"萝卜求生",3,CREAM);
     if(g->limit_mode)snprintf(t,sizeof t,"%s 敌%d 弹%d/%d",g->stress_tier==STRESS_CUSTOM?"自定义":g->stress_tier==1?"低档":g->stress_tier==2?"中档":"高档",g->enemy_count,game_hostile_count(g),game_hostile_slots(g));
     else snprintf(t,sizeof t,"无尽模式 怪物 %d",g->enemy_count);
     gfx_text(r,24,53,t,1,g->limit_mode?GOLD:MUTED);
-    gfx_text(r,360,12,"生命",2,MUTED);snprintf(t,sizeof t,"%d/%d",g->hp,g->max_hp);gfx_text(r,515,12,t,2,CREAM);
+    gfx_label(r,360,12,"生命",2,MUTED);snprintf(t,sizeof t,"%d/%d",g->hp,g->max_hp);gfx_text(r,515,12,t,2,CREAM);
     gfx_fill_rect(r,360,37,270,15,EDGE);gfx_fill_rect(r,362,39,266*g->hp/g->max_hp,11,g->hp<30?RED:GREEN);
     snprintf(t,sizeof t,"经验 %d/%d",g->xp,g->next_xp);gfx_text(r,360,62,t,1,CYAN);
     gfx_text(r,710,12,g->limit_mode?"耗时 毫秒":"存活时间",2,MUTED);
@@ -706,8 +726,9 @@ static void hud(Gfx *r,const Game *g,RenderInfo info) {
     snprintf(t,sizeof t,"等级 %02d",g->level);gfx_text(r,1120,14,t,2,CYAN);
     snprintf(t,sizeof t,"%s %d秒",sec%60<30?"敌潮":"首领",30-sec%30);gfx_text(r,1120,51,t,1,MUTED);
     gfx_fill_rect(r,22,80,1236,3,EDGE);gfx_fill_rect(r,22,80,1236*g->xp/g->next_xp,3,CYAN);
+    }
     gfx_fill_rect(r,0,672,1280,48,INK);
-    gfx_text(r,24,682,"WASD 移动  P 暂停  M 菜单",1,MUTED);
+    gfx_label(r,24,682,"WASD 移动  P 暂停  M 菜单",1,MUTED);
     if(g->skill_cooldown)snprintf(t,sizeof t,"J 环形爆发 冷却 %d.%d秒",g->skill_cooldown/60,(g->skill_cooldown%60)/6);
     else snprintf(t,sizeof t,"J 环形爆发 就绪");
     gfx_text(r,24,701,t,1,g->skill_cooldown?MUTED:GREEN);
@@ -717,12 +738,12 @@ static void hud(Gfx *r,const Game *g,RenderInfo info) {
     gfx_text(r,1250-gfx_text_width(t,2),687,t,2,info.fps>=50?GREEN:GOLD);
     if(g->limit_mode){snprintf(t,sizeof t,"弹体%dpx 步长%d",game_seed_size(),info.quantity_step?info.quantity_step:100);gfx_text(r,680,705,t,1,CYAN);}
     if(info.present_valid){snprintf(t,sizeof t,"呈现%d.%d 逻辑%d.%d",info.present_fps10/10,info.present_fps10%10,info.logic_hz10/10,info.logic_hz10%10);gfx_text(r,1250-gfx_text_width(t,1),705,t,1,MUTED);}
-    if(g->limit_mode&&g->stress_tier==STRESS_CUSTOM)gfx_text(r,24,95,"自定义档：- / + 按所选步长调整；M返回菜单",1,GOLD);
+    if(g->limit_mode&&g->stress_tier==STRESS_CUSTOM)gfx_label(r,24,95,"自定义档：- / + 按所选步长调整；M返回菜单",1,GOLD);
 }
 #if SPROUT_STATS
 static void stats_overlay(Gfx *r,const Game *g,RenderInfo info) {
     char t[160];int y=480;panel(r,24,y,650,177,EDGE);
-    gfx_text(r,40,y+12,"每帧耗时 微秒",2,CYAN);
+    gfx_label(r,40,y+12,"每帧耗时 微秒",2,CYAN);
     snprintf(t,sizeof t,"逻辑 %d 峰值 %d 同步 %d",info.logic_us,info.logic_max_us,info.vsync_us);gfx_text(r,40,y+43,t,1,CREAM);
     snprintf(t,sizeof t,"提交 %d 队列等待 %d 尾部等待 %d",info.submit_us,info.qstall_us,info.tail_us);gfx_text(r,40,y+66,t,1,CREAM);
     snprintf(t,sizeof t,"弹幕 %d/%d 丢弃 %d",game_hostile_count(g),game_hostile_slots(g),game_dropped_shots(g));gfx_text(r,40,y+89,t,1,MUTED);
@@ -754,8 +775,8 @@ void render_game(const Game *g,Gfx *r,RenderInfo info) {
         menu_label(r,577,"M 返回菜单；自定义档中 - / + 调整弹幕数",1,MUTED);
     }else if(g->phase==UPGRADE){
         panel(r,35,160,1210,460,EDGE);menu_label(r,186,"升级选择",4,GREEN);
-        snprintf(t,sizeof t,"等级 %d 每次选择一项",g->level);menu_center(r,239,t,2,CREAM);
-        for(i=0;i<3;i++){int x=70+i*390,id=g->choices[i];panel(r,x,280,360,280,EDGE);
+        snprintf(t,sizeof t,"P%d  等级 %d 每次选择一项",g->upgrade_actor+1,game_player(g,g->upgrade_actor)->level);menu_center(r,239,t,2,CREAM);
+        for(i=0;i<3;i++){int x=70+i*390,id=game_player(g,g->upgrade_actor)->choices[i];panel(r,x,280,360,280,EDGE);
             snprintf(t,sizeof t,"%d",i+1);gfx_text(r,x+24,300,t,4,GOLD);
             center(r,x+180,372,game_upgrade_name(id),2,CREAM);
             center(r,x+180,417,game_upgrade_line(id,0),1,GREEN);

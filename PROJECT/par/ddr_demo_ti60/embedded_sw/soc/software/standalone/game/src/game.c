@@ -38,6 +38,36 @@ static const StressSettings *stress(const Game *g) {
     return g->stress_tier>=STRESS_LOW && g->stress_tier<=STRESS_CUSTOM
         ? &stress_settings[g->stress_tier] : 0;
 }
+const GamePlayer *game_player(const Game *g,int player){
+    return player==g->actor_index?&g->actor:&g->party[player];
+}
+static void player_context(Game *g,int player){
+    if(player==g->actor_index)return;
+    g->party[g->actor_index]=g->actor;g->actor=g->party[player];g->actor_index=player;
+}
+void game_coop_enable(Game *g,int n){
+    if(n<1)n=1;if(n>GAME_PLAYERS)n=GAME_PLAYERS;if(g->limit_mode)n=1;
+    player_context(g,0);g->player_count=n;
+    g->party[0]=g->actor;
+    for(int i=1;i<n;i++){
+        g->party[i]=g->actor;g->party[i].x=clamp(g->x+(i==1?-96:96)*FIX,GAME_PLAYER_MIN_X*FIX,GAME_PLAYER_MAX_X*FIX);
+        g->party[i].y=clamp(g->y+32*FIX,GAME_PLAYER_MIN_Y*FIX,GAME_PLAYER_MAX_Y*FIX);
+    }
+}
+static int nearest_player(const Game *g,int x,int y){
+    int best=0;uint32_t distance=~0u;
+    for(int i=0;i<g->player_count;i++){
+        const GamePlayer *p=game_player(g,i);if(p->hp<=0)continue;
+        int dx=(p->x-x)/FIX,dy=(p->y-y)/FIX;uint32_t d=(uint32_t)(dx*dx+dy*dy);
+        if(d<distance){distance=d;best=i;}
+    }return best;
+}
+static int living_players(const Game *g){
+    int n=0;for(int i=0;i<g->player_count;i++)n+=game_player(g,i)->hp>0;return n;
+}
+int game_actor_level(const Game *g,const GamePlayer *p){
+    return g->limit_mode?(g->stress_tier>=STRESS_HIGH?7:1):clamp(p->level,1,7);
+}
 static uint32_t random_u32(Game *g) {
     uint32_t x=g->rng; x^=x<<13; x^=x>>17; x^=x<<5; return g->rng=x;
 }
@@ -357,11 +387,10 @@ static Bullet *hostile_slot(Game *g, int index) {
     return (Bullet *)game_hostile_at(g, index);
 }
 int game_hostile_count(const Game *g) { return g->hostile_active; }
-int game_player_count(const Game *g) { return g->player_active; }
-int game_total_bullets(const Game *g) { return g->hostile_active+g->player_active; }
+int game_player_count(const Game *g) { int n=0;for(int i=0;i<g->player_count;i++)n+=game_player(g,i)->player_active;return n; }
+int game_total_bullets(const Game *g) { return g->hostile_active+game_player_count(g); }
 int game_appearance_level(const Game *g) {
-    if(g->limit_mode)return g->stress_tier>=STRESS_HIGH?7:1;
-    return clamp(g->level,1,7);
+    return game_actor_level(g,&g->actor);
 }
 static int pressure_seed_size=13;
 int game_seed_size(void){return pressure_seed_size;}
@@ -539,11 +568,12 @@ static void small_attack(Game *g,Enemy *e) {
 static void begin_run(Game *g, uint32_t seed, int tier) {
     int i;
     int previous_target=g->stress_tier==STRESS_CUSTOM?g->stress_bullet_target:0;
+    int players=g->player_count==3?3:1;
     Bullet *extended=g->limit_shots;
     int extended_cap=g->limit_shot_cap;
     GameConfig config=g->config;
     memset(g,0,sizeof(*g));
-    g->limit_shots=extended; g->limit_shot_cap=extended_cap; g->config=config;
+    g->limit_shots=extended; g->limit_shot_cap=extended_cap; g->config=config;g->player_count=1;
     if (extended && extended_cap>0) memset(extended,0,(size_t)extended_cap*sizeof(Bullet));
     g->rng=seed ? seed : 0x12345678u; g->phase=PLAYING;
     g->stress_tier=tier; g->limit_mode=tier!=0;
@@ -566,6 +596,7 @@ static void begin_run(Game *g, uint32_t seed, int tier) {
         for (i=0;i<5;i++) { spawn_enemy(g,0); place_on_ring(g,i,i*128/5); }
         g->spawn_timer=30;
     }
+    game_coop_enable(g,tier?1:players);
 }
 
 void game_start(Game *g, uint32_t seed) { begin_run(g,seed,0); }
@@ -627,13 +658,14 @@ static void check_level(Game *g) {
         g->xp-=g->next_xp; ++g->level; g->sfx|=GS_LEVEL; g->next_xp=required_xp(g);
         /* Milestones increase the normal volley; the active skill is separate. */
         if((g->level==3||g->level==5||g->level==7)&&g->shots<6)++g->shots;
-        g->hp=clamp(g->hp+7,0,g->max_hp); offer_upgrades(g);
+        g->hp=clamp(g->hp+7,0,g->max_hp); offer_upgrades(g);g->upgrade_mask|=1<<g->actor_index;
     }
 }
 
 void game_choose_upgrade(Game *g, int slot) {
     int id;
     if (g->phase!=UPGRADE || slot<0 || slot>2) return;
+    player_context(g,g->upgrade_actor);
     id=g->choices[slot]; ++g->upgrades[id];
     switch (id) {
         case RAPID: g->fire_period=clamp(g->fire_period-3,7,60); break;
@@ -646,7 +678,9 @@ void game_choose_upgrade(Game *g, int slot) {
         default: break;
     }
     g->phase=PLAYING; g->invincible=60; g->banner=90; g->event=EVENT_UPGRADE;
-    check_level(g);
+    g->upgrade_mask&=~(1<<g->actor_index);check_level(g);
+    if(g->upgrade_mask){g->upgrade_actor=__builtin_ctz((unsigned)g->upgrade_mask);g->phase=UPGRADE;}
+    player_context(g,0);
 }
 
 static int nearest_enemy(Game *g, int x, int y) {
@@ -672,6 +706,7 @@ static int bullet_heading(int vx,int vy) {
 
 static void shoot(Game *g) {
     int target=nearest_enemy(g,g->x/FIX,g->y/FIX), i,shot,emitted=0;
+    int first=g->actor_index*GAME_PLAYER_BULLETS,last=first+GAME_PLAYER_BULLETS;
     int dx,dy,vx,vy;
     if(target<0){
         if(!g->limit_mode)return;
@@ -685,8 +720,8 @@ static void shoot(Game *g) {
     g->weapon_flash_mask=0;
     for (shot=0;shot<g->shots;shot++) {
         int spread=(shot*2-(g->shots-1))*14;
-        for (i=0;i<MAX_BULLETS;i++) if (!g->bullets[i].active) break;
-        if (i==MAX_BULLETS) break;
+        for (i=first;i<last;i++) if (!g->bullets[i].active) break;
+        if (i==last) break;
         {
             Bullet *b=&g->bullets[i];
             int gun=g->shots==1?(g->weapon_burst&1):(shot&1);
@@ -694,7 +729,7 @@ static void shoot(Game *g) {
             b->active=1; b->x=p.mx*FIX; b->y=p.my*FIX;
             b->vx=vx-vy*spread/256; b->vy=vy+vx*spread/256;
             b->damage=g->damage; b->life=60;
-            b->style=bullet_heading(b->vx,b->vy);
+            b->style=bullet_heading(b->vx,b->vy);b->owner=(uint8_t)g->actor_index;
             g->weapon_flash_mask|=1<<gun;++emitted;
         }
     }
@@ -704,11 +739,12 @@ static void shoot(Game *g) {
 
 static void cast_nova(Game *g) {
     int i,k,free_slots=0,count=g->level>=6?32:16;
+    int first=g->actor_index*GAME_PLAYER_BULLETS,last=first+GAME_PLAYER_BULLETS;
     if(g->skill_cooldown)return;
-    for(i=0;i<MAX_BULLETS;i++)if(!g->bullets[i].active)++free_slots;
+    for(i=first;i<last;i++)if(!g->bullets[i].active)++free_slots;
     /* Never consume cooldown for a truncated ring when the existing pool is full. */
     if(free_slots<count)return;
-    for(k=0,i=0;k<count;k++){
+    for(k=0,i=first;k<count;k++){
         int a=k*128/count;
         Bullet *b;
         while(g->bullets[i].active)++i;
@@ -716,7 +752,7 @@ static void cast_nova(Game *g) {
         b->active=1;b->x=g->x;b->y=g->y;
         b->vx=orbit_unit[a][0]*8;b->vy=orbit_unit[a][1]*8;
         b->damage=g->damage*(4+g->upgrades[NOVA])+g->level;
-        b->life=55;b->style=bullet_heading(b->vx,b->vy);
+        b->life=55;b->style=bullet_heading(b->vx,b->vy);b->owner=(uint8_t)g->actor_index;
     }
     g->skill_cooldown=clamp(480-g->upgrades[NOVA]*45,240,480);
     g->skill_flash=24;++g->skill_casts;g->sfx|=GS_SKILL;
@@ -733,8 +769,35 @@ static uint32_t gclock(void) { return game_clock ? game_clock() : 0u; }
 #define GSPLIT(f, v) ((void)(v))
 #endif
 
-void game_tick(Game *g, Input in) {
-    int i,j,mx,my,vx,vy,seconds,n_hostile,hostile_used,n_draw=0,n_clip=0,n_player=0;
+/* Stress has a dedicated hot loop: all supported sprites are <=25px and
+ * surviving centres are inside [16,1264] x [87,666], so every sprite is fully
+ * inside 1280x720. This removes clipping/proximity/extra-player branches. */
+static __attribute__((noinline)) int pressure_hostile_update(Game *g,GfxItem *draw,int half,int *used){
+    int n=g->hostile_used,count=0;Bullet *pool=g->limit_shots?g->limit_shots:g->hostile;
+    const int px=g->x,py=g->y;int can_hit=!g->invincible,last=0;
+    for(int i=0;i<n;i++){
+        Bullet *b=&pool[i];if(!b->active)continue;
+        int x=b->x+b->vx,y=b->y+b->vy;
+        if(STRESS_WRAP){
+            if(x<30*FIX)x+=1220*FIX;else if(x>1250*FIX)x-=1220*FIX;
+            if(y<108*FIX)y+=537*FIX;else if(y>645*FIX)y-=537*FIX;
+        }
+        b->x=x;b->y=y;
+        if(--b->life<=0||(!STRESS_WRAP&&(x<16*FIX||x>1264*FIX||y<87*FIX||y>666*FIX))){release_hostile(g,b,i);continue;}
+        if(can_hit&&(unsigned)(px-x+24*FIX)<48u*FIX&&(unsigned)(py-y+24*FIX)<48u*FIX){
+            int dx=(px-x)/FIX,dy=(py-y)/FIX;
+            if(dx*dx+dy*dy<18*18){g->hp-=b->damage;g->invincible=45;g->hurt_flash=10;g->sfx|=GS_HURT;particles(g,px,py,1,10);can_hit=0;}
+        }
+        last=i+1;
+        GfxItem *item=&draw[count++];gfx_item_xy(item,(x>>8)-half,(y>>8)-half);item->sprite=b->style<GAME_SEED_STYLES?b->style:0;
+    }
+    *used=last;return count;
+}
+
+static void game_tick_core(Game *g, Input in) {
+    if(g->player_count<1)g->player_count=1;
+    if(g->phase==UPGRADE){Input shared=in;in=g->player_input[g->upgrade_actor];in.pressed|=shared.pressed&(KEY_MENU|KEY_RESTART|KEY_PAUSE);}
+    int i,j,mx,my,vx,vy,seconds,n_hostile,hostile_used,n_draw=0,n_clip=0,n_player[GAME_PLAYERS]={0};
     const int seed_half=game_seed_half(g),seed_size=game_seed_extent(g);
     Bullet *hostile_pool;
     const int seed_buf=(g->seed_draw_buf+1)%3;
@@ -771,16 +834,20 @@ void game_tick(Game *g, Input in) {
     if (g->phase!=PLAYING) return;
 
     t=gclock();
-    ++g->ticks; seconds=g->ticks/60; g->next_xp=required_xp(g);
-    if (g->invincible) --g->invincible;
+    ++g->ticks; seconds=g->ticks/60;
     if (g->banner) --g->banner;
+    for(int pi=0;pi<g->player_count;pi++){
+    player_context(g,pi);g->next_xp=required_xp(g);
+    if(g->hp<=0)continue;
+    Input move=g->player_input[pi];
+    if (g->invincible) --g->invincible;
     if (g->hurt_flash) --g->hurt_flash;
     if (g->muzzle) --g->muzzle;
     if(g->weapon_idle_ticks<1000)++g->weapon_idle_ticks;
     if(g->skill_cooldown)--g->skill_cooldown;
     if(g->skill_flash)--g->skill_flash;
-    mx=((in.held&KEY_RIGHT)!=0)-((in.held&KEY_LEFT)!=0);
-    my=((in.held&KEY_DOWN)!=0)-((in.held&KEY_UP)!=0);
+    mx=((move.held&KEY_RIGHT)!=0)-((move.held&KEY_LEFT)!=0);
+    my=((move.held&KEY_DOWN)!=0)-((move.held&KEY_UP)!=0);
     g->moving=mx||my;
     vx=mx*g->speed; vy=my*g->speed;
     if (mx && my) { vx=vx*181/256; vy=vy*181/256; }
@@ -788,12 +855,14 @@ void game_tick(Game *g, Input in) {
     /* One common 60px canvas; the body centre is the gameplay/collision point. */
     g->y=clamp(g->y+vy,GAME_PLAYER_MIN_Y*FIX,GAME_PLAYER_MAX_Y*FIX);
     if (mx) g->facing=mx;
-
+    }
+    player_context(g,0);
     spawn_director(g);
     refresh_formation(g);
     for (i=0;i<MAX_ENEMIES;i++) {
         Enemy *e=&g->enemies[i]; int dx,dy,r,speed;
         if (!e->active) continue;
+        if(g->player_count>1)player_context(g,nearest_player(g,e->x,e->y));
         if (e->hit) --e->hit;
         if (e->spawn) { if(e->spawn==1)set_walk_target(g,i,0);--e->spawn;continue; }
         dx=(g->x-e->x)/FIX; dy=(g->y-e->y)/FIX;
@@ -831,12 +900,16 @@ void game_tick(Game *g, Input in) {
      * emitters, kill particles, gems or skill volleys. Normal gameplay retains
      * automatic dual guns and the active skill. Starting stress resets the pool. */
     if (!g->limit_mode) {
+    for(int pi=0;pi<g->player_count;pi++){
+    player_context(g,pi);if(g->hp<=0)continue;
     if (g->fire_timer) --g->fire_timer;
     if (!g->fire_timer) shoot(g);
-    if(in.pressed&KEY_SKILL)cast_nova(g);
+    if(g->player_input[pi].pressed&KEY_SKILL)cast_nova(g);
+    }
     for (i=0;i<MAX_BULLETS;i++) {
         Bullet *b=&g->bullets[i];
         if (!b->active) continue;
+        player_context(g,b->owner<g->player_count?b->owner:0);
         b->x+=b->vx; b->y+=b->vy;
         if (--b->life<=0 || b->x<16*FIX || b->x>1264*FIX || b->y<87*FIX || b->y>666*FIX) {
             b->active=0; continue;
@@ -861,10 +934,11 @@ void game_tick(Game *g, Input in) {
                 break;
             }
         }
-        if(b->active)++n_player;
+        if(b->active)++n_player[g->actor_index];
     }
     }
-    g->player_active=n_player;
+    for(int pi=0;pi<g->player_count;pi++){player_context(g,pi);g->player_active=n_player[pi];}
+    player_context(g,0);
     t1=gclock(); GSPLIT(pbullets,t1-t); t=t1;
     n_hostile=g->hostile_used;                        /* slots above are all free */
     hostile_used=0;
@@ -875,6 +949,8 @@ void game_tick(Game *g, Input in) {
     g->occlusion_near_n=g->occlusion_near_overflow=0;
     int can_hit=!g->invincible;
     hostile_pool=n_hostile ? hostile_slot(g,0) : 0;   /* pool is contiguous */
+    if(pressure)n_draw=pressure_hostile_update(g,seed_draw,seed_half,&hostile_used);
+    else {
     for (i=0;i<n_hostile;i++) {
         Bullet *b=&hostile_pool[i]; int dx,dy;
         if (!b->active) continue;
@@ -892,7 +968,16 @@ void game_tick(Game *g, Input in) {
          * Reject distant bullets in fixed point before division/squared distance.
          * 24px covers every scaled hit radius incl. truncation toward zero;
          * damage radii and real projectile counts are unchanged. */
-        if (can_hit &&
+        if(g->player_count>1){
+            for(int pi=0;pi<g->player_count;pi++){
+                const GamePlayer *p=game_player(g,pi);
+                if(p->hp<=0||p->invincible||(unsigned)(p->x-b->x+24*FIX)>=48u*FIX||(unsigned)(p->y-b->y+24*FIX)>=48u*FIX)continue;
+                int radius=(b->style==2?15:b->style==3?13:11)*3/2;
+                int dx=(p->x-b->x)/FIX,dy=(p->y-b->y)/FIX;
+                if(dx*dx+dy*dy<radius*radius){player_context(g,pi);g->hp-=b->damage;g->invincible=45;g->hurt_flash=10;g->sfx|=GS_HURT;particles(g,g->x,g->y,1,10);}
+            }
+            player_context(g,0);
+        }else if (can_hit &&
             (unsigned)(player_x-b->x+24*FIX)<48u*FIX &&
             (unsigned)(player_y-b->y+24*FIX)<48u*FIX) {
             int hit_radius=(pressure?12:b->style==2?15:b->style==3?13:11)*3/2;
@@ -911,7 +996,7 @@ void game_tick(Game *g, Input in) {
             if (((unsigned)sx<=(unsigned)(SCREEN_W-seed_size) && (unsigned)sy<=(unsigned)(SCREEN_H-seed_size)) ||
                 (sx>-seed_size && sy>-seed_size && sx<SCREEN_W && sy<SCREEN_H && ++n_clip)) {
                 GfxItem *d=&seed_draw[n_draw++];
-                d->x=(int16_t)sx; d->y=(int16_t)sy;
+                gfx_item_xy(d,sx,sy);
                 d->sprite=(unsigned)b->style<GAME_SEED_STYLES ? b->style : 0;
                 /* Stress bullets cover the actor directly: no visual-only proximity work. */
                 if(!pressure&&(unsigned)(sx-near_left)<near_width&&(unsigned)(sy-near_top)<near_height){
@@ -922,6 +1007,7 @@ void game_tick(Game *g, Input in) {
             }
         }
     }
+    }
     g->hostile_used=hostile_used;
     g->seed_draw_n=n_draw; g->seed_draw_clip=n_clip; g->seed_draw_ok=1;
     g->seed_draw_buf=seed_buf;          /* 新表生效 */
@@ -930,6 +1016,7 @@ void game_tick(Game *g, Input in) {
     for (i=0;i<MAX_GEMS;i++) {
         Gem *gem=&g->gems[i]; int dx,dy,d;
         if (!gem->active) continue;
+        if(g->player_count>1)player_context(g,nearest_player(g,gem->x,gem->y));
         dx=(g->x-gem->x)/FIX; dy=(g->y-gem->y)/FIX; d=dx*dx+dy*dy;
         if (d<14*14) { g->xp+=gem->value; gem->active=0; }
         else if (d<g->pickup_radius*g->pickup_radius) {
@@ -940,9 +1027,21 @@ void game_tick(Game *g, Input in) {
         Particle *p=&g->particles[i];
         if (p->life) { --p->life; p->x+=p->vx; p->y+=p->vy; p->vx=p->vx*235/256; p->vy=p->vy*235/256; }
     }
-    if (g->hp<=0) { g->hp=0; g->phase=DEFEAT; }
-    else check_level(g);
+    for(int pi=0;pi<g->player_count;pi++){
+        player_context(g,pi);if(g->hp<=0)g->hp=0;else check_level(g);
+    }
+    if(!living_players(g))g->phase=DEFEAT;
+    else if(g->upgrade_mask){g->upgrade_actor=__builtin_ctz((unsigned)g->upgrade_mask);g->phase=UPGRADE;}
+    player_context(g,0);
     GSPLIT(rest,gclock()-t);
+}
+void game_tick_coop(Game *g,const Input input[GAME_PLAYERS]){
+    for(int i=0;i<GAME_PLAYERS;i++)g->player_input[i]=input[i];
+    Input shared=input[0];for(int i=1;i<GAME_PLAYERS;i++)shared.pressed|=input[i].pressed&(KEY_PAUSE|KEY_MENU|KEY_RESTART);
+    player_context(g,0);game_tick_core(g,shared);player_context(g,0);
+}
+void game_tick(Game *g,Input input){
+    Input all[GAME_PLAYERS]={input,{0},{0}};game_tick_coop(g,all);
 }
 
 const char *game_upgrade_name(int id) {

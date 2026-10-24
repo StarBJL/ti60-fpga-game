@@ -1,0 +1,9 @@
+Creating /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/outflow
+Running: efx_run_map.py ddr_demo_ti60 --family Titanium --device Ti60F225 --project_xml /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/ddr_demo_ti60.xml --dir /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/ip/soc --output_dir outflow --work_dir work_syn --opt root=ddr3_example_top --opt veri_options=verilog_mode=verilog_2k,vhdl_mode=vhdl_2008 work-dir=work_syn write_efx_verilog=on I=ip/soc
+[92m   map :	PASS [0m
+Running: efx_run_pt_unified.py ddr_demo_ti60 Titanium Ti60F225 --output_dir outflow --timing_model I3 --project_xml ddr_demo_ti60.xml
+[92m   interface :	PASS [0m
+Running: efx_run_pnr.py ddr_demo_ti60 --prj /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/ddr_demo_ti60.xml --family Titanium --device Ti60F225 --timing_model I3 --dir /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/ip/soc --output_dir outflow --work_dir work_pnr --opt sdc_file=sdc/ddr3.sdc
+[92m   pnr :	PASS [0m
+Running: efx_run_pgm.py ddr_demo_ti60 --family Titanium --device Ti60F225 --output_dir outflow --work_dir work_pnr --opt mode=active width=1 enable_roms=smart spi_low_power_mode=on io_weak_pullup=on oscillator_clock_divider=DIV8 bitstream_compression=on enable_external_master_clock=off active_capture_clk_edge=negedge jtag_usercode=0xFFFFFFFF release_tri_then_reset=on four_byte_addressing=off
+[92m   pgm :	PASS [0m

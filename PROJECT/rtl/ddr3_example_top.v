@@ -151,6 +151,7 @@ parameter                       AXI_DATA_WIDTH     = `AXI_DATA_WIDTH
 
       
 //Parameter Define
+parameter CORE_CLOCK_HZ = 200000000;
 parameter FREQ = 200;			// default is 100 MHz.  Redefine as needed.
 `ifndef SIM
     localparam CNT_INIT = 1.5*FREQ*1000;
@@ -414,7 +415,7 @@ parameter FREQ = 200;			// default is 100 MHz.  Redefine as needed.
   //                          1x -> audio_mixer (0xF810_2000, 2026-10-19)
   wire apb_sel_input = (apb_paddr[15:5]==11'h004);
   wire [31:0] input_prdata;
-  input_hub u_input (
+  input_hub #(.CLK_HZ(CORE_CLOCK_HZ)) u_input (
     .clk(user_clk),.rst(soc_system_reset),
     .matrix_col(matrix_col),.matrix_row_out(matrix_row_OUT),.matrix_row_oe(matrix_row_OE),
     .uart_rx(keyboard_rx),.uart_tx(keyboard_tx),
@@ -745,7 +746,7 @@ wire [9:0] tmds_clk_w, tmds_d0_w, tmds_d1_w, tmds_d2_w;
 // from hdmi_fb RES (0x14) and blit CAPS2[2].
 localparam HDMI_720P = 1;
 
-hdmi_fb_top #(
+hdmi_fb_top #(.SYSTEM_CLOCK_HZ(CORE_CLOCK_HZ),
     .DUAL_MODE(1),
     .H_ACT        (HDMI_720P ? 1280 : 640),
     .H_FP         (HDMI_720P ? 110  : 16),

@@ -1,0 +1,19 @@
+--- R5.6/hdmi_fb.v
++++ R5.7/hdmi_fb.v
+@@ -45,6 +45,7 @@
+ `timescale 1ns / 1ps
+ 
+ module hdmi_fb_top #(
++    parameter SYSTEM_CLOCK_HZ = 200000000,
+     parameter DUAL_MODE = 0,              // 720p canvas -> 720p60 or scaled 1080p30
+     parameter H_ACT  = 640,
+     parameter H_FP   = 16,
+@@ -559,6 +560,8 @@
+             6'h15:   apb_prdata = DUAL_MODE ? 32'h56494435 : 32'd0; // +54 VID5
+             6'h16:   apb_prdata = {V_ACT16,H_ACT16}; // +58 internal canvas
+             6'h17:   apb_prdata = 32'h00050201; // +5c R5.2.1 HDMI audio / VSYNC repair
++            6'h1e:   apb_prdata = SYSTEM_CLOCK_HZ; // +78 physical build clock metadata
++            6'h1f:   apb_prdata = 32'h434c4b37; // +7c CLK7
+             default: apb_prdata = 32'd0;
+         endcase
+     end

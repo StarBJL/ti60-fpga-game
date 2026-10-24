@@ -10,6 +10,7 @@
  * of the playfield) -> numbers.
  */
 #include "th.h"
+#include "coop_fx.h"
 #include "pad.h"
 #include "mini_snprintf.h"
 #include <string.h>
@@ -182,34 +183,42 @@ static void draw_items(const Th *t, Gfx *g)
     gfx_blit_list(g, &th_spr_item[TI_STAR], stars, ns, GFX_BLIT_ADD);
 }
 
+static void draw_player_body(const Th *t,Gfx *g,int alpha,const ThPlayer *actor,int id){
+    int i;
+    if(t->player_count>1&&!actor->out)coop_fx_actor(g,SX(actor->px),SY(actor->py),id,t->tick,!!(actor->held&(PAD_LEFT|PAD_RIGHT|PAD_UP|PAD_DOWN)),actor->bomb_t,actor->dying,alpha);
+    if (t->mode == TH_TITLE) return;
+    if(actor->out)return;
+    if (alpha && actor->focus && !actor->dying)     /* focus: magic circle turning around the player */
+        gfx_blit_alpha(g, SX(actor->px) - V(32), SY(actor->py) - V(32), &th_spr_focus[(t->tick >> 2) % TH_FOCUS_FRAMES], 1, 255);
+    if (!actor->dying) {
+        const uint32_t h = actor->held;
+        const int f = (h & PAD_LEFT) ? 0 : (h & PAD_RIGHT) ? 2 : (t->tick & 16u) ? 3 : 1;   /* lean / idle */
+        if (!actor->invuln)  gfx_blit(g, SX(actor->px) - V(16), SY(actor->py) - V(24), coop_fx_tint(&th_spr_player[f],id,g), 1);
+        else if (alpha)  gfx_blit_alpha(g, SX(actor->px) - V(16), SY(actor->py) - V(24), coop_fx_tint(&th_spr_player[f],id,g), 1,
+                                        (t->tick & 8) ? 96 : 160);   /* invulnerable: translucent, pulsing */
+        else if (!(t->tick & 4)) gfx_blit(g, SX(actor->px) - V(16), SY(actor->py) - V(24), coop_fx_tint(&th_spr_player[f],id,g), 1);
+    }
+    for (i = 0; i < actor->power / 100 && i < 4; i++)
+        gfx_blit(g, SX(actor->opt_x[i]) - V(8), SY(actor->opt_y[i]) - V(8), &th_spr_option, 1);
+}
 static void draw_player(const Th *t, Gfx *g, int alpha)
 {
     int i, n = 0;
-    Sprite sh[2];
+    Sprite sh[6];
     sh[0] = th_spr_shot_main; sh[1] = th_spr_shot_opt;
+    if(t->player_count>1)for(int p=1;p<3;p++){sh[p*2]=*coop_fx_tint(&th_spr_shot_main,p,g);sh[p*2+1]=*coop_fx_tint(&th_spr_shot_opt,p,g);}
     for (i = 0; i < TH_MAX_SHOTS; i++) {
         const ThShot *s = &t->shots[i];
         if (!s->active) continue;
         lst[n].x = (int16_t)(SX(s->x) - V(6));
         lst[n].y = (int16_t)(SY(s->y) - V(s->kind ? 6 : 12));
-        lst[n].sprite = s->kind;
+        lst[n].sprite = s->kind+(t->player_count>1?s->owner*2:0);
         ++n;
     }
     gfx_blit_list(g, sh, lst, n, GFX_BLIT_ADD);
-    if (t->mode == TH_TITLE) return;
-    if (t->mode == TH_OVER && t->lives == 0) return;
-    if (alpha && t->focus && !t->dying)     /* focus: magic circle turning around the player */
-        gfx_blit_alpha(g, SX(t->px) - V(32), SY(t->py) - V(32), &th_spr_focus[(t->tick >> 2) % TH_FOCUS_FRAMES], 1, 255);
-    if (!t->dying) {
-        const uint32_t h = t->held;
-        const int f = (h & PAD_LEFT) ? 0 : (h & PAD_RIGHT) ? 2 : (t->tick & 16u) ? 3 : 1;   /* lean / idle */
-        if (!t->invuln)  gfx_blit(g, SX(t->px) - V(16), SY(t->py) - V(24), &th_spr_player[f], 1);
-        else if (alpha)  gfx_blit_alpha(g, SX(t->px) - V(16), SY(t->py) - V(24), &th_spr_player[f], 1,
-                                        (t->tick & 8) ? 96 : 160);   /* invulnerable: translucent, pulsing */
-        else if (!(t->tick & 4)) gfx_blit(g, SX(t->px) - V(16), SY(t->py) - V(24), &th_spr_player[f], 1);
-    }
-    for (i = 0; i < t->power / 100 && i < 4; i++)
-        gfx_blit(g, SX(t->opt_x[i]) - V(8), SY(t->opt_y[i]) - V(8), &th_spr_option, 1);
+
+    int nplayers=t->player_count>0?t->player_count:1;
+    for(int id=0;id<nplayers;id++)draw_player_body(t,g,alpha,th_player(t,id),id);
 }
 
 static void draw_bullets(const Th *t, Gfx *g)
@@ -344,19 +353,24 @@ static void draw_cutin(const Th *t, Gfx *g)
     gfx_blit_alpha(g, TVX(x), TVY(y), p, 1, a);
 }
 
-static void draw_bomb(const Th *t, Gfx *g)
+static void draw_bomb_actor(const Th *t, Gfx *g,const ThPlayer *actor)
 {
     int k;
-    if (t->bomb_t) {
-        const int r = (150 - t->bomb_t) * 3;
+    if (actor->bomb_t) {
+        const int r = (150 - actor->bomb_t) * 3;
         for (k = 0; k < 8; k++) {
             const uint16_t a = (uint16_t)(k * 8192 + t->tick * 600u);
-            const int x = SX(t->px + (int32_t)((r * th_cos(a)) >> 6)) - V(32);
-            const int y = SY(t->py + (int32_t)((r * th_sin(a)) >> 6)) - V(32);
+            const int x = SX(actor->px + (int32_t)((r * th_cos(a)) >> 6)) - V(32);
+            const int y = SY(actor->py + (int32_t)((r * th_sin(a)) >> 6)) - V(32);
             gfx_blit_add(g, x, y, &th_spr_bomb_ring, 0, 255);
         }
     }
-    if (t->flash) fadd(g, TH_PF_X, TH_PF_Y, TH_PF_W, TH_PF_H, C_WHITE, t->flash / 2);
+}
+
+static void draw_bomb(const Th *t,Gfx *g){
+    for(int i=0;i<t->player_count;i++)draw_bomb_actor(t,g,th_player(t,i));
+    /* World flash is shared: applying it per player overexposes the scene. */
+    if(t->flash)fadd(g,TH_PF_X,TH_PF_Y,TH_PF_W,TH_PF_H,C_WHITE,t->flash/2);
 }
 
 static void draw_boss_hud(const Th *t, Gfx *g, int alpha)
@@ -411,6 +425,7 @@ static void draw_frame(const Th *t, Gfx *g, ThRenderInfo info)
         gfx_blit_part(g, 0, PY0, f, 0, PY0, PX0, PH, 0);
         gfx_blit_part(g, PX0 + PW, PY0, f, PX0 + PW, PY0, fw - PX0 - PW, PH, 0);
     }
+    if(t->player_count<=1 || t->mode==TH_TITLE){
     snprintf(s, sizeof s, "%010u", (unsigned)t->hiscore);
     txt_r(g, 616, 53, s, 2, RGB565(200, 200, 220));
     snprintf(s, sizeof s, "%010u", (unsigned)t->score);
@@ -434,6 +449,7 @@ static void draw_frame(const Th *t, Gfx *g, ThRenderInfo info)
     }
     else if (t->bot) txt(g, 440, 302, "自动演示", 1, RGB565(180, 180, 200));
     else if (t->diff == TH_LUNATIC) txt(g, 440, 302, "极难模式", 1, RGB565(255, 120, 200));
+    }
     snprintf(s, sizeof s, "渲染%d帧/秒 %s", info.fps, info.hw ? "硬件" : "处理器");
     txt_r(g, 640 - 8, 480 - 30, s, 2, C_WHITE);
 }
@@ -492,7 +508,9 @@ void th_render(const Th *t, Gfx *g, ThRenderInfo info)
     if (t->nphantoms) draw_phantoms(t, g, alpha);
     if (t->nlasers) draw_lasers(t, g, alpha);
     if (t->mode == TH_PLAY || t->mode == TH_PAUSE) {
-        if (t->focus && !t->dying) gfx_blit(g, SX(t->px) - V(8), SY(t->py) - V(8), &th_spr_hitbox, 1);
+        for(int id=0;id<t->player_count;id++){const ThPlayer *p=th_player(t,id);
+            if(p->focus&&!p->dying&&!p->out)gfx_blit(g,SX(p->px)-V(8),SY(p->py)-V(8),&th_spr_hitbox,1);
+        }
     }
     if (alpha && t->mode != TH_TITLE) draw_ghosts(t, g);
     draw_fx(t, g);
@@ -500,4 +518,18 @@ void th_render(const Th *t, Gfx *g, ThRenderInfo info)
     if (t->mode != TH_TITLE) draw_boss_hud(t, g, alpha);
     draw_menus(t, g);
     draw_frame(t, g, info);
+    if(t->player_count>1&&t->mode!=TH_TITLE){
+        int x=TVX(TH_PF_X+TH_PF_W+12),width=g->width-x-16;
+        gfx_fill_rect(g,x,36,width,620,RGB565(8,14,24));
+        gfx_border(g,x,36,width,620,1,RGB565(94,106,144));gfx_label(g,x+20,52,"3P CO-OP",2,RGB565(235,240,245));
+        for(int id=0;id<t->player_count;id++){
+            const ThPlayer *p=th_player(t,id);char line[96];int y=90+id*155;
+            Pixel color=coop_fx_color(id);gfx_fill_rect(g,x+8,y,3,126,color);
+            snprintf(line,sizeof line,"P%d %s",id+1,p->out?"OUT":id==0?"UART":id==1?"USB":"KEYPAD");gfx_text(g,x+20,y+4,line,2,color);
+            snprintf(line,sizeof line,"LIFE %d   BOMB %d",p->lives,p->bombs);gfx_text(g,x+20,y+34,line,1,RGB565(235,240,245));
+            snprintf(line,sizeof line,"POWER %d   GRAZE %d",p->power,p->graze);gfx_text(g,x+20,y+57,line,1,color);
+            snprintf(line,sizeof line,"SCORE %u",(unsigned)p->score);gfx_text(g,x+20,y+80,line,1,RGB565(235,240,245));
+            snprintf(line,sizeof line,"%s",p->bomb_t?"SPELL ACTIVE":p->focus?"FOCUS":"READY");gfx_text(g,x+20,y+103,line,1,color);
+        }
+    }
 }

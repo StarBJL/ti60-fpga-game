@@ -1,0 +1,10 @@
+Verified: BOARD_TEST/r5_7/ti60_r5_7.bit
+Verified: BOARD_TEST/r5_7/ti60_r5_7_debug.elf
+Verified: BOARD_TEST/r5_7/ti60_r5_7_release.elf
+Verified: BOARD_TEST/r5_7/205/ti60_r5_7_205.bit
+Verified: BOARD_TEST/r5_7/205/ti60_r5_7_205_release.elf
+Verified: BOARD_TEST/r5_7/205/ti60_r5_7_205_debug.elf
+Verified: BOARD_TEST/r5_7/202p083333/ti60_r5_7_202p083333_release.elf
+Verified: BOARD_TEST/r5_7/202p083333/ti60_r5_7_202p083333_debug.elf
+Verified: BOARD_TEST/r5_7/202p083333/ti60_r5_7_202p083333.bit
+R5.7 archive and all matched bit/ELF files restored and SHA256 verified.

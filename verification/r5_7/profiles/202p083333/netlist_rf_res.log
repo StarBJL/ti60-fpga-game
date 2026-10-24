@@ -1,0 +1,4 @@
+netlist: /data/users/user/codex_tmp/ti60_r57_work/clock_202/PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.v
+cone of u_blit/rf_res[9:0]: 41 cells, 20 inputs
+  formula: rf_res + rdi_m - rf_pop
+OK: 0 / 3000 random vectors differ

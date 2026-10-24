@@ -33,6 +33,8 @@ window.addEventListener("keydown",e=>{
   if(keyBits[e.key]!==undefined){e.preventDefault();keys.set(e.code,keyBits[e.key]);updateHeld();}
   else if(!e.repeat&&(e.key==="+"||e.key==="="||e.key==="-")){e.preventDefault();cmd("delta",e.key==="-"?-1:1);}
   else if(!e.repeat&&e.key==="F9"){e.preventDefault();if(dualvideo&&!snapshot?.state.pending)cmd("resolution",snapshot?.state.resolution===1?0:1);else notice("等待 R5 显示能力或当前切换完成。","error");}
+  else if(!e.repeat&&e.key==="F10"){e.preventDefault();if(snapshot?.state.video_trial)cmd("video_confirm");}
+  else if(!e.repeat&&["1","2","3"].includes(e.key)){e.preventDefault();cmd("pick",Number(e.key));}
   else if(!e.repeat&&["F6","F7","F8"].includes(e.key)){e.preventDefault();cmd("step",{F6:100,F7:10,F8:1}[e.key]);}
   else if(!e.repeat&&(e.key==="["||e.key==="]")){e.preventDefault();const s=$("bulletSize"),i=(s.selectedIndex+s.options.length+(e.key==="]"?1:-1))%s.options.length;cmd("bullet",Number(s.options[i].value));}
   else if(!e.repeat&&(e.key==="{"||e.key==="}")){e.preventDefault();const s=$("squareSize"),i=(s.selectedIndex+s.options.length+(e.key==="}"?1:-1))%s.options.length;cmd("square",Number(s.options[i].value));}
@@ -187,6 +189,15 @@ function render(data){
     if(document.activeElement!==$("musicSelect"))$("musicSelect").value=state.music_auto?-1:state.music_index;
     $("musicMode").textContent=state.music_auto?"跟随场景自动配乐；点击上一首 / 下一首进入全曲库手动切换。":`手动曲目 ${(state.music_index??0)+1} / ${state.music_total||10}；切换场景仍保持所选曲目。`;
   }else $("musicMode").textContent="当前固件只支持场景内两首备选曲；全曲库选择需要新版 ELF。";
+  $("confirmVideo").disabled=!connected||!state.video_trial||configuring;
+  $("videoTrial").textContent=state.video_trial?`试切中：约 ${Math.ceil((state.trial_ms||0)/1000)} 秒后自动返回 720P。看见正常画面后再确认。`:state.trial_supported?"1080P 试切保护已就绪；黑屏可等待自动返回 720P。":"自动回退需 R5.7 ELF。";
+  $("partyMode").textContent=state.players===3?"同屏三人":state.players===1?"单人 / 压力":"菜单 / 其他场景";
+  $("coreClock").textContent=state.core_hz?`处理时钟：${(state.core_hz/1e6).toFixed(6)} MHz。请使用对应 bit / ELF。`:"处理时钟：当前固件未回报。";
+  for(let p=1;p<=3;p++){
+    const life=state[`p${p}_life`],skill=state[`p${p}_skill`],score=state[`p${p}_score`];
+    $("party"+p+"Stats").textContent=p>(state.players||0)?"当前场景未启用":life===undefined?"等待角色状态":state.scene===1?`生命 ${life} · 技能 ${(skill/60).toFixed(1)}s · 击败 ${score}`:`残机 ${life<0?"退出":life} · 符卡 ${skill} · 得分 ${score}${p===3&&state.matrix_auto?" · 自动射击":""}`;
+    $("party"+p+"Input").textContent=state[`p${p}_held`]===undefined?"等待独立输入状态":`逻辑位置 (${state[`p${p}_x`]}, ${state[`p${p}_y`]}) · 按键 ${state[`p${p}_held`]}`;
+  }
   $("engineState").textContent=engineText(state);
   const degraded=state.accel_supported&&(!state.hw||state.submit_mode!==2||!state.band||!state.cache||!state.kpath||!state.seed_table||!state.seed_build||!state.overlap||(state.scene===2&&(!state.motion||!state.table)));
   $("engineWarning").textContent=degraded?"当前存在关闭的加速项。比较稳定 60 帧上限前，可先恢复加速配置，并保持场景、尺寸、Alpha 和同步条件一致。":state.accel_supported?"加速条件已报告。1080P 输出为 30 Hz；重叠是否实际生效由场景和分辨率决定。":"当前固件未报告完整加速项，无法判定测试基线。";

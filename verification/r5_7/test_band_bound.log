@@ -1,0 +1,4 @@
+PASS 99999 squares, 4 aligned MOT2 jobs, CPU/HW motion equality, 1/3/6px SQTAB alpha parity and full world pixels
+j 0 items 99999 commands 4
+j 1 items 199998 commands 8
+j 2 items 299997 commands 12

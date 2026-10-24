@@ -22,7 +22,7 @@
       "key": "S3",
       "row": 0,
       "column": 2,
-      "base": "射击",
+      "base": "射击 / 自动射击开关",
       "fn": "选项 2",
       "base_action": "shot",
       "fn_action": "pick2"
@@ -140,7 +140,7 @@
       "row": 3,
       "column": 3,
       "base": "慢速",
-      "fn": "状态",
+      "fn": "确认显示 / 状态",
       "base_action": "slow",
       "fn_action": "status"
     }
@@ -202,5 +202,11 @@
       "ball": "A2",
       "gpio": "GPIOL_N_18"
     }
-  ]
+  ],
+  "version": "R5.7",
+  "normal_game_players": {
+    "P1": "UART / PC",
+    "P2": "USB / CH9350L",
+    "P3": "4x4 matrix"
+  }
 }

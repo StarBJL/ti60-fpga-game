@@ -29,6 +29,7 @@ void demo_reset_squares(void);
 /* 0 = deterministic mixed 6..40px; fixed sizes use existing MOT2/SQTAB ABI. */
 int demo_set_square_size(int pixels);
 int demo_square_size(void);
+unsigned demo_band_bound(void);
 int demo_motion_benchmark(int count,unsigned *cpu,unsigned *hardware);
 
 /* Generates the 3 pictures at img_base, img_base + 2 MB, img_base + 4 MB. */

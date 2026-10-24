@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 static struct {InputAction a;int v;} events[256];static unsigned count;
-static void cb(void *opaque,InputAction a,int v){assert(opaque==&count);assert(count<256);events[count].a=a;events[count++].v=v;}
+static void cb(void *opaque,InputAction a,int v){assert(opaque==&count);if(a==INPUT_SOURCE_HELD)return;assert(count<256);events[count].a=a;events[count++].v=v;}
 static void report(InputDevices *d,unsigned key,unsigned mod,unsigned now){
     const unsigned char h[]={0x57,0xab,1};unsigned i;
     for(i=0;i<3;i++)input_ch9350_feed(d,h[i],now);

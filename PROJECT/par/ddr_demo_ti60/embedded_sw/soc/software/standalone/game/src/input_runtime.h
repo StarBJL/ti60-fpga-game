@@ -11,6 +11,11 @@ static void physical_action(void *opaque,InputAction action,int value){
     ControlEvent e={CT_NONE,value,0,1};(void)opaque;
     if(action!=INPUT_CH9350_STATE)pad_set_physical(devices.published_held);
     switch(action){
+    case INPUT_SOURCE_HELD:{
+        unsigned source=(unsigned)value>>16,mask=(unsigned)value&65535u;
+        if(source==2&&scene==SCENE_TH&&th.diff!=TH_STRESS&&th.mode==TH_PLAY&&
+           (mask&PAD_SHOT)&&!(pad_source_held(2,now(),BSP_CLINT_HZ/1000u)&PAD_SHOT))matrix_autofire=!matrix_autofire;
+        pad_set_device(source,mask);return;}
     case INPUT_CH9350_STATE:keyboard_ack_pending=1;return;
     case INPUT_HELD:
         pad_set_physical((unsigned)value);
@@ -29,7 +34,9 @@ static void physical_action(void *opaque,InputAction action,int value){
     case INPUT_SQUARE_DELTA:handle_char(value<0?'{':'}');return;
     case INPUT_RESOLUTION_NEXT:e.type=CT_RESOLUTION;e.value=!(HDMI_MODE&1u);break;
     case INPUT_MENU:e.type=CT_MENU;break;
-    case INPUT_PICK:e.type=CT_PICK;break;
+    case INPUT_PICK:
+        if((scene==SCENE_GAME&&!game.limit_mode)||(scene==SCENE_TH&&th.diff!=TH_STRESS)){player_pick[devices.source]=value;return;}
+        e.type=CT_PICK;break;
     case INPUT_RESTART:e.type=CT_RESTART;break;
     case INPUT_AUTO_TOGGLE:e.type=CT_AUTO;e.value=!autoplay;break;
     case INPUT_ALPHA_TOGGLE:e.type=CT_ALPHA;e.value=!alpha_fx;break;
@@ -39,7 +46,8 @@ static void physical_action(void *opaque,InputAction action,int value){
     case INPUT_VSYNC_TOGGLE:e.type=CT_VSYNC;e.value=!vsync;break;
     case INPUT_BGM_TOGGLE:e.type=CT_BGM;e.value=!music_enabled();break;
     case INPUT_TRACK_NEXT:e.type=CT_NEXT_TRACK;break;
-    case INPUT_STATUS:e.type=CT_STATUS;break;
+    case INPUT_STATUS:e.type=devices.source==2&&video_trial?CT_VIDEO_CONFIRM:CT_STATUS;break;
+    case INPUT_VIDEO_CONFIRM:e.type=CT_VIDEO_CONFIRM;break;
     case INPUT_PAUSE:e.type=CT_PAUSE;break;
     case INPUT_TONE_TOGGLE:e.type=CT_TONE;e.value=!aud.tone;break;
     case INPUT_LEGACY:handle_char((char)value);return;
@@ -48,9 +56,14 @@ static void physical_action(void *opaque,InputAction action,int value){
     if(control_apply(e))control_state(0);
     else tx_puts("[physical control unavailable in this scene]\r\n");
 }
+static uint32_t input_milliseconds(void){
+    static uint32_t previous,wraps;uint32_t tick=now();
+    if(tick<previous)++wraps;previous=tick;
+    return (uint32_t)((((uint64_t)wraps<<32)|tick)*1000u/BSP_CLINT_HZ);
+}
 static void poll_input_devices(void){
     unsigned limit=64;
-    uint32_t ms=now()/(TICKS_PER_US*1000u);
+    uint32_t ms=input_milliseconds();
     if(!devices_ready){input_devices_init(&devices,physical_action,0);devices_ready=1;
         devices_present=HDMI_REG(0x80)==0x494e5035u;}
     if(!devices_present)return;

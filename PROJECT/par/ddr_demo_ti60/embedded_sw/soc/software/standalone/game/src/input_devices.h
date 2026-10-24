@@ -12,13 +12,14 @@ typedef enum {
     INPUT_ALPHA_TOGGLE, INPUT_VOLUME_DELTA, INPUT_STATS_TOGGLE,
     INPUT_BACKEND_TOGGLE, INPUT_VSYNC_TOGGLE, INPUT_BGM_TOGGLE,
     INPUT_TRACK_NEXT, INPUT_STATUS, INPUT_PAUSE, INPUT_TONE_TOGGLE,
-    INPUT_CH9350_STATE, INPUT_LEGACY
+    INPUT_CH9350_STATE, INPUT_LEGACY, INPUT_SOURCE_HELD, INPUT_VIDEO_CONFIRM
 } InputAction;
 typedef void (*InputEmit)(void *opaque, InputAction action, int value);
 typedef struct {
     InputEmit emit; void *opaque;
     uint16_t matrix_previous, matrix_held, keyboard_held, published_held;
-    uint8_t keyboard_previous[8];
+    uint8_t keyboard_previous[8],source;
+    uint16_t published_matrix,published_keyboard;
     uint8_t rx_state, rx_tag, rx_length, rx_used, rx_data[8], ghost_latched;
     uint32_t rx_last_ms, keyboard_reports, mouse_reports, malformed_frames,
              rollover_reports, ghost_reports, status_reports;

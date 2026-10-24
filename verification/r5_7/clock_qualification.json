@@ -1,0 +1,243 @@
+{
+  "profile": "Ti60_R5_DUALVIDEO",
+  "relationships": [
+    {
+      "launch": "core_clk",
+      "capture": "core_clk",
+      "constraint_ns": 5.0,
+      "slack_ns": 0.147
+    },
+    {
+      "launch": "pll_fb_clk",
+      "capture": "pll_fb_clk",
+      "constraint_ns": 10.0,
+      "slack_ns": 3.502
+    },
+    {
+      "launch": "sdram_clk",
+      "capture": "sdram_clk",
+      "constraint_ns": 2.5,
+      "slack_ns": 0.402
+    },
+    {
+      "launch": "rx_cal_clk",
+      "capture": "rx_cal_clk",
+      "constraint_ns": 2.5,
+      "slack_ns": 0.381
+    },
+    {
+      "launch": "tx_cal_clk",
+      "capture": "tx_cal_clk",
+      "constraint_ns": 2.5,
+      "slack_ns": 0.247
+    },
+    {
+      "launch": "tx_cal_clk_90edge",
+      "capture": "tx_cal_clk_90edge",
+      "constraint_ns": 2.5,
+      "slack_ns": 0.423
+    },
+    {
+      "launch": "hdmi_tx_slow_clk",
+      "capture": "hdmi_tx_slow_clk",
+      "constraint_ns": 13.445,
+      "slack_ns": 7.994
+    },
+    {
+      "launch": "core_clk",
+      "capture": "core_clk",
+      "constraint_ns": 0.0,
+      "slack_ns": 0.026
+    },
+    {
+      "launch": "pll_fb_clk",
+      "capture": "pll_fb_clk",
+      "constraint_ns": 0.0,
+      "slack_ns": 0.026
+    },
+    {
+      "launch": "sdram_clk",
+      "capture": "sdram_clk",
+      "constraint_ns": 0.0,
+      "slack_ns": 0.09
+    },
+    {
+      "launch": "rx_cal_clk",
+      "capture": "rx_cal_clk",
+      "constraint_ns": 0.0,
+      "slack_ns": 0.026
+    },
+    {
+      "launch": "tx_cal_clk",
+      "capture": "tx_cal_clk",
+      "constraint_ns": 0.0,
+      "slack_ns": 0.052
+    },
+    {
+      "launch": "tx_cal_clk_90edge",
+      "capture": "tx_cal_clk_90edge",
+      "constraint_ns": 0.0,
+      "slack_ns": 0.094
+    },
+    {
+      "launch": "hdmi_tx_slow_clk",
+      "capture": "hdmi_tx_slow_clk",
+      "constraint_ns": 0.0,
+      "slack_ns": 0.048
+    }
+  ],
+  "worst_slack_ns": 0.026,
+  "bit_sha256": "54e73f164dd60711347126541eb9b2162494936ccbfe9de5790047d62f6a10e0",
+  "resource_report_lines": [
+    "Module                                                                FFs      SRLs       ADDs         LUTs    COMB4s      RAMs DSP/MULTs"
+  ],
+  "hardware_tested": false,
+  "audited_gray_groups": {
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_userAdapters_0_bridge/io_input_w_queue/pushToPopGray_buffercc/buffers_0*~FF|D": 5,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_userAdapters_0_bridge/io_input_w_queue/popToPushGray_buffercc/buffers_0*~FF|D": 5,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_userAdapters_0_bridge/io_output_r_queue/pushToPopGray_buffercc/buffers_0*~FF|D": 5,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_userAdapters_0_bridge/io_output_r_queue/popToPushGray_buffercc/buffers_0*~FF|D": 5,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_userAdapters_0_bridge/io_input_ar_queue/pushToPopGray_buffercc/buffers_0*~FF|D": 5,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_userAdapters_0_bridge/io_input_ar_queue/popToPushGray_buffercc/buffers_0*~FF|D": 5,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_userAdapters_0_bridge/io_input_aw_queue/pushToPopGray_buffercc/buffers_0*~FF|D": 5,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_userAdapters_0_bridge/io_input_aw_queue/popToPushGray_buffercc/buffers_0*~FF|D": 5,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_userAdapters_0_bridge/io_output_b_queue/popToPushGray_buffercc/buffers_0*~FF|D": 5,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_userAdapters_0_bridge/io_output_b_queue/pushToPopGray_buffercc/buffers_0*~FF|D": 5,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_cc_fifo/io_input_cmd_queue/pushToPopGray_buffercc/buffers_0*~FF|D": 7,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_cc_fifo/io_input_cmd_queue/popToPushGray_buffercc/buffers_0*~FF|D": 7,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_cc_fifo/io_output_rsp_queue/pushToPopGray_buffercc/buffers_0*~FF|D": 7,
+    "u_sapphire_soc/u_EfxSapphireSoc/system_ddr_ddrLogic_cc_fifo/io_output_rsp_queue/popToPushGray_buffercc/buffers_0*~FF|D": 7,
+    "u_hdmi_fb/u_fifo/rgray_w1*~FF|D": 12,
+    "u_hdmi_fb/u_fifo/wgray_r1*~FF|D": 12,
+    "u_hdmi_fb/u_aud_fifo/rgray_w1*~FF|D": 9,
+    "u_hdmi_fb/u_aud_fifo/wgray_r1*~FF|D": 9
+  },
+  "bus_skew": {
+    "setup": {
+      "reported_groups": 18,
+      "requirements_ns": [
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5
+      ],
+      "skew_ns": [
+        0.179,
+        0.34,
+        0.259,
+        0.318,
+        0.31,
+        0.207,
+        0.336,
+        0.218,
+        0.278,
+        0.226,
+        0.186,
+        0.282,
+        0.229,
+        0.31,
+        0.387,
+        0.351,
+        0.362,
+        0.446
+      ],
+      "slack_ns": [
+        4.321,
+        4.16,
+        4.241,
+        4.182,
+        4.19,
+        4.293,
+        4.164,
+        4.282,
+        4.222,
+        4.274,
+        4.314,
+        4.218,
+        4.271,
+        4.19,
+        4.113,
+        4.149,
+        4.138,
+        4.054
+      ]
+    },
+    "hold": {
+      "reported_groups": 18,
+      "requirements_ns": [
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5
+      ],
+      "skew_ns": [
+        0.101,
+        0.192,
+        0.148,
+        0.181,
+        0.177,
+        0.118,
+        0.193,
+        0.125,
+        0.158,
+        0.128,
+        0.107,
+        0.161,
+        0.132,
+        0.176,
+        0.223,
+        0.199,
+        0.206,
+        0.254
+      ],
+      "slack_ns": [
+        4.399,
+        4.308,
+        4.352,
+        4.319,
+        4.323,
+        4.382,
+        4.307,
+        4.375,
+        4.342,
+        4.372,
+        4.393,
+        4.339,
+        4.368,
+        4.324,
+        4.277,
+        4.301,
+        4.294,
+        4.246
+      ]
+    }
+  }
+}

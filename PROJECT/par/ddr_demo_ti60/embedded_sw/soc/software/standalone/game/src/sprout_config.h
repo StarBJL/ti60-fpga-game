@@ -12,7 +12,8 @@
 #define MAX_ENEMIES 192
 #endif
 #ifndef MAX_BULLETS
-#define MAX_BULLETS 160
+#define MAX_BULLETS 480
+#define GAME_PLAYER_BULLETS 160
 #endif
 #ifndef MAX_HOSTILE_BULLETS
 /* 4096 so stress tier 3 has room on the board (no heap growth there);

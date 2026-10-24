@@ -1,0 +1,5 @@
+PASS native 1280x720 SQTAB framebuffer exact, cycles 3196588 AR 78278 AW 138808
+- /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/squares_rtl_tb.sv:80: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel
+- Verilator: $finish at 16ms; walltime 3.022 s; speed 5.289 ms/s
+- Verilator: cpu 3.021 s on 1 threads; allocated 99 MB

@@ -1,3 +1,6 @@
+R5.7 current candidate: BOARD_TEST/r5_7/README.txt
+Use matched 200 / 202.083333 / 205MHz bit and ELF. Keep 720p baseline; 1080p trial reverts after 10s unless confirmed. 480p is not implemented.
+
 Ti60 R5 上板包 / Board-test package
 
 1. 加载 ti60_r5.bit。必须更新硬件；原R4 bit不支持新输入与分辨率切换。

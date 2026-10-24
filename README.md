@@ -1,5 +1,11 @@
 # Ti60 R5：RISC-V + FPGA 2D 游戏渲染引擎
 
+当前交付候选 **R5.7-COOP-PERF**：普通萝卜/东方同屏三人（UART / CH9350L / 矩阵），压力热路径与方块分带优化；**720P 显示链路保留原样**。200 / 202.083333 / 205MHz 均有配套 bit 与 ELF，见 [R5.7 实现与验证报告](docs/R57_REPORT.html)、[下载清单](BOARD_TEST/r5_7/manifest.json)。新版本板上稳定帧率尚未测试；1080P 黑屏仍需彩条/显示器验证，已加10秒自动回720P；480P尚未实现。上位机源码版本为`R5.7-COOP-PERF`。
+
+GitHub克隆后先运行 `python3 tools/restore_r57_package.py`（Windows可用 `python`），自动拼接校验分卷并恢复 `BOARD_TEST/r5_7` 中全部配套bit/ELF。GitHub大文件接口拒绝单个ELF，因此使用无损分卷；本地交付目录已含完整文件。
+
+下面保留各历史版本说明，其版本号与资源数字不代表R5.7。
+
 最新版本 **R5.6**：萝卜压力模式取消定位轮廓、遮挡渐隐与近身索引，让弹幕直接覆盖角色。继续使用 R5.5 bit，下载 `BOARD_TEST/r5_6/` 的新 ELF。详见 [实现与收益估算](docs/R5_6_LOCATOR_OFF.md)；99,999 容量与小尺寸沿用 R5.5，实际帧率增益待上板测量。
 
 **R5.3 软件更新：** [完整说明与 R2 对照](docs/R5_3_SETTINGS_MUSIC.md)。全 10 首切换、人物轮廓缓存、自动演示循环优化与更明确的加速状态。新 ELF 在 `BOARD_TEST/r5_3`，继续配套已验证的 R5.2.1 bit；上板性能恢复幅度待复测。完整包见 `dist/Ti60_R5_3_MUSIC_PERF.tar.xz`。

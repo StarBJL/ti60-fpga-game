@@ -1,0 +1,242 @@
+[
+  {
+    "path": "BOARD_TEST/START_HERE.txt",
+    "old_sha256": "5c8645246f8f848fd27b59851610c3123a0fd378a99f861b170093e1654494ce",
+    "new_sha256": "b4970851f5d41479097538e4b5ff1b345456e35b2c3a543b6733204c910a6119"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.c",
+    "old_sha256": "1a4523db748fee190dab6836f9221ff0e099315b0fee2ac52f37ff5db4115cf7",
+    "new_sha256": "b232fda8d63642f278fbd98bd1a1007bfde29c5c512b8ffa2e66670638af618b"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.h",
+    "old_sha256": "6d4e0dd604b35ca48e256444e33e3cff512b596c12c20614069369affba12223",
+    "new_sha256": "1eac4617f732b6983b1df286a5b35f8e51dc9e040b8dde0ea934fc60b5e42740"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control_runtime.h",
+    "old_sha256": "0540dc66eb6baa5b30ab0ba14682f7b9568914d61751755c16fcd45ada3f8544",
+    "new_sha256": "b91f78998119e2dc7309edbc243a98c89470ddae2010a29c7cb7409f9395d9b0"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/coop_fx.c",
+    "old_sha256": null,
+    "new_sha256": "a390ca80c6a5e34c1d1c392d19f3c0a4631482683eb7926bccf63e71a559ffca"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/coop_fx.h",
+    "old_sha256": null,
+    "new_sha256": "3ff0004b3dd11f68df6349a9b2c7ea994bb20dda7aedd060695b517b2ec525b7"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/demo.c",
+    "old_sha256": "e4e95d29d01b7a05ec92ecec19cd3cb14eb4c33e30fcd001e133061d64501b70",
+    "new_sha256": "48814885ad4775f30a2132cce143e77a7a68c6445f78cfeb460abc83dfa63f5f"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/demo.h",
+    "old_sha256": "c78c98ea926d16ecfef2411fb3839e84ac0f32a2868c7db02ff385db85ac0f1c",
+    "new_sha256": "98f80ae7f9aa4b446db9315c037267b4c1223aadc06c1e8be61787c7b2b2827d"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game.c",
+    "old_sha256": "a54ea5713fbdfe032d74a574356a02583aaa04ac1a7c529029bde31ac8b069de",
+    "new_sha256": "68daedcf61bf29dad1cdfa6b0f334d775e5c7a1cde15fd5b901f719afbaaf3b7"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game.h",
+    "old_sha256": "ed6579c7af1bcfdc7c9f618fb998342a19cea5f928f7712631c1d821692da1b5",
+    "new_sha256": "a3071d37e11e65f7c35b29053e948ac1ebe18982e2837124dbd1312b39a3d68c"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/gfx.h",
+    "old_sha256": "826b282eeca0e98470babd03215caabfe1fed33d37d0b71e2f560c6da7247db1",
+    "new_sha256": "02f8a4b79651e8f4f20e1f588771768eae1929ee0acbd4d3e4d7d92bc5391b43"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hero_locator.h",
+    "old_sha256": "1701a5c077a5bcab7e84c1037dccaa244c443a10a7e84a4ce018230aceea2021",
+    "new_sha256": "15ae83475aaa9e0c031679bea5b4932886da90c8d6a7b34d1e808d9184ddd767"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.c",
+    "old_sha256": "b89c68c2dc2273e3f2e281696c302caee875066eb19306d668ed141015c041ca",
+    "new_sha256": "a2fa54c8ba357bbe1afc760abbb1bbe8b5acc60ca67e02500885dd963b5b629f"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.h",
+    "old_sha256": "2d653657c39439674d1c9cdb3cd26e85522628fb308fa150ff78a62400120083",
+    "new_sha256": "f49c573bb25490c2ed9baa3151edd57ddf443156d2bab0d186a45fee7e9b8aa1"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_runtime.h",
+    "old_sha256": "099a98b12c4decfd49a20d7a4a77139adccda8a2b04af7afe654a73530c94a47",
+    "new_sha256": "b86a0520c2f532ba72b870da27151a3e7b95ce8d87e94853b71437d15adb7fed"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c",
+    "old_sha256": "7563ea4b86948ec41c6669afd4c12ec57322bdc854dd68a311daf1c195cfea7d",
+    "new_sha256": "730e6c8c5811ea930f8793df1e6ab08b2d87ec3e5e980f2680289d068315486b"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/pad.c",
+    "old_sha256": "4f99b928c4cff93a827137bd2c3ac8031fc0380e01275c6eb7addd6df692018f",
+    "new_sha256": "ccafc2982a9e01707f550c79f56c3f19521ef4967df6ec9d869024e62a7825e0"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/pad.h",
+    "old_sha256": "e49278f231371386fa0e901db7d1f7dbd7cdd7232095c1c3f3acd34208fd1c11",
+    "new_sha256": "5065c18a9eccf1a6deafbacd3d0f0b88ca51a1a2f2c29cede51e68deadfc064a"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/render.c",
+    "old_sha256": "74137b85788dbc43e3b65b53923d3dbe7c5bffb416326dbb0eb4860f496b5502",
+    "new_sha256": "2d21f2dff31b995110387a80c8353f5a3264b31971f78959d8634be8aa4b0c6c"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/sprout_config.h",
+    "old_sha256": "445b419c8690ac79e9e98935b29979bcb1b84db68d7a34cc0792dfbd350ae845",
+    "new_sha256": "84751f12e501e7ebf2506f9bc5a8062fc1ab285ffb48a32f2561cc311512dfec"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th.h",
+    "old_sha256": "a030bb608c4018927135a42e1cd929297e957cfccbffc4658f776caabdc70b0a",
+    "new_sha256": "81ab14719df1fa20f9a1578243433069c41a63ea2fde21c86458ed6c2dd805f4"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_game.c",
+    "old_sha256": "7a27ac54860c2837891807c98974a16cff136e08e890570eb4a28f3b20cdb41b",
+    "new_sha256": "f8d4b74d7f7d8101119058d2fe4145a9aefe976a5045e5e5336783c7e13a1537"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_render.c",
+    "old_sha256": "c4dee059b3f137791cb5697e8ba43d2bb07b65f9471a5f47d36bb31aeeb40dc9",
+    "new_sha256": "273d732a9f405110ee20f284fd672135d10e021b8f3070daa80b0cd602b014e3"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/weapon_pose.h",
+    "old_sha256": "684453f653feab94e3a15b2870343954efa333152edf5bbd647e072bb6f24543",
+    "new_sha256": "36f5a22762f6751e3e7fc3ad9bfbb63a006bbbfb329f16e0349da8656815a2fe"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/ip/soc/settings.json",
+    "old_sha256": "8c974b7e7fd2ccab72c3ad7f910a5015144e40a5eaeea30ef709fa5dc2b208ab",
+    "new_sha256": "8e2efb315719300b2414010fb0cf724f529aedc029f86548f0991b4c6574bcd0"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/ip/soc/soc.v",
+    "old_sha256": "654a1921274a4c4231b13ef3727db1c4e76ea076b460bcd5c536177b4464413c",
+    "new_sha256": "ac4f414f60b8f0972e6e9617d275a90ccc30fad76c4bd7e3c6536dfc1175e6f4"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/ip/soc/source/soc_config",
+    "old_sha256": "6fc70ef4dc7ed8e545ac22e5fcce17c0acda4746699e2a075dded14b43c5d4fe",
+    "new_sha256": "5417e1690b775c5ed0109fa926769e3eb2a1530734d12239eb762c72dbeb378f"
+  },
+  {
+    "path": "PROJECT/rtl/ddr3_example_top.v",
+    "old_sha256": "e20a88f39cf2c84b24a1cf630b2cc8720bcef03745a71006cbac1990c3bb8056",
+    "new_sha256": "4b2c41e8ab04a6ffb5acc5243ec94be77eb2e08a10e8dacb8755d7d38e2aba12"
+  },
+  {
+    "path": "PROJECT/rtl/hdmi/hdmi_fb.v",
+    "old_sha256": "9fbeb5cabdf33163da707e35836530f7e0dccda8afe252cfa92e1e8294ef5cbf",
+    "new_sha256": "eb897544387b2c3fb4ff4ea307adbf3c4d6ec9b953e6b7523651538bdffc104c"
+  },
+  {
+    "path": "README.md",
+    "old_sha256": "2f5db6bd7ed1ae77c980af8c17113ba867c77a48324b913db876ab09756651c2",
+    "new_sha256": "1269b147f0d7397d5e56160e473010a1755c8e13b301a335c45435f990bcb848"
+  },
+  {
+    "path": "README_EN.md",
+    "old_sha256": "29ee12f96b7b65ade0aa1f7e38d35aa3061756c282c202c1ee63ef45af59c7fb",
+    "new_sha256": "08e81b2cabe5a4c28999a7bf6704c601d0f80363cf7bd45f5411fe559dd34a5c"
+  },
+  {
+    "path": "START_HERE.md",
+    "old_sha256": "b87a906b87e6012f6e36f0764b9b42f929166a5cf7726b6285a90ce23dc0f486",
+    "new_sha256": "2f6dab16887ad07f584e5e847184a009183ee7c4152f3d1a6db0af3412c6241a"
+  },
+  {
+    "path": "build_hardware.py",
+    "old_sha256": "1a8b9de32587e1baa9326e43429a8394f2ab8967660c76e8b1693009e8bcefb9",
+    "new_sha256": "3ad5580be5c20d527a9631593f35ecc934f750fdbf332277421beb6925bbddc6"
+  },
+  {
+    "path": "build_software.py",
+    "old_sha256": "a908c40dc60caa5ef53683a5ee1426ae3f8fdc9cd471ad9e2986c682d34c0fe4",
+    "new_sha256": "7e8f0faeeda457df8754e0ce3246fb1bdc733a76353a3c46a978f3287ed47fdf"
+  },
+  {
+    "path": "docs/INPUT_DEVICES.md",
+    "old_sha256": "d78002a987d480aff2a6311d2a906b634a393b795064ecd73690386a452bb954",
+    "new_sha256": "a9c26f7de63adfd9ac057d1453efd2954c7d2cf3655abd496ce22bd7c2969926"
+  },
+  {
+    "path": "docs/INPUT_GUIDE.html",
+    "old_sha256": "6c8252e6751972e7001d90d5db4534ad00c94b259e6f13e6a5874fe38c58d558",
+    "new_sha256": "bddc57ca5a1faacafa1372d5b8b654077d8df151fff537208a28cec54ad97bf8"
+  },
+  {
+    "path": "docs/R57_REPORT.html",
+    "old_sha256": null,
+    "new_sha256": "1184f4a8d8cbe80b24381fb84e863bb9448eb077ef341152dff8724e0543f550"
+  },
+  {
+    "path": "docs/key_layout.json",
+    "old_sha256": "da613e678b2e1801abb7cc4ab8d5f016cda5ef85a7a3d6e792a388f9629f1d1e",
+    "new_sha256": "79df0d9f111cec0e51c2ce9fd8bb43aca0222fd809c35c1075c0722077f60011"
+  },
+  {
+    "path": "tools/build_clock_variant.py",
+    "old_sha256": null,
+    "new_sha256": "42b51bdc27516436383c05ed6c6a3dd95e91b1b72c0466dd7c31659a4f7ca8e8"
+  },
+  {
+    "path": "tools/control_panel/app.js",
+    "old_sha256": "857b053a3dcb3339803eb84ca8f7ae05f30b9905ed5662f4ed1648c9ea380ce9",
+    "new_sha256": "8a8fbea8dac9ab6a9f95fe21d87919b12d570eb1e44f9c370c152060d8eff0ec"
+  },
+  {
+    "path": "tools/control_panel/index.html",
+    "old_sha256": "4b91596709db0367105f0a2eb4eeed0aebd5390e5ab5685a1e2f5a1d0605172a",
+    "new_sha256": "24c6ac4e9939fb513e5a9bf93573ec6e9d3c14efbea73ac4db3a99da63453b7e"
+  },
+  {
+    "path": "tools/control_panel/serial_ports.py",
+    "old_sha256": "2c5c6107fcd19e31c3ac240373212dad1c8dc5dd96fd13c81fa73e476174bd13",
+    "new_sha256": "fb672a1b2df1cceed5aeef41aeead0462526886c2b67e8bd33c3076efa4a9baa"
+  },
+  {
+    "path": "tools/control_panel/server.py",
+    "old_sha256": "bcc90bf8cdfd9f3470afbd6f79d908e825201169edc7e433e56e420c5c6d6dc3",
+    "new_sha256": "0b7ed63a1a7077df8e841f4b9f06da9ee5b76e0487e0c17c15ebf4de0357eaf2"
+  },
+  {
+    "path": "tools/control_panel/style.css",
+    "old_sha256": "75fdf6f2c35a2a53464fac6d18a5584e5d702c717c6b0324e7d705eb6ec4eac4",
+    "new_sha256": "52c201f51a111c13e52f39bdacdbc3b1bb8d216e87c599194edb30e30fe9224c"
+  },
+  {
+    "path": "tools/restore_r57_package.py",
+    "old_sha256": null,
+    "new_sha256": "f0782c686d6076f58584e94c8529707010d490851bbcfe727049d51a5b032d06"
+  },
+  {
+    "path": "verification/r5/run_firmware_checks.py",
+    "old_sha256": "7b08f26d1ad0516ee2d75103185d5dcfb680eb88151368f4794ff01ea44c3e62",
+    "new_sha256": "90cb46d54477580e56053fa3b07fc5c8a1604c2a32a91d2672a9a1349fb6b7d9"
+  },
+  {
+    "path": "verification/r5/test_input_devices.c",
+    "old_sha256": "0dd0e96ccb8b345bacb47563e9a2370a5f38e0d55699abe1064f27709100663f",
+    "new_sha256": "a0a28d41d1cccb6635f55af0b3b2187b9e60bb83691ab1a901c0fc29febe08b0"
+  },
+  {
+    "path": "verification/r5/test_main.c",
+    "old_sha256": "7dfbe4e59f58d3a0ccb3132fb67781dfcdb8a7b2cc5d274f79b919c2facafc58",
+    "new_sha256": "010a3f66f8cf34c1a655dd6e147bb41f64dfac4a0460a1ac1dc455c23cb74b67"
+  }
+]

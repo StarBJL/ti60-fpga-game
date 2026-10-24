@@ -1,0 +1,28 @@
+FRAME_HASH 78ece1c5
+FRAME_PASS 1 mode=0 pixels=921600
+FRAME_HASH 78ece1c5
+FRAME_PASS 2 mode=0 pixels=921600
+MODE_COMMIT 1 at 49363784000
+FRAME_HASH 8cc130c5
+FRAME_PASS 3 mode=1 pixels=2073600
+FRAME_HASH 8cc130c5
+FRAME_PASS 4 mode=1 pixels=2073600
+MODE_COMMIT 0 at 115921497000
+FRAME_HASH 78ece1c5
+FRAME_PASS 5 mode=0 pixels=921600
+FRAME_HASH 78ece1c5
+FRAME_PASS 6 mode=0 pixels=921600
+FRAME_HASH 78ece1c5
+FRAME_PASS 7 mode=0 pixels=921600
+FRAME_HASH 78ece1c5
+FRAME_PASS 8 mode=0 pixels=921600
+MODE_COMMIT 1 at 182479211000
+FRAME_HASH 8cc130c5
+FRAME_PASS 9 mode=1 pixels=2073600
+FRAME_HASH 8cc130c5
+FRAME_PASS 10 mode=1 pixels=2073600
+PACKET_TRACE_PASS: frames=10 mode_changes=3 TMDS pixels=13824000 audio_sent=11968 audio_UF=0
+- /data/users/user/codex_tmp/ti60_r57_work/Ti60_R5_DUALVIDEO/verification/r5_7/video_202p083333/tb.sv:177: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.051 devel
+- Verilator: $finish at 249ms; walltime 42.580 s; speed 5.856 ms/s
+- Verilator: cpu 42.539 s on 1 threads; allocated 4 MB

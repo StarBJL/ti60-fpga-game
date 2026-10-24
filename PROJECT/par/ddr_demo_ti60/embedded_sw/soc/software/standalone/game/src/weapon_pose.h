@@ -12,7 +12,7 @@ static inline int weapon_heading_for(int dx,int dy){
     return index;
 }
 /* Shared by firing and rendering; the barrel bore is two pixels above pivot. */
-static inline WeaponPose weapon_pose(const Game *g,int gun,int idle){
+static inline WeaponPose weapon_pose_player(const GamePlayer *g,int gun,int idle){
     WeaponPose p;int side=gun?5:-5,cx=g->x/FIX,cy=g->y/FIX;
     int h=idle?(gun?28:20):(g->weapon_heading&31);
     int ux=weapon_unit[h][0],uy=weapon_unit[h][1],px=-uy,py=ux;
@@ -24,4 +24,5 @@ static inline WeaponPose weapon_pose(const Game *g,int gun,int idle){
     p.front=p.y>=cy;
     return p;
 }
+static inline WeaponPose weapon_pose(const Game *g,int gun,int idle){return weapon_pose_player(&g->actor,gun,idle);}
 #endif

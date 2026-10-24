@@ -1,5 +1,11 @@
 # Ti60 R5: RISC-V + FPGA 2D Game Rendering Engine
 
+Current candidate: **R5.7-COOP-PERF**. Normal carrot/Touhou games support independent UART, USB and matrix players. Pressure data/loop and square band admission are optimized. **The 720p display path is preserved.** Matched 200, 202.083333 and 205MHz artifacts are in `BOARD_TEST/r5_7/`. Read the [bilingual implementation and validation report](docs/R57_REPORT.html#english). New board FPS gains are unmeasured. The reported 1080p monitor blackout is unresolved; a 10-second trial timeout now restores720p. 480p is not implemented. Current source console identifies as`R5.7-COOP-PERF`.
+
+After cloning, run `python tools/restore_r57_package.py` to verify/reassemble the archive and restore all matched bit/ELF files. The connector rejected individual ELF uploads; checked binary parts preserve the exact originals. Local delivery already contains full artifacts.
+
+Historical versions and their resource numbers follow.
+
 Latest revision **R5.6** removes locator coverage, fading, markers and nearby indexing from carrot stress mode. Bullets cover the actor directly; normal gameplay retains its locator. Use the unchanged R5.5 bit with the new ELF in `BOARD_TEST/r5_6/`. See [implementation and conditional benefit estimate](docs/R5_6_LOCATOR_OFF.md). Actual board FPS gains are not yet measured.
 
 **R5.3 firmware update:** [R2 comparison and changes](docs/R5_3_SETTINGS_MUSIC.md). Full ten-track selection, immutable hero-outline caching and invariant autoplay lookup. New ELF files are in `BOARD_TEST/r5_3`; hardware reuses the validated R5.2.1 bit. Actual throughput recovery requires board retesting. Complete bundle: `dist/Ti60_R5_3_MUSIC_PERF.tar.xz`.

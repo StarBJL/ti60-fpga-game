@@ -21,15 +21,15 @@ if __name__=='__main__':
     names=set(sys.argv[1:])
     def wanted(n):return not names or n in names
     if wanted('gameplay'):run('gameplay',[root/'verification/r4/test_merge_gameplay.c',src/'game.c'],['-DSPROUT_STATS=1'])
-    if wanted('visual'):run('visual',[root/'verification/r4/test_merge_visual.c',*[src/f for f in ['game.c','gfx.c','gfx_hw.c','blit.c','mini_snprintf.c']]],['-no-pie','-fno-pie','-Wl,-Ttext-segment=0x08000000','-DBLIT_HOST_MODEL','-DSPROUT_STATS=1','-DGFX_FONT_ATLAS_CPU_MAX_SCALE=3'])
+    if wanted('visual'):run('visual',[root/'verification/r4/test_merge_visual.c',*[src/f for f in ['game.c','gfx.c','gfx_hw.c','blit.c','mini_snprintf.c','coop_fx.c']]],['-no-pie','-fno-pie','-Wl,-Ttext-segment=0x08000000','-DBLIT_HOST_MODEL','-DSPROUT_STATS=1','-DGFX_FONT_ATLAS_CPU_MAX_SCALE=3'])
     if wanted('audio'):run('audio',[root/'verification/r4/test_audio.c',src/'game_sound.c',src/'music.c'])
     if wanted('font'):run('font',[root/'verification/test_font.c'])
     if wanted('demos'):run('demos',[root/'verification/r4/test_demos.c',src/'gfx.c',src/'mini_snprintf.c'])
-    if wanted('touhou'):run('touhou',[root/'verification/th_preview.c',*[src/f for f in ['th_tab.c','th_game.c','th_pattern.c','th_stage2.c','th_art.c','th_render.c','th_pix.c','gfx.c','mini_snprintf.c','stress_sizes.c']]])
+    if wanted('touhou'):run('touhou',[root/'verification/th_preview.c',*[src/f for f in ['th_tab.c','th_game.c','th_pattern.c','th_stage2.c','th_art.c','th_render.c','th_pix.c','gfx.c','mini_snprintf.c','stress_sizes.c','coop_fx.c']]])
     if wanted('control'):run('control',[v/'test_control.c',src/'control.c',src/'pad.c'],['-fsanitize=address,undefined','-fno-omit-frame-pointer'])
-    if wanted('th_sizes'):run('th_sizes',[root/'verification/r4/test_th_sizes.c',*[src/f for f in ['th_tab.c','th_game.c','th_pattern.c','th_stage2.c','th_art.c','th_render.c','th_pix.c','gfx.c','mini_snprintf.c','stress_sizes.c']]])
+    if wanted('th_sizes'):run('th_sizes',[root/'verification/r4/test_th_sizes.c',*[src/f for f in ['th_tab.c','th_game.c','th_pattern.c','th_stage2.c','th_art.c','th_render.c','th_pix.c','gfx.c','mini_snprintf.c','stress_sizes.c','coop_fx.c']]])
     if wanted('main'):
-        run('main',[v/'test_main.c',*[src/f for f in ['game.c','gfx.c','render.c','demo.c','gfx_hw.c','blit.c','mini_snprintf.c','pad.c','th_tab.c','th_game.c','th_pattern.c','th_stage2.c','th_art.c','th_render.c','th_pix.c','audio.c','th_sound.c','game_sound.c','music.c','control.c','stress_sizes.c','input_devices.c']]],['-no-pie','-fno-pie','-Wl,-Ttext-segment=0x08000000','-DBLIT_HOST_MODEL','-DSPROUT_STATS=1','-DBOOT_DIAG=0','-DHOST_RES=0x02d00500u','-I'+str(tools/'mock')],['main_uart.log'])
+        run('main',[v/'test_main.c',*[src/f for f in ['game.c','gfx.c','render.c','demo.c','gfx_hw.c','blit.c','mini_snprintf.c','pad.c','th_tab.c','th_game.c','th_pattern.c','th_stage2.c','th_art.c','th_render.c','th_pix.c','audio.c','th_sound.c','game_sound.c','music.c','control.c','stress_sizes.c','input_devices.c','coop_fx.c']]],['-no-pie','-fno-pie','-Wl,-Ttext-segment=0x08000000','-DBLIT_HOST_MODEL','-DSPROUT_STATS=1','-DBOOT_DIAG=0','-DHOST_RES=0x02d00500u','-I'+str(tools/'mock')],['main_uart.log'])
     codes={int(x,16) for x in re.findall(r'0x[0-9a-f]+',(src/'zh_font_data.h').read_text().split('zh_bitmap')[0])}
     used=set()
     for p in src.glob('*.c'):

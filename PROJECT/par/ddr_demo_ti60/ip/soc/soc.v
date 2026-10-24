@@ -9902,7 +9902,7 @@ module BmbUartCtrl_9c017bb480e9457fb077e67cf184264d (
     if(systemCd_logic_outputReset) begin
       _zz_io_bus_rsp_valid_1 <= 1'b0;
       bridge_uartConfigReg_clockDivider <= 20'h0;
-      bridge_uartConfigReg_clockDivider <= 20'h0006b;
+      bridge_uartConfigReg_clockDivider <= 20'h000d8;
       bridge_uartConfigReg_frame_dataLength <= 3'b111;
       bridge_uartConfigReg_frame_parity <= UartParityType_NONE;
       bridge_uartConfigReg_frame_stop <= UartStopType_ONE;

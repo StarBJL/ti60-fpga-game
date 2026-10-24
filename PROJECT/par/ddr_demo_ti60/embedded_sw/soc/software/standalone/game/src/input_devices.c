@@ -4,6 +4,8 @@ enum { UP=1,DOWN=2,LEFT=4,RIGHT=8,SHOT=16,BOMB=32,SLOW=64,PAUSE=128,START=256 };
 static void emit(InputDevices *d,InputAction a,int v){if(d->emit)d->emit(d->opaque,a,v);}
 static void publish(InputDevices *d){
     uint16_t held=d->matrix_held|d->keyboard_held;
+    if(d->matrix_held!=d->published_matrix){d->published_matrix=d->matrix_held;emit(d,INPUT_SOURCE_HELD,0x20000|d->matrix_held);}
+    if(d->keyboard_held!=d->published_keyboard){d->published_keyboard=d->keyboard_held;emit(d,INPUT_SOURCE_HELD,0x10000|d->keyboard_held);}
     if(held!=d->published_held){d->published_held=held;emit(d,INPUT_HELD,held);}
 }
 void input_devices_init(InputDevices *d,InputEmit cb,void *arg){memset(d,0,sizeof(*d));d->emit=cb;d->opaque=arg;}
@@ -31,7 +33,7 @@ static void matrix_action(InputDevices *d,unsigned key,int fn){
     emit(d,a,v);
 }
 void input_matrix_snapshot(InputDevices *d,uint16_t keys){
-    unsigned i;uint16_t rising;int fn;
+    unsigned i;uint16_t rising;int fn;d->source=2;
     if(input_matrix_has_ghost(keys)){
         if(!d->ghost_latched)d->ghost_reports++;
         d->ghost_latched=1;
@@ -77,6 +79,7 @@ static void keyboard_action(InputDevices *d,unsigned code,int shift){
     case 0x40:emit(d,INPUT_STEP_SET,10);break;
     case 0x41:emit(d,INPUT_STEP_SET,1);break;
     case 0x42:emit(d,INPUT_RESOLUTION_NEXT,0);break;
+    case 0x43:emit(d,INPUT_VIDEO_CONFIRM,0);break;
     case 0x2d:case 0x36:emit(d,INPUT_COUNT_DELTA,-1);break;
     case 0x2e:case 0x37:emit(d,INPUT_COUNT_DELTA,1);break;
     case 0x2f:case 0x30:emit(d,shift?INPUT_SQUARE_DELTA:INPUT_BULLET_DELTA,code==0x2f?-1:1);break;
@@ -92,10 +95,11 @@ static void keyboard_action(InputDevices *d,unsigned code,int shift){
     }
 }
 void input_keyboard_release(InputDevices *d){
+    d->source=1;
     memset(d->keyboard_previous,0,sizeof(d->keyboard_previous));d->keyboard_held=0;d->rx_state=0;publish(d);
 }
 static void keyboard_report(InputDevices *d){
-    unsigned i,held=0;uint8_t *r=d->rx_data;d->keyboard_reports++;
+    unsigned i,held=0;uint8_t *r=d->rx_data;d->keyboard_reports++;d->source=1;
     /* ErrorRollOver / POSTFail / ErrorUndefined are not real key usages. */
     for(i=2;i<8;i++)if(r[i]>=1&&r[i]<=3){d->rollover_reports++;input_keyboard_release(d);return;}
     if(r[0]&0x22u)held|=SLOW;

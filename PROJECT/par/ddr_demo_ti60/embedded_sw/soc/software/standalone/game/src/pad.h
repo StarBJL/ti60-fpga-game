@@ -33,6 +33,9 @@ int      pad_feed(uint8_t c, uint32_t now);
 /* Common held-state event for framed hosts and future GPIO/USB decoders. */
 void pad_set_physical(uint32_t mask);
 void pad_set_state(uint32_t mask,uint32_t now);
+void pad_set_device(unsigned source,uint32_t mask);
+uint32_t pad_source_held(unsigned source,uint32_t now,uint32_t ticks_per_ms);
+uint32_t pad_source_pressed(unsigned source,uint32_t now,uint32_t ticks_per_ms);
 int pad_has_state(void);
 void pad_use_terminal(void);
 /* 当前按住的键（PAD_*）；超时（PC 程序没在发）返回 0。 */

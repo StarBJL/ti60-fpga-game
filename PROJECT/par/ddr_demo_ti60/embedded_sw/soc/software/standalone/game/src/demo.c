@@ -11,6 +11,10 @@ static int motion_ok,motion_on=1,motion_fault,table_on=1;
 static uint32_t tick_cycles,table_frames,motion_cycles;
 #define MOT_BATCH 29984 /* 32-object multiple, <= old hardware 30000 cap */
 static uint32_t square_revision;
+static uint32_t square_band_bound,bound_revision;
+static int bound_count,bound_valid;
+unsigned demo_band_bound(void){return bound_valid&&bound_revision==square_revision?square_band_bound:0;}
+
 static int fixed_square_size,motion_min_px=6;
 int demo_motion_min_size(void){return motion_min_px;}
 int demo_square_size(void){return fixed_square_size;}
@@ -87,7 +91,7 @@ static void gen_image(Pixel *p, int kind)
 void demo_init(uint32_t img_base)
 {
     static const char *names[3] = { "图像一", "图像二", "图像三" };
-    int i;
+    int i;bound_valid=0;
     for (i = 0; i < 3; i++) {
         Gfx g;
         Pixel *p = (Pixel *)(uintptr_t)(img_base + (uint32_t)i * 0x200000u);
@@ -160,14 +164,14 @@ void demo_reset_squares(void)
         square_pixels[i+1]=square_pixels[i]+size*size;
         square_alpha_pixels[i+1]=square_alpha_pixels[i]+((i&1)?size*size:0u);
     }
-    square_revision=0;motion_fault=0;blit_fence();
+    square_revision=0;motion_fault=0;bound_valid=0;blit_fence();
 }
 
 int demo_set_square_size(int pixels){
     if(pixels!=0&&pixels!=1&&pixels!=3&&(pixels<6||pixels>40))return 0;
     if(blit_st.depth)blit_wait();
     if(motion_ok&&(MOT_REG(8)&1u))return 0;
-    blit_dcache_invalidate();fixed_square_size=pixels;
+    blit_dcache_invalidate();fixed_square_size=pixels;bound_valid=0;
     square_pixels[0]=square_alpha_pixels[0]=0;
     for(int i=0;i<DEMO_MAX_SQUARES;i++){
         Square *s=&squares[i];uint32_t size=pixels?(uint32_t)pixels:6u+((uint32_t)i*2654435761u)%35u;
@@ -182,7 +186,7 @@ int demo_set_square_size(int pixels){
 
 static void square_cpu_step(int count)
 {
-    int i;motion_cycles=0;blit_dcache_invalidate();
+    int i;motion_cycles=0;bound_valid=0;blit_dcache_invalidate();
     for(i=0;i<count;i++){
         Square *s=&squares[i];uint32_t m=s->motion;int size=(m>>16)&255;
         int x=(s->xy&65535u)+(int8_t)m,y=(s->xy>>16)+(int8_t)(m>>8);
@@ -197,15 +201,21 @@ static void square_cpu_step(int count)
 static int square_hw_step(int count)
 {
     uint32_t t,st;
-    motion_cycles=0;blit_fence();
+    uint32_t bound=0;int valid=1;
+    motion_cycles=0;bound_valid=0;blit_fence();
     for(int offset=0;offset<count;){
         int n=count-offset;if(n>MOT_BATCH)n=MOT_BATCH;
         MOT_REG(0x0c)=(uint32_t)(uintptr_t)(squares+offset);MOT_REG(0x10)=(uint32_t)n;
         MOT_REG(0x14)=1;t=DEMO_CLOCK();
         do{st=MOT_REG(8);if(DEMO_CLOCK()-t>BSP_CLINT_HZ){motion_fault=1;return 0;}}while(st&1u);
         if((st&14u)!=2u){motion_fault=1;return 0;}
-        motion_cycles+=MOT_REG(0x18);offset+=n;
+        motion_cycles+=MOT_REG(0x18);
+        uint32_t peak=MOT_REG(0x34),upper=peak*((unsigned)(scene_w+31)/32u);
+        if(!peak||peak>(unsigned)n)valid=0;
+        bound+=upper>(unsigned)n?(unsigned)n:upper;
+        offset+=n;
     }
+    square_band_bound=bound;bound_count=count;bound_revision=square_revision+1;bound_valid=valid;
     return 1;
 }
 void demo_squares_tick(int count)
@@ -258,10 +268,11 @@ void demo_squares_render(Gfx *g, RenderInfo info, int count)
         const GfxHwTarget *t=(const GfxHwTarget *)g->context;
         uint32_t *p;
         blit_list_draw_ctx(t->fb,t->pitch,0);
+        uint32_t upper=bound_valid&&bound_revision==square_revision&&count<=bound_count?square_band_bound:(uint32_t)count;
+        blit_band_admit(upper);
         for(int offset=0;offset<count;){
             /* Even chunks preserve SQTAB's odd/even Alpha pattern. */
             int n=count-offset;if(n>MOT_BATCH)n=MOT_BATCH;
-            blit_band_admit((uint32_t)n);
             p=blit_list_reserve(2);p[0]=0x60000000u|(info.alpha_fx?0x10000u:0u)|(uint32_t)n;
             p[1]=(uint32_t)(uintptr_t)(squares+offset);blit_list_commit(p+2);offset+=n;
         }
