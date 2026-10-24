@@ -22,6 +22,8 @@ jobs:
         run: python tools/control_panel/build_windows.py
       - name: Protocol and Windows branch checks
         run: .venv-control-build/Scripts/python.exe verification/r5/windows_console/test_portability.py
+      - name: R2 preset acknowledgement and telemetry checks
+        run: .venv-control-build/Scripts/python.exe verification/r5_4/test_presets.py
       - name: Packaged executable HTTP smoke test
         run: python verification/r5/windows_console/windows_exe_smoke.py
       - uses: actions/upload-artifact@v4

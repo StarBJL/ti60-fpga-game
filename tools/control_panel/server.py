@@ -12,6 +12,7 @@ from pathlib import Path
 import argparse, csv, io, json, mimetypes, os, re, secrets, sys, threading, time, urllib.parse, webbrowser
 
 from serial_ports import CONSOLE_VERSION, enumerate_ports
+from r2_presets import PROFILES, REQUIRED_FIELDS, public_profiles, command_plan, mismatches
 
 HERE=Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parent))
 ROOT=Path(sys.executable).resolve().parent if getattr(sys,'frozen',False) else HERE.parents[1]
@@ -24,7 +25,7 @@ def default_log_root():
 
 COMMANDS={'status','scene','start','pause','restart','menu','stress','skill','pick','move','stop','step','delta','count','bullet','square','period','density','auto','vsync','alpha','backend','motion','table','bgm','next','volume','tone','stats','verbose','bench','key','resolution','fast','bars','volume_delta','prev','music'}
 NO_ARGUMENT={'status','start','pause','restart','menu','skill','stop','next','prev','bench','fast'}
-FIELDS=['timestamp','boot','seq','epoch','scene','phase','count','target','step','bullet','square','alpha','vsync','hw','motion','table','bgm','track','resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','elapsed_us','render_fps','logic_hz','present_fps','repeat_fps','scan_hz','valid','video_uf','audio_uf','logic_us','logic_max_us','submit_us','wait_us','work_us','work_max_us','over','busy','phase1_us','bands_us','profile','font_hit','font_miss','font_reset','label_hit','label_miss','drops','submit_mode','band','cache','overlap','overlap_active','seed_table','seed_build','sort','kpath','rd_bursts','wr_bursts','rd_words','wide','video_rev','bars','tone','volume','bank_sounds','mixer','audio_ctrl','auto','density','stress_auto','stats','verbose','music_auto','music_index','music_total']
+FIELDS=['timestamp','boot','seq','epoch','scene','phase','count','target','step','bullet','square','alpha','vsync','hw','motion','table','bgm','track','resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','elapsed_us','render_fps','logic_hz','present_fps','repeat_fps','scan_hz','valid','video_uf','audio_uf','logic_us','logic_max_us','submit_us','wait_us','work_us','work_max_us','over','busy','phase1_us','bands_us','profile','font_hit','font_miss','font_reset','label_hit','label_miss','drops','submit_mode','band','cache','overlap','overlap_active','seed_table','seed_build','sort','kpath','rd_bursts','wr_bursts','rd_words','wide','video_rev','bars','tone','volume','bank_sounds','mixer','audio_ctrl','auto','density','stress_auto','stats','verbose','music_auto','music_index','music_total','r2_preset','r2_stage','r2_conditions_match','r2_initial_target']
 def utc():return datetime.now(timezone.utc).isoformat(timespec='milliseconds')
 def parse_values(line):
     result={}
@@ -48,11 +49,11 @@ def command_wire(request_id,name,value=None):
 
 class Collector:
     def __init__(self):
-        self.state={};self.samples=deque(maxlen=600);self.lines=deque(maxlen=300);self.parts={};self.complete=set();self.acks=deque(maxlen=80);self.cursor=0;self.boot=0;self.compatible=False;self.dualvideo=False
+        self.state={};self.samples=deque(maxlen=600);self.lines=deque(maxlen=300);self.parts={};self.complete=set();self.acks=deque(maxlen=80);self.cursor=0;self.boot=0;self.compatible=False;self.dualvideo=False;self.responses={}
     def feed(self,line):
         self.cursor+=1;self.lines.append({'id':self.cursor,'time':utc(),'text':line})
         if re.search(r'=== (?:720P-|TI60-|Ti60-|R5-)',line):
-            self.boot+=1;self.parts.clear();self.complete.clear();self.state={};self.compatible=False;self.dualvideo=False
+            self.boot+=1;self.parts.clear();self.complete.clear();self.state={};self.compatible=False;self.dualvideo=False;self.responses.clear()
             self.state['firmware']=line.strip('= ')
         if line.startswith(('R4:','R5:')):self.compatible=True
         tag=line.split(' ',1)[0]
@@ -62,6 +63,11 @@ class Collector:
                 self.dualvideo=values.get('supported')==1
                 if 'nominal_hz' in values:values['output_hz']=values['nominal_hz']
             if tag=='S4' and 'count' in values:values['target']=values.pop('count')
+            rid=values.get('id')
+            if isinstance(rid,int) and rid>0:
+                response=self.responses.setdefault(rid,{'tags':set(),'values':{}})
+                response['tags'].add(tag);response['values'].update(values)
+                if len(self.responses)>32:del self.responses[next(iter(self.responses))]
             self.state.update(values);return None
         if tag=='ACK':self.acks.append(dict(parse_values(line),time=utc()));return None
         if tag not in ('M4','F4','P4','C4'):return None
@@ -90,6 +96,9 @@ class Collector:
 class Session:
     def __init__(self,log_root):
         self.lock=threading.RLock();self.serial=None;self.reader=None;self.running=False;self.collector=Collector();self.error='';self.port='';self.baud=115200;self.request_id=0;self.log_root=Path(log_root);self.record=None;self.files={};self.label='R5-CONSOLE';self.keyboard_until=0;self.keyboard_mask=0
+        self.preset_changed=threading.Condition(self.lock);self.preset_generation=0
+        self.preset={'status':'idle'};self.preset_thread=None
+        self.preset_ack_timeout=5.0;self.preset_verify_timeout=10.0
     @staticmethod
     def ports():
         try:return enumerate_ports()
@@ -105,6 +114,7 @@ class Session:
     def new_record(self,label=None):
         with self.lock:
             if not self.serial:raise ValueError('请先连接串口')
+            if self.preset_busy():raise ValueError('预设正在执行，请稍候新建记录')
             self._finish_record();self.label=(label or self.label)[:40]
             slug=re.sub(r'[^\w-]','_',self.label) or 'R5'
             now=datetime.now();folder=self.log_root/now.strftime('%Y%m%d');folder.mkdir(parents=True,exist_ok=True)
@@ -132,6 +142,7 @@ class Session:
             if os.name=='posix':options['exclusive']=True
             try:device=serial.Serial(**options)
             except Exception as e:raise ValueError('无法打开串口：'+str(e))
+            self.preset_generation+=1;self.preset={'status':'idle'}
             self.serial=device;self.port=port;self.baud=baud;self.error='';self.collector=Collector();self.running=True;self.keyboard_until=0;self.keyboard_mask=0
             try:self.new_record(label)
             except Exception:
@@ -150,8 +161,7 @@ class Session:
                     buffer+=chunk
                     while b'\n' in buffer:
                         line,buffer=buffer.split(b'\n',1);text=line.decode('utf-8',errors='replace').rstrip('\r')
-                        row=self.collector.feed(text)
-                        if row and self.files:self.writer.writerow(row);self.files['metrics'].flush()
+                        self._ingest(text)
                     if len(buffer)>16384:
                         self.collector.feed('[超长串口行已截断] '+buffer[:200].decode(errors='replace'));buffer=b''
         except Exception as e:
@@ -160,7 +170,7 @@ class Session:
         finally:
             with self.lock:
                 if self.serial is device:
-                    self.running=False;self.serial=None;self.keyboard_mask=0;self._finish_record()
+                    self._cancel_preset('串口连接中断');self.running=False;self.serial=None;self.keyboard_mask=0;self._finish_record()
                     try:device.close()
                     except Exception:pass
     def _command(self,name,value=None):
@@ -176,6 +186,8 @@ class Session:
         return {'id':self.request_id,'sent':True}
     def command(self,name,value=None):
         with self.lock:
+            if self.preset_busy() and not (name in ('status','stop') or (name=='move' and value==0)):
+                raise ValueError('R2 预设正在执行，请等待条件确认或先断开取消')
             result=self._command(name,value)
             if name=='move':self.keyboard_mask=value;self.keyboard_until=time.monotonic()+.35
             if name=='stop':self.keyboard_mask=0
@@ -183,6 +195,7 @@ class Session:
     def help(self):
         with self.lock:
             if not self.serial:raise ValueError('串口尚未连接')
+            if self.preset_busy():raise ValueError('预设正在执行，请稍候读取帮助')
             self.serial.write(b'h');self.event('TX_LEGACY',wire='h')
     def disconnect(self):
         with self.lock:
@@ -191,14 +204,133 @@ class Session:
                 if self.collector.compatible:
                     try:self._command('move',0)
                     except Exception:pass
-                self.event('DISCONNECT');self.running=False;self.serial=None;self.keyboard_mask=0
+                self._cancel_preset('用户断开连接');self.event('DISCONNECT');self.running=False;self.serial=None;self.keyboard_mask=0
                 try:device.close()
                 except Exception:pass
                 self._finish_record()
         if self.reader and self.reader is not threading.current_thread():self.reader.join(timeout=1)
     def snapshot(self,after=0):
         with self.lock:
-            return {'console_version':CONSOLE_VERSION,'connected':self.serial is not None,'compatible':self.collector.compatible,'dualvideo':self.collector.dualvideo,'port':self.port,'baud':self.baud,'error':self.error,'record':self.record,'label':self.label,'cursor':self.collector.cursor,'state':dict(self.collector.state),'lines':[x for x in self.collector.lines if x['id']>after],'samples':list(self.collector.samples)[-180:],'acks':list(self.collector.acks)[-20:]}
+            return {'console_version':CONSOLE_VERSION,'preset':self.preset_snapshot(),'presets_supported':True,'preset_unavailable':self.preset_unavailable(),'connected':self.serial is not None,'compatible':self.collector.compatible,'dualvideo':self.collector.dualvideo,'port':self.port,'baud':self.baud,'error':self.error,'record':self.record,'label':self.label,'cursor':self.collector.cursor,'state':dict(self.collector.state),'lines':[x for x in self.collector.lines if x['id']>after],'samples':list(self.collector.samples)[-180:],'acks':list(self.collector.acks)[-20:]}
+    def preset_busy(self):
+        return self.preset.get('status') in ('applying','verifying')
+    def preset_snapshot(self):
+        result=dict(self.preset)
+        if result.get('status')=='applied':
+            profile=PROFILES[result['id']]
+            result['mismatches']=mismatches(profile,self.collector.state)
+            result['conditions_match']=not result['mismatches']
+            result['current_target']=self.collector.state.get('target')
+        return result
+    def _cancel_preset(self,reason):
+        if self.preset_busy():
+            self.preset.update(status='cancelled',error=reason)
+            self.event('PRESET_CANCEL',preset=self.preset.get('id'),reason=reason)
+        self.preset_generation+=1;self.preset_changed.notify_all()
+    def _ingest(self,line):
+        # Called under the session lock by the serial reader (also test fixtures).
+        previous_boot=self.collector.boot
+        row=self.collector.feed(line)
+        if self.collector.boot!=previous_boot and self.preset.get('status')=='applied':
+            self.preset.update(status='cancelled',error='固件已重启，旧的条件确认已失效，请重新选择预设')
+            self.event('PRESET_INVALIDATED',preset=self.preset.get('id'),reason='firmware_reboot')
+        if row:
+            p=self.preset;profile=PROFILES.get(p.get('id'))
+            row.update(r2_preset=p.get('id',''),r2_stage=p.get('status','idle'),
+                       r2_initial_target=profile['count'] if profile else '',
+                       r2_conditions_match=int(p.get('status')=='applied' and not mismatches(profile,row)) if profile else '')
+            if self.files:self.writer.writerow(row);self.files['metrics'].flush()
+        self.preset_changed.notify_all()
+        return row
+    def _preset_context(self,generation,device,collector,boot):
+        if generation!=self.preset_generation or self.serial is not device or self.collector is not collector:
+            raise ValueError('连接或任务已改变，预设已停止')
+        if collector.boot!=boot:raise ValueError('检测到固件重启，预设已停止')
+    def _preset_command(self,name,value,generation,device,collector,boot):
+        with self.preset_changed:
+            self._preset_context(generation,device,collector,boot)
+            rid=self._command(name,value)['id'];deadline=time.monotonic()+self.preset_ack_timeout
+            while True:
+                self._preset_context(generation,device,collector,boot)
+                ack=next((a for a in collector.acks if a.get('id')==rid),None)
+                if ack:
+                    if ack.get('ok')!=1:raise ValueError(f'设备拒绝 {name} 指令：{ack.get("code","unknown")}')
+                    return rid
+                remaining=deadline-time.monotonic()
+                if remaining<=0:raise ValueError(f'{name} 指令未收到回执；后续设置已停止')
+                self.preset_changed.wait(min(remaining,.2))
+    def preset_unavailable(self):
+        if not self.serial or not self.collector.compatible:return '连接设备并等待读取固件状态后可使用。'
+        latest=self.collector.samples[-1] if self.collector.samples else {}
+        if not self.collector.dualvideo or not self.collector.state.get('accel_supported'):
+            return '需要配套 bit 和具有加速恢复功能的固件。'
+        if latest.get('boot')!=self.collector.boot or latest.get('profile')!=1 or any(k not in latest for k in REQUIRED_FIELDS):
+            return '请使用 R5.3 调试 ELF，并等待完整测量数据；发行版不用于 R2 统计条件对照。'
+        return ''
+    def start_preset(self,key):
+        if not isinstance(key,str) or key not in PROFILES:raise ValueError('未知 R2 预设')
+        with self.lock:
+            if self.preset_busy():raise ValueError('已有预设正在执行，请等待完成')
+            unavailable=self.preset_unavailable()
+            if unavailable:raise ValueError(unavailable)
+            self.preset_generation+=1;generation=self.preset_generation
+            profile=PROFILES[key];plan=command_plan(profile);device=self.serial;collector=self.collector
+            self.keyboard_mask=0;self.keyboard_until=0
+            self.preset=dict(operation=generation,id=key,label=profile['label'],group=profile['group'],status='applying',
+                             step=0,total=len(plan),command='',started=utc(),initial_target=profile['count'])
+            self.event('PRESET_BEGIN',preset=key,expected=profile['expected'],target=profile['count'],steps=plan)
+            self.preset_thread=threading.Thread(target=self._run_preset,
+                args=(profile,plan,generation,device,collector,collector.boot),daemon=True)
+            self.preset_thread.start()
+            return dict(accepted=True,preset=key,operation=generation)
+    def _run_preset(self,profile,plan,generation,device,collector,boot):
+        try:
+            last_id=0
+            for index,(name,value) in enumerate(plan):
+                with self.lock:
+                    self._preset_context(generation,device,collector,boot)
+                    self.preset.update(step=index+1,command=name)
+                last_id=self._preset_command(name,value,generation,device,collector,boot)
+            with self.preset_changed:
+                self._preset_context(generation,device,collector,boot)
+                self.preset.update(status='verifying',command='核对状态与新测量窗口')
+                deadline=time.monotonic()+self.preset_verify_timeout
+                # A successful ACK alone is insufficient. Read this request's
+                # complete status response, then require a subsequent full row.
+                while True:
+                    self._preset_context(generation,device,collector,boot)
+                    response=collector.responses.get(last_id,{})
+                    if response.get('tags',set())>={'S4','A4','V5','E5'}:break
+                    remaining=deadline-time.monotonic()
+                    if remaining<=0:raise ValueError('状态回报不完整，不能确认预设成功')
+                    self.preset_changed.wait(min(remaining,.2))
+                min_epoch=response['values'].get('epoch')
+                if not isinstance(min_epoch,int):raise ValueError('设备状态缺少有效的测量 epoch，不能确认预设')
+                floor=collector.samples[-1]['seq'] if collector.samples else -1
+                problems=[]
+                while True:
+                    self._preset_context(generation,device,collector,boot)
+                    row=collector.samples[-1] if collector.samples else None
+                    if row and row.get('seq',-1)>floor and isinstance(row.get('epoch'),int) and row['epoch']>=min_epoch:
+                        problems=mismatches(profile,row,include_target=True)
+                        if not problems:
+                            self.preset.update(status='applied',confirmed_seq=row['seq'],confirmed_epoch=row['epoch'],finished=utc())
+                            self.event('PRESET_CONFIRMED',preset=profile['id'],seq=row['seq'],epoch=row['epoch'])
+                            # This row confirmed settings but was recorded during
+                            # verification; subsequent rows carry match=1.
+                            return
+                    remaining=deadline-time.monotonic()
+                    if remaining<=0:
+                        detail='；'.join(f'{x["label"]}={x["actual"]}，应为{x["expected"]}' for x in problems[:5])
+                        raise ValueError('未确认新的完整测量窗口'+('：'+detail if detail else '，请检查固件遥测'))
+                    self.preset_changed.wait(min(remaining,.2))
+        except Exception as exc:
+            # An asynchronous job must always leave a visible terminal state.
+            with self.lock:
+                if generation==self.preset_generation:
+                    self.preset.update(status='failed',error=str(exc),finished=utc())
+                    self.event('PRESET_FAILED',preset=profile['id'],step=self.preset.get('step'),reason=str(exc))
+
     def export(self,kind):
         with self.lock:
             if not self.record or kind not in self.record:raise ValueError('还没有可以导出的记录')
@@ -224,6 +356,7 @@ def make_server(session,port=8765):
             parts=urllib.parse.urlsplit(self.path);query=urllib.parse.parse_qs(parts.query)
             try:
                 if parts.path=='/api/state':return self.reply(200,dict(session.snapshot(int(query.get('after',['0'])[0])),token=token))
+                if parts.path=='/api/presets':return self.reply(200,{'profiles':public_profiles()})
                 if parts.path=='/api/ports':return self.reply(200,session.ports())
                 if parts.path=='/api/export':
                     name,data=session.export(query.get('kind',['metrics'])[0]);return self.reply(200,data,'application/octet-stream',name)
@@ -240,6 +373,7 @@ def make_server(session,port=8765):
                 if not isinstance(d,dict):raise ValueError('请求格式错误')
                 if path=='/api/connect':session.connect(d.get('port'),d.get('baud',115200),d.get('label'));result={'ok':True}
                 elif path=='/api/disconnect':session.disconnect();result={'ok':True}
+                elif path=='/api/preset':result=session.start_preset(d.get('id'))
                 elif path=='/api/command':result=session.command(d.get('command'),d.get('value'))
                 elif path=='/api/help':session.help();result={'ok':True}
                 elif path=='/api/record':result=session.new_record(d.get('label'))

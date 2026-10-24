@@ -1,6 +1,7 @@
 "use strict";
 const $=id=>document.getElementById(id);
 const pendingCommands=new Map();let statusSynced=false;
+let presetCatalog=[],presetCatalogError="",presetRequestPending=false,presetRequestedOperation=null;
 let token="",cursor=0,connected=false,compatible=false,dualvideo=false,currentScene=-1,snapshot=null,lastAck=0,queue=Promise.resolve(),polling=false,held=0,lastHeld=-1,lastError="";
 const tracks={bgm_title:"像素晨光",bgm_menu2:"星灯菜单",bgm_stage1:"云端疾行",bgm_stage2:"月下航线",bgm_boss1:"赤色风暴",bgm_boss2:"终幕回响",bgm_garden:"萝卜田野",bgm_garden2:"森林夜行",bgm_stress:"压力脉冲",bgm_stress2:"数字方阵","?":"未播放"};
 const sceneNames=["东方","萝卜","方块","图片"];
@@ -83,9 +84,9 @@ async function refreshPorts(){
 $("port").addEventListener("input",()=>{++portInputEpoch;portHint();});
 $("refreshPorts").addEventListener("click",refreshPorts);
 $("connect").addEventListener("click",async()=>{
-  try{await api("/api/connect",{port:$("port").value.trim(),baud:Number($("baud").value),label:$("recordLabel").value});cursor=0;lastAck=0;lastError="";statusSynced=false;pendingCommands.clear();$("log").textContent="";notice("串口已连接，正在被动识别固件。旧版固件可记录日志，扩展控制需 R4 / R5；分辨率切换需 R5 配套 bit。");await poll();}catch(e){notice(e.message,"error");}
+  try{await api("/api/connect",{port:$("port").value.trim(),baud:Number($("baud").value),label:$("recordLabel").value});cursor=0;lastAck=0;lastError="";statusSynced=false;presetRequestPending=false;presetRequestedOperation=null;pendingCommands.clear();$("log").textContent="";notice("串口已连接，正在被动识别固件。旧版固件可记录日志，扩展控制需 R4 / R5；分辨率切换需 R5 配套 bit。");await poll();}catch(e){notice(e.message,"error");}
 });
-$("disconnect").addEventListener("click",async()=>{try{release();await queue.catch(()=>{});await api("/api/disconnect",{});notice("串口已断开，记录已保存。");await poll();}catch(e){notice(e.message,"error");}});
+$("disconnect").addEventListener("click",async()=>{try{release();await queue.catch(()=>{});await api("/api/disconnect",{});presetRequestPending=false;presetRequestedOperation=null;notice("串口已断开，记录已保存。");await poll();}catch(e){notice(e.message,"error");}});
 $("help").addEventListener("click",async()=>{try{await api("/api/help",{});notice("已发送兼容旧版的帮助键 h。");}catch(e){notice(e.message,"error");}});
 $("newRecord").addEventListener("click",async()=>{try{await api("/api/record",{label:$("recordLabel").value});notice("已保存上一份记录并建立新记录。","success");}catch(e){notice(e.message,"error");}});
 $("mark").addEventListener("click",async()=>{try{if(!connected)throw new Error("请先连接串口");const text=$("markText").value.trim();if(!text)return;await api("/api/mark",{text});$("markText").value="";notice("标记已写入操作记录。","success");}catch(e){notice(e.message,"error");}});
@@ -104,27 +105,79 @@ function updateScene(scene){
   $("quantityNote").textContent=scene===2?"1–30,000 个；固定尺寸与原随机尺寸均使用同一对象表。":scene===0?"1–16,384 颗上限；调节上限会关闭自动负载，密度倍率独立设置。":"1–40,000 颗上限；需要先进入萝卜自定义压力档。";
 }
 function number(id,value,unit="",decimals=1){$(id).textContent=value===undefined||value===null?"—":Number(value).toFixed(decimals)+unit;}
+function configuringPreset(){return presetRequestPending||["applying","verifying"].includes(snapshot?.preset?.status);}
+async function loadPresets(){
+  try{
+    const data=await api("/api/presets");presetCatalog=data.profiles;presetCatalogError="";
+    const groups=$("r2PresetGroups");groups.replaceChildren();
+    for(const group of [...new Set(presetCatalog.map(x=>x.group))]){
+      const box=document.createElement("div");box.className="preset-group";
+      const heading=document.createElement("h3");heading.textContent=group;box.append(heading);
+      const profiles=presetCatalog.filter(x=>x.group===group),detail=document.createElement("p");detail.textContent=profiles[0].detail;box.append(detail);
+      for(const p of profiles){
+        const button=document.createElement("button");button.dataset.preset=p.id;button.disabled=true;
+        button.setAttribute("aria-label",`${group} ${p.label}`);
+        const count=document.createElement("strong"),mode=document.createElement("span");count.textContent=p.count.toLocaleString();mode.textContent=p.vsync?"60 帧呈现验证":"自由吞吐对照";
+        button.append(count,mode);button.addEventListener("click",()=>applyPreset(p.id));box.append(button);
+      }groups.append(box);
+    }
+  }catch(e){presetCatalogError="预设服务未加载，请重启上位机服务并刷新页面。";}
+  if(snapshot)renderPresetState(snapshot);
+}
+async function applyPreset(id){
+  if(configuringPreset())return;
+  presetRequestPending=true;presetRequestedOperation=null;$("captureKeys").checked=false;release();
+  if(snapshot)render(snapshot);
+  try{
+    await queue.catch(()=>{});
+    const accepted=await api("/api/preset",{id});presetRequestedOperation=accepted.operation;notice("正在设置 R2 对照条件，等待设备回执和新的测量窗口。");
+  }catch(e){presetRequestPending=false;presetRequestedOperation=null;notice(e.message,"error");}
+  finally{await poll();if(snapshot)render(snapshot);}
+}
+function renderPresetState(data){
+  const p=data.preset||{status:"idle"},busy=configuringPreset(),el=$("r2PresetStatus");
+  for(const b of document.querySelectorAll("[data-preset]")){
+    b.disabled=busy||!!data.preset_unavailable||!data.presets_supported;
+    b.classList.toggle("selected",p.status==="applied"&&p.conditions_match&&p.id===b.dataset.preset);
+  }
+  el.className="preset-status";
+  if(presetCatalogError){el.textContent=presetCatalogError;return;}
+  if(presetRequestPending){el.textContent="正在请求预设并等待执行状态…";return;}
+  if(p.status==="applying"){el.textContent=`${p.group} ${p.label}：设置中 ${p.step} / ${p.total}。逐条等待设备确认。`;return;}
+  if(p.status==="verifying"){el.textContent=`${p.group} ${p.label}：指令已确认，正在核对新测量窗口。`;return;}
+  if(p.status==="failed"||p.status==="cancelled"){
+    el.classList.add("error");el.textContent=`预设${p.status==="failed"?"未完成":"已取消"}：${p.error}。已执行的设置请以设备回报为准。`;return;
+  }
+  if(p.status==="applied"){
+    if(!data.connected){el.textContent="上次预设已完成；当前串口未连接。";return;}
+    if(!p.conditions_match){el.classList.add("warning");el.textContent="基准条件已改变："+(p.mismatches||[]).slice(0,5).map(x=>`${x.label} 当前 ${x.actual??"未回报"}，应为 ${x.expected}`).join("；")+"。可重新点击预设恢复。";return;}
+    el.classList.add("confirmed");el.textContent=`已确认 ${p.group} · ${p.label}（窗口 ${p.confirmed_seq}）。当前目标 ${p.current_target?.toLocaleString()||"—"}${p.current_target!==p.initial_target?`，预设初始 ${p.initial_target.toLocaleString()}`:""}；成绩以实际呈现和渲染数据为准。`;return;
+  }
+  el.textContent=data.preset_unavailable||"选择一个基准负载；执行完成后会核对设备实际生效的条件。";
+}
 function engineText(s){
   if(s.submit_mode===undefined||s.band===undefined||s.cache===undefined)return "旧固件未报告完整加速状态，请使用配套 R5.2 ELF。";
   const on=x=>x===undefined?"未知":x?"开":"关";
   return `提交 ${["逐对象 calls","APB 列表","DDR 硬件列表","APB 列表字"][s.submit_mode]||s.submit_mode} · 分带${on(s.band)} · 源缓存${on(s.cache)} · K 通路${on(s.kpath)} · 弹幕表${on(s.seed_table)} · 逻辑建表${on(s.seed_build)} · 重叠${on(s.overlap)}（本场景${on(s.overlap_active)}） · LIMIT ${s.rd_bursts}/${s.wr_bursts}/${s.rd_words}`;
 }
 function render(data){
-  snapshot=data;connected=data.connected;compatible=data.compatible;dualvideo=!!data.dualvideo;token=data.token;const state=data.state;
+  if(presetRequestedOperation!==null&&data.preset?.operation===presetRequestedOperation){presetRequestPending=false;presetRequestedOperation=null;}
+  if(!data.connected){presetRequestPending=false;presetRequestedOperation=null;}
+  snapshot=data;connected=data.connected;compatible=data.compatible;dualvideo=!!data.dualvideo;token=data.token;const state=data.state,configuring=configuringPreset();
   if(connected&&data.port){$("port").value=data.port;portHint();}
   $("consoleVersion").textContent=data.console_version||"旧版服务（重启后加载端口修复）";
   $("connectionBadge").textContent=!connected?"串口未连接":compatible?(String(state.firmware||"").includes("PTY")?"伪终端测试 · 非实板":(dualvideo?"R5 已连接":"兼容协议已连接")):"已连接 · 识别中";
   $("connectionBadge").className="badge "+(connected?(compatible?"online":"warning"):"");
-  $("connect").disabled=connected;$("disconnect").disabled=!connected;$("help").disabled=!connected;$("port").disabled=connected;$("baud").disabled=connected;
-  for(const el of document.querySelectorAll("[data-command],[data-scene],[data-step],[data-setting],[data-held],#decrease,#increase,#setCount,#bulletSize,#squareSize,#stressStart,#volume,#captureKeys,#targetCount,#imagePeriod"))el.disabled=!connected||!compatible;
+  $("connect").disabled=connected;$("disconnect").disabled=!connected;$("help").disabled=!connected||configuring;$("port").disabled=connected;$("baud").disabled=connected;
+  for(const el of document.querySelectorAll("[data-command],[data-scene],[data-step],[data-setting],[data-held],#decrease,#increase,#setCount,#bulletSize,#squareSize,#stressStart,#volume,#captureKeys,#targetCount,#imagePeriod"))el.disabled=!connected||!compatible||configuring;
   for(const button of document.querySelectorAll("[data-resolution]")){
-    button.disabled=!connected||!dualvideo||!!state.pending;
+    button.disabled=!connected||!dualvideo||!!state.pending||configuring;
     button.classList.toggle("selected",dualvideo&&Number(button.dataset.resolution)===state.resolution);
   }
   $("videoState").textContent=!connected?"等待读取 R5 显示能力。":!dualvideo?"当前固件 / bit 未声明双模式输出，分辨率控制不可用。":state.pending?"切换已请求，等待硬件完成；以设备回报的输出状态为准。":`设备回报：${state.output_w||"—"}×${state.output_h||"—"}，标称 ${state.output_hz||state.nominal_hz||"—"} Hz；渲染 ${state.render_w||1280}×${state.render_h||720}。${state.bars?"当前为彩条测试。":""}扫描状态不代表显示器已锁定。`;
-  for(const id of ["restoreFast","restoreFastDiag","testBarsOn","testBarsOff"])$(id).disabled=!connected||!state.accel_supported;
-  for(const id of ["volumeDown","volumeUp"])$(id).disabled=!connected||!state.volume_step_supported;
-  for(const id of ["musicSelect","musicPrev"])$(id).disabled=!connected||!state.music_supported;
+  for(const id of ["restoreFast","restoreFastDiag","testBarsOn","testBarsOff"])$(id).disabled=!connected||!state.accel_supported||configuring;
+  for(const id of ["volumeDown","volumeUp"])$(id).disabled=!connected||!state.volume_step_supported||configuring;
+  for(const id of ["musicSelect","musicPrev"])$(id).disabled=!connected||!state.music_supported||configuring;
   if(state.music_supported){
     if(document.activeElement!==$("musicSelect"))$("musicSelect").value=state.music_auto?-1:state.music_index;
     $("musicMode").textContent=state.music_auto?"跟随场景自动配乐；点击上一首 / 下一首进入全曲库手动切换。":`手动曲目 ${(state.music_index??0)+1} / ${state.music_total||10}；切换场景仍保持所选曲目。`;
@@ -143,10 +196,10 @@ function render(data){
   if(state.submit_mode!==undefined&&state.submit_mode!==2)bandButton.textContent="分带未生效：需要 DDR 硬件列表";
   const revision=state.video_rev===328193?"R5.2.1 HDMI 修正版":state.video_rev?`视频修订 ${state.video_rev}`:"未确认 HDMI 修正版 bit";
   $("audioState").textContent=`${revision}；音库 ${state.bank_sounds??"—"} 个，混音器${on(state.mixer)}，测试音${on(state.tone)}。测试音直接由 HDMI 模块产生；开启时不播放音乐。`;
-  $("newRecord").disabled=$("mark").disabled=!connected;
+  $("newRecord").disabled=!connected||configuring;$("mark").disabled=!connected;
   if(state.profile===0)$("stats").disabled=true;
   if(state.scene!==undefined)updateScene(Number(state.scene));
-  if(connected&&compatible){$("stressStart").disabled=currentScene!==0&&currentScene!==1;$("bulletSize").disabled=currentScene!==0&&currentScene!==1;$("squareSize").disabled=currentScene!==2;for(const id of ["decrease","increase","setCount","targetCount"])$(id).disabled=currentScene===3;}
+  if(connected&&compatible&&!configuring){$("stressStart").disabled=currentScene!==0&&currentScene!==1;$("bulletSize").disabled=currentScene!==0&&currentScene!==1;$("squareSize").disabled=currentScene!==2;for(const id of ["decrease","increase","setCount","targetCount"])$(id).disabled=currentScene===3;}
   for(const [id,key] of Object.entries(boolFields))if(state[key]!==undefined&&document.activeElement!==$(id))$(id).checked=!!state[key];
   if(state.step!==undefined)document.querySelectorAll("[data-step]").forEach(e=>e.classList.toggle("selected",Number(e.dataset.step)===state.step));
   if(state.bullet!==undefined&&document.activeElement!==$("bulletSize"))$("bulletSize").value=state.bullet;
@@ -170,6 +223,7 @@ function render(data){
     $("conditionLine").textContent+="\n"+engineText(s);
     $("fontLine").textContent=`字体累计命中 ${s.font_hit} / 生成 ${s.font_miss} / 重置 ${s.font_reset}；静态文字命中 ${s.label_hit} / 生成 ${s.label_miss}。`;
   }
+  renderPresetState(data);
   chart(data.samples);
   if(connected&&compatible&&data.samples.length&&!statusSynced){statusSynced=true;cmd("status").catch(()=>{statusSynced=false;});}
 }
@@ -187,4 +241,4 @@ function chart(samples){
 }
 async function poll(){if(polling)return;polling=true;try{render(await api("/api/state?after="+cursor));}catch(e){notice("本地服务未响应："+e.message,"error");}finally{polling=false;}}
 window.addEventListener("resize",()=>chart(snapshot?.samples||[]));setInterval(poll,500);setInterval(()=>{if($("captureKeys").checked)sendHeld(true);else if(held)sendHeld();},100);
-poll().then(refreshPorts);
+Promise.all([poll(),loadPresets()]).then(refreshPorts);
