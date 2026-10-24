@@ -10,7 +10,7 @@ int main(void){
  /* All indices, including the partial final bitmap word, must be reachable. */
  for(int i=0;i<99999;i++)g.hostile[i]=(Bullet){1,640*FIX,360*FIX,0,0,2,0,0};
  g.hostile_active=g.hostile_used=99999;g.invincible=100000;
- game_tick(&g,(Input){0});assert(g.seed_draw_n==99999&&g.occlusion_near_n==99999&&!g.occlusion_near_overflow);
+ game_tick(&g,(Input){0});assert(g.seed_draw_n==99999&&g.occlusion_near_n==0&&!g.occlusion_near_overflow);
  game_set_stress_bullets(&g,65536);assert(g.hostile_active==65536&&game_hostile_slots(&g)==65536);
  game_set_stress_bullets(&g,1);assert(g.hostile_active==1);game_set_stress_bullets(&g,99999);
  game_tick(&g,(Input){0});assert(g.hostile_active<99999);assert(g.hostile_free[GAME_HOSTILE_WORDS-1]>>31==0);

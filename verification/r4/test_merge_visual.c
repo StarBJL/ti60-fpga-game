@@ -44,6 +44,9 @@ static int projectile_hit(int wx,int wy){
     }return 0;
 }
 static void reference(void){
+    if(g.limit_mode){prepare_player_locator(&g);RenderLocatorInfo info=render_locator_info();
+        assert(!info.total&&!info.covered&&!info.active&&!info.fade&&!info.near_items);return;}
+
     unsigned char a[LOC_W*LOC_H];actor(a);int total=0,cover=0,bob=g.moving?(g.ticks/7)%2:0;
     for(int y=0;y<LOC_H;y++)for(int x=0;x<LOC_W;x++)if(a[y*LOC_W+x]){
         total++;cover+=projectile_hit(g.x/FIX-LOC_X+x,g.y/FIX-LOC_Y-bob+y);
@@ -78,7 +81,7 @@ static void compare_modes(void){
 int main(void){
     assert(mmap((void*)(uintptr_t)FB,0x00200000,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED,-1,0)==(void*)(uintptr_t)FB);
     blit_model_reset();assert(blit_init());render_init();assert(native_used<48000);
-    for(int pressure=0;pressure<2;pressure++)for(int level=1;level<=7;level++)for(int h=0;h<32;h++)for(int bob=0;bob<2;bob++){
+    for(int pressure=0;pressure<1;pressure++)for(int level=1;level<=7;level++)for(int h=0;h<32;h++)for(int bob=0;bob<2;bob++){
         fixture(pressure,level,38+(h%9));g.weapon_heading=h;g.moving=bob;g.ticks=105;reference();
         unsigned char a[LOC_W*LOC_H];actor(a);const Sprite *edge=render_locator_outline_asset();
         for(int k=0;k<LOC_W*LOC_H;k++)if(a[k])assert(edge->pixels[k]==COLOR_KEY);
@@ -97,11 +100,11 @@ int main(void){
         g.weapon_heading=h;locator_pose(&g);render_locator_outline_asset();assert(!loc_dirty);
     }
     puts("PASS 3200 warm pose changes: no outline rebuild/publication, immutable old sources");
-    puts("PASS independent opaque-pixel reference: 896 level/heading/bob/mode combinations, idle poses and hollow union outlines");
+    puts("PASS independent opaque-pixel reference: 448 normal level/heading/bob combinations, idle poses and hollow union outlines");
     fixture(0,7,40);g.invincible=10000;game_tick(&g,(Input){0});reference();assert(render_locator_info().used_near_cache);
     int cov=render_locator_info().covered;g.occlusion_near_overflow=1;reference();assert(render_locator_info().covered==cov);
     g.seed_draw_ok=0;reference();assert(render_locator_info().covered==cov);
-    fixture(1,7,400);g.invincible=10000;game_tick(&g,(Input){0});assert(!g.occlusion_near_overflow);reference();assert(render_locator_info().used_near_cache);
+    fixture(1,7,400);g.invincible=10000;game_tick(&g,(Input){0});assert(!g.occlusion_near_overflow);reference();assert(!g.occlusion_near_n&&!render_locator_info().used_near_cache);
     fixture(1,7,256);for(int k=0;k<256;k++)g.hostile[k]=g.hostile[0];reference();cov=render_locator_info().covered;
     g.hostile_used=1;reference();assert(render_locator_info().covered==cov);
     fixture(0,7,0);for(int k=0;k<MAX_BULLETS;k++)g.bullets[k]=(Bullet){1,(612+k%10*5)*FIX,(345+k/10*4)*FIX,0,0,100,0,k%8};reference();
@@ -127,6 +130,29 @@ int main(void){
             for(int j=0;j<h;j++)assert(pointers[h]!=pointers[j]&&!memcmp(outlines[j],pointers[j],sizeof outlines[j]));}
     }
     puts("PASS 80/65 hysteresis, four-step fade, replay stability, hidden body at full fade, 3 distinct outline buffers and gameplay immutability");
+    for(int sz=0;sz<7;sz++){
+        const int sizes[]={1,3,6,9,13,17,25};fixture(1,7,400);
+        game_set_seed_size(&g,sizes[sz]);render_set_pressure_size(sizes[sz]);
+        g.invincible=10000;game_tick(&g,(Input){0});assert(!g.occlusion_near_n&&!g.occlusion_near_overflow);
+        g.invincible=0;loc_info.fade=255;loc_info.active=1;loc_info.total=2000;
+        Gfx world;memset(cpu,0,sizeof cpu);gfx_begin(&world,cpu,1280,720);draw_world(&world,&g,2);gfx_end(&world);
+        assert(!loc_info.fade&&!loc_info.active&&!loc_info.total);assert(render_split.locator==0);
+        for(int k=0;k<NPIX;k++)gold[k]=COLOR_KEY;
+        Gfx expected;gfx_begin(&expected,gold,1280,720);
+        for(int k=0;k<g.hostile_used;k++)if(g.hostile[k].active){
+            const Bullet *b=&g.hostile[k];const Sprite *a=render_projectile_asset(1,b->style);
+            gfx_blit(&expected,b->x/FIX-a->width/2,b->y/FIX-a->height/2,a,1);
+        }
+        int visible=0;for(int y=300;y<450;y++)for(int x=560;x<720;x++){
+            int k=y*1280+x;if(gold[k]!=COLOR_KEY){assert(cpu[k]==gold[k]);++visible;}
+        }
+        assert(visible>0);
+        /* A direct helper call must also be harmless in stress mode. */
+        memcpy(gold,cpu,sizeof gold);loc_info.fade=255;draw_player_locator(&world,&g);assert(!memcmp(cpu,gold,sizeof gold));
+        reference();compare_modes();
+    }
+    game_set_seed_size(&g,13);render_set_pressure_size(13);
+    puts("PASS pressure: no near indexing, coverage/fade/outline/marker; every last projectile pixel covers the actor in all 7 sizes");
     fixture(1,7,0);g.hostile_used=g.hostile_active=40000;
     for(int i=0;i<40000;i++)g.hostile[i]=(Bullet){1,(60+(i*137)%1160)*FIX,(140+(i*53)%480)*FIX,0,0,1000,0,i%4};
     g.invincible=10000;game_tick(&g,(Input){0});compare_modes();dump("stress40k.rgb565");

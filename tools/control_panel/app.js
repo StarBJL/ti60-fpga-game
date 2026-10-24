@@ -227,7 +227,7 @@ function render(data){
     [...$("costBar").children].forEach((e,i)=>e.style.width=values[i]/total*100+"%");$("costText").textContent=values.map(x=>(x/1000).toFixed(2)).join(" / ")+" ms";
     $("conditionLine").textContent=`渲染 ${s.render_w||s.w||1280}×${s.render_h||s.h||720}　输出 ${s.output_w||s.w||1280}×${s.output_h||s.h||720}　${s.hw?"硬件":"CPU"}绘制　透明${s.alpha?"开":"关"}　同步${s.vsync?"开":"关"}　${s.scene===2?"方块 "+(s.square||"随机")+"px":"弹体 "+s.bullet+(s.scene===0&&s.bullet>6?"%":"px")}　步长 ${s.step}　超预算 ${s.over||0} 帧`;
     $("conditionLine").textContent+="\n"+engineText(s);
-    $("pressureMetrics").textContent=s.pressure_supported?`角色子弹 ${s.player_shots??"—"}；轮廓计算 ${s.locator_us??"—"} μs，敌人与角色绘制 ${s.enemy_us??"—"} μs，玩家子弹逻辑 ${s.player_logic_us??"—"} μs，敌弹逻辑 ${s.hostile_logic_us??"—"} μs；分带提前结束 ${s.band_splits??"—"} 次，桶溢出 ${s.band_overflow??"—"}。`:"新增小尺寸与 99,999 容量需 R5.5 ELF；旧固件保留其原上限。";
+    $("pressureMetrics").textContent=s.pressure_supported?`角色子弹 ${s.player_shots??"—"}；轮廓${s.locator_on===0?"关闭":s.locator_on===1?"开启":"状态未报告"} / 计算 ${s.locator_us??"—"} μs，敌人与角色绘制 ${s.enemy_us??"—"} μs，玩家子弹逻辑 ${s.player_logic_us??"—"} μs，敌弹逻辑 ${s.hostile_logic_us??"—"} μs；分带提前结束 ${s.band_splits??"—"} 次，桶溢出 ${s.band_overflow??"—"}。`:"新增小尺寸与 99,999 容量需 R5.5 ELF；旧固件保留其原上限。";
     $("fontLine").textContent=`字体累计命中 ${s.font_hit} / 生成 ${s.font_miss} / 重置 ${s.font_reset}；静态文字命中 ${s.label_hit} / 生成 ${s.label_miss}。`;
   }
   renderPresetState(data);

@@ -110,6 +110,7 @@ static int locator_cover(uint64_t *left,const uint32_t *rows,int size,int x,int 
     return n;
 }
 static void prepare_player_locator(const Game *g){
+    if(g->limit_mode){render_locator_reset();return;}
     uint64_t left[LOC_H];
     int bob=g->moving?(g->ticks/7)%2:0,cx=g->x/FIX,cy=g->y/FIX;
     int ox=cx-LOC_X,oy=cy-LOC_Y-bob,total=0,covered=0,count=0;

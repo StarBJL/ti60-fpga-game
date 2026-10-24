@@ -1568,8 +1568,8 @@ static void print_telemetry(const WinStats *s){
       id,s->el_us,s->fps10,s->logic10,s->present10,s->repeat10,s->scan10,s->prs,s->video_delta,s->audio_delta,tx_dropped);
     tx_printf("P4 seq=%u logic_us=%u logic_max_us=%u submit_us=%u wait_us=%u work_us=%u work_max_us=%u over=%u busy=%u phase1_us=%u bands_us=%u profile=%d\r\n",
       id,s->logic,s->logic_max,s->submit,s->qstall+s->tail,s->loop_work_us,s->work_max_us,s->over_budget,s->blt,s->bp[BLIT_BP_P1]/BLIT_CLK_MHZ,s->bp[BLIT_BP_BAND]/BLIT_CLK_MHZ,SPROUT_STATS);
-    tx_printf("C4 seq=%u font_hit=%u font_miss=%u font_reset=%u label_hit=%u label_miss=%u font_pixels=%u track=%s w=%u h=%u auto=%d density=%d stress_auto=%d tone=%d volume=%d bank_sounds=%d mixer=%d audio_ctrl=%u stats=%d verbose=%d music_auto=%d music_index=%d music_total=10 pressure_supported=1 motion_min_px=%d player_shots=%d locator_us=%u enemy_us=%u player_logic_us=%u hostile_logic_us=%u hud_us=%u band_splits=%u band_overflow=%u\r\n",
-      id,fs.hits,fs.misses,fs.resets,fs.label_hits,fs.label_misses,fs.used_pixels,aud_name(aud_bgm_current()),disp_w,disp_h,autoplay,th_stress_dens(&th),th.stress_auto,aud.tone,aud.master,aud.nsnd,aud.mixer,HDMI_REG(0x20),show_stats,report_verbose,music_follow_scene(),music_index(),demo_motion_min_size(),scene==SCENE_GAME?game.player_active:scene==SCENE_TH?th.shots_alive:0,s->sc[5],s->sc[2],s->lg[1],s->lg[2],s->hud,s->bsplits,hw_avail?((blit_rd(BLIT_R_STATUS)>>6)&1u):0u);
+    tx_printf("C4 seq=%u font_hit=%u font_miss=%u font_reset=%u label_hit=%u label_miss=%u font_pixels=%u track=%s w=%u h=%u auto=%d density=%d stress_auto=%d tone=%d volume=%d bank_sounds=%d mixer=%d audio_ctrl=%u stats=%d verbose=%d music_auto=%d music_index=%d music_total=10 pressure_supported=1 motion_min_px=%d player_shots=%d locator_us=%u locator_on=%d enemy_us=%u player_logic_us=%u hostile_logic_us=%u hud_us=%u band_splits=%u band_overflow=%u\r\n",
+      id,fs.hits,fs.misses,fs.resets,fs.label_hits,fs.label_misses,fs.used_pixels,aud_name(aud_bgm_current()),disp_w,disp_h,autoplay,th_stress_dens(&th),th.stress_auto,aud.tone,aud.master,aud.nsnd,aud.mixer,HDMI_REG(0x20),show_stats,report_verbose,music_follow_scene(),music_index(),demo_motion_min_size(),scene==SCENE_GAME?game.player_active:scene==SCENE_TH?th.shots_alive:0,s->sc[5],scene==SCENE_GAME&&!game.limit_mode,s->sc[2],s->lg[1],s->lg[2],s->hud,s->bsplits,hw_avail?((blit_rd(BLIT_R_STATUS)>>6)&1u):0u);
 }
 
 /* Physical scan statistics: independent of render-loop FPS, audio ABI untouched. */
@@ -1808,7 +1808,7 @@ int main(void)
     GfxHwTarget hw_target;
 
     bsp_init();
-    bsp_printf("\r\n=== TI60-R5.5-MUSIC-CONTROL-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
+    bsp_printf("\r\n=== TI60-R5.6-STRESS-NO-LOCATOR-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
                (int)(BSP_CLINT_HZ / 1000000u));
 
     if (hdmi_id() != HDMI_ID_VALUE)

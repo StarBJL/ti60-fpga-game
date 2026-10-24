@@ -1,0 +1,21 @@
+const fs=require('fs'),path=require('path'),assert=require('assert');
+const {chromium}=require('/home/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+(async()=>{
+ const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,'pty_fixture.json'),'utf8'));
+ const browser=await chromium.launch({executablePath:'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+ const page=await browser.newPage({viewport:{width:1360,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(fixture.url,{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>typeof token==='string'&&token.length>10);
+ await page.locator('#port').fill(fixture.port);await page.locator('#connect').click();
+ await page.waitForFunction(()=>!document.querySelector('[data-preset="carrot_15000_free"]').disabled);
+ await page.locator('[data-preset="carrot_15000_free"]').click();await page.waitForFunction(()=>snapshot.preset.status==='applied');
+ await page.locator('details.diagnostics summary').click();
+ await page.waitForFunction(()=>document.querySelector('#pressureMetrics').textContent.includes('轮廓关闭 / 计算 0 μs'));
+ assert((await page.locator('#consoleVersion').textContent()).includes('R5.6'));
+ const download=page.waitForEvent('download');await page.locator('a[href="/api/export?kind=metrics"]').click();
+ await (await download).saveAs(path.join(__dirname,'locator_export.csv'));
+ const csv=fs.readFileSync(path.join(__dirname,'locator_export.csv'),'utf8');assert(csv.includes('locator_on'));
+ await page.locator('details.diagnostics').screenshot({path:path.join(__dirname,'locator_off_console.png')});
+ await page.locator('#disconnect').click();await page.waitForFunction(()=>!snapshot.connected);assert(!errors.length);
+ fs.writeFileSync(path.join(__dirname,'browser_results.json'),JSON.stringify({passed:true,physical_board:false,checks:['real PTY preset command sequence','firmware locator-off telemetry displayed','CSV exports locator state','R5.6 service version','no page errors'],errors},null,2));
+ await browser.close();console.log('PASS PTY console locator-off state and CSV');
+})().catch(e=>{console.error(e);process.exit(1)});

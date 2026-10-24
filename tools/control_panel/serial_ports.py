@@ -8,7 +8,7 @@ from pathlib import Path, PosixPath
 import re
 import sys
 
-CONSOLE_VERSION = 'R5.5-PRESSURE-99999'
+CONSOLE_VERSION = 'R5.6-STRESS-NO-LOCATOR'
 FT4232 = (0x0403, 0x6011)
 
 def channel_number(port, platform=None, sys_tty='/sys/class/tty'):

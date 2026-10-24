@@ -1,0 +1,82 @@
+[
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game.h",
+    "old_sha256": "000f736ace5be4e9d2ccd58e5ed7bb009e32ee22508ef9bb42f287f388c5cfcc",
+    "new_sha256": "ed6579c7af1bcfdc7c9f618fb998342a19cea5f928f7712631c1d821692da1b5"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game.c",
+    "old_sha256": "a48958f7ca40a262f3d2d013108fedb86e6bcc5cff33eee5dead3cfce91124fc",
+    "new_sha256": "a54ea5713fbdfe032d74a574356a02583aaa04ac1a7c529029bde31ac8b069de"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/render.c",
+    "old_sha256": "f36c6b8ec6a8e29b9f3acfbf3e74b363ea318509b4221e68b7fa0ba3faa7c0d0",
+    "new_sha256": "74137b85788dbc43e3b65b53923d3dbe7c5bffb416326dbb0eb4860f496b5502"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hero_locator.h",
+    "old_sha256": "67bb11428370c156dd0d018e291839baaa3e1fd72f8f6e44312ba8c2aa2444c0",
+    "new_sha256": "1701a5c077a5bcab7e84c1037dccaa244c443a10a7e84a4ce018230aceea2021"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c",
+    "old_sha256": "6c88e68bb2282ce5f94cc258bdb821ce7efc805c0c570398ef6171766e43d321",
+    "new_sha256": "7563ea4b86948ec41c6669afd4c12ec57322bdc854dd68a311daf1c195cfea7d"
+  },
+  {
+    "path": "build_software.py",
+    "old_sha256": "14b9a7747e90f1fa9d6143927d0052b74d80ba8a4b5476c82920f73abd7081ab",
+    "new_sha256": "a908c40dc60caa5ef53683a5ee1426ae3f8fdc9cd471ad9e2986c682d34c0fe4"
+  },
+  {
+    "path": "tools/control_panel/server.py",
+    "old_sha256": "7235e0e010ebca179604f7503af9907ca253100f71c6e126b413d98de6ddfc69",
+    "new_sha256": "bcc90bf8cdfd9f3470afbd6f79d908e825201169edc7e433e56e420c5c6d6dc3"
+  },
+  {
+    "path": "tools/control_panel/app.js",
+    "old_sha256": "827ce65f634aa0149a365391f208f450c5d1db54086a49616aa34be3dc4dc30a",
+    "new_sha256": "857b053a3dcb3339803eb84ca8f7ae05f30b9905ed5662f4ed1648c9ea380ce9"
+  },
+  {
+    "path": "tools/control_panel/index.html",
+    "old_sha256": "ccf570874177d04410532d751a6c8a2391838b970d29b7c29d6deb6085235922",
+    "new_sha256": "4b91596709db0367105f0a2eb4eeed0aebd5390e5ab5685a1e2f5a1d0605172a"
+  },
+  {
+    "path": "tools/control_panel/serial_ports.py",
+    "old_sha256": "bc295188ba2a9453212c4b79315b0fe02b27bb5e0653d5e8c5a32546b2b48483",
+    "new_sha256": "2c5c6107fcd19e31c3ac240373212dad1c8dc5dd96fd13c81fa73e476174bd13"
+  },
+  {
+    "path": "README.md",
+    "old_sha256": "5e9067ad2fb7806564953b649c1641b4c6ef706e05d3ab7de6b7135ffa1ab641",
+    "new_sha256": "2f5db6bd7ed1ae77c980af8c17113ba867c77a48324b913db876ab09756651c2"
+  },
+  {
+    "path": "README_EN.md",
+    "old_sha256": "a352d625c86acddfed3f717ca19291fa6cd4471e61ee4a616842bfd34d95117c",
+    "new_sha256": "29ee12f96b7b65ade0aa1f7e38d35aa3061756c282c202c1ee63ef45af59c7fb"
+  },
+  {
+    "path": "START_HERE.md",
+    "old_sha256": "22a393c968484bf1484cbfe90c9a63e49a67bdcefe09b33b05984b87430b05d3",
+    "new_sha256": "b87a906b87e6012f6e36f0764b9b42f929166a5cf7726b6285a90ce23dc0f486"
+  },
+  {
+    "path": "docs/R5_6_LOCATOR_OFF.md",
+    "old_sha256": null,
+    "new_sha256": "660d6eaa2506d96afd4248980c91ce4f5033adc1336bf78c1c7d86c7c4d8adea"
+  },
+  {
+    "path": "verification/r4/test_merge_visual.c",
+    "old_sha256": "10683b96362ceab178cde711f29e7bd885b386f34241e1de476af8d36fba86c0",
+    "new_sha256": "b1d76e0af03860b6050709017310f26e43078df52b57ece407f9eeaaf44a4b49"
+  },
+  {
+    "path": "verification/r5_5/test_capacity.c",
+    "old_sha256": "ea863939b588c1e492fac8477eee48c1650354c8b1bea22f1b2f9c2e36832edc",
+    "new_sha256": "acf6279b3a716be658bd8078773ec7bce0792f5d14420c51e4c5a7c3e339e226"
+  }
+]

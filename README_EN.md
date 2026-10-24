@@ -1,6 +1,6 @@
 # Ti60 R5: RISC-V + FPGA 2D Game Rendering Engine
 
-Latest pressure-test revision: **R5.5** adds 99,999-object capacity, small sizes, stress-only gunfire removal and separate locator profiling. See [implementation, evidence and timing plan](docs/R5_5_PRESSURE.md). Paired bitstream/ELF files are in `BOARD_TEST/r5_5/`; physical FPS results remain pending.
+Latest revision **R5.6** removes locator coverage, fading, markers and nearby indexing from carrot stress mode. Bullets cover the actor directly; normal gameplay retains its locator. Use the unchanged R5.5 bit with the new ELF in `BOARD_TEST/r5_6/`. See [implementation and conditional benefit estimate](docs/R5_6_LOCATOR_OFF.md). Actual board FPS gains are not yet measured.
 
 **R5.3 firmware update:** [R2 comparison and changes](docs/R5_3_SETTINGS_MUSIC.md). Full ten-track selection, immutable hero-outline caching and invariant autoplay lookup. New ELF files are in `BOARD_TEST/r5_3`; hardware reuses the validated R5.2.1 bit. Actual throughput recovery requires board retesting. Complete bundle: `dist/Ti60_R5_3_MUSIC_PERF.tar.xz`.
 

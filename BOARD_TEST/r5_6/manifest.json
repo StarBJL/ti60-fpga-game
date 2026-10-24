@@ -1,0 +1,154 @@
+{
+  "version": "TI60-R5.6-STRESS-NO-LOCATOR",
+  "created_utc": "2026-10-24T08:49:24.627918+00:00",
+  "project_root": "/home/user/fpga_contest/1025/Ti60_R5_DUALVIDEO",
+  "hardware_reused_from": "R5.5",
+  "hardware": {
+    "tool": "Efinity 2026.1.132.4.5",
+    "device": "Ti60F225",
+    "timing_model": "I3",
+    "core_hz": 200000000,
+    "pixel_hz": 74375000,
+    "video_revision": 328193,
+    "motion_revision": 131073,
+    "motion_min_px": 1,
+    "pnr": {
+      "seed": 2,
+      "placer_effort_level": 4,
+      "optimization_level": "TIMING_2",
+      "retiming": 0
+    },
+    "post_route_slack": {
+      "core_clk": {
+        "setup_ns": 0.224,
+        "hold_ns": 0.026
+      },
+      "pll_fb_clk": {
+        "setup_ns": 4.016,
+        "hold_ns": 0.027
+      },
+      "sdram_clk": {
+        "setup_ns": 0.496,
+        "hold_ns": 0.024
+      },
+      "rx_cal_clk": {
+        "setup_ns": 0.451,
+        "hold_ns": 0.026
+      },
+      "tx_cal_clk": {
+        "setup_ns": 0.386,
+        "hold_ns": 0.097
+      },
+      "tx_cal_clk_90edge": {
+        "setup_ns": 0.395,
+        "hold_ns": 0.072
+      },
+      "hdmi_tx_slow_clk": {
+        "setup_ns": 7.094,
+        "hold_ns": 0.042
+      }
+    },
+    "all_reported_setup_hold_passed": true,
+    "resources": {
+      "xlr": {
+        "used": 58568,
+        "capacity": 60800
+      },
+      "ram_blocks": {
+        "used": 253,
+        "capacity": 256
+      },
+      "dsp": {
+        "used": 32,
+        "capacity": 160
+      }
+    }
+  },
+  "memory_regions_bytes": {
+    "debug": {
+      "ram": 9309040,
+      "snd": 10123520,
+      "art": 13067392,
+      "stress": 30522920
+    },
+    "release": {
+      "ram": 9236464,
+      "snd": 10123520,
+      "art": 13067392,
+      "stress": 30522920
+    }
+  },
+  "elf_symbols": {
+    "debug": {
+      "game": {
+        "address": 125547264,
+        "bytes": 5638952
+      },
+      "squares": {
+        "address": 2558720,
+        "bytes": 799992
+      },
+      "th": {
+        "address": 100663296,
+        "bytes": 24883748
+      }
+    },
+    "release": {
+      "game": {
+        "address": 125547264,
+        "bytes": 5638952
+      },
+      "squares": {
+        "address": 2519552,
+        "bytes": 799992
+      },
+      "th": {
+        "address": 100663296,
+        "bytes": 24883748
+      }
+    }
+  },
+  "external_ddr_index_bytes_saved": 395900,
+  "validation": "verification/r5_6/validation.json",
+  "physical_board_retested": false,
+  "source_sha256": {
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game.h": "ed6579c7af1bcfdc7c9f618fb998342a19cea5f928f7712631c1d821692da1b5",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game.c": "a54ea5713fbdfe032d74a574356a02583aaa04ac1a7c529029bde31ac8b069de",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/render.c": "74137b85788dbc43e3b65b53923d3dbe7c5bffb416326dbb0eb4860f496b5502",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hero_locator.h": "1701a5c077a5bcab7e84c1037dccaa244c443a10a7e84a4ce018230aceea2021",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c": "7563ea4b86948ec41c6669afd4c12ec57322bdc854dd68a311daf1c195cfea7d",
+    "build_software.py": "a908c40dc60caa5ef53683a5ee1426ae3f8fdc9cd471ad9e2986c682d34c0fe4",
+    "tools/control_panel/server.py": "bcc90bf8cdfd9f3470afbd6f79d908e825201169edc7e433e56e420c5c6d6dc3",
+    "tools/control_panel/app.js": "857b053a3dcb3339803eb84ca8f7ae05f30b9905ed5662f4ed1648c9ea380ce9",
+    "tools/control_panel/index.html": "4b91596709db0367105f0a2eb4eeed0aebd5390e5ab5685a1e2f5a1d0605172a",
+    "tools/control_panel/serial_ports.py": "2c5c6107fcd19e31c3ac240373212dad1c8dc5dd96fd13c81fa73e476174bd13",
+    "README.md": "2f5db6bd7ed1ae77c980af8c17113ba867c77a48324b913db876ab09756651c2",
+    "README_EN.md": "29ee12f96b7b65ade0aa1f7e38d35aa3061756c282c202c1ee63ef45af59c7fb",
+    "START_HERE.md": "b87a906b87e6012f6e36f0764b9b42f929166a5cf7726b6285a90ce23dc0f486",
+    "docs/R5_6_LOCATOR_OFF.md": "660d6eaa2506d96afd4248980c91ce4f5033adc1336bf78c1c7d86c7c4d8adea",
+    "verification/r4/test_merge_visual.c": "b1d76e0af03860b6050709017310f26e43078df52b57ece407f9eeaaf44a4b49",
+    "verification/r5_5/test_capacity.c": "acf6279b3a716be658bd8078773ec7bce0792f5d14420c51e4c5a7c3e339e226"
+  },
+  "artifacts": {
+    "ti60_r5_6_debug.launch": {
+      "bytes": 7032,
+      "sha256": "d4095a663228b4a627a70a48cf25cc7a4acee9b52c124bc0ee819f9628f00bcf"
+    },
+    "README.txt": {
+      "bytes": 1100,
+      "sha256": "8a053113f69afaac793daedd31072fd63f96cf0c226e8106a4c629cbb0798061"
+    },
+    "ti60_r5_6_release.elf": {
+      "bytes": 10549668,
+      "sha256": "0b905935e5c5adf85f2d2b9ac332a92758f00b0b56ae63dcfdecc072249390a3"
+    },
+    "ti60_r5_6_debug.elf": {
+      "bytes": 10588476,
+      "sha256": "b71c91473ae2084d7e1d094418291de3b71bdbe804e6f64de71bf30733fab1bc"
+    },
+    "compatible_ti60_r5_5.bit": {
+      "bytes": 2846550,
+      "sha256": "274a2b10755e8de5077eae25fc775481b246740aa2479aad0a67de75c3a849a5"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "source": "/home/user/下载/uart_163553_825766_R5-CONSOLE25.csv",
+  "source_sha256": "43e1305480a075dfa36867c3d380e029c300a5cd2c700b54119983371ed2fa9e",
+  "no_R55_or_R56_board_telemetry_available": true,
+  "old_13px_marginal_hostile_us_per_bullet": 0.6502553830746107,
+  "old_13px_average_hostile_us_per_bullet": 0.76946157359064,
+  "old_15k_work_us": 19543.555555555555,
+  "assumptions": [
+    "Conditional CPU-only conversion, not a prediction of saved time or achieved FPS",
+    "No physical A/B data exists for removal; old actor metric includes locator, player and enemies",
+    "GPU/DDR/command submission and extra opaque player rendering can limit net improvement"
+  ],
+  "scenarios": [
+    {
+      "net_saved_ms": 0.5,
+      "cpu_equivalent_bullets_low": 650,
+      "cpu_equivalent_bullets_high": 769
+    },
+    {
+      "net_saved_ms": 1,
+      "cpu_equivalent_bullets_low": 1300,
+      "cpu_equivalent_bullets_high": 1538
+    },
+    {
+      "net_saved_ms": 2,
+      "cpu_equivalent_bullets_low": 2599,
+      "cpu_equivalent_bullets_high": 3076
+    },
+    {
+      "net_saved_ms": 3,
+      "cpu_equivalent_bullets_low": 3899,
+      "cpu_equivalent_bullets_high": 4614
+    }
+  ],
+  "capacity_remains": 99999
+}

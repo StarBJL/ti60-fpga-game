@@ -913,7 +913,8 @@ void game_tick(Game *g, Input in) {
                 GfxItem *d=&seed_draw[n_draw++];
                 d->x=(int16_t)sx; d->y=(int16_t)sy;
                 d->sprite=(unsigned)b->style<GAME_SEED_STYLES ? b->style : 0;
-                if((unsigned)(sx-near_left)<near_width&&(unsigned)(sy-near_top)<near_height){
+                /* Stress bullets cover the actor directly: no visual-only proximity work. */
+                if(!pressure&&(unsigned)(sx-near_left)<near_width&&(unsigned)(sy-near_top)<near_height){
                     if(g->occlusion_near_n<GAME_OCCLUSION_NEAR_MAX)
                         g->occlusion_near[g->occlusion_near_n++]=(uint32_t)(n_draw-1);
                     else g->occlusion_near_overflow=1;

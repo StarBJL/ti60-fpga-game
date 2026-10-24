@@ -1,6 +1,6 @@
 # Ti60 R5 工程入口 / Project entry
 
-当前测试版本：**R5.5-PRESSURE-99999**。请使用 `BOARD_TEST/r5_5/ti60_r5_5.bit` + `ti60_r5_5_debug.elf`，并重启上位机。详细条件和待填上板表见 [R5.5 说明](docs/R5_5_PRESSURE.md)。
+当前版本：**R5.6-STRESS-NO-LOCATOR**。使用 R5.5 bit + `BOARD_TEST/r5_6/ti60_r5_6_debug.elf`；已烧入 R5.5 bit 时只需换 ELF。上位机重启后显示压力轮廓关闭。见 [修改与收益估算](docs/R5_6_LOCATOR_OFF.md)。
 
 请先阅读 [中文说明](README.md) 或 [English README](README_EN.md)。
 

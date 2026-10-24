@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "physical_board": false,
+  "checks": [
+    "real PTY preset command sequence",
+    "firmware locator-off telemetry displayed",
+    "CSV exports locator state",
+    "R5.6 service version",
+    "no page errors"
+  ],
+  "errors": []
+}

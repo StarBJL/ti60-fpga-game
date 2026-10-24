@@ -1,0 +1,30 @@
+{
+  "debug": {
+    "game": {
+      "address": 125547264,
+      "bytes": 5638952
+    },
+    "squares": {
+      "address": 2558720,
+      "bytes": 799992
+    },
+    "th": {
+      "address": 100663296,
+      "bytes": 24883748
+    }
+  },
+  "release": {
+    "game": {
+      "address": 125547264,
+      "bytes": 5638952
+    },
+    "squares": {
+      "address": 2519552,
+      "bytes": 799992
+    },
+    "th": {
+      "address": 100663296,
+      "bytes": 24883748
+    }
+  }
+}

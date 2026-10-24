@@ -434,7 +434,7 @@ static void draw_player(Gfx *r,const Game *g) {
     int level=game_appearance_level(g),palette=level<4?0:level<6?1:2;
     WeaponPose p[2]={weapon_pose(g,0,g->weapon_idle_ticks>30),weapon_pose(g,1,g->weapon_idle_ticks>30)};
     const Sprite *s=render_hero_asset(level,(g->ticks/9)&1);
-    int alpha=255-loc_info.fade;
+    int alpha=g->limit_mode?255:255-loc_info.fade;
     /* Body and both turning guns are below projectiles. Face protection only
      * affects this actor pass, never bullets. Immunity has no clearing mask. */
     if(alpha){
@@ -461,7 +461,7 @@ static void draw_player(Gfx *r,const Game *g) {
         gfx_fill_rect(r,x-2,y+13,5,2,GOLD);
 }
 static void draw_player_locator(Gfx *r,const Game *g){
-    if(!loc_info.fade)return;
+    if(g->limit_mode||!loc_info.fade)return;
     int x=g->x/FIX,y=g->y/FIX,bob=g->moving?(g->ticks/7)%2:0;
     const Sprite *s=render_locator_outline_asset();
     /* The interior is COLOR_KEY: no body repaint, erasure or per-bullet test.
@@ -655,8 +655,16 @@ static void draw_world(Gfx *r,const Game *g,int batch) {
     t1=clock_now(); RSPLIT(bg,t1-t); t=t1;
     n=enemy_order(g,order,ys);
     t1=clock_now(); RSPLIT(sort,t1-t); t=t1;
-    prepare_player_locator(g);
-    t1=clock_now(); RSPLIT(locator,t1-t); t=t1;
+    if(g->limit_mode){
+        /* Clear a previous normal-game fade once; no coverage scan, outline,
+         * hit-centre marker or per-frame silhouette work in pressure mode. */
+        if(loc_game||loc_info.total||loc_info.fade)render_locator_reset();
+        RSPLIT(locator,0);
+    }else{
+        prepare_player_locator(g);
+        RSPLIT(locator,clock_now()-t);
+    }
+    t=clock_now();
     shadow(r,g->x/FIX,g->y/FIX+21,14);
     for(i=0;i<n;i++)draw_enemy(r,&g->enemies[order[i]],g->ticks);
     draw_player(r,g);
@@ -672,7 +680,7 @@ static void draw_world(Gfx *r,const Game *g,int batch) {
         const Particle *p=&g->particles[i]; Pixel c=p->color==1?RED:p->color==2?GREEN:GOLD;
         gfx_fill_rect(r,p->x/FIX,p->y/FIX,p->size,p->size,c);
     }
-    draw_player_locator(r,g);
+    if(!g->limit_mode)draw_player_locator(r,g);
     if(g->hurt_flash) gfx_border(r,20,90,1240,576,3,RED);
     RSPLIT(particles,clock_now()-t);
 }
