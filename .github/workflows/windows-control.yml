@@ -26,6 +26,8 @@ jobs:
         run: .venv-control-build/Scripts/python.exe verification/r5_4/test_presets.py
       - name: Input calibration and diagnostic protocol
         run: .venv-control-build/Scripts/python.exe verification/r5_9/test_protocol.py
+      - name: Co-op request and response state checks
+        run: .venv-control-build/Scripts/python.exe verification/r5_9_1/test_flow_state.py
       - name: Packaged executable HTTP smoke test
         run: python verification/r5/windows_console/windows_exe_smoke.py
       - uses: actions/upload-artifact@v4

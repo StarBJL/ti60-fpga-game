@@ -2,6 +2,7 @@
 const $=id=>document.getElementById(id);
 const pendingCommands=new Map();let statusSynced=false;
 let pressureCapability=-1;
+let coopStartBusy=false,lastInputDiagnostic=0;
 let presetCatalog=[],presetCatalogError="",presetRequestPending=false,presetRequestedOperation=null;
 let token="",cursor=0,connected=false,compatible=false,dualvideo=false,currentScene=-1,snapshot=null,lastAck=0,queue=Promise.resolve(),polling=false,held=0,lastHeld=-1,lastError="";
 const tracks={bgm_title:"像素晨光",bgm_menu2:"星灯菜单",bgm_stage1:"云端疾行",bgm_stage2:"月下航线",bgm_boss1:"赤色风暴",bgm_boss2:"终幕回响",bgm_garden:"萝卜田野",bgm_garden2:"森林夜行",bgm_stress:"压力脉冲",bgm_stress2:"数字方阵","?":"未播放"};
@@ -29,7 +30,7 @@ function updateHeld(){let value=0;for(const v of keys.values())value|=v;for(cons
 const keyBits={ArrowUp:1,ArrowDown:2,ArrowLeft:4,ArrowRight:8,w:1,W:1,s:2,S:2,a:4,A:4,d:8,D:8,z:16,Z:16," ":16,x:32,X:32,j:32,J:32,Shift:64,Escape:128,Enter:256};
 function typing(){return /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName||"")&&document.activeElement?.id!=="captureKeys";}
 window.addEventListener("keydown",e=>{
-  if(!$("captureKeys").checked||typing()||!connected||!compatible||snapshot?.state.input_diag)return;
+  if(!$("captureKeys").checked||typing()||!connected||!compatible||snapshot?.state.input_diag||coopStartBusy)return;
   if(keyBits[e.key]!==undefined){e.preventDefault();keys.set(e.code,keyBits[e.key]);updateHeld();}
   else if(!e.repeat&&(e.key==="+"||e.key==="="||e.key==="-")){e.preventDefault();cmd("delta",e.key==="-"?-1:1);}
   else if(!e.repeat&&e.key==="F9"){e.preventDefault();if(dualvideo&&!snapshot?.state.pending&&!snapshot?.state.link_stage)cmd("resolution",snapshot?.state.resolution===1?0:1);else notice("等待 R5 显示能力或当前切换完成。","error");}
@@ -50,6 +51,8 @@ document.querySelectorAll("[data-held]").forEach(button=>{
   for(const type of ["pointerup","pointercancel","lostpointercapture"])button.addEventListener(type,e=>{pointerBits.delete(e.pointerId);updateHeld();});
 });
 document.querySelectorAll("[data-command]").forEach(button=>button.addEventListener("click",()=>{
+  if(button.dataset.command==="coop"){startCoopGame(Number(button.dataset.value));return;}
+  if(coopStartBusy&&button.dataset.command!=="stop")return;
   if(button.dataset.command==="stop")release();
   cmd(button.dataset.command,button.dataset.value===undefined?undefined:Number(button.dataset.value));
 }));
@@ -170,7 +173,7 @@ function engineText(s){
 function render(data){
   if(presetRequestedOperation!==null&&data.preset?.operation===presetRequestedOperation){presetRequestPending=false;presetRequestedOperation=null;}
   if(!data.connected){presetRequestPending=false;presetRequestedOperation=null;}
-  snapshot=data;connected=data.connected;compatible=data.compatible;dualvideo=!!data.dualvideo;token=data.token;const state=data.state,configuring=configuringPreset();
+  snapshot=data;connected=data.connected;compatible=data.compatible;dualvideo=!!data.dualvideo;token=data.token;const state=data.state,configuring=configuringPreset()||coopStartBusy;
   if(connected&&data.port){$("port").value=data.port;portHint();}
   $("consoleVersion").textContent=data.console_version||"旧版服务（重启后加载端口修复）";
   $("connectionBadge").textContent=!connected?"串口未连接":compatible?(String(state.firmware||"").includes("PTY")?"伪终端测试 · 非实板":(dualvideo?"R5 已连接":"兼容协议已连接")):"已连接 · 识别中";
@@ -193,12 +196,16 @@ function render(data){
   $("recoverVideo").disabled=!connected||!state.video_recover_supported||configuring;
   $("dvi1080").disabled=!connected||!state.link_supported||!!state.link_stage||configuring;
   $("linkState").textContent=state.link_stage?"显示链路重新启动中：暂时停发四路 TMDS，等待目标时序稳定。":state.link_fault?"恢复超时，已请求720P并重新开启输出；请记录日志。":state.link_supported?`链路重启可用 · ${state.link_dvi&&state.resolution===1?"1080P DVI诊断，无音频":"HDMI音视频"} · 恢复次数 ${state.recoveries||0}`:"完整链路重启需R5.8 bit；旧bit的恢复仅重发720P请求。";
-  for(const id of ["startCoopCarrot","startCoopTouhou"])$(id).disabled=!connected||!state.coop_start_supported||configuring;
-  $("coopHelp").textContent=state.auto?"当前自动演示保持单人。点击上方三人合作按钮，会关闭自动演示并从普通游戏新局开始。":state.players===3?"三人模式已启用；未接入键盘的角色会留在原地。":"选择上方三人合作入口；压力模式不会显示三个角色。";
+  for(const id of ["startCoopCarrot","startCoopTouhou"])$(id).disabled=!connected||!state.coop_start_supported||configuring||!!state.matrix_cal||matrixRestoreBusy;
+  $("coopHelp").textContent=coopStartBusy?"正在确认输入状态并启动三人新局，请稍候。":state.matrix_cal?"正在校准矩阵：先完成并应用映射，或取消本次校准，再启动游戏。":state.input_diag?"仍在只检测按键：扩展键盘不驱动角色，电脑键盘捕获也暂停。松开全部按键后，点击三人启动按钮会先退出检测；也可点击下方“结束检测”。":state.scene===1&&state.phase===5?"本局已失败，方向键不会使人物移动。点击三人启动按钮重新开局。":state.auto?"当前自动演示保持单人。点击三人启动按钮会关闭自动演示、开始新局并启用电脑键盘。":state.players===3?"三人模式已启用。P1：网页启用键盘控制；P2：USB键盘；P3：矩阵板。":"选择上方三人合作入口；压力模式不会显示三个角色。";
+  $("coopHelp").classList.toggle("input-blocked",!!state.input_diag||!!state.matrix_cal);
+  $("captureKeys").disabled=!connected||!compatible||configuring||!!state.input_diag;
+  $("keyboardCaptureState").textContent=state.input_diag?"只检测按键中：电脑键盘捕获暂停。请先结束检测，或松开全部按键后启动三人新局。":$("captureKeys").checked?"电脑键盘控制已启用：让浏览器窗口保持焦点，点网页空白处后使用 WASD／方向键。":"电脑键盘控制未启用；点击三人启动按钮会自动启用，也可勾选上方开关。";
   $("inputState").textContent=`矩阵原始键位：${state.matrix_keys===undefined?"等待状态":"0x"+Number(state.matrix_keys).toString(16).padStart(4,"0")} · USB键盘报告 ${state.keyboard_reports??"—"} · UART错误 ${state.uart_error??"—"} · 鬼键 ${state.ghosts??"—"}。零键位不能单独证明未连接。`;
   renderInputDiagnostics(state,configuring);
   $("videoTrial").textContent=state.video_trial?`试切中：约 ${Math.ceil((state.trial_ms||0)/1000)} 秒后自动返回 720P。看见正常画面后再确认。`:state.trial_supported?"1080P 试切保护已就绪；黑屏可等待自动返回 720P。":"自动回退需 R5.7 ELF。";
-  $("partyMode").textContent=state.players===3?"同屏三人":state.players===1?(state.auto?"自动演示 · 单人":"单人 / 压力"):"菜单 / 其他场景";
+  $("partyMode").textContent=state.input_diag?"输入检测中":state.players===3?"同屏三人":state.players===1?(state.auto?"自动演示 · 单人":"单人 / 压力"):"菜单 / 其他场景";
+  $("partyMode").className="badge "+(state.input_diag?"warning":"neutral");
   $("coreClock").textContent=state.core_hz?`处理时钟：${(state.core_hz/1e6).toFixed(6)} MHz。请使用对应 bit / ELF。`:"处理时钟：当前固件未回报。";
   for(let p=1;p<=3;p++){
     const life=state[`p${p}_life`],skill=state[`p${p}_skill`],score=state[`p${p}_score`];
@@ -265,7 +272,7 @@ function chart(samples){
   if(!samples.length){c.fillStyle="#7b91a0";c.textAlign="center";c.fillText("连接设备后显示真实测量曲线",w/2,105);c.textAlign="left";}
 }
 async function poll(){if(polling)return;polling=true;try{render(await api("/api/state?after="+cursor));}catch(e){notice("本地服务未响应："+e.message,"error");}finally{polling=false;}}
-window.addEventListener("resize",()=>chart(snapshot?.samples||[]));setInterval(poll,500);setInterval(()=>{if($("captureKeys").checked)sendHeld(true);else if(held)sendHeld();},100);
+window.addEventListener("resize",()=>chart(snapshot?.samples||[]));setInterval(poll,500);setInterval(()=>{if($("captureKeys").checked||held)sendHeld();},100);
 Promise.all([poll(),loadPresets()]).then(refreshPorts);
 
 const mapStorageKey="ti60-r59-matrix-map-v1";
@@ -274,15 +281,44 @@ try{const x=JSON.parse(localStorage.getItem(mapStorageKey)||"null");if(x&&validM
 function validMatrixMap(x){return typeof x==="string"&&/^x[0-9a-f]{16}$/.test(x)&&new Set(x.slice(1)).size===16;}
 function hexKeys(x){return "0x"+Number(x||0).toString(16).padStart(4,"0");}
 for(let i=0;i<16;i++){const cell=document.createElement("span");cell.textContent="S"+(i+1);$("matrixCalibrationGrid").append(cell);}
-async function confirmedInputCommand(command,value){
+async function confirmedInputCommand(command,value,requiredTags=[]){
+  const boot=snapshot?.boot,record=snapshot?.record?.raw;
   const result=await cmd(command,value),deadline=Date.now()+7000;
   while(Date.now()<deadline){
-    if(!connected)throw new Error("串口已断开，未应用的校准仍不会改变旧映射。");
-    const ack=snapshot?.acks?.find(x=>x.id===result.id);
-    if(ack){if(!ack.ok)throw new Error("设备拒绝校准步骤，请松开全部按键后重试。");return;}
+    if(!connected||snapshot?.boot!==boot||snapshot?.record?.raw!==record)throw new Error("连接或固件状态已变化，本次操作已停止，请重新读取状态。");
+    const ack=snapshot?.acks?.find(x=>x.id===result.id),response=snapshot?.responses?.[result.id];
+    if(ack){
+      if(!ack.ok)throw new Error("设备拒绝控制命令，请确认校准已结束并松开全部按键后重试。");
+      if(requiredTags.every(tag=>response?.tags?.includes(tag)))return response?.values||{};
+    }
     await new Promise(resolve=>setTimeout(resolve,100));
   }
-  throw new Error("等待校准回执超时；请重新读取状态，确认结果。");
+  throw new Error("等待设备回执或完整状态超时，本次操作已停止，请同步状态后重试。");
+}
+async function startCoopGame(scene){
+  if(coopStartBusy||matrixRestoreBusy)return;
+  coopStartBusy=true;$("captureKeys").checked=false;release();
+  try{
+    if(!snapshot?.state.coop_start_supported)throw new Error("当前固件不支持三人启动入口。");
+    const diagnosticCapable=snapshot.state.input_diag_supported===1;
+    if(diagnosticCapable&&(!snapshot.responses||snapshot.boot===undefined))throw new Error("请重启上位机服务，加载 R5.9.1 后再启动三人游戏。");
+    // Require the state tagged with this exact request, not a stale periodic
+    // sample or merely an ACK that preceded the following telemetry lines.
+    const tags=["S4","T7",...(diagnosticCapable?["I5","I9"]:[])];
+    const state=await confirmedInputCommand("status",undefined,tags);
+    if(state.matrix_cal)throw new Error("矩阵校准尚未结束，请先应用完整映射或取消本次校准。");
+    if(state.input_diag){
+      if(state.matrix_keys||(state.keyboard_down??state.keyboard_held))throw new Error("请先松开矩阵板和 USB 键盘的全部按键，再点击三人启动。");
+      const enabled=await confirmedInputCommand("input_diag",0,["I9"]);
+      if(enabled.input_diag!==0)throw new Error("尚未确认输入检测已退出，已停止启动游戏。");
+    }
+    const game=await confirmedInputCommand("coop",scene,tags);
+    if(game.players!==3||game.scene!==scene||game.auto!==0||game.input_diag)throw new Error("尚未确认三人新局和输入状态，请同步设备状态后重试。");
+    $("captureKeys").checked=true;
+    $(scene===1?"startCoopCarrot":"startCoopTouhou").focus();
+    notice("三人新局已启动，输入检测已退出，电脑键盘控制已启用。","success");
+  }catch(e){notice(e.message,"error");}
+  finally{coopStartBusy=false;}
 }
 $("matrixRestore").addEventListener("click",async()=>{
   if(!savedMatrixMap||!validMatrixMap(savedMatrixMap.map)||matrixRestoreBusy)return;
@@ -296,6 +332,8 @@ $("matrixRestore").addEventListener("click",async()=>{
   finally{matrixRestoreBusy=false;}
 });
 function renderInputDiagnostics(s,configuring){
+  if(s.input_diag===1&&lastInputDiagnostic!==1)release();
+  lastInputDiagnostic=s.input_diag;
   const available=connected&&compatible&&s.input_diag_supported===1&&s.input_supported===1&&!configuring&&!matrixRestoreBusy;
   const active=!!s.matrix_cal,step=Number(s.matrix_step||0),released=!s.matrix_keys&&!(s.keyboard_down??s.keyboard_held);
   $("inputDiagOn").disabled=!available||!!s.input_diag;
@@ -306,7 +344,7 @@ function renderInputDiagnostics(s,configuring){
   $("matrixCalApply").disabled=!available||!active||step!==16||!released;
   $("keyboardSync").disabled=!available||!s.input_diag;
   $("matrixRestore").disabled=!available||!savedMatrixMap||!released||active;
-  $("inputDiagState").textContent=!s.input_diag_supported?"请下载 R5.9 ELF 后使用；R5.8 bit 不需要更换。":s.input_diag?"检测中：扩展按键不会操作游戏。完成或取消校准后，松开全部按键，再结束检测。":"游戏输入已启用。首次接线请先进入只检测按键模式。";
+  $("inputDiagState").textContent=!s.input_diag_supported?"请下载 R5.9 ELF 后使用；R5.8 bit 不需要更换。":s.input_diag?"检测中：扩展键盘和网页电脑键盘捕获都暂停。校准应用后仍保留检测状态；松开全部键，点结束检测，或点三人启动按钮自动退出。":"游戏输入已启用。首次接线请先进入只检测按键模式。";
   $("matrixCalPrompt").textContent=active?(step===16?"16 键已记录，全部松开后点击“应用完整映射”。":`已记录 ${step}/16。${s.matrix_wait?"请先松开全部按键，然后":"请"}只按板上 S${step+1}，松开并等待进度变化。`):s.matrix_mapped?"已应用校准。可在检测模式验证每一键后恢复游戏操作。":"当前为默认行列映射。点击开始校准，按板上丝印从 S1 到 S16 逐个记录。";
   if(active&&s.matrix_cal_error)$("matrixCalPrompt").textContent+=(s.matrix_cal_error===1?" 本次检测到多键，请松开重按当前键。":" 这条原始键位已录过，请松开后按当前提示的键；接触短路也会导致重复。");
   [...$("matrixCalibrationGrid").children].forEach((cell,i)=>{cell.classList.toggle("recorded",active&&i<step);cell.classList.toggle("current",active&&i===step);const m=String(s.matrix_candidate||"").slice(1);cell.textContent="S"+(i+1)+(active&&i<step?" · "+m[i].toUpperCase():"");});

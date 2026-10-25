@@ -1,0 +1,96 @@
+{
+  "created_utc": "2026-10-25T11:35:16.686663+00:00",
+  "files": [
+    {
+      "path": ".github/workflows/windows-control.yml",
+      "sha256": "808cd3b5039f8d12b415c7d261547293ede7ca94e87a24cea412d4a37fe1b7a7"
+    },
+    {
+      "path": "dist/Ti60_Control_Panel_R5_9_1.zip",
+      "sha256": "986af138e39a395750e14085fe9cd004c66bba7e5ed7feca9dcfa34f89651310"
+    },
+    {
+      "path": "docs/R59_1_INPUT_RESUME.md",
+      "sha256": "edb18a0885f597511e3c68752aaa9b0086b9eab6017dd5728710d9717567dc0c"
+    },
+    {
+      "path": "tools/control_panel/app.js",
+      "sha256": "2966ffd1e4a84a1facc9515f8c01a43af187a879ac8ad060303f859018c7a055"
+    },
+    {
+      "path": "tools/control_panel/index.html",
+      "sha256": "2611534c84a55accc2cf64e52ef462703d2424a5f909b34df89bafe99cd1d2e7"
+    },
+    {
+      "path": "tools/control_panel/serial_ports.py",
+      "sha256": "0c214b21da345c2bda7ded91d245e962987f980d13461c933490b6c33d4b09a9"
+    },
+    {
+      "path": "tools/control_panel/server.py",
+      "sha256": "7cd42a7d4b2ee5448decc468a6796bbe2a4d44cc4f726bf6cb44b376126f2f66"
+    },
+    {
+      "path": "tools/control_panel/style.css",
+      "sha256": "4daa1fbe7cb365250a02b522badf052a06ada8aed73b88e3c316997325e61906"
+    },
+    {
+      "path": "verification/r5_9_1/after_recovery.png",
+      "sha256": "eabacff126991c208a752415dae80faf9187507d2ef7c47bcf6374bdf21a8e10"
+    },
+    {
+      "path": "verification/r5_9_1/before_recovery.png",
+      "sha256": "79c8d48f7bc2572d975e6573081bf08bd21e6e02a6c0ecd6a7f0cc5d17d00c9c"
+    },
+    {
+      "path": "verification/r5_9_1/browser_results.json",
+      "sha256": "e574f30b040bd24296387b94274d17433c60447fda1eccb4231a303e9b01b759"
+    },
+    {
+      "path": "verification/r5_9_1/browser_test.js",
+      "sha256": "a1f35cbe9631364fa8e281ff2772c92d38e9c055b64fbb4de697d8448b0a01a9"
+    },
+    {
+      "path": "verification/r5_9_1/log_analysis.json",
+      "sha256": "1b40bb812b39f5b92c387188e756da241ed75073655799ee17e3c9d0ee644db2"
+    },
+    {
+      "path": "verification/r5_9_1/mobile.png",
+      "sha256": "e4a34a86676be0a4694234a0bb71eac62679b604da66ce034a58445d4ba2e2fd"
+    },
+    {
+      "path": "verification/r5_9_1/package.json",
+      "sha256": "ffa8ca88bbc5e46f44079f912a48ba92e125b97ef34e4d660cbefe7418029ab9"
+    },
+    {
+      "path": "verification/r5_9_1/pty_commands.json",
+      "sha256": "c16bc109237f0ec477cd0f6e5301be84db020ab16fa2ecfff4637b2851ffa79c"
+    },
+    {
+      "path": "verification/r5_9_1/pty_console_fixture.py",
+      "sha256": "ae201fc65ccc04ff985c4ea066c3a7a1aa10dd2df5cac1201101ea4492fc5e3e"
+    },
+    {
+      "path": "verification/r5_9_1/run_browser_check.py",
+      "sha256": "2399d02cf2a31cb7a99d15cd689b8b54d46068ffa85d6d9f76a10bc880b299c2"
+    },
+    {
+      "path": "verification/r5_9_1/test_flow_state.py",
+      "sha256": "ba98c4e886d1555c5b0dd1a599fed5ee9ea573c7dd95e14b08b0f53051b119c8"
+    },
+    {
+      "path": "verification/r5_9_1/validation.json",
+      "sha256": "21e4e9e2d4a8874f94e210482b30a1215889a70fb109f8b5ceb32c3d6a5bc267"
+    },
+    {
+      "path": "verification/r5_9_1/delivery_paths.json",
+      "sha256": "47c06cba380e77f4b137804c49cfd31eaae53fa42e6a0e07d20a338b7b983178"
+    }
+  ],
+  "backup": "/home/user/fpga_contest/1025/Ti60_R5_DUALVIDEO/backups/R5_9_before_COOP_input_resume_20261025",
+  "preserved": {
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.elf": "ad5958621c39e9ed93ea3f39c4bad7f42c80e74e32ac645bd275a95f08ea05b5",
+    "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.bit": "dced75cde6c7d3d80d0a4941b00d0695d54511ee4d587b514c60bfea7c8e52c4"
+  },
+  "physical_serial_opened": false,
+  "board_programmed": false
+}

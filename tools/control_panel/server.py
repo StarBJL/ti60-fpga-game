@@ -219,7 +219,7 @@ class Session:
         if self.reader and self.reader is not threading.current_thread():self.reader.join(timeout=1)
     def snapshot(self,after=0):
         with self.lock:
-            return {'console_version':CONSOLE_VERSION,'preset':self.preset_snapshot(),'presets_supported':True,'preset_unavailable':self.preset_unavailable(),'connected':self.serial is not None,'compatible':self.collector.compatible,'dualvideo':self.collector.dualvideo,'port':self.port,'baud':self.baud,'error':self.error,'record':self.record,'label':self.label,'cursor':self.collector.cursor,'state':dict(self.collector.state),'lines':[x for x in self.collector.lines if x['id']>after],'samples':list(self.collector.samples)[-180:],'acks':list(self.collector.acks)[-20:]}
+            return {'console_version':CONSOLE_VERSION,'boot':self.collector.boot,'responses':{rid:{'tags':sorted(response['tags']),'values':dict(response['values'])} for rid,response in self.collector.responses.items()},'preset':self.preset_snapshot(),'presets_supported':True,'preset_unavailable':self.preset_unavailable(),'connected':self.serial is not None,'compatible':self.collector.compatible,'dualvideo':self.collector.dualvideo,'port':self.port,'baud':self.baud,'error':self.error,'record':self.record,'label':self.label,'cursor':self.collector.cursor,'state':dict(self.collector.state),'lines':[x for x in self.collector.lines if x['id']>after],'samples':list(self.collector.samples)[-180:],'acks':list(self.collector.acks)[-20:]}
     def preset_busy(self):
         return self.preset.get('status') in ('applying','verifying')
     def preset_snapshot(self):
