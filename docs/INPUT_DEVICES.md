@@ -1,5 +1,7 @@
 # R5 输入硬件与固件接口 / Input integration
 
+R5.8：[双键盘接线附图](R58_INPUT_SCHEMATIC.html)。CH9350L VCC接经确认的J7 3脚5V，GND接J7 5脚；TX/RX仍为J7 32/34。新增上位机三人启动按钮和I5原始键位诊断。
+
 R5.7：普通游戏source0=UART/P1、source1=CH9350/P2、source2=矩阵/P3；每源独立held/pressed。压力模式兼容合并输入。矩阵普通东方默认自动射击，S3切换；Fn+S16在显示试切期间确认，否则查询状态；F10确认。三人具体规则见[报告](R57_REPORT.html#coop)。
 
 交互版：[按键、接线与协议指南](INPUT_GUIDE.html)。本文件记录可用于集成的接口；实板电气和键盘兼容性验收尚待用户填写。

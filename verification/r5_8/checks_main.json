@@ -1,0 +1,12 @@
+[
+  {
+    "name": "main",
+    "passed": true,
+    "log": "main.log"
+  },
+  {
+    "name": "all_screen_glyphs",
+    "passed": true,
+    "count": 275
+  }
+]

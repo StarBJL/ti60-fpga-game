@@ -8,7 +8,7 @@ from pathlib import Path, PosixPath
 import re
 import sys
 
-CONSOLE_VERSION = 'R5.7-COOP-PERF'
+CONSOLE_VERSION = 'R5.8-VIDEO-COOP'
 FT4232 = (0x0403, 0x6011)
 
 def channel_number(port, platform=None, sys_tty='/sys/class/tty'):

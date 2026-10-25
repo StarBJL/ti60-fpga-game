@@ -32,7 +32,7 @@ window.addEventListener("keydown",e=>{
   if(!$("captureKeys").checked||typing()||!connected||!compatible)return;
   if(keyBits[e.key]!==undefined){e.preventDefault();keys.set(e.code,keyBits[e.key]);updateHeld();}
   else if(!e.repeat&&(e.key==="+"||e.key==="="||e.key==="-")){e.preventDefault();cmd("delta",e.key==="-"?-1:1);}
-  else if(!e.repeat&&e.key==="F9"){e.preventDefault();if(dualvideo&&!snapshot?.state.pending)cmd("resolution",snapshot?.state.resolution===1?0:1);else notice("等待 R5 显示能力或当前切换完成。","error");}
+  else if(!e.repeat&&e.key==="F9"){e.preventDefault();if(dualvideo&&!snapshot?.state.pending&&!snapshot?.state.link_stage)cmd("resolution",snapshot?.state.resolution===1?0:1);else notice("等待 R5 显示能力或当前切换完成。","error");}
   else if(!e.repeat&&e.key==="F10"){e.preventDefault();if(snapshot?.state.video_trial)cmd("video_confirm");}
   else if(!e.repeat&&["1","2","3"].includes(e.key)){e.preventDefault();cmd("pick",Number(e.key));}
   else if(!e.repeat&&["F6","F7","F8"].includes(e.key)){e.preventDefault();cmd("step",{F6:100,F7:10,F8:1}[e.key]);}
@@ -178,7 +178,7 @@ function render(data){
   $("connect").disabled=connected;$("disconnect").disabled=!connected;$("help").disabled=!connected||configuring;$("port").disabled=connected;$("baud").disabled=connected;
   for(const el of document.querySelectorAll("[data-command],[data-scene],[data-step],[data-setting],[data-held],#decrease,#increase,#setCount,#bulletSize,#squareSize,#stressStart,#volume,#captureKeys,#targetCount,#imagePeriod"))el.disabled=!connected||!compatible||configuring;
   for(const button of document.querySelectorAll("[data-resolution]")){
-    button.disabled=!connected||!dualvideo||!!state.pending||configuring;
+    button.disabled=!connected||!dualvideo||!!state.pending||!!state.link_stage||configuring;
     button.classList.toggle("selected",dualvideo&&Number(button.dataset.resolution)===state.resolution);
   }
   $("videoState").textContent=!connected?"等待读取 R5 显示能力。":!dualvideo?"当前固件 / bit 未声明双模式输出，分辨率控制不可用。":state.pending?"切换已请求，等待硬件完成；以设备回报的输出状态为准。":`设备回报：${state.output_w||"—"}×${state.output_h||"—"}，标称 ${state.output_hz||state.nominal_hz||"—"} Hz；渲染 ${state.render_w||1280}×${state.render_h||720}。${state.bars?"当前为彩条测试。":""}扫描状态不代表显示器已锁定。`;
@@ -189,9 +189,15 @@ function render(data){
     if(document.activeElement!==$("musicSelect"))$("musicSelect").value=state.music_auto?-1:state.music_index;
     $("musicMode").textContent=state.music_auto?"跟随场景自动配乐；点击上一首 / 下一首进入全曲库手动切换。":`手动曲目 ${(state.music_index??0)+1} / ${state.music_total||10}；切换场景仍保持所选曲目。`;
   }else $("musicMode").textContent="当前固件只支持场景内两首备选曲；全曲库选择需要新版 ELF。";
-  $("confirmVideo").disabled=!connected||!state.video_trial||configuring;
+  $("confirmVideo").disabled=!connected||!state.video_trial||!!state.link_stage||configuring;
+  $("recoverVideo").disabled=!connected||!state.video_recover_supported||configuring;
+  $("dvi1080").disabled=!connected||!state.link_supported||!!state.link_stage||configuring;
+  $("linkState").textContent=state.link_stage?"显示链路重新启动中：暂时停发四路 TMDS，等待目标时序稳定。":state.link_fault?"恢复超时，已请求720P并重新开启输出；请记录日志。":state.link_supported?`链路重启可用 · ${state.link_dvi&&state.resolution===1?"1080P DVI诊断，无音频":"HDMI音视频"} · 恢复次数 ${state.recoveries||0}`:"完整链路重启需R5.8 bit；旧bit的恢复仅重发720P请求。";
+  for(const id of ["startCoopCarrot","startCoopTouhou"])$(id).disabled=!connected||!state.coop_start_supported||configuring;
+  $("coopHelp").textContent=state.auto?"当前自动演示保持单人。点击上方三人合作按钮，会关闭自动演示并从普通游戏新局开始。":state.players===3?"三人模式已启用；未接入键盘的角色会留在原地。":"选择上方三人合作入口；压力模式不会显示三个角色。";
+  $("inputState").textContent=`矩阵原始键位：${state.matrix_keys===undefined?"等待状态":"0x"+Number(state.matrix_keys).toString(16).padStart(4,"0")} · USB键盘报告 ${state.keyboard_reports??"—"} · UART错误 ${state.uart_error??"—"} · 鬼键 ${state.ghosts??"—"}。零键位不能单独证明未连接。`;
   $("videoTrial").textContent=state.video_trial?`试切中：约 ${Math.ceil((state.trial_ms||0)/1000)} 秒后自动返回 720P。看见正常画面后再确认。`:state.trial_supported?"1080P 试切保护已就绪；黑屏可等待自动返回 720P。":"自动回退需 R5.7 ELF。";
-  $("partyMode").textContent=state.players===3?"同屏三人":state.players===1?"单人 / 压力":"菜单 / 其他场景";
+  $("partyMode").textContent=state.players===3?"同屏三人":state.players===1?(state.auto?"自动演示 · 单人":"单人 / 压力"):"菜单 / 其他场景";
   $("coreClock").textContent=state.core_hz?`处理时钟：${(state.core_hz/1e6).toFixed(6)} MHz。请使用对应 bit / ELF。`:"处理时钟：当前固件未回报。";
   for(let p=1;p<=3;p++){
     const life=state[`p${p}_life`],skill=state[`p${p}_skill`],score=state[`p${p}_score`];

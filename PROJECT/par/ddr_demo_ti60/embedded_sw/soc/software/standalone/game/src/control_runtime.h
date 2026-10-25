@@ -4,6 +4,16 @@ static ControlParser control_rx;
 static int count_step=100,report_verbose;
 static unsigned settings_epoch=1;
 static int video_trial;static uint32_t video_trial_start;
+static unsigned video_switch_state,video_switch_target,video_link_dvi,video_link_fault,video_recoveries;
+static uint32_t video_switch_start,video_switch_frame;
+static void video_request(unsigned target,int force,unsigned dvi){
+    video_trial=0;video_switch_target=target;video_link_dvi=target?dvi:0;video_link_fault=0;
+    if(force){++video_recoveries;test_bars=0;hdmi_test_pattern(0);}
+    if(hdmi_link_supported()){
+        HDMI_LINK_CTRL=1u|(video_link_dvi<<1);video_switch_state=1;video_switch_start=now();
+    }else{HDMI_MODE=target;video_switch_state=0;video_trial=target!=0;video_trial_start=now();}
+    stats_reset=1;
+}
 static void set_game_limit(void);
 /* An explicit baseline restores all cross-scene A/B switches. Workload,
  * dimensions, alpha, vsync, scene, and gameplay state remain as selected. */
@@ -45,9 +55,9 @@ static unsigned video_trial_left(void){
 }
 static void control_video_state(unsigned id){
     unsigned supported=hdmi_dual_supported(),mode=supported?HDMI_MODE:0;
-    tx_printf("V5 id=%u supported=%u resolution=%u requested=%u pending=%u output_w=%u output_h=%u nominal_hz=%u render_w=1280 render_h=720 scale=%s pixel_hz=74375000 video_rev=%u bars=%u trial_supported=1 video_trial=%d trial_ms=%u\r\n",
+    tx_printf("V5 id=%u supported=%u resolution=%u requested=%u pending=%u output_w=%u output_h=%u nominal_hz=%u render_w=1280 render_h=720 scale=%s pixel_hz=74375000 video_rev=%u bars=%u trial_supported=1 video_trial=%d trial_ms=%u link_supported=%u link_stage=%u link_status=%u link_dvi=%u link_fault=%u recoveries=%u\r\n",
        id,supported,(mode>>1)&1u,mode&1u,(mode>>2)&1u,(mode&2u)?1920u:1280u,(mode&2u)?1080u:720u,
-       (mode&2u)?30u:60u,(mode&2u)?"1.5":"1",supported?HDMI_VIDEO_REV:0u,(HDMI_CTRL&HDMI_CTRL_TEST)?1u:0u,video_trial,video_trial_left());
+       (mode&2u)?30u:60u,(mode&2u)?"1.5":"1",supported?HDMI_VIDEO_REV:0u,(HDMI_CTRL&HDMI_CTRL_TEST)?1u:0u,video_trial,video_trial_left(),hdmi_link_supported(),video_switch_state,hdmi_link_supported()?HDMI_LINK_STATUS:0u,video_link_dvi,video_link_fault,video_recoveries);
 }
 static void control_party_line(const char *key,unsigned id){
     int count=scene==SCENE_GAME?game.player_count:scene==SCENE_TH?th.player_count:0;
@@ -66,7 +76,7 @@ static void control_state(unsigned id){
       id,settings_epoch,scene,scene==SCENE_TH?th.mode:scene==SCENE_GAME?game.phase:0,count_step,control_limit(),
       scene==SCENE_SQUARES?DEMO_MAX_SQUARES:scene==SCENE_GAME?MAX_HOSTILE_BULLETS:scene==SCENE_TH?TH_MAX_BULLETS:3,
       scene==SCENE_TH?th_pressure_scale():game_seed_size(),demo_square_size(),alpha_fx,vsync,use_hw,autoplay,show_stats);
-    tx_printf("A4 id=%u bgm=%d track=%s volume=%d tone=%d motion=%d motion_min_px=%d table=%d stress_auto=%d density=%d verbose=%d period=%d bank_sounds=%d mixer=%d audio_ctrl=%u pressure_supported=1 music_supported=1 music_auto=%d music_index=%d music_total=10 core_hz=%u coop_supported=1\r\n",
+    tx_printf("A4 id=%u bgm=%d track=%s volume=%d tone=%d motion=%d motion_min_px=%d table=%d stress_auto=%d density=%d verbose=%d period=%d bank_sounds=%d mixer=%d audio_ctrl=%u pressure_supported=1 music_supported=1 music_auto=%d music_index=%d music_total=10 core_hz=%u coop_supported=1 coop_start_supported=1 video_recover_supported=1\r\n",
       id,music_enabled(),aud_name(aud_bgm_current()),aud.master,aud.tone,demo_motion_enabled(),demo_motion_min_size(),demo_table_enabled(),
       th.stress_auto,th_stress_dens(&th),report_verbose,img_period,aud.nsnd,aud.mixer,HDMI_REG(0x20),music_follow_scene(),music_index(),(unsigned)BSP_CLINT_HZ);
     control_video_state(id);control_engine_state(id);control_input_state(id);control_party_line("id",id);
@@ -87,8 +97,21 @@ static int control_apply(ControlEvent e){
     case CT_BARS:if(v<0||v>1)return 0;hdmi_test_pattern(v);break;
     case CT_RESOLUTION:
         if(v<0||v>1||!hdmi_dual_supported())return 0;
-        control_fence();HDMI_MODE=(unsigned)v;video_trial=v!=0;video_trial_start=now();break;
-    case CT_VIDEO_CONFIRM:if(!video_trial)return 0;video_trial=0;break;
+        if(!video_switch_state&&(unsigned)v==((HDMI_MODE>>1)&1u)&&!(HDMI_MODE&4u)){changed=0;break;}
+        control_fence();video_request((unsigned)v,0,0);break;
+    case CT_VIDEO_RECOVER:
+        if(!hdmi_dual_supported())return 0;video_request(0,1,0);break;
+    case CT_VIDEO_DVI:
+        if(v<0||v>1||!hdmi_link_supported())return 0;
+        control_fence();video_request(1,0,(unsigned)v);break;
+    case CT_COOP_START:
+        if(v!=SCENE_TH&&v!=SCENE_GAME)return 0;
+        control_fence();scene=v;autoplay=0;th_bot_last=0;dir_x=dir_y=0;key_pressed=th_edge=0;control_move(0);
+        memset(player_pick,0,sizeof player_pick);memset(player_slow,0,sizeof player_slow);matrix_autofire=1;
+        if(scene==SCENE_TH){th_start(&th,TH_NORMAL);th_coop_enable(&th,3);}
+        else{game_start(&game,now()|1u);game_coop_enable(&game,3);}
+        view_dirty=1;break;
+    case CT_VIDEO_CONFIRM:if(!video_trial||video_switch_state)return 0;video_trial=0;break;
     case CT_SCENE:
         if(v<0||v>=SCENE_COUNT)return 0;control_fence();scene=v;aud_tone(0);
         dir_x=dir_y=0;key_pressed=th_edge=0;control_move(0);view_dirty=1;th_bot_last=0;break;
@@ -152,8 +175,24 @@ static int control_apply(ControlEvent e){
     if(changed){++settings_epoch;stats_reset=1;}return 1;
 }
 static void poll_video_trial(void){
+    uint32_t elapsed=now()-video_switch_start;
+    if(video_switch_state==1 && elapsed>=(uint32_t)BSP_CLINT_HZ*15u/100u){
+        HDMI_MODE=video_switch_target;video_switch_frame=hdmi_frame_cnt();video_switch_start=now();video_switch_state=2;
+    }else if(video_switch_state==2){
+        int stable=!(HDMI_MODE&4u)&&((HDMI_MODE>>1)&1u)==video_switch_target;
+        if(stable&&(uint32_t)(hdmi_frame_cnt()-video_switch_frame)>=2u&&elapsed>=(uint32_t)BSP_CLINT_HZ*15u/100u){
+            HDMI_LINK_CTRL=video_link_dvi<<1;video_switch_state=0;
+            video_trial=video_switch_target!=0;video_trial_start=now();stats_reset=1;
+            tx_puts("[video link restarted]\r\n");control_video_state(0);
+        }else if(elapsed>=(uint32_t)BSP_CLINT_HZ){
+            /* Always release the physical lanes, even if ack/counters fail. */
+            HDMI_MODE=0;HDMI_LINK_CTRL=0;video_switch_state=0;video_trial=0;video_link_dvi=0;video_link_fault=1;stats_reset=1;
+            tx_puts("[video link restart timeout; requested 720p]\r\n");control_video_state(0);
+        }
+    }
+
     if(video_trial&&(uint32_t)(now()-video_trial_start)>=(uint32_t)BSP_CLINT_HZ*10u){
-        video_trial=0;HDMI_MODE=0;stats_reset=1;++settings_epoch;
+        video_request(0,1,0);++settings_epoch;
         tx_puts("[video trial expired: returning to 720p]\r\n");control_video_state(0);
     }
 }

@@ -36,6 +36,11 @@
 #define HDMI_MODE          HDMI_REG(0x50)
 #define HDMI_VIDEO_ID      HDMI_REG(0x54)
 #define HDMI_CANVAS        HDMI_REG(0x58)
+#define HDMI_LINK_CTRL     HDMI_REG(0x60)
+#define HDMI_LINK_STATUS   HDMI_REG(0x64)
+#define HDMI_LINK_ID       HDMI_REG(0x68)
+#define HDMI_LINK_ID_VALUE 0x4c4e4b38u
+static inline int hdmi_link_supported(void){return HDMI_LINK_ID==HDMI_LINK_ID_VALUE;}
 #define HDMI_VIDEO_REV     HDMI_REG(0x5c) /* R5.2.1 = 0x00050201; older bit = 0 */
 #define HDMI_VIDEO_ID_VALUE 0x56494435u
 static inline int hdmi_dual_supported(void){return HDMI_VIDEO_ID==HDMI_VIDEO_ID_VALUE;}

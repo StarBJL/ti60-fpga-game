@@ -2,8 +2,8 @@
 static InputDevices devices;
 static int devices_ready,devices_present,keyboard_ack_pending;
 static void control_input_state(unsigned id){
-    tx_printf("I5 id=%u supported=%u held=%u keyboard_reports=%u malformed=%u rollover=%u ghosts=%u status_reports=%u uart_error=%u\r\n",
-      id,(unsigned)devices_present,(unsigned)devices.published_held,(unsigned)devices.keyboard_reports,
+    tx_printf("I5 id=%u supported=%u held=%u matrix_keys=%u matrix_held=%u keyboard_held=%u keyboard_reports=%u malformed=%u rollover=%u ghosts=%u status_reports=%u uart_error=%u\r\n",
+      id,(unsigned)devices_present,(unsigned)devices.published_held,(unsigned)devices.matrix_previous,(unsigned)devices.matrix_held,(unsigned)devices.keyboard_held,(unsigned)devices.keyboard_reports,
       (unsigned)devices.malformed_frames,(unsigned)devices.rollover_reports,(unsigned)devices.ghost_reports,
       (unsigned)devices.status_reports,devices_present?((HDMI_REG(0x88)>>2)&1u):0u);
 }
@@ -48,6 +48,7 @@ static void physical_action(void *opaque,InputAction action,int value){
     case INPUT_TRACK_NEXT:e.type=CT_NEXT_TRACK;break;
     case INPUT_STATUS:e.type=devices.source==2&&video_trial?CT_VIDEO_CONFIRM:CT_STATUS;break;
     case INPUT_VIDEO_CONFIRM:e.type=CT_VIDEO_CONFIRM;break;
+    case INPUT_VIDEO_RECOVER:e.type=CT_VIDEO_RECOVER;break;
     case INPUT_PAUSE:e.type=CT_PAUSE;break;
     case INPUT_TONE_TOGGLE:e.type=CT_TONE;e.value=!aud.tone;break;
     case INPUT_LEGACY:handle_char((char)value);return;
@@ -61,6 +62,17 @@ static uint32_t input_milliseconds(void){
     if(tick<previous)++wraps;previous=tick;
     return (uint32_t)((((uint64_t)wraps<<32)|tick)*1000u/BSP_CLINT_HZ);
 }
+static void poll_matrix_rescue(uint16_t keys,uint32_t ms){
+    static int held,sent;static uint32_t start;
+    if(keys!=(1u<<14)||devices.ghost_latched){held=sent=0;return;}
+    if(!held){held=1;start=ms;}
+    if(!sent&&(uint32_t)(ms-start)>=2000u){
+        sent=1;
+        if(control_apply((ControlEvent){CT_VIDEO_RECOVER,0,0,0})){
+            tx_puts("[matrix S15 held: force 720p recovery]\r\n");control_state(0);
+        }
+    }
+}
 static void poll_input_devices(void){
     unsigned limit=64;
     uint32_t ms=input_milliseconds();
@@ -68,6 +80,7 @@ static void poll_input_devices(void){
         devices_present=HDMI_REG(0x80)==0x494e5035u;}
     if(!devices_present)return;
     input_matrix_snapshot(&devices,(uint16_t)HDMI_REG(0x84));
+    poll_matrix_rescue(devices.matrix_previous,ms);
     if(HDMI_REG(0x88)&4u){input_keyboard_release(&devices);HDMI_REG(0x94)=1;
         tx_puts("[keyboard UART error: released and FIFO cleared]\r\n");}
     while(limit--&&(HDMI_REG(0x88)&1u))input_ch9350_feed(&devices,(uint8_t)HDMI_REG(0x8c),ms);

@@ -736,6 +736,7 @@ assign s_axi_araddr   = soc_axi_araddr[AXI_ADDR_WIDTH-1:0];
 //***************************************************************************
 // HDMI framebuffer scan-out (APB regs @0xF8100000 + AXI read DMA + TMDS)
 //***************************************************************************
+wire hdmi_link_enable,hdmi_link_reset;
 wire [9:0] tmds_clk_w, tmds_d0_w, tmds_d1_w, tmds_d2_w;
 
 // Video mode (2026-10-21): 1 = 1280x720@60, 0 = 640x480@60 (25.00 / 125 MHz).
@@ -792,6 +793,8 @@ hdmi_fb_top #(.SYSTEM_CLOCK_HZ(CORE_CLOCK_HZ),
     .axi_rresp      (hd_rresp          ),
     .axi_rid        (hd_rid            ),
 
+    .link_tx_enable (hdmi_link_enable),
+    .link_tx_reset  (hdmi_link_reset),
     .pix_clk        (hdmi_tx_slow_clk  ),
     .pix_rst_n      (hdmi_tx_locked    ),
     .tmds_clk       (tmds_clk_w        ),
@@ -874,14 +877,14 @@ assign tmds_clk_o        = ~tmds_clk_w;
 assign tmds_data0_o      = ~tmds_d0_w;
 assign tmds_data1_o      = ~tmds_d1_w;
 assign tmds_data2_o      = ~tmds_d2_w;
-assign tmds_clk_TX_OE    = 1'b1;
-assign tmds_data0_TX_OE  = 1'b1;
-assign tmds_data1_TX_OE  = 1'b1;
-assign tmds_data2_TX_OE  = 1'b1;
-assign tmds_clk_TX_RST   = 1'b0;
-assign tmds_data0_TX_RST = 1'b0;
-assign tmds_data1_TX_RST = 1'b0;
-assign tmds_data2_TX_RST = 1'b0;
+assign tmds_clk_TX_OE    = hdmi_link_enable;
+assign tmds_data0_TX_OE  = hdmi_link_enable;
+assign tmds_data1_TX_OE  = hdmi_link_enable;
+assign tmds_data2_TX_OE  = hdmi_link_enable;
+assign tmds_clk_TX_RST   = hdmi_link_reset;
+assign tmds_data0_TX_RST = hdmi_link_reset;
+assign tmds_data1_TX_RST = hdmi_link_reset;
+assign tmds_data2_TX_RST = hdmi_link_reset;
 
 //***************************************************************************
 // BitBlt 2D engine (APB regs @0xF8101000, AXI4 burst DMA on io_ddrMasters_0)

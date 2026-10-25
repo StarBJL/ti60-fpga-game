@@ -538,6 +538,39 @@ static void finish(void)
     assert(control_apply((ControlEvent){CT_RESOLUTION,1,802,1}));video_trial_start=now()-(uint32_t)BSP_CLINT_HZ*10u-1u;
     poll_video_trial();assert(!video_trial&&!(HDMI_MODE&1u));
     puts("PASS 1080 trial confirm and automatic timeout return to 720p");
+    /* R5.8 typed entry must leave demo and pressure modes atomically. */
+    autoplay=1;game_start_stress(&game,3,STRESS_CUSTOM);
+    assert(control_apply((ControlEvent){CT_COOP_START,1,810,1}));
+    assert(scene==SCENE_GAME&&!autoplay&&!game.limit_mode&&game.phase==PLAYING&&game.player_count==3);
+    assert(game.hp>0&&game.party[1].hp>0&&game.party[2].hp>0);
+    autoplay=1;th_start(&th,TH_STRESS);
+    assert(control_apply((ControlEvent){CT_COOP_START,0,811,1}));
+    assert(scene==SCENE_TH&&!autoplay&&th.diff==TH_NORMAL&&th.mode==TH_PLAY&&th.player_count==3);
+    assert(!control_apply((ControlEvent){CT_COOP_START,2,812,1}));
+    /* New bit: both lanes and mode have distinct states. */
+    mock_hdmi[0x68/4]=HDMI_LINK_ID_VALUE;
+    mock_hdmi[0x50/4]=0;video_active=0;
+    assert(control_apply((ControlEvent){CT_RESOLUTION,1,813,1}));
+    assert(video_switch_state==1&&HDMI_LINK_CTRL==1&&!video_trial);
+    video_switch_start=now()-(uint32_t)BSP_CLINT_HZ/5u;poll_video_trial();assert(video_switch_state==2&&(HDMI_MODE&1u));
+    mock_hdmi[0x50/4]=3;video_active=1;hd_frames+=3;mock_hdmi[0x10/4]=hd_frames;
+    video_switch_start=now()-(uint32_t)BSP_CLINT_HZ/5u;poll_video_trial();assert(!video_switch_state&&!HDMI_LINK_CTRL&&video_trial);
+    assert(control_apply((ControlEvent){CT_VIDEO_CONFIRM,0,814,0}));assert(!video_trial);
+    assert(control_apply((ControlEvent){CT_VIDEO_RECOVER,0,815,0}));assert(video_switch_state==1&&HDMI_LINK_CTRL==1&&!video_trial);
+    video_switch_start=now()-(uint32_t)BSP_CLINT_HZ/5u;poll_video_trial();assert(video_switch_state==2&&!(HDMI_MODE&1u));
+    mock_hdmi[0x50/4]=0;video_active=0;hd_frames+=3;mock_hdmi[0x10/4]=hd_frames;
+    video_switch_start=now()-(uint32_t)BSP_CLINT_HZ/5u;poll_video_trial();assert(!video_switch_state&&!HDMI_LINK_CTRL&&!video_trial);
+    assert(control_apply((ControlEvent){CT_VIDEO_DVI,1,816,1}));assert(HDMI_LINK_CTRL==3);
+    video_switch_start=now()-(uint32_t)BSP_CLINT_HZ/5u;poll_video_trial();
+    /* Simulate stuck acknowledge: the recovery may not leave outputs off. */
+    video_switch_start=now()-(uint32_t)BSP_CLINT_HZ-1;poll_video_trial();assert(!video_switch_state&&!HDMI_LINK_CTRL&&video_link_fault);
+    unsigned rescue_before=video_recoveries;
+    poll_matrix_rescue(0,0);poll_matrix_rescue(1u<<14,100);poll_matrix_rescue(1u<<14,2099);assert(video_recoveries==rescue_before);
+    poll_matrix_rescue(1u<<14,2100);assert(video_recoveries==rescue_before+1);
+    poll_matrix_rescue(1u<<14,3100);assert(video_recoveries==rescue_before+1);
+    poll_matrix_rescue(0,3200);poll_matrix_rescue((1u<<14)|(1u<<3),7000);assert(video_recoveries==rescue_before+1);
+    puts("PASS explicit three-player start from demo/pressure, link quiet/stabilize/restart, DVI request and bounded failure recovery");
+
     printf(errors ? "FAIL (%u)\n" : "PASS\n", errors);
     if (ulog) fclose(ulog);
     exit(errors ? 1 : 0);

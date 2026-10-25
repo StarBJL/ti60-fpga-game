@@ -40,14 +40,14 @@ def main():
                 match = re.search(r'http://127\.0\.0\.1:\d+', line)
                 if match: base = match.group(); break
             if not base: raise RuntimeError('EXE did not report its loopback URL: ' + ''.join(output))
-            for asset in ('/', '/app.js', '/style.css'):
+            for asset in ('/', '/app.js', '/style.css', '/wiring'):
                 with urllib.request.urlopen(base + asset, timeout=5) as response:
                     assert response.status == 200 and response.read(), asset
             with urllib.request.urlopen(base + '/api/state', timeout=5) as response:
                 state = json.load(response)
             assert state['connected'] is False
             assert len(state['token']) > 10
-            result.update(passed=True, checks=['packaged UI assets', 'loopback API', 'Unicode/space log path', 'no serial auto-connect'])
+            result.update(passed=True, checks=['packaged UI assets and offline wiring page', 'loopback API', 'Unicode/space log path', 'no serial auto-connect'])
             print('PASS Windows packaged executable HTTP smoke test')
         finally:
             process.terminate()

@@ -12,7 +12,7 @@ dest=args.out.resolve()
 if dest.exists():a.error('Output must be a new directory. Existing projects are never overwritten.')
 if r==dest or r in dest.parents and 'PROJECT' in dest.relative_to(r).parts:a.error('Do not place the candidate inside PROJECT.')
 hz,m,fb,div=(202083333,1,97,12) if args.profile=='202p083333' else (205000000,2,41,10)
-shutil.copytree(r/'PROJECT',dest/'PROJECT',ignore=shutil.ignore_patterns('outflow','work_syn','work_pnr','build','build_release','obj_files','__pycache__','*.o','*.elf','*.bin','*.asm','*.map'))
+shutil.copytree(r/'PROJECT',dest/'PROJECT',ignore=shutil.ignore_patterns('outflow','work_syn','work_pnr','build','build_release','obj_files','__pycache__','*.o','*.elf','*.asm','*.map'))
 for name in ['build_hardware.py','build_software.py']:shutil.copy2(r/name,dest/name)
 p=dest/'PROJECT/par/ddr_demo_ti60'
 s=(p/'ddr_demo_ti60.peri.xml').read_text();start=s.index('<efxpt:pll name="pll_inst1"');end=s.index('</efxpt:pll>',start)+len('</efxpt:pll>');pll=s[start:end]

@@ -1,0 +1,122 @@
+{
+  "steady720_and1080_preserved": true,
+  "vendor_serializer_modeled": false,
+  "monitor_tested": false,
+  "results": [
+    {
+      "error_categories": {},
+      "passed": true,
+      "error_count": 0,
+      "errors": [],
+      "blank_lines": {
+        "0": 5225,
+        "1": 4511
+      },
+      "packets": {
+        "0:01": 117,
+        "0:02": 5224,
+        "0:82": 7,
+        "0:84": 7,
+        "1:02": 4511,
+        "1:01": 133,
+        "1:82": 4,
+        "1:84": 4
+      },
+      "fifo_samples": 7155,
+      "tone_samples": 4797,
+      "audio_rate_hz": 47997.67906540468,
+      "hardware_tested": false,
+      "name": "baseline",
+      "frame_hashes": [
+        "78ece1c5",
+        "78ece1c5",
+        "8cc130c5",
+        "8cc130c5",
+        "78ece1c5",
+        "78ece1c5",
+        "78ece1c5",
+        "78ece1c5",
+        "8cc130c5",
+        "8cc130c5"
+      ],
+      "blank_trace_sha256": "2278a1c62505fe1913e04641b403ce61289a8db34473b5381cdc7fe86517fb9e"
+    },
+    {
+      "error_categories": {},
+      "passed": true,
+      "error_count": 0,
+      "errors": [],
+      "blank_lines": {
+        "0": 5225,
+        "1": 4511
+      },
+      "packets": {
+        "0:01": 117,
+        "0:02": 5224,
+        "0:82": 7,
+        "0:84": 7,
+        "1:02": 4511,
+        "1:01": 133,
+        "1:82": 4,
+        "1:84": 4
+      },
+      "fifo_samples": 7155,
+      "tone_samples": 4797,
+      "audio_rate_hz": 47997.67906540468,
+      "hardware_tested": false,
+      "name": "steady",
+      "frame_hashes": [
+        "78ece1c5",
+        "78ece1c5",
+        "8cc130c5",
+        "8cc130c5",
+        "78ece1c5",
+        "78ece1c5",
+        "78ece1c5",
+        "78ece1c5",
+        "8cc130c5",
+        "8cc130c5"
+      ],
+      "blank_trace_sha256": "2278a1c62505fe1913e04641b403ce61289a8db34473b5381cdc7fe86517fb9e"
+    },
+    {
+      "error_categories": {},
+      "passed": true,
+      "error_count": 0,
+      "errors": [],
+      "blank_lines": {
+        "0": 5225,
+        "1": 4511
+      },
+      "packets": {
+        "0:01": 117,
+        "0:02": 5224,
+        "0:82": 7,
+        "0:84": 7,
+        "1:02": 4511,
+        "1:01": 133,
+        "1:82": 4,
+        "1:84": 4
+      },
+      "fifo_samples": 7155,
+      "tone_samples": 4797,
+      "audio_rate_hz": 47997.67906540468,
+      "hardware_tested": false,
+      "name": "link_restart",
+      "frame_hashes": [
+        "78ece1c5",
+        "78ece1c5",
+        "8cc130c5",
+        "8cc130c5",
+        "78ece1c5",
+        "78ece1c5",
+        "78ece1c5",
+        "78ece1c5",
+        "8cc130c5",
+        "8cc130c5",
+        "8cc130c5"
+      ],
+      "blank_trace_sha256": "c906dff16fa345ebfbfcb9c194a83da8823d0090e8c29b56b8910c3f3ab31743"
+    }
+  ]
+}

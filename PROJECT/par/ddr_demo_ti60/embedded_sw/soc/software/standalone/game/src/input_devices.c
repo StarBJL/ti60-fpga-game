@@ -80,6 +80,7 @@ static void keyboard_action(InputDevices *d,unsigned code,int shift){
     case 0x41:emit(d,INPUT_STEP_SET,1);break;
     case 0x42:emit(d,INPUT_RESOLUTION_NEXT,0);break;
     case 0x43:emit(d,INPUT_VIDEO_CONFIRM,0);break;
+    case 0x45:emit(d,INPUT_VIDEO_RECOVER,0);break; /* USB F12 */
     case 0x2d:case 0x36:emit(d,INPUT_COUNT_DELTA,-1);break;
     case 0x2e:case 0x37:emit(d,INPUT_COUNT_DELTA,1);break;
     case 0x2f:case 0x30:emit(d,shift?INPUT_SQUARE_DELTA:INPUT_BULLET_DELTA,code==0x2f?-1:1);break;

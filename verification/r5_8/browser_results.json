@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "physical_board": false,
+  "checks": [
+    "single-player demo reproduced",
+    "both explicit co-op entry commands",
+    "input diagnostics",
+    "confirm then forced recovery",
+    "DVI 1080 and return to HDMI",
+    "automatic timeout",
+    "R2 preset",
+    "new CSV fields",
+    "offline wiring route and responsive layout"
+  ],
+  "errors": []
+}

@@ -1,0 +1,963 @@
+{
+  "created_utc": "2026-10-25T08:22:39.733744+00:00",
+  "backup": "/home/user/fpga_contest/1025/Ti60_R5_DUALVIDEO/backups/R5_7_before_R5_8_20261025",
+  "files": [
+    {
+      "path": "BOARD_TEST/r5_8/README.txt",
+      "sha256": "986622fc7db6ac274a6df8b98b30f444d5df1b3efe7b40efe4e0111115773fa7"
+    },
+    {
+      "path": "BOARD_TEST/r5_8/manifest.json",
+      "sha256": "cc8f489aa9043a5da3a1a62b90d40c9be141c35aaef64399f105abdcfbc7650c"
+    },
+    {
+      "path": "BOARD_TEST/r5_8/ti60_r5_8.bit",
+      "sha256": "dced75cde6c7d3d80d0a4941b00d0695d54511ee4d587b514c60bfea7c8e52c4"
+    },
+    {
+      "path": "BOARD_TEST/r5_8/ti60_r5_8_debug.elf",
+      "sha256": "78cfba18a8e5ccf62b167c11a699dde5b7e38e09f75b3eb0f6bdc6a0d11bf0fe"
+    },
+    {
+      "path": "BOARD_TEST/r5_8/ti60_r5_8_debug.launch",
+      "sha256": "e867e852bab323201ed13a690c51bd4fa58d8e77a8fe159ed45fa248bf9dc95b"
+    },
+    {
+      "path": "BOARD_TEST/r5_8/ti60_r5_8_release.elf",
+      "sha256": "29240f6b909b25cd6dbace4185aba89bac579f366ebeb52ebd2660164b37c55e"
+    },
+    {
+      "path": "BOARD_TEST/r5_8/ti60_r5_8_release.launch",
+      "sha256": "1c5bd2fba686ce07dacdb23b22a2298781c2f497469a14de85d3748f39bed29c"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.asm",
+      "sha256": "c22765cd5efbce6df364aaa982698fcb688f707843a67c1145a07ba53d205906"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.bin",
+      "sha256": "d497b7ee5bc04710aef828fb9b2c3e246cdbc7b5f0d3dcc3797aa6a563b8b8c0"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.elf",
+      "sha256": "78cfba18a8e5ccf62b167c11a699dde5b7e38e09f75b3eb0f6bdc6a0d11bf0fe"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.hex",
+      "sha256": "d855251880f5cf2e3a02b261e05dea362ef24d9e8b3555b74cb3a310654c2e36"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.map",
+      "sha256": "26c31213f33b0a89872d26cb9d01e28b26229ef90b0815456c22b5e7045da338"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/audio.o",
+      "sha256": "73c3e628c8924258c8a78af3c08b38d457d6887b6f025175d39868b6b9baac97"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/blit.o",
+      "sha256": "f52331ea65cd3197f8fb61dc5edcb75513ed9a404fc85f426154e555f6c4e7ab"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/control.o",
+      "sha256": "07ef6d634dfc3e81f97b959756eb12e3388a9fc780c330403076e8cf0e279f9c"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/coop_fx.o",
+      "sha256": "084eac6baf979b085c96ec87a23b970c0083154076f3d9cfed8a12a93b720048"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/demo.o",
+      "sha256": "89161915728f67c5076c043dc95bead235180dedc3f894bda8adbf4bcad4a235"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/game.o",
+      "sha256": "01ebd34c27b9914a571334aba48c901126f6390daf9ced4ac3121ab0ebe5f183"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/game_sound.o",
+      "sha256": "b01086857e9b7893a95f0b48ce74bef7355726c23d252bcce6a2e69014c0aa85"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/gfx.o",
+      "sha256": "6b291163fc1b0ae67b0d67c5328200262bf73d1092a8554ac08966d8683f1b8a"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/gfx_hw.o",
+      "sha256": "4492f72433221c38bc7ba10a2bf3776a99090a6a586ba02689857aad460fd522"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/input_devices.o",
+      "sha256": "84b1cd78793e1a87f76ef3e79c69bdd30d0eb558e19b81030efda5cc2b6e5c83"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/main.o",
+      "sha256": "8ff794572bb09a05c0c1a0d73723d1297873bddf75f4aa3cea0397cdc3a4d646"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/mini_snprintf.o",
+      "sha256": "ef3ed7fd212a71753011d8929fceaea0af819ee060c54821ea03fffe22955ae7"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/music.o",
+      "sha256": "fdd3dc61cb5ae4012d271433cc071c109f03405ddbbae538d4cdeea92ae6e478"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/pad.o",
+      "sha256": "813d8be5f6eda3c535524e8af0c0694449c255972c8e834a54b8879c15e6e7e2"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/render.o",
+      "sha256": "854ede7b420e7682810ca21b8431b5fd774c9dcf76e1efba2b5e5f0b3a32afc5"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/sound_bank.o",
+      "sha256": "cf94f55ed948dd991227d9b834f6b6cac037e16d9ae5e87046c9789e7d75fb27"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/start.o",
+      "sha256": "03fa80f4078f2aa4b02f37fddeccae97088e48d4ec1ec140e42efb3970a72d49"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/stress_sizes.o",
+      "sha256": "cfc9afbb4c2689da7750726beb2b6d7960c391f3d76d8088f52fc9df2c49c1df"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/syscalls.o",
+      "sha256": "ddd4a7ecf678ae8c0623ae2b40d40144ff845a7d61db11e87a5d47f86b260948"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_art.o",
+      "sha256": "e406cea014591c6365e71cac5de747b378c65a839e1c0a1be3711904113110a2"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_game.o",
+      "sha256": "bbe3f314d06d417112d6edae137acfd5b1f9f19fbb0148b73e13ec09f42053f5"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_pattern.o",
+      "sha256": "729219177adfcd269cdf7c30489406ce0f43effb6934392525ea8b234c9819fb"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_pix.o",
+      "sha256": "eedee703204886df5a0c25b3fa54b4155135106f0e4e07f857a535007cdab742"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_render.o",
+      "sha256": "3c1e8f428dba1a3b8681cb3c3b2783424b2a7745b3ecf1ca62d7debeb8a4ae78"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_sound.o",
+      "sha256": "f6772358fabec4c391ff5be9bf7563026f1cb0179b74a85b4ec63f74f2f0826d"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_stage2.o",
+      "sha256": "e171917ae28c7c72106d4c29939e73be7b3193226d05de20e9770442c18285eb"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_tab.o",
+      "sha256": "56e45623cfa3d3441953bb8763d773a30fd8d983be84e85c673c6ba72b7838ac"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.asm",
+      "sha256": "13e0971b2356c5173de210a7a6daf326e6b93648d3f88cafd9ce2db4dadb3d55"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.bin",
+      "sha256": "bcb703540aa7816cade4574b879142b876ce1cb048d7d266572719edae09e2f1"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.elf",
+      "sha256": "29240f6b909b25cd6dbace4185aba89bac579f366ebeb52ebd2660164b37c55e"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.hex",
+      "sha256": "a298b3f98fdd23be35d26cfdd8c2feb663a8d205f2435e76d8df0e34e99c438b"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.map",
+      "sha256": "d22d9b23fe31618dbc81e13f1f815e613645888264ea3b6ad01d428d341dd014"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/audio.o",
+      "sha256": "73c3e628c8924258c8a78af3c08b38d457d6887b6f025175d39868b6b9baac97"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/blit.o",
+      "sha256": "c5a4ca4e72c32c548537b4ad8486edf730950b554d54e33775571ffe7c6f762b"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/control.o",
+      "sha256": "07ef6d634dfc3e81f97b959756eb12e3388a9fc780c330403076e8cf0e279f9c"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/coop_fx.o",
+      "sha256": "084eac6baf979b085c96ec87a23b970c0083154076f3d9cfed8a12a93b720048"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/demo.o",
+      "sha256": "034ebe38010c1b22adddaca9aafa23902fe551bbb2b73941e7c35318dda313ea"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/game.o",
+      "sha256": "125b205b5081b7cb7adf147bd6f1da33d5624e108dfa61645266ec47799fbb34"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/game_sound.o",
+      "sha256": "b01086857e9b7893a95f0b48ce74bef7355726c23d252bcce6a2e69014c0aa85"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/gfx.o",
+      "sha256": "6b291163fc1b0ae67b0d67c5328200262bf73d1092a8554ac08966d8683f1b8a"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/gfx_hw.o",
+      "sha256": "93c948fefd287393740cb1ff099c671a4d2e29255a5c5062856246ca4fcfc3a4"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/input_devices.o",
+      "sha256": "84b1cd78793e1a87f76ef3e79c69bdd30d0eb558e19b81030efda5cc2b6e5c83"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/main.o",
+      "sha256": "35f1a9c565c3f8dad770a80550d48f8f7c649d07a8d46a61ddb9ac9e3a32dfed"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/mini_snprintf.o",
+      "sha256": "ef3ed7fd212a71753011d8929fceaea0af819ee060c54821ea03fffe22955ae7"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/music.o",
+      "sha256": "fdd3dc61cb5ae4012d271433cc071c109f03405ddbbae538d4cdeea92ae6e478"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/pad.o",
+      "sha256": "813d8be5f6eda3c535524e8af0c0694449c255972c8e834a54b8879c15e6e7e2"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/render.o",
+      "sha256": "2f6a88c82934cd22a6ea84ba7a2553c4f312e3c78b21d1e8687b1ad5cc23915e"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/sound_bank.o",
+      "sha256": "cf94f55ed948dd991227d9b834f6b6cac037e16d9ae5e87046c9789e7d75fb27"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/start.o",
+      "sha256": "03fa80f4078f2aa4b02f37fddeccae97088e48d4ec1ec140e42efb3970a72d49"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/stress_sizes.o",
+      "sha256": "cfc9afbb4c2689da7750726beb2b6d7960c391f3d76d8088f52fc9df2c49c1df"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/syscalls.o",
+      "sha256": "ddd4a7ecf678ae8c0623ae2b40d40144ff845a7d61db11e87a5d47f86b260948"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_art.o",
+      "sha256": "e406cea014591c6365e71cac5de747b378c65a839e1c0a1be3711904113110a2"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_game.o",
+      "sha256": "bbe3f314d06d417112d6edae137acfd5b1f9f19fbb0148b73e13ec09f42053f5"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_pattern.o",
+      "sha256": "729219177adfcd269cdf7c30489406ce0f43effb6934392525ea8b234c9819fb"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_pix.o",
+      "sha256": "eedee703204886df5a0c25b3fa54b4155135106f0e4e07f857a535007cdab742"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_render.o",
+      "sha256": "3c1e8f428dba1a3b8681cb3c3b2783424b2a7745b3ecf1ca62d7debeb8a4ae78"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_sound.o",
+      "sha256": "f6772358fabec4c391ff5be9bf7563026f1cb0179b74a85b4ec63f74f2f0826d"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_stage2.o",
+      "sha256": "e171917ae28c7c72106d4c29939e73be7b3193226d05de20e9770442c18285eb"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_tab.o",
+      "sha256": "56e45623cfa3d3441953bb8763d773a30fd8d983be84e85c673c6ba72b7838ac"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.c",
+      "sha256": "752a4e15391fc50b0148010a1c8855c071c655ac526f0df9eef4bef01d527a77"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.h",
+      "sha256": "30b022e6340774b34761c5da3f3e1a297e5d85bf721d83db63cc7b27f0e07947"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control_runtime.h",
+      "sha256": "2ea5ded1fc14909c7bca991bb8d87e0d8846377f8bcc0130a2691c813bd0e3f2"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hdmi_fb.h",
+      "sha256": "84fecdfa76607d9b61139c210c2a79ff79a5214004eb82e815b60f2625d41b1f"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.c",
+      "sha256": "4d9ad0dcbe7577fe6066642c36c2b8e21dc595aa01bf7be96610d6bb2b84584a"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.h",
+      "sha256": "834bf0315171a4b92e9fa5c56fe1cf273e0f210c97f69cc0395370c2750f1232"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_runtime.h",
+      "sha256": "781b86d4d5df666270ff7b6a3e0a6c4e4615db53b73b1f643449a988be6f0b6c"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c",
+      "sha256": "b90960510d8964d59b950a4e687fa2a537de013e47b8cb9896c90dd4c1deecb3"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/clock_cdc_hold.rpt",
+      "sha256": "66180241b1f382b01a8c3762261db523ace3019f1ac45ac2fe0d61ed25633995"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/clock_cdc_setup.rpt",
+      "sha256": "f72c9b400f2c0bc3b7d4341d1d55eb3378e6ee5485b4082d51a0dfa5c602f952"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60-post.bsd",
+      "sha256": "a0c5ee392b309536e944a0c90e1d36c672dadf01804ec44c2596012ff77ad352"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.bit",
+      "sha256": "dced75cde6c7d3d80d0a4941b00d0695d54511ee4d587b514c60bfea7c8e52c4"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.cdc.rpt",
+      "sha256": "394642e8f9a0b15c964840a08630a09938073254b4bc12fb56412fefbf582529"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.clstdb",
+      "sha256": "f10918d3131a034719ec20e3c622e7c453c96de29cfa18e4676e91c5cd1c1e9e"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.cnst",
+      "sha256": "271371ecd4bc7273515650bcb2105d78f32834d55a2ea22fa33f70afb84f6140"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.gplace",
+      "sha256": "eb8fa7f5cbdcc6cba4e007d875bda44f4279a1e62e7cd05427d540e432dfa502"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.hex",
+      "sha256": "5569a8f258df18fc0c24c7df87fae9d545d24a1acc411cc7a8a5a95817e154ee"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.hier_util.rpt",
+      "sha256": "01b635b99e02d2a604aca0eab298020c878b893039245674240cfdc5ecbb6db3"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.hold_fixing.rpt",
+      "sha256": "d8544b1aad3502e09feb46911db243b32985fafa1f87f1b11a2afe3af418b2aa"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.htree",
+      "sha256": "52badaa1b9bb2bd5e924c44cc2a635370759eedda47d2fa10eae3eba1addd98a"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.info.log",
+      "sha256": "41185c9d487b209d1f4912c0a693c3bcd7fafde1b3c9e02f006ebb19c4bb65a3"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.interface.csv",
+      "sha256": "7fdabf40cc85f4f1b9225fe8d80605db3ec94f81023c05dd9b66af89b9ea0c97"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.log",
+      "sha256": "10150d9977bb61359e3b39958e99bad30b021d06ab060c699a013cccd1741a3d"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.lpf",
+      "sha256": "fbea81a520093e9310c518260a2f0ad87f58d81393f6685e4d990ab0ad2a3cd6"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.out",
+      "sha256": "70a7c8c3d4377c38473d0bf3222f128959a810f768074b56b78a3353eb775a78"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.rdb",
+      "sha256": "5c74e79a5dacac17a186209632c330c0ede3e588a4fbf0b2988270896d9d1111"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.rpt",
+      "sha256": "94183f3f28d2a1cd4eb6ebe081654c822dad9acbc31f135efd8899d12b99c321"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.v",
+      "sha256": "f54c4bde785a1bffd142fe7c07939806378d53d85c15753337e2c321c248e8cc"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.netlist",
+      "sha256": "99035b8f1c9fd44aa4ace0f3f1588c477905fa55ef7e933dd1f6d2f43c5ef39e"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.peri.cdo",
+      "sha256": "dc66afb70e8f1af0923c2f658c54d2b3d0970a4ba20a55010c75beb655186e74"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.peri.csi",
+      "sha256": "74a7088530d01e0e336c063a3feb476179339fb38d1ddc7e70cb616e0b7a9b9b"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.peri.pbn",
+      "sha256": "80c6e060d89699bf7121fc4bed43bae20ea59f2b1e616029d5ea51d8d53ca66f"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.peri.qdelay",
+      "sha256": "e50a6267c0d8e7d945de33d12a46e39dcb377437a2f0e36461b057674bb1bea3"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.pgm.out",
+      "sha256": "080b75abed85fe2bf99b259eb336d37807dc6c632f41763ce592bfba2dede1e5"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.pinout.csv",
+      "sha256": "e34313b36d41d0bdd0ee6f629615b9b74e4429a6d0e7121c99bc91ce92dd9b0f"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.pinout.rpt",
+      "sha256": "2a135ac4f7b73c32f56e49d7de32fb79b9ef68d95421dc2d7291f0504d8b251e"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.place",
+      "sha256": "49ae8b4a777fa5f2a5ac071cb03a5da182af1bd64f6835c1f4dad7d96b554e6a"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.place.out",
+      "sha256": "2a6791e79c4fba69988675cd7c885f3c5e7858ddcccb40422ad0b0201593d61d"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.place.rpt",
+      "sha256": "ee0ea0c45c0310f231495c6985ce5bb79525982d58e7ed7487b77b155616012d"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.place.timing.rpt",
+      "sha256": "2bdb9ed33ed7a528a161baa2218c26eb4bf390f43fb9c61898ccebbb7c2c6875"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.proj_state.ini",
+      "sha256": "872eed25c5794448c5816014382e4c5aebf34b1995156eb89a572e867c139f90"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.pt.rpt",
+      "sha256": "e446aeb8a5b22bcf9d9ca025b6ab92245aa3e3a4b983af7c142a40d32f1f8cd4"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.pt.rpt.xml",
+      "sha256": "f6ef490e20cb850ce9aa3a6a7af9f6c0e8626b266fa2ffbc4b27ca54a129c83f"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.pt.sdc",
+      "sha256": "4b18dbfb187c2e9c841c40406a116310987e196a4e47fb77bd810be8f4b3f546"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.pt_routing_hints",
+      "sha256": "1e094621289dec8a3a27a327940c2a4cc2f2aba5308a8cc1129cba9b60e7caf0"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.pt_timing.rpt",
+      "sha256": "e4edf0f84f12b066a4b35368cbc0a0a16c8e9730f24fcfc68ab96be41864d2bf"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.raminfo.pb",
+      "sha256": "53f71195bb5d56046e75766b4fba2abd160e8baf4198ec37b1466b4e47ce95ee"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.res.csv",
+      "sha256": "ec8a48aca093329b42e2137dd20c5070bdd00f87515ca8b394cb43bde66262bd"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.route.out",
+      "sha256": "8d9b1c6ebed1fc30d5811ed41f6e7d0bde91e8c1714e8aab80f69bbbcea1696e"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.route.rpt",
+      "sha256": "b385533288fdabbb09064de75c212051d66935bcdfc3df066b9cea9527f23e53"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.route.rpt.xml",
+      "sha256": "c52fa1c6f955fdc1927c69bb68f1a64c29e456295d30980d6ec8960ed9854ae8"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.rs",
+      "sha256": "bd3ec6b6ec6f20a2685ab004c9c52977ebf8e29b9213537e50da04e5c2a5432c"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.sta.out",
+      "sha256": "6f801664e6061b301056659df036c4efd30234c43d8d5469765cdc7fb5f996c7"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.timing.rpt",
+      "sha256": "ce3bbe6b04b417aec73790c716ea0d319b12e5abb5bbb6f3354a28f53171c9cb"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.troutingtraces",
+      "sha256": "45370af466db61619301dc2923537dc63dc21f523e33cf9ff7c2f30a8b075c49"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.vdb",
+      "sha256": "cdebfaede145e2a6b8b13f73955a3ade3d536a9b316429e61272ecfcb13a98ab"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.warn.log",
+      "sha256": "6f32bae70743ee30bd05fffd275dee4bd1229f5bae1f88b3f0c3e6ba2af3b10c"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60_or.ini",
+      "sha256": "07511ef0a5a556b064bdd771bfd26854bfd242fabb5c379ebb41a01931cf786e"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60_template.v",
+      "sha256": "32218c4eded84781e0fc035c3abe1bac134975eaf6b8e08dd4c2a214171de962"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/debug_profile.mark_debug.json",
+      "sha256": "7950f857f5cfd9633ec69561035d6706f476610eb5912dabcd3f0ea2e7546cab"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/design_issue.xml",
+      "sha256": "fdfb8090253d2452f4f280799009edb9d0ccd47a1ce0e7f9a7ef9b7b7fb1042e"
+    },
+    {
+      "path": "PROJECT/rtl/ddr3_example_top.v",
+      "sha256": "dc5f815dc6adc8d93b8dbe90aa971e056a176bee272cf68bd81080d8f1b3f313"
+    },
+    {
+      "path": "PROJECT/rtl/hdmi/hdmi_fb.v",
+      "sha256": "8cf470f8b3d31f7d95af3daf6aafca26964abd596afde74e17dc92c33a6f80fb"
+    },
+    {
+      "path": "README.md",
+      "sha256": "9d825407c78dbdd1d57a8bb0e9ae7e0836afb55c1cf9b4f1aa67a4ef15b1b3ce"
+    },
+    {
+      "path": "README_EN.md",
+      "sha256": "cca0c38b10d653acc1316c311320e2677b97f2cf5348d438067d23cb2ec8b154"
+    },
+    {
+      "path": "START_HERE.md",
+      "sha256": "a588e1132ae5f25e2e22eec99b5415f26e661cc95a0ca2fcb424aeacf8dcd30e"
+    },
+    {
+      "path": "build_hardware.py",
+      "sha256": "8377b769d88578919d2063401513fbeb9d4d1a5d382c62514537ea02d4408574"
+    },
+    {
+      "path": "build_software.py",
+      "sha256": "61a97903be5c822f9634895286a0d98d2c66b59bb505cd406cbdf43871702f93"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz",
+      "sha256": "46f836b5d60e974551ac78ad2e94e66e77625804a1cd7e8adc62965ec76354a6"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz.part00",
+      "sha256": "724195320502bf08bef87d8a31af773ef3f0cffc78fb5279188e3223cce06d29"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz.part01",
+      "sha256": "db8360fbbe1f4035e0228d1af7c6712bd49a5214a17cb27a67580f4480d029b0"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz.part02",
+      "sha256": "33e9146393d42ee6b273baf49dda71eccb384259be2c6e04977497e5f4a8cc8e"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz.part03",
+      "sha256": "fe6f8dd68286c5b2eb2dcc057b6f966a6bb86690f656bc71a9f5fe4e320cdfdf"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz.part04",
+      "sha256": "8e005c7f9441e2648abe423046380441113bcdb472294249332a69cd206f494b"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.zip",
+      "sha256": "c1c8587ce437ccf173c86b03c2289f645d0d7791d72087bec579292e39ba0d85"
+    },
+    {
+      "path": "dist/r58_package_parts.json",
+      "sha256": "7840d57681b7a41af0e1ac1673211084ccf6c013bc7f537dafcafb2efa743762"
+    },
+    {
+      "path": "docs/INPUT_DEVICES.md",
+      "sha256": "45c0072f0405f3b5883f6bdf7f95e75c43064149582675b86ce340a651716626"
+    },
+    {
+      "path": "docs/INPUT_GUIDE.html",
+      "sha256": "9a5fbb1810b8be89c75694b5abe86b07fd39e8521cb36118912c86c2bfa1c74c"
+    },
+    {
+      "path": "docs/R58_BOARD_FIX.html",
+      "sha256": "cf4235ce12a554f7908139381fa9d9eefebad47552c91744509c55081f7ebd73"
+    },
+    {
+      "path": "docs/R58_INPUT_SCHEMATIC.html",
+      "sha256": "b19739883ce2fea14a81d2b8b75dccf0f3fbd18ed3cc1119023b63f1e73c9973"
+    },
+    {
+      "path": "docs/R58_INPUT_SCHEMATIC.png",
+      "sha256": "823316403592eef6418dbbde4f7638b086a5422139254afebf53b02f883aad5e"
+    },
+    {
+      "path": "docs/R58_INPUT_SCHEMATIC.svg",
+      "sha256": "773d2aa0b454259effc1b90f5ca3a0260f5020028613cc533be28770150a3080"
+    },
+    {
+      "path": "docs/WIRING_DEMO.html",
+      "sha256": "fa4b67ad3105a44ad6a0402f847e95428dcaa1eaad5b4728c98f9165b6e1012d"
+    },
+    {
+      "path": "tools/build_clock_variant.py",
+      "sha256": "b261657f7ab1e15ce6619e228d9dc648ab9a2923833cd53e7e11cad9f2b00ea9"
+    },
+    {
+      "path": "tools/control_panel/Ti60Control.spec",
+      "sha256": "9332e0e4de6965a7a11c22216597feb870713ef99d3755409cf8f75126c3b1a0"
+    },
+    {
+      "path": "tools/control_panel/app.js",
+      "sha256": "2119f146fa4ada3415b47c37c38301eb3120e557b99f38a19a497853140c63ef"
+    },
+    {
+      "path": "tools/control_panel/index.html",
+      "sha256": "f46c34f2de4e96177780875d2cb62e408073ea2bd126dc292f8cd1b7ef459a0a"
+    },
+    {
+      "path": "tools/control_panel/serial_ports.py",
+      "sha256": "0b54d83e529fd4dd3bcb5dd59bc403f947850bd449f57ca88092ed50fce101ed"
+    },
+    {
+      "path": "tools/control_panel/server.py",
+      "sha256": "50cf981833bad38ff0c0334d3a66d443f92f40e32207a8161a4e2ab029b018d8"
+    },
+    {
+      "path": "tools/control_panel/wiring.html",
+      "sha256": "b19739883ce2fea14a81d2b8b75dccf0f3fbd18ed3cc1119023b63f1e73c9973"
+    },
+    {
+      "path": "tools/read_display_edid.py",
+      "sha256": "4d51162eb694a9e8dd6bff386572b6f40aeaf93e2ca89e88e35c199980d953eb"
+    },
+    {
+      "path": "tools/restore_r58_package.py",
+      "sha256": "056afe9ba5043b034b174d635db84f6c0617ea742d36ea68ca5a51c89c07fe23"
+    },
+    {
+      "path": "verification/r5/test_main.c",
+      "sha256": "3db4c537d92a6afaa38f97d8cef07129c27d3a64e6e7eb5741a9e2168af13f55"
+    },
+    {
+      "path": "verification/r5/windows_console/windows_exe_smoke.py",
+      "sha256": "7ca36ced1f612654e8044cd25c0db8662520bf71e7445054215ba5fa9dc18475"
+    },
+    {
+      "path": "verification/r5_8/baseline/build.log",
+      "sha256": "c13441d4508bd4921505033934d4550f1341f315c031249c99f536a3052dd885"
+    },
+    {
+      "path": "verification/r5_8/baseline/decode.log",
+      "sha256": "65c8e2f05d81d42f91e84fb1a8f5590d74b7ebe31c987a288c82cd0c4f0c21ad"
+    },
+    {
+      "path": "verification/r5_8/baseline/packets_result.json",
+      "sha256": "65c8e2f05d81d42f91e84fb1a8f5590d74b7ebe31c987a288c82cd0c4f0c21ad"
+    },
+    {
+      "path": "verification/r5_8/baseline/run.log",
+      "sha256": "6d0a212c70dca5d6cb319c4d9ae5b5b6584ef62eb4809c94d34a4919ebafdaac"
+    },
+    {
+      "path": "verification/r5_8/baseline/tb.sv",
+      "sha256": "bdf1881f6f25af10b68c4f3c8cf40353bcc45bfc0fbe57394fb4e6ca76c25791"
+    },
+    {
+      "path": "verification/r5_8/board_analysis.json",
+      "sha256": "a11d3743d498e94ae8a1c3f9bf9e18ec5666a772703b3ec97633853b017198ab"
+    },
+    {
+      "path": "verification/r5_8/board_input.csv",
+      "sha256": "aaf0c997a2ad4787e4f5f05dc9a1765a457909c46727dff4366c3fa3d4e6a0aa"
+    },
+    {
+      "path": "verification/r5_8/browser_results.json",
+      "sha256": "acd9a9dd613c60162b585556655024256d77b205db99c5e740194f392746face"
+    },
+    {
+      "path": "verification/r5_8/browser_test.js",
+      "sha256": "2318a1f833c52d8a2edb41c70c2774e860787c4df01a5434928b3b0bac47c0bd"
+    },
+    {
+      "path": "verification/r5_8/build_debug.log",
+      "sha256": "d5210da2cf812b2ee337d251faf81ac7c699dc228b34c8fa2de9ff7e25c8ea72"
+    },
+    {
+      "path": "verification/r5_8/build_release.log",
+      "sha256": "af194faf1315b2875c340a6db70c6da3ecb3ddc79ed3376dd1787d4aab23831a"
+    },
+    {
+      "path": "verification/r5_8/cdc.log",
+      "sha256": "9e08390ffa0f6a410089c3fb0d74b85f85320b052ab6074d3483d49a390df3d9"
+    },
+    {
+      "path": "verification/r5_8/changed_sources.json",
+      "sha256": "b94c3b2fb9f703a391505b4f897ddebb9aa1f4bac2773468aade001c00ccef27"
+    },
+    {
+      "path": "verification/r5_8/check_docs.cjs",
+      "sha256": "fff6de5047051efacd4abea81752ea7b42e46d775343469f61fd56297dbd6b53"
+    },
+    {
+      "path": "verification/r5_8/check_hdmi_packets.py",
+      "sha256": "3af533e7c6aa303754c0e727e017e18a86a75a52b985a1680a06cb9e8becbee1"
+    },
+    {
+      "path": "verification/r5_8/checks_main.json",
+      "sha256": "284764b342a1ef71bc5e2b5473ddf26b7edfc080fcb84139fa9e06cfa699a987"
+    },
+    {
+      "path": "verification/r5_8/clock_cdc_hold.rpt",
+      "sha256": "66180241b1f382b01a8c3762261db523ace3019f1ac45ac2fe0d61ed25633995"
+    },
+    {
+      "path": "verification/r5_8/clock_cdc_setup.rpt",
+      "sha256": "f72c9b400f2c0bc3b7d4341d1d55eb3378e6ee5485b4082d51a0dfa5c602f952"
+    },
+    {
+      "path": "verification/r5_8/clock_qualification.json",
+      "sha256": "33d6602379af08d567eb77e59505cf791836dff1067812298a70d323a92a70df"
+    },
+    {
+      "path": "verification/r5_8/clock_summary.json",
+      "sha256": "8ddc4cd7b68257078916bcb3d927368ab3fc26732819bef678d7b786c19bf7af"
+    },
+    {
+      "path": "verification/r5_8/control.log",
+      "sha256": "c8aeab76af87089e4d7f37ab83ad3b709c9788eee463071123cb983671ed4349"
+    },
+    {
+      "path": "verification/r5_8/control_build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/r5_8/controls_export.csv",
+      "sha256": "2fc4197295c512b255973aebbca38398bfff09570951b367215e51b6f5192267"
+    },
+    {
+      "path": "verification/r5_8/coop_entry.png",
+      "sha256": "2736646f241625cc0f2d9549b038f73021c02252ed7c697f229cf787b134ff6d"
+    },
+    {
+      "path": "verification/r5_8/docs_check.json",
+      "sha256": "ddf501e0408128edfe390f12946afd601fdbe91f1529794bcbd3f97f212ad92e"
+    },
+    {
+      "path": "verification/r5_8/efinity_compile.log",
+      "sha256": "bd0d92c454ff8f726d3139b24ca45796bfb976b2792d9649d04b879dfe76f84b"
+    },
+    {
+      "path": "verification/r5_8/link_restart/build.log",
+      "sha256": "5da989c9ded0509d124e04f9f30b14d09a1f3c390ec974fe73fbdc812ba0224d"
+    },
+    {
+      "path": "verification/r5_8/link_restart/decode.log",
+      "sha256": "65c8e2f05d81d42f91e84fb1a8f5590d74b7ebe31c987a288c82cd0c4f0c21ad"
+    },
+    {
+      "path": "verification/r5_8/link_restart/packets_result.json",
+      "sha256": "65c8e2f05d81d42f91e84fb1a8f5590d74b7ebe31c987a288c82cd0c4f0c21ad"
+    },
+    {
+      "path": "verification/r5_8/link_restart/run.log",
+      "sha256": "c028fb3f4f8cc42e0fe1b53a05350df9be54c29b1fd7b56219eea6b2c10e5b05"
+    },
+    {
+      "path": "verification/r5_8/link_restart/tb.sv",
+      "sha256": "829edd2f35c332ec44d3bebb1d73e3e07af3eaf7e83bafd4d6af3a058d172d86"
+    },
+    {
+      "path": "verification/r5_8/main.log",
+      "sha256": "caee9a3d6059da678479d671132f2271dfd031802e96a212c5a61cb9e79bee01"
+    },
+    {
+      "path": "verification/r5_8/main_build.log",
+      "sha256": "6a8caed0de270a3544e0cdd738faba15e7a483caddc0efba4fc0893b4a93cccf"
+    },
+    {
+      "path": "verification/r5_8/main_uart.log",
+      "sha256": "77b9e3558914c58a21187fb57488c491d418011c2b096f18471d274728efd2e1"
+    },
+    {
+      "path": "verification/r5_8/map.rpt",
+      "sha256": "94183f3f28d2a1cd4eb6ebe081654c822dad9acbc31f135efd8899d12b99c321"
+    },
+    {
+      "path": "verification/r5_8/netlist_rd_words.log",
+      "sha256": "82678e01f83174d04557f3a2039d6989f2e1820aabfdb7108b7fbb2b62dda097"
+    },
+    {
+      "path": "verification/r5_8/netlist_retime.log",
+      "sha256": "8045dc336cb003daf501d0000329c7f66edf2d11f712ded4e4acc33c5185c765"
+    },
+    {
+      "path": "verification/r5_8/netlist_rf_res.log",
+      "sha256": "6aec2aa821c9afe0baf0b54308e3cc593390df86e2daa2d88877813186219131"
+    },
+    {
+      "path": "verification/r5_8/packages.json",
+      "sha256": "0385a6b0d9785a63e2214dcf7060f04b679ca58c98a8abd264ca06d3cd06fda9"
+    },
+    {
+      "path": "verification/r5_8/place.rpt",
+      "sha256": "ee0ea0c45c0310f231495c6985ce5bb79525982d58e7ed7487b77b155616012d"
+    },
+    {
+      "path": "verification/r5_8/portability.log",
+      "sha256": "f80029fea6a6fd47c98605efabd90681526d6c4dbf120e6ad40c1ecc6fd64167"
+    },
+    {
+      "path": "verification/r5_8/presets.log",
+      "sha256": "88b75d3ec5b4e95b4df6eef944f9a42a86ae67613820e3993317ba8775091326"
+    },
+    {
+      "path": "verification/r5_8/pty_console_fixture.py",
+      "sha256": "fe06396355c5b3f96d2e3992ecdf072925cbe6da91215770bccef09c587c22c1"
+    },
+    {
+      "path": "verification/r5_8/qualify_clocks.py",
+      "sha256": "5408a60f6ee0806bdaa4c88961acf01085ac101744bf4fe4e5c61096cc34c9a1"
+    },
+    {
+      "path": "verification/r5_8/reference_r57/hdmi_fb.v",
+      "sha256": "eb897544387b2c3fb4ff4ea307adbf3c4d6ec9b953e6b7523651538bdffc104c"
+    },
+    {
+      "path": "verification/r5_8/reference_r57/hdmi_island.v",
+      "sha256": "6d60c568b5bff96abd5c6f6e3bd2e08b9cd17bbd7bcc49a9a68e98c5bd54925a"
+    },
+    {
+      "path": "verification/r5_8/report_1400.png",
+      "sha256": "98dab50c4d49e240eb7a793ef063a268d385fce4842f244495190f77d8b5a065"
+    },
+    {
+      "path": "verification/r5_8/report_390.png",
+      "sha256": "1b36a91b095de39e1b7090c063be7c9a60d7b832a01f9e9f9e4d21c8751223d2"
+    },
+    {
+      "path": "verification/r5_8/restore_test.json",
+      "sha256": "f375148e4379b410f5811d2d89b72de0a4ebf8b22d822cdf6bc6bd70d231b6a9"
+    },
+    {
+      "path": "verification/r5_8/restore_test.log",
+      "sha256": "4ed22caeb5232636ef17f039590287433be522e173f42810db070693fba505b2"
+    },
+    {
+      "path": "verification/r5_8/run_browser_check.py",
+      "sha256": "d12371cb8fa548d63eecf3f3068d84bc2a000c6125129b0e7701675d996ffc69"
+    },
+    {
+      "path": "verification/r5_8/run_video_checks.py",
+      "sha256": "c951a78e2452ae50fa7c3544378a62d92c8b010a320833f3649aedc1d686cd6c"
+    },
+    {
+      "path": "verification/r5_8/steady/build.log",
+      "sha256": "5188a3670cd32551c4ab6f419904526e124a92a0e3e5ca071d8bc6f3dec65d3e"
+    },
+    {
+      "path": "verification/r5_8/steady/decode.log",
+      "sha256": "65c8e2f05d81d42f91e84fb1a8f5590d74b7ebe31c987a288c82cd0c4f0c21ad"
+    },
+    {
+      "path": "verification/r5_8/steady/packets_result.json",
+      "sha256": "65c8e2f05d81d42f91e84fb1a8f5590d74b7ebe31c987a288c82cd0c4f0c21ad"
+    },
+    {
+      "path": "verification/r5_8/steady/run.log",
+      "sha256": "c454e441180773ffdb6acdf56aa6097a71c5f3ec7fc3f00c316b0967beea8f47"
+    },
+    {
+      "path": "verification/r5_8/steady/tb.sv",
+      "sha256": "bdf1881f6f25af10b68c4f3c8cf40353bcc45bfc0fbe57394fb4e6ca76c25791"
+    },
+    {
+      "path": "verification/r5_8/test_protocol.py",
+      "sha256": "f69791e1926258c9ca4a89c370bca3d5780529bb0885698fcf85e1fe7f6220ca"
+    },
+    {
+      "path": "verification/r5_8/test_usb_recovery.c",
+      "sha256": "6496c9780672ce78309b40e85a524c2976bff42080e4b5d62219ecdc77dec477"
+    },
+    {
+      "path": "verification/r5_8/timing.rpt",
+      "sha256": "ce3bbe6b04b417aec73790c716ea0d319b12e5abb5bbb6f3354a28f53171c9cb"
+    },
+    {
+      "path": "verification/r5_8/validation.json",
+      "sha256": "2dff4dc3e7cfa6c168563333176c204b076d7c72dd42e5be9b64ca3835296623"
+    },
+    {
+      "path": "verification/r5_8/video_checks.json",
+      "sha256": "7bea0708f0415cb2e8e1c39ed580bc189f86d0223d71ed80cf4e397b08535d69"
+    },
+    {
+      "path": "verification/r5_8/wiring.png",
+      "sha256": "823316403592eef6418dbbde4f7638b086a5422139254afebf53b02f883aad5e"
+    }
+  ],
+  "preserved": {
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/game_ti.launch": "ef3acbfb4d478666a04f3dbab45527ce8e63a2080550f7ffe010f33f85547802",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/game_trion.launch": "42aef658a8c33d825420faf8be44b76e0864d232f17f1d9d282ee545ab4e00bc",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/.cproject": "4e2cac6967667e95b1b87bcc675c4eb9d36579042fd452553b4ecda9bfb0bdcb",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/game_tz.launch": "9c3873e2219738dae514c1cda589061af8ff27d62bdc424a1ac229b001aac121",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/.project": "82ea0dd03f471118aafc8e60c021ca67e37cfabf79a6a29ede4cf7f0ae7ca3a6",
+    "BOARD_TEST/r5_5/ti60_r5_5_debug.launch": "84f7e2ef0cd81016657231f30c0175b716f14472e817188afef9156a36672927",
+    "BOARD_TEST/r5_5/ti60_r5_5.bit": "274a2b10755e8de5077eae25fc775481b246740aa2479aad0a67de75c3a849a5",
+    "BOARD_TEST/r5_5/ti60_r5_5_release.elf": "e1dade1be4bc5e43abe6dee17c9fee462324bbd89fc9823f08c626d2758229c2",
+    "BOARD_TEST/r5_5/manifest.json": "062ed808e041f0119b61f53e929f9ad219247a8f433fd8e53a9f41c9e3b6ae1e",
+    "BOARD_TEST/r5_5/README.txt": "7e78b57061f2017405f624f42b6402a510f535896f99e6d449f4e5aecbce2e21",
+    "BOARD_TEST/r5_5/ti60_r5_5_debug.elf": "f813a86fc3fe1ec30259ffbeefe41bf6ccd4721b41cb1251978f687fa3cd425f",
+    "BOARD_TEST/r5_5/reports/ddr_demo_ti60.timing.rpt": "730148f4b9b141d5fd8d1ac920e2180d84dd60053ce5c6bd5f75e5f455ec8e77",
+    "BOARD_TEST/r5_5/reports/ddr_demo_ti60.place.rpt": "6ba5c6727cb1b3eca4a4744390c64bbbb083bae3ef056117da97505946e5d97d",
+    "BOARD_TEST/r5_5/reports/ddr_demo_ti60.cdc.rpt": "394642e8f9a0b15c964840a08630a09938073254b4bc12fb56412fefbf582529",
+    "BOARD_TEST/r5_5/reports/ddr_demo_ti60.hier_util.rpt": "cdd5c08fa3910b2574096cca63839e76525823126900d1f4f5828240f1a89c8d",
+    "BOARD_TEST/r5_6/ti60_r5_6_release.elf": "0b905935e5c5adf85f2d2b9ac332a92758f00b0b56ae63dcfdecc072249390a3",
+    "BOARD_TEST/r5_6/compatible_ti60_r5_5.bit": "274a2b10755e8de5077eae25fc775481b246740aa2479aad0a67de75c3a849a5",
+    "BOARD_TEST/r5_6/ti60_r5_6_debug.elf": "b71c91473ae2084d7e1d094418291de3b71bdbe804e6f64de71bf30733fab1bc",
+    "BOARD_TEST/r5_6/manifest.json": "a74904f3417d3c5b0437cd1a62aa92f5dc5b5e24495e0dc6fb3c0e1319fa9ced",
+    "BOARD_TEST/r5_6/README.txt": "8a053113f69afaac793daedd31072fd63f96cf0c226e8106a4c629cbb0798061",
+    "BOARD_TEST/r5_6/ti60_r5_6_debug.launch": "d4095a663228b4a627a70a48cf25cc7a4acee9b52c124bc0ee819f9628f00bcf",
+    "BOARD_TEST/r5_7/ti60_r5_7_release.elf": "17e3c26efd0a5351d72da69c43e6929c26fb2376808a3113222035446d803491",
+    "BOARD_TEST/r5_7/soc.h": "04fdac6f9a4ddd7754b10fcce566d47e22b57ee7d8ba345869a8c696ed8f4404",
+    "BOARD_TEST/r5_7/ti60_r5_7_debug.elf": "957df437ea2d586ea606ae5ab80165d6ce4ee2b3e16c531c2a9e2287208cccb8",
+    "BOARD_TEST/r5_7/ti60_r5_7_release.launch": "37af49bdeb3625e004b490a54c02fb87aa51ba9401c5f68d0e51f22f1d4a1733",
+    "BOARD_TEST/r5_7/ti60_r5_7.bit": "54e73f164dd60711347126541eb9b2162494936ccbfe9de5790047d62f6a10e0",
+    "BOARD_TEST/r5_7/manifest.json": "dc5ff5bf2cf54b87ff9f57eb09a27501b397330193a731612fe8dfebbeb3b445",
+    "BOARD_TEST/r5_7/README.txt": "bd44eb270993c6331caa3d31d21798b7389ad2691cd628bccc19016f73f4721c",
+    "BOARD_TEST/r5_7/ti60_r5_7_debug.launch": "a1a11d78b0f40f9665fedc04cee3df4ea49a9192888625d3de1518af5dfc256a",
+    "BOARD_TEST/r5_7/205/ti60_r5_7_205_release.launch": "c99f54f74e4695ea41c27b030f6a43a25ac1d69e7fc5432511c4b9009ebd855e",
+    "BOARD_TEST/r5_7/205/ti60_r5_7_205_release.elf": "7e6e567c97d004f9faefcfa7ddde51eae5348443ef522476c4f70940d46fa975",
+    "BOARD_TEST/r5_7/205/soc.h": "844c892b59c2933202565a2f8c9ab3d8a739c39475dfbfa55c1e2422b9d122f1",
+    "BOARD_TEST/r5_7/205/ti60_r5_7_205_debug.elf": "c7c04c1f35e96f97ee1328d60eae1875971de6212fa9af01571e26e38ae21a1e",
+    "BOARD_TEST/r5_7/205/ti60_r5_7_205.bit": "a47d79001154d219accf7d859b63e674ba907ab4a87b994131a0d7299c2d0c7d",
+    "BOARD_TEST/r5_7/205/ti60_r5_7_205_debug.launch": "2b7640700648de069140984ff379b7afc7f8711d1a521d6ee785c280ab06dfc2",
+    "BOARD_TEST/r5_7/202p083333/ti60_r5_7_202p083333.bit": "673360b0530079f0ceccc12a7be9c6d807e1bbd8cf29bc2f58cb5e4ac3b4a2ff",
+    "BOARD_TEST/r5_7/202p083333/ti60_r5_7_202p083333_debug.elf": "2174223a378fe3cd7f6b17bbc69cc564d2e0705fa8f4bb623ae2cf5b7bd015aa",
+    "BOARD_TEST/r5_7/202p083333/soc.h": "7f019fdf1e2585a7f5ad4c28c9955fe652fa9b65bf9d3f958abfe8628cf94a10",
+    "BOARD_TEST/r5_7/202p083333/ti60_r5_7_202p083333_release.launch": "b950ad9247000ea5b2fc5570a8453567c9c0cbe86b1d1be3e679218ae6ffff5e",
+    "BOARD_TEST/r5_7/202p083333/ti60_r5_7_202p083333_debug.launch": "2f1bbf343514f1cc340919357f6bdcf0e9b1913c71c9cdc3f53e1f6abfddc2c7",
+    "BOARD_TEST/r5_7/202p083333/ti60_r5_7_202p083333_release.elf": "78cb9fd43caeaecb3485688ed505d44f6726a5db524dfbe56d190d98d8370ecb"
+  },
+  "physical_board_programmed": false,
+  "monitor_retested": false
+}

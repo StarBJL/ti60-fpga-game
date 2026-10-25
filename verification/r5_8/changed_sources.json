@@ -1,0 +1,162 @@
+[
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.c",
+    "old_sha256": "b232fda8d63642f278fbd98bd1a1007bfde29c5c512b8ffa2e66670638af618b",
+    "new_sha256": "752a4e15391fc50b0148010a1c8855c071c655ac526f0df9eef4bef01d527a77"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.h",
+    "old_sha256": "1eac4617f732b6983b1df286a5b35f8e51dc9e040b8dde0ea934fc60b5e42740",
+    "new_sha256": "30b022e6340774b34761c5da3f3e1a297e5d85bf721d83db63cc7b27f0e07947"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control_runtime.h",
+    "old_sha256": "b91f78998119e2dc7309edbc243a98c89470ddae2010a29c7cb7409f9395d9b0",
+    "new_sha256": "2ea5ded1fc14909c7bca991bb8d87e0d8846377f8bcc0130a2691c813bd0e3f2"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/hdmi_fb.h",
+    "old_sha256": "ad373df74c57dac7967ca408427b1c31d18fb74e4d345fd03644660acb278392",
+    "new_sha256": "84fecdfa76607d9b61139c210c2a79ff79a5214004eb82e815b60f2625d41b1f"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.c",
+    "old_sha256": "a2fa54c8ba357bbe1afc760abbb1bbe8b5acc60ca67e02500885dd963b5b629f",
+    "new_sha256": "4d9ad0dcbe7577fe6066642c36c2b8e21dc595aa01bf7be96610d6bb2b84584a"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.h",
+    "old_sha256": "f49c573bb25490c2ed9baa3151edd57ddf443156d2bab0d186a45fee7e9b8aa1",
+    "new_sha256": "834bf0315171a4b92e9fa5c56fe1cf273e0f210c97f69cc0395370c2750f1232"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_runtime.h",
+    "old_sha256": "b86a0520c2f532ba72b870da27151a3e7b95ce8d87e94853b71437d15adb7fed",
+    "new_sha256": "781b86d4d5df666270ff7b6a3e0a6c4e4615db53b73b1f643449a988be6f0b6c"
+  },
+  {
+    "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c",
+    "old_sha256": "730e6c8c5811ea930f8793df1e6ab08b2d87ec3e5e980f2680289d068315486b",
+    "new_sha256": "b90960510d8964d59b950a4e687fa2a537de013e47b8cb9896c90dd4c1deecb3"
+  },
+  {
+    "path": "PROJECT/rtl/ddr3_example_top.v",
+    "old_sha256": "4b2c41e8ab04a6ffb5acc5243ec94be77eb2e08a10e8dacb8755d7d38e2aba12",
+    "new_sha256": "dc5f815dc6adc8d93b8dbe90aa971e056a176bee272cf68bd81080d8f1b3f313"
+  },
+  {
+    "path": "PROJECT/rtl/hdmi/hdmi_fb.v",
+    "old_sha256": "eb897544387b2c3fb4ff4ea307adbf3c4d6ec9b953e6b7523651538bdffc104c",
+    "new_sha256": "8cf470f8b3d31f7d95af3daf6aafca26964abd596afde74e17dc92c33a6f80fb"
+  },
+  {
+    "path": "README.md",
+    "old_sha256": "1269b147f0d7397d5e56160e473010a1755c8e13b301a335c45435f990bcb848",
+    "new_sha256": "9d825407c78dbdd1d57a8bb0e9ae7e0836afb55c1cf9b4f1aa67a4ef15b1b3ce"
+  },
+  {
+    "path": "README_EN.md",
+    "old_sha256": "08e81b2cabe5a4c28999a7bf6704c601d0f80363cf7bd45f5411fe559dd34a5c",
+    "new_sha256": "cca0c38b10d653acc1316c311320e2677b97f2cf5348d438067d23cb2ec8b154"
+  },
+  {
+    "path": "START_HERE.md",
+    "old_sha256": "2f6dab16887ad07f584e5e847184a009183ee7c4152f3d1a6db0af3412c6241a",
+    "new_sha256": "a588e1132ae5f25e2e22eec99b5415f26e661cc95a0ca2fcb424aeacf8dcd30e"
+  },
+  {
+    "path": "build_hardware.py",
+    "old_sha256": "3ad5580be5c20d527a9631593f35ecc934f750fdbf332277421beb6925bbddc6",
+    "new_sha256": "8377b769d88578919d2063401513fbeb9d4d1a5d382c62514537ea02d4408574"
+  },
+  {
+    "path": "build_software.py",
+    "old_sha256": "7e8f0faeeda457df8754e0ce3246fb1bdc733a76353a3c46a978f3287ed47fdf",
+    "new_sha256": "61a97903be5c822f9634895286a0d98d2c66b59bb505cd406cbdf43871702f93"
+  },
+  {
+    "path": "docs/INPUT_DEVICES.md",
+    "old_sha256": "a9c26f7de63adfd9ac057d1453efd2954c7d2cf3655abd496ce22bd7c2969926",
+    "new_sha256": "45c0072f0405f3b5883f6bdf7f95e75c43064149582675b86ce340a651716626"
+  },
+  {
+    "path": "docs/INPUT_GUIDE.html",
+    "old_sha256": "bddc57ca5a1faacafa1372d5b8b654077d8df151fff537208a28cec54ad97bf8",
+    "new_sha256": "9a5fbb1810b8be89c75694b5abe86b07fd39e8521cb36118912c86c2bfa1c74c"
+  },
+  {
+    "path": "docs/R58_BOARD_FIX.html",
+    "old_sha256": null,
+    "new_sha256": "cf4235ce12a554f7908139381fa9d9eefebad47552c91744509c55081f7ebd73"
+  },
+  {
+    "path": "docs/R58_INPUT_SCHEMATIC.html",
+    "old_sha256": null,
+    "new_sha256": "b19739883ce2fea14a81d2b8b75dccf0f3fbd18ed3cc1119023b63f1e73c9973"
+  },
+  {
+    "path": "docs/R58_INPUT_SCHEMATIC.png",
+    "old_sha256": null,
+    "new_sha256": "823316403592eef6418dbbde4f7638b086a5422139254afebf53b02f883aad5e"
+  },
+  {
+    "path": "docs/R58_INPUT_SCHEMATIC.svg",
+    "old_sha256": null,
+    "new_sha256": "773d2aa0b454259effc1b90f5ca3a0260f5020028613cc533be28770150a3080"
+  },
+  {
+    "path": "docs/WIRING_DEMO.html",
+    "old_sha256": "94984c14671a70215f2b91c33cb9b6952fe344fef67e7211cb6b9b865af3c5e3",
+    "new_sha256": "fa4b67ad3105a44ad6a0402f847e95428dcaa1eaad5b4728c98f9165b6e1012d"
+  },
+  {
+    "path": "tools/build_clock_variant.py",
+    "old_sha256": "42b51bdc27516436383c05ed6c6a3dd95e91b1b72c0466dd7c31659a4f7ca8e8",
+    "new_sha256": "b261657f7ab1e15ce6619e228d9dc648ab9a2923833cd53e7e11cad9f2b00ea9"
+  },
+  {
+    "path": "tools/control_panel/app.js",
+    "old_sha256": "8a8fbea8dac9ab6a9f95fe21d87919b12d570eb1e44f9c370c152060d8eff0ec",
+    "new_sha256": "2119f146fa4ada3415b47c37c38301eb3120e557b99f38a19a497853140c63ef"
+  },
+  {
+    "path": "tools/control_panel/index.html",
+    "old_sha256": "24c6ac4e9939fb513e5a9bf93573ec6e9d3c14efbea73ac4db3a99da63453b7e",
+    "new_sha256": "f46c34f2de4e96177780875d2cb62e408073ea2bd126dc292f8cd1b7ef459a0a"
+  },
+  {
+    "path": "tools/control_panel/serial_ports.py",
+    "old_sha256": "fb672a1b2df1cceed5aeef41aeead0462526886c2b67e8bd33c3076efa4a9baa",
+    "new_sha256": "0b54d83e529fd4dd3bcb5dd59bc403f947850bd449f57ca88092ed50fce101ed"
+  },
+  {
+    "path": "tools/control_panel/server.py",
+    "old_sha256": "0b7ed63a1a7077df8e841f4b9f06da9ee5b76e0487e0c17c15ebf4de0357eaf2",
+    "new_sha256": "50cf981833bad38ff0c0334d3a66d443f92f40e32207a8161a4e2ab029b018d8"
+  },
+  {
+    "path": "tools/control_panel/wiring.html",
+    "old_sha256": null,
+    "new_sha256": "b19739883ce2fea14a81d2b8b75dccf0f3fbd18ed3cc1119023b63f1e73c9973"
+  },
+  {
+    "path": "tools/read_display_edid.py",
+    "old_sha256": null,
+    "new_sha256": "4d51162eb694a9e8dd6bff386572b6f40aeaf93e2ca89e88e35c199980d953eb"
+  },
+  {
+    "path": "verification/r5/test_main.c",
+    "old_sha256": "010a3f66f8cf34c1a655dd6e147bb41f64dfac4a0460a1ac1dc455c23cb74b67",
+    "new_sha256": "3db4c537d92a6afaa38f97d8cef07129c27d3a64e6e7eb5741a9e2168af13f55"
+  },
+  {
+    "path": "verification/r5/windows_console/windows_exe_smoke.py",
+    "old_sha256": "a8ac0331a14997d67137e6295561d6e78ed40d29160fccd94d64c86be0dc95b0",
+    "new_sha256": "7ca36ced1f612654e8044cd25c0db8662520bf71e7445054215ba5fa9dc18475"
+  },
+  {
+    "path": "tools/control_panel/Ti60Control.spec",
+    "old_sha256": "7ec0ffa4e1fe047a149bc2f25f97ffb15a4c34ff1b25ee76a1ee0994f62d975a",
+    "new_sha256": "9332e0e4de6965a7a11c22216597feb870713ef99d3755409cf8f75126c3b1a0"
+  }
+]

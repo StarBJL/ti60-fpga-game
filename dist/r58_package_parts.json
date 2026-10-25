@@ -1,0 +1,32 @@
+{
+  "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz",
+  "bytes": 8613272,
+  "sha256": "46f836b5d60e974551ac78ad2e94e66e77625804a1cd7e8adc62965ec76354a6",
+  "parts": [
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz.part00",
+      "bytes": 2097152,
+      "sha256": "724195320502bf08bef87d8a31af773ef3f0cffc78fb5279188e3223cce06d29"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz.part01",
+      "bytes": 2097152,
+      "sha256": "db8360fbbe1f4035e0228d1af7c6712bd49a5214a17cb27a67580f4480d029b0"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz.part02",
+      "bytes": 2097152,
+      "sha256": "33e9146393d42ee6b273baf49dda71eccb384259be2c6e04977497e5f4a8cc8e"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz.part03",
+      "bytes": 2097152,
+      "sha256": "fe6f8dd68286c5b2eb2dcc057b6f966a6bb86690f656bc71a9f5fe4e320cdfdf"
+    },
+    {
+      "path": "dist/Ti60_R5_8_VIDEO_COOP.tar.xz.part04",
+      "bytes": 224664,
+      "sha256": "8e005c7f9441e2648abe423046380441113bcdb472294249332a69cd206f494b"
+    }
+  ]
+}

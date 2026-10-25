@@ -23,7 +23,7 @@ env['QT_PLUGIN_PATH']=str(ef/'bin' if win else ef/'lib/plugins')
 env['PYTHONPATH']=str(ef/'lib')
 env['PATH']=os.pathsep.join(str(ef/x) for x in ['bin','scripts','pgm/bin','debugger/bin','ipm/bin'])+os.pathsep+env.get('PATH','')
 env.setdefault('EFINITY_USER_DIR_INI',str(Path(os.environ.get('LOCALAPPDATA',''))/'efinity/user_dir.ini') if win else str(Path.home()/'.local/share/efinity/user_dir.ini'))
-prj=root/'PROJECT/par/ddr_demo_ti60';logs=root/'verification/r5_7';logs.mkdir(parents=True,exist_ok=True)
+prj=root/'PROJECT/par/ddr_demo_ti60';logs=root/'verification/r5_8';logs.mkdir(parents=True,exist_ok=True)
 log=logs/('efinity_'+a.flow+'.log')
 print('Efinity:',ef,'; flow:',a.flow,'; log:',log,flush=True)
 with log.open('w',encoding='utf-8') as f:
@@ -41,6 +41,6 @@ if a.flow in ('compile','pnr','pgm'):
 if a.flow in ('compile','pgm'):
  bit=prj/'outflow/ddr_demo_ti60.bit'
  if not bit.is_file():p.error('Efinity returned success but no bit was produced')
- dest=root/'BOARD_TEST/r5_7/ti60_r5_7.bit';dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(bit,dest)
+ dest=root/'BOARD_TEST/r5_8/ti60_r5_8.bit';dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(bit,dest)
  print('Built:',dest,'SHA256:',hashlib.sha256(dest.read_bytes()).hexdigest())
 print('Completed. Inspect timing reports before board use. No device was programmed.')

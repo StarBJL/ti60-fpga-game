@@ -1,5 +1,7 @@
 # Ti60 R5: RISC-V + FPGA 2D Game Rendering Engine
 
+Current delivery **R5.8-VIDEO-COOP** adds bounded HDMI link restart, emergency720p recovery,1080-only DVI diagnostics, explicit three-player starts and the complete two-keyboard wiring addendum. Normal720p behavior is preserved. The PH27QB2 blackout awaits physical retesting. Use the matched200MHz artifacts in `BOARD_TEST/r5_8`. See the[bilingual report](docs/R58_BOARD_FIX.html) and[wiring addendum](docs/R58_INPUT_SCHEMATIC.html).
+
 Current candidate: **R5.7-COOP-PERF**. Normal carrot/Touhou games support independent UART, USB and matrix players. Pressure data/loop and square band admission are optimized. **The 720p display path is preserved.** Matched 200, 202.083333 and 205MHz artifacts are in `BOARD_TEST/r5_7/`. Read the [bilingual implementation and validation report](docs/R57_REPORT.html#english). New board FPS gains are unmeasured. The reported 1080p monitor blackout is unresolved; a 10-second trial timeout now restores720p. 480p is not implemented. Current source console identifies as`R5.7-COOP-PERF`.
 
 After cloning, run `python tools/restore_r57_package.py` to verify/reassemble the archive and restore all matched bit/ELF files. The connector rejected individual ELF uploads; checked binary parts preserve the exact originals. Local delivery already contains full artifacts.

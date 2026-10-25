@@ -65,6 +65,8 @@ module hdmi_fb_top #(
     parameter [7:0]  AVI_PB2 = 8'h18       // 0x18 = 4:3, 0x28 = 16:9
 )(
     // ---------------- system clock domain (APB + AXI, same clock) ----------
+    output wire        link_tx_enable,    // lane OE: defaults to original always-on behavior
+    output wire        link_tx_reset,     // all four serializers reset together
     input  wire        clk,
     input  wire        rst,                // APB/system reset, active high
     input  wire        axi_rst,            // io_ddrMasters_0_reset, active high
@@ -138,6 +140,28 @@ module hdmi_fb_top #(
     end
     wire en_p   = en_p_s[1];
     wire test_p = test_p_s[1];
+
+    // R5.8 link restart is independent of timing/DMA/FIFO state. Stopping all
+    // four output lanes lets a sink reacquire after a mode change. Counters and
+    // normal frame flushing continue; never reset one side of an active FIFO.
+    reg [1:0] link_ctrl; // bit0 hold all TMDS lanes, bit1 1080-only DVI diagnostic
+    (* async_reg = "true" *) reg [1:0] link_p1,link_p2;
+    (* async_reg = "true" *) reg [2:0] link_s1,link_s2;
+    reg [3:0] link_run;
+    always @(posedge pix_clk) begin
+        if(pix_rst)begin link_p1<=0;link_p2<=0;link_run<=4'hf;end
+        else begin
+            link_p1<=link_ctrl;link_p2<=link_p1;
+            if(link_p2[0])link_run<=0;
+            else link_run<={link_run[2:0],1'b1};
+        end
+    end
+    assign link_tx_reset=link_p2[0];
+    assign link_tx_enable=link_run[3]&~link_p2[0];
+    always @(posedge clk) begin
+        if(rst)begin link_s1<=3'b100;link_s2<=3'b100;end
+        else begin link_s1<={link_tx_enable,link_p2};link_s2<=link_s1;end
+    end
 
     // Single-bit request/ack CDC. Commit only inside vertical sync; keep the
     // 1280x720 framebuffer and DMA burst count unchanged in both output modes.
@@ -335,7 +359,7 @@ module hdmi_fb_top #(
         .rst         (pix_rst),
         .h_cnt       (h_cnt),
         .v_cnt       (v_cnt),
-        .hdmi_en     (actl_p2[0]),
+        .hdmi_en     (actl_p2[0] & ~(link_p2[1] & mode_1080)),
         .aud_en      (actl_p2[1]),
         .tone_en     (actl_p2[2]),
         .tone_lr     (actl_p2[5:4]),
@@ -478,6 +502,7 @@ module hdmi_fb_top #(
     always @(posedge clk) begin
         if (rst) begin
             mode_req     <= 1'b0;
+            link_ctrl    <= 2'd0;
             ctrl_en      <= 1'b0;
             ctrl_test    <= 1'b0;
             ctrl_irqen   <= 1'b0;
@@ -531,6 +556,7 @@ module hdmi_fb_top #(
                     end
                     6'h08: aud_ctrl <= apb_pwdata[5:0];
                     6'h14: if (DUAL_MODE) mode_req <= apb_pwdata[0];
+                    6'h18: link_ctrl <= apb_pwdata[1:0];
                     default: ;
                 endcase
             end
@@ -559,7 +585,10 @@ module hdmi_fb_top #(
             6'h14:   apb_prdata = {29'd0,(mode_req^mode_ack_s[1]),mode_ack_s[1],mode_req}; // +50
             6'h15:   apb_prdata = DUAL_MODE ? 32'h56494435 : 32'd0; // +54 VID5
             6'h16:   apb_prdata = {V_ACT16,H_ACT16}; // +58 internal canvas
-            6'h17:   apb_prdata = 32'h00050201; // +5c R5.2.1 HDMI audio / VSYNC repair
+            6'h17:   apb_prdata = 32'h00050800; // +5c R5.8 link restart support
+            6'h18:   apb_prdata = {30'd0,link_ctrl}; // +60 requests
+            6'h19:   apb_prdata = {29'd0,link_s2}; // +64 active [2] TX enable [1] 1080 DVI [0] hold
+            6'h1a:   apb_prdata = 32'h4c4e4b38; // +68 LNK8
             6'h1e:   apb_prdata = SYSTEM_CLOCK_HZ; // +78 physical build clock metadata
             6'h1f:   apb_prdata = 32'h434c4b37; // +7c CLK7
             default: apb_prdata = 32'd0;

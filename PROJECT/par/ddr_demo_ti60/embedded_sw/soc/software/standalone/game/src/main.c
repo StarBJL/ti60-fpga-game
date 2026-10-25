@@ -1574,7 +1574,7 @@ static Input player_game_input(unsigned who,uint32_t time){
 static void print_telemetry(const WinStats *s){
     unsigned id=++telemetry_seq;int count=scene==SCENE_SQUARES?sq_count:scene==SCENE_GAME?game_hostile_count(&game):scene==SCENE_TH?th.nbullets:3;
     GfxFontStats fs=gfx_font_stats();
-    control_party_line("seq",id);if(video_trial)control_video_state(0);
+    control_party_line("seq",id);control_input_state(0);if(video_trial)control_video_state(0);
     tx_printf("M4 seq=%u epoch=%u scene=%d phase=%d count=%d target=%d step=%d bullet=%d square=%d alpha=%d vsync=%d hw=%d motion=%d table=%d bgm=%d submit_mode=%d band=%d cache=%d overlap=%d overlap_active=%d seed_table=%d seed_build=%d sort=%d kpath=%d rd_bursts=%u wr_bursts=%u rd_words=%u wide=%u\r\n",
       id,settings_epoch,scene,scene==SCENE_TH?th.mode:scene==SCENE_GAME?game.phase:0,count,control_limit(),count_step,
       scene==SCENE_TH?th_pressure_scale():game_seed_size(),demo_square_size(),alpha_fx,vsync,use_hw,demo_motion_enabled(),demo_table_enabled(),music_enabled(),
@@ -1853,7 +1853,7 @@ int main(void)
         if(actual_hz!=BSP_CLINT_HZ){bsp_printf("CLOCK MISMATCH: load the matched bit and ELF.\r\n");for(;;);}
     }else if(BSP_CLINT_HZ!=200000000u){bsp_printf("CLOCK ABI missing: OC firmware requires its matched bit.\r\n");for(;;);}
 #endif
-    bsp_printf("\r\n=== TI60-R5.7-COOP-PERF-20261024 Sapphire RV32IM @ %d MHz ===\r\n",
+    bsp_printf("\r\n=== TI60-R5.8-VIDEO-COOP-20261025 Sapphire RV32IM @ %d MHz ===\r\n",
                (int)(BSP_CLINT_HZ / 1000000u));
 
     if (hdmi_id() != HDMI_ID_VALUE)
