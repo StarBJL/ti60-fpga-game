@@ -1,5 +1,7 @@
 # Ti60 R5：RISC-V + FPGA 2D 游戏渲染引擎
 
+当前交付 **R5.9-INPUT-CAL**：修正矩阵接线文档（厂商手册与原理图冲突，S7实测与手册吻合），S15短按不再切1080P，加入16键校准、短按记录和USB原始字节诊断。新ELF在`BOARD_TEST/r5_9`，沿用未改动的R5.8 bit。见[接线修订与测试步骤](docs/R59_INPUT_FIX.html)。Git克隆后运行`python tools/restore_r59_package.py`恢复精确ELF；本机工程已包含完整文件。USB实板链路和1080P显示器兼容性仍待验证。以下为历史交付记录。
+
 当前交付 **R5.8-VIDEO-COOP**：新增HDMI输出停发/复位/重启、黑屏恢复720P、1080P DVI诊断、明确的两款三人新局入口，以及完整双键盘接线图。720P正常显示行为保持；PH27QB2实屏黑屏是否解决仍待复测。本轮配套200MHz bit/ELF在`BOARD_TEST/r5_8`，见[处理报告](docs/R58_BOARD_FIX.html)和[接线附图](docs/R58_INPUT_SCHEMATIC.html)。
 
 当前交付候选 **R5.7-COOP-PERF**：普通萝卜/东方同屏三人（UART / CH9350L / 矩阵），压力热路径与方块分带优化；**720P 显示链路保留原样**。200 / 202.083333 / 205MHz 均有配套 bit 与 ELF，见 [R5.7 实现与验证报告](docs/R57_REPORT.html)、[下载清单](BOARD_TEST/r5_7/manifest.json)。新版本板上稳定帧率尚未测试；1080P 黑屏仍需彩条/显示器验证，已加10秒自动回720P；480P尚未实现。上位机源码版本为`R5.7-COOP-PERF`。

@@ -1,0 +1,2 @@
+PASS input_hub: 8-frame debounce, bounce/release, onehot open-drain rows, UART 8N1, FIFO wrap/overflow/clear, framing and TX (111 status checks)
+/data/users/user/codex_tmp/ti60_r59_work/Ti60_R5_DUALVIDEO/verification/r5/input_hub_tb.v:86: $finish called at 344260000 (1ps)

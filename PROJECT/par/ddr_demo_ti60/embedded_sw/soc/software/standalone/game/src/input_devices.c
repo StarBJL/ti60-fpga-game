@@ -1,14 +1,41 @@
 #include "input_devices.h"
 #include <string.h>
 enum { UP=1,DOWN=2,LEFT=4,RIGHT=8,SHOT=16,BOMB=32,SLOW=64,PAUSE=128,START=256 };
-static void emit(InputDevices *d,InputAction a,int v){if(d->emit)d->emit(d->opaque,a,v);}
+static void emit(InputDevices *d,InputAction a,int v){if(d->emit&&(!d->diagnostic||a==INPUT_CH9350_STATE))d->emit(d->opaque,a,v);}
 static void publish(InputDevices *d){
     uint16_t held=d->matrix_held|d->keyboard_held;
     if(d->matrix_held!=d->published_matrix){d->published_matrix=d->matrix_held;emit(d,INPUT_SOURCE_HELD,0x20000|d->matrix_held);}
     if(d->keyboard_held!=d->published_keyboard){d->published_keyboard=d->keyboard_held;emit(d,INPUT_SOURCE_HELD,0x10000|d->keyboard_held);}
     if(held!=d->published_held){d->published_held=held;emit(d,INPUT_HELD,held);}
 }
-void input_devices_init(InputDevices *d,InputEmit cb,void *arg){memset(d,0,sizeof(*d));d->emit=cb;d->opaque=arg;}
+void input_devices_init(InputDevices *d,InputEmit cb,void *arg){unsigned i;memset(d,0,sizeof(*d));d->emit=cb;d->opaque=arg;for(i=0;i<16;i++)d->matrix_map[i]=(uint8_t)i;}
+int input_set_diagnostic(InputDevices *d,int enabled){
+    if(enabled!=0&&enabled!=1)return 0;
+    if(!enabled&&(d->matrix_raw||d->keyboard_down||d->calibrating))return 0;
+    /* Publish release while the old live dispatcher is still enabled. */
+    d->matrix_held=d->keyboard_held=0;publish(d);d->diagnostic=(uint8_t)enabled;
+    memset(d->keyboard_previous,0,sizeof(d->keyboard_previous));return 1;
+}
+int input_matrix_bind(InputDevices *d,unsigned packed){
+    unsigned physical=packed>>4,raw=packed&15u;
+    if(packed>255u||!d->diagnostic||!d->calibrating||d->matrix_raw||physical!=d->cal_step||physical>=16||(d->cal_seen&(1u<<raw)))return 0;
+    d->cal_map[d->cal_step++]=(uint8_t)raw;d->cal_seen|=(uint16_t)(1u<<raw);d->cal_error=0;return 1;
+}
+int input_matrix_calibration(InputDevices *d,int op){
+    if(op<0||op>3)return 0;
+    if(op==0){d->calibrating=0;d->cal_error=0;return 1;}
+    if(op==1){
+        input_set_diagnostic(d,1);d->calibrating=1;d->cal_step=0;d->cal_seen=0;d->cal_error=0;d->cal_wait=1;
+        memset(d->cal_map,0,sizeof d->cal_map);return 1;
+    }
+    if(!d->diagnostic||!d->calibrating||d->matrix_raw||d->keyboard_down)return 0;
+    if(op==2){
+        if(d->cal_step!=16||d->cal_seen!=65535u)return 0;
+        memcpy(d->matrix_map,d->cal_map,16);d->calibrating=0;d->map_applied=1;return 1;
+    }
+    if(!d->cal_step)return 0;
+    d->cal_seen&=(uint16_t)~(1u<<d->cal_map[--d->cal_step]);d->cal_error=0;d->cal_wait=1;return 1;
+}
 int input_matrix_has_ghost(uint16_t keys){
     int a,b;for(a=0;a<4;a++)for(b=a+1;b<4;b++){
         unsigned common=((keys>>(a*4))&(keys>>(b*4)))&15u;
@@ -20,12 +47,12 @@ static void matrix_action(InputDevices *d,unsigned key,int fn){
         INPUT_SCENE_NEXT,INPUT_HELD,INPUT_HELD,INPUT_HELD,
         INPUT_HELD,INPUT_HELD,INPUT_HELD,INPUT_HELD,
         INPUT_COUNT_DELTA,INPUT_COUNT_DELTA,INPUT_STEP_NEXT,INPUT_SIZE_NEXT,
-        INPUT_START_PAUSE,INPUT_STRESS_MENU,INPUT_RESOLUTION_NEXT,INPUT_HELD};
+        INPUT_START_PAUSE,INPUT_STRESS_MENU,INPUT_STATUS,INPUT_HELD};
     static const InputAction shifted[16]={
         INPUT_MENU,INPUT_PICK,INPUT_PICK,INPUT_HELD,
         INPUT_PICK,INPUT_RESTART,INPUT_AUTO_TOGGLE,INPUT_ALPHA_TOGGLE,
         INPUT_VOLUME_DELTA,INPUT_VOLUME_DELTA,INPUT_STATS_TOGGLE,INPUT_BACKEND_TOGGLE,
-        INPUT_VSYNC_TOGGLE,INPUT_BGM_TOGGLE,INPUT_TRACK_NEXT,INPUT_STATUS};
+        INPUT_VSYNC_TOGGLE,INPUT_BGM_TOGGLE,INPUT_TRACK_NEXT,INPUT_VIDEO_CONFIRM};
     InputAction a=fn?shifted[key]:base[key];int v=0;
     if(a==INPUT_HELD)return;
     if(a==INPUT_COUNT_DELTA||a==INPUT_VOLUME_DELTA)v=key==8?-1:1;
@@ -33,16 +60,32 @@ static void matrix_action(InputDevices *d,unsigned key,int fn){
     emit(d,a,v);
 }
 void input_matrix_snapshot(InputDevices *d,uint16_t keys){
-    unsigned i;uint16_t rising;int fn;d->source=2;
+    unsigned i;uint16_t rising,logical=0;int fn;d->source=2;
+    if(keys==d->matrix_raw&&!d->calibrating)return;
+    rising=keys&~d->matrix_raw;d->matrix_raw=keys;
+    if(rising){d->matrix_events++;d->matrix_last=rising;d->matrix_seen|=rising;}
+    if(d->calibrating){
+        if(!keys)d->cal_wait=0;
+        else if(!d->cal_wait&&d->cal_step<16){
+            d->cal_wait=1;
+            if(keys&(keys-1u))d->cal_error=1;
+            else if(d->cal_seen&keys)d->cal_error=2;
+            else{for(i=0;!(keys&(1u<<i));i++);d->cal_map[d->cal_step++]=(uint8_t)i;d->cal_seen|=keys;d->cal_error=0;}
+        }
+    }
+    /* Check the electrical matrix BEFORE remapping: arbitrary labels must not
+       hide a ghost rectangle or create a false one. */
     if(input_matrix_has_ghost(keys)){
         if(!d->ghost_latched)d->ghost_reports++;
         d->ghost_latched=1;
     }
     if(d->ghost_latched){
-        d->matrix_held=0;d->matrix_previous=keys;publish(d);
+        d->matrix_held=0;d->matrix_previous=0;publish(d);
         if(!keys)d->ghost_latched=0;
         return;
     }
+    for(i=0;i<16;i++)if(keys&(1u<<d->matrix_map[i]))logical|=(uint16_t)(1u<<i);
+    keys=logical;
     fn=!!(keys&(1u<<3));rising=keys&~d->matrix_previous;d->matrix_previous=keys;
     d->matrix_held=fn?0:
       ((keys&(1u<<1))?UP:0)|((keys&(1u<<5))?DOWN:0)|
@@ -97,12 +140,13 @@ static void keyboard_action(InputDevices *d,unsigned code,int shift){
 }
 void input_keyboard_release(InputDevices *d){
     d->source=1;
-    memset(d->keyboard_previous,0,sizeof(d->keyboard_previous));d->keyboard_held=0;d->rx_state=0;publish(d);
+    memset(d->keyboard_previous,0,sizeof(d->keyboard_previous));d->keyboard_held=0;d->keyboard_down=0;d->rx_state=0;publish(d);
 }
 static void keyboard_report(InputDevices *d){
     unsigned i,held=0;uint8_t *r=d->rx_data;d->keyboard_reports++;d->source=1;
     /* ErrorRollOver / POSTFail / ErrorUndefined are not real key usages. */
     for(i=2;i<8;i++)if(r[i]>=1&&r[i]<=3){d->rollover_reports++;input_keyboard_release(d);return;}
+    d->keyboard_down=r[0]!=0;for(i=2;i<8;i++)if(r[i])d->keyboard_down=1;
     if(r[0]&0x22u)held|=SLOW;
     for(i=2;i<8;i++)held|=held_for(r[i]);
     d->keyboard_held=(uint16_t)held;publish(d);
@@ -116,13 +160,16 @@ void input_devices_poll(InputDevices *d,uint32_t now_ms){
     if(d->rx_state&&(uint32_t)(now_ms-d->rx_last_ms)>20u){d->rx_state=0;d->malformed_frames++;}
 }
 void input_ch9350_feed(InputDevices *d,uint8_t byte,uint32_t now_ms){
+    d->keyboard_bytes++;
+    d->rx_history[d->rx_history_head]=byte;d->rx_history_head=(d->rx_history_head+1u)&15u;
+    if(d->rx_history_used<16)d->rx_history_used++;
     /* A rendering loop may dequeue a valid report in two batches >20 ms apart.
      * Only the caller's empty-FIFO poll may expire it; a queued byte is evidence
      * to continue the report, not evidence of a wire-level idle interval. */
     d->rx_last_ms=now_ms;
     switch(d->rx_state){
     case 0:if(byte==0x57)d->rx_state=1;break;
-    case 1:if(byte==0xab)d->rx_state=2;else d->rx_state=byte==0x57?1:0;break;
+    case 1:if(byte==0xab){d->rx_state=2;d->keyboard_headers++;}else d->rx_state=byte==0x57?1:0;break;
     case 2:
         d->rx_tag=byte;d->rx_used=0;
         if(byte==1)d->rx_length=8;

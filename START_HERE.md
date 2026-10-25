@@ -1,5 +1,7 @@
 # Ti60 R5 工程入口 / Project entry
 
+**当前使用 R5.9 输入修订版。** 下载`BOARD_TEST/r5_9/ti60_r5_9_debug.elf`，bit沿用R5.8；[修正后的矩阵接线与USB诊断](docs/R59_INPUT_FIX.html)。矩阵建议行J7 20/22/2/4、列14/16/26/28，依据与实测一致的手册，先核对实板。旧图针脚冲突已明确标出。上位机版本应为R5.9-INPUT-CAL。
+
 最新R5.8入口：[显示恢复、双键盘、三人启动说明](docs/R58_BOARD_FIX.html)。使用`BOARD_TEST/r5_8`配套bit+ELF。以下保留历史版本入口。
 
 当前候选 **R5.7**：先从`BOARD_TEST/r5_7`使用200MHz配套bit+debug ELF，上位机需重启。202.083333/205子目录是独立候选，禁止混用bit/ELF。详见[三人、性能、显示及下载说明](docs/R57_REPORT.html)。720P显示链路保留；1080P试切10秒未确认返回720P；480P未实现。下面是历史R5.6入口。

@@ -29,7 +29,7 @@ function updateHeld(){let value=0;for(const v of keys.values())value|=v;for(cons
 const keyBits={ArrowUp:1,ArrowDown:2,ArrowLeft:4,ArrowRight:8,w:1,W:1,s:2,S:2,a:4,A:4,d:8,D:8,z:16,Z:16," ":16,x:32,X:32,j:32,J:32,Shift:64,Escape:128,Enter:256};
 function typing(){return /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName||"")&&document.activeElement?.id!=="captureKeys";}
 window.addEventListener("keydown",e=>{
-  if(!$("captureKeys").checked||typing()||!connected||!compatible)return;
+  if(!$("captureKeys").checked||typing()||!connected||!compatible||snapshot?.state.input_diag)return;
   if(keyBits[e.key]!==undefined){e.preventDefault();keys.set(e.code,keyBits[e.key]);updateHeld();}
   else if(!e.repeat&&(e.key==="+"||e.key==="="||e.key==="-")){e.preventDefault();cmd("delta",e.key==="-"?-1:1);}
   else if(!e.repeat&&e.key==="F9"){e.preventDefault();if(dualvideo&&!snapshot?.state.pending&&!snapshot?.state.link_stage)cmd("resolution",snapshot?.state.resolution===1?0:1);else notice("等待 R5 显示能力或当前切换完成。","error");}
@@ -196,6 +196,7 @@ function render(data){
   for(const id of ["startCoopCarrot","startCoopTouhou"])$(id).disabled=!connected||!state.coop_start_supported||configuring;
   $("coopHelp").textContent=state.auto?"当前自动演示保持单人。点击上方三人合作按钮，会关闭自动演示并从普通游戏新局开始。":state.players===3?"三人模式已启用；未接入键盘的角色会留在原地。":"选择上方三人合作入口；压力模式不会显示三个角色。";
   $("inputState").textContent=`矩阵原始键位：${state.matrix_keys===undefined?"等待状态":"0x"+Number(state.matrix_keys).toString(16).padStart(4,"0")} · USB键盘报告 ${state.keyboard_reports??"—"} · UART错误 ${state.uart_error??"—"} · 鬼键 ${state.ghosts??"—"}。零键位不能单独证明未连接。`;
+  renderInputDiagnostics(state,configuring);
   $("videoTrial").textContent=state.video_trial?`试切中：约 ${Math.ceil((state.trial_ms||0)/1000)} 秒后自动返回 720P。看见正常画面后再确认。`:state.trial_supported?"1080P 试切保护已就绪；黑屏可等待自动返回 720P。":"自动回退需 R5.7 ELF。";
   $("partyMode").textContent=state.players===3?"同屏三人":state.players===1?(state.auto?"自动演示 · 单人":"单人 / 压力"):"菜单 / 其他场景";
   $("coreClock").textContent=state.core_hz?`处理时钟：${(state.core_hz/1e6).toFixed(6)} MHz。请使用对应 bit / ELF。`:"处理时钟：当前固件未回报。";
@@ -266,3 +267,58 @@ function chart(samples){
 async function poll(){if(polling)return;polling=true;try{render(await api("/api/state?after="+cursor));}catch(e){notice("本地服务未响应："+e.message,"error");}finally{polling=false;}}
 window.addEventListener("resize",()=>chart(snapshot?.samples||[]));setInterval(poll,500);setInterval(()=>{if($("captureKeys").checked)sendHeld(true);else if(held)sendHeld();},100);
 Promise.all([poll(),loadPresets()]).then(refreshPorts);
+
+const mapStorageKey="ti60-r59-matrix-map-v1";
+let savedMatrixMap=null,matrixRestoreBusy=false,lastSavedMatrixMap="";
+try{const x=JSON.parse(localStorage.getItem(mapStorageKey)||"null");if(x&&validMatrixMap(x.map))savedMatrixMap=x;}catch(e){}
+function validMatrixMap(x){return typeof x==="string"&&/^x[0-9a-f]{16}$/.test(x)&&new Set(x.slice(1)).size===16;}
+function hexKeys(x){return "0x"+Number(x||0).toString(16).padStart(4,"0");}
+for(let i=0;i<16;i++){const cell=document.createElement("span");cell.textContent="S"+(i+1);$("matrixCalibrationGrid").append(cell);}
+async function confirmedInputCommand(command,value){
+  const result=await cmd(command,value),deadline=Date.now()+7000;
+  while(Date.now()<deadline){
+    if(!connected)throw new Error("串口已断开，未应用的校准仍不会改变旧映射。");
+    const ack=snapshot?.acks?.find(x=>x.id===result.id);
+    if(ack){if(!ack.ok)throw new Error("设备拒绝校准步骤，请松开全部按键后重试。");return;}
+    await new Promise(resolve=>setTimeout(resolve,100));
+  }
+  throw new Error("等待校准回执超时；请重新读取状态，确认结果。");
+}
+$("matrixRestore").addEventListener("click",async()=>{
+  if(!savedMatrixMap||!validMatrixMap(savedMatrixMap.map)||matrixRestoreBusy)return;
+  matrixRestoreBusy=true;release();
+  try{
+    await confirmedInputCommand("matrix_cal",1);
+    for(let i=0;i<16;i++)await confirmedInputCommand("matrix_bind",(i<<4)|parseInt(savedMatrixMap.map[i+1],16));
+    await confirmedInputCommand("matrix_cal",2);
+    notice("已恢复本机保存的映射。先检测 S2/S5/S6/S7，再结束检测。","success");
+  }catch(e){notice(e.message,"error");}
+  finally{matrixRestoreBusy=false;}
+});
+function renderInputDiagnostics(s,configuring){
+  const available=connected&&compatible&&s.input_diag_supported===1&&s.input_supported===1&&!configuring&&!matrixRestoreBusy;
+  const active=!!s.matrix_cal,step=Number(s.matrix_step||0),released=!s.matrix_keys&&!(s.keyboard_down??s.keyboard_held);
+  $("inputDiagOn").disabled=!available||!!s.input_diag;
+  $("inputDiagOff").disabled=!available||!s.input_diag||active||!released;
+  $("matrixCalBegin").disabled=!available;
+  $("matrixCalUndo").disabled=!available||!active||!step||!released;
+  $("matrixCalCancel").disabled=!available||!active;
+  $("matrixCalApply").disabled=!available||!active||step!==16||!released;
+  $("keyboardSync").disabled=!available||!s.input_diag;
+  $("matrixRestore").disabled=!available||!savedMatrixMap||!released||active;
+  $("inputDiagState").textContent=!s.input_diag_supported?"请下载 R5.9 ELF 后使用；R5.8 bit 不需要更换。":s.input_diag?"检测中：扩展按键不会操作游戏。完成或取消校准后，松开全部按键，再结束检测。":"游戏输入已启用。首次接线请先进入只检测按键模式。";
+  $("matrixCalPrompt").textContent=active?(step===16?"16 键已记录，全部松开后点击“应用完整映射”。":`已记录 ${step}/16。${s.matrix_wait?"请先松开全部按键，然后":"请"}只按板上 S${step+1}，松开并等待进度变化。`):s.matrix_mapped?"已应用校准。可在检测模式验证每一键后恢复游戏操作。":"当前为默认行列映射。点击开始校准，按板上丝印从 S1 到 S16 逐个记录。";
+  if(active&&s.matrix_cal_error)$("matrixCalPrompt").textContent+=(s.matrix_cal_error===1?" 本次检测到多键，请松开重按当前键。":" 这条原始键位已录过，请松开后按当前提示的键；接触短路也会导致重复。");
+  [...$("matrixCalibrationGrid").children].forEach((cell,i)=>{cell.classList.toggle("recorded",active&&i<step);cell.classList.toggle("current",active&&i===step);const m=String(s.matrix_candidate||"").slice(1);cell.textContent="S"+(i+1)+(active&&i<step?" · "+m[i].toUpperCase():"");});
+  $("matrixRawState").textContent=`当前原始 ${hexKeys(s.matrix_keys)}；最近按下 ${hexKeys(s.matrix_last)}；累计按下事件 ${s.matrix_events??"—"}。映射后逻辑 ${hexKeys(s.matrix_logical)}。短按后松开仍保留最近记录。`;
+  if(s.matrix_mapped&&validMatrixMap(s.matrix_map)&&s.matrix_map!==lastSavedMatrixMap){
+    const item={map:s.matrix_map,saved_at:new Date().toISOString()};
+    try{localStorage.setItem(mapStorageKey,JSON.stringify(item));savedMatrixMap=item;lastSavedMatrixMap=s.matrix_map;}catch(e){$("matrixSavedState").textContent="浏览器无法保存校准，请记录日志中的 matrix_map。";}
+  }
+  $("matrixSavedState").textContent=savedMatrixMap?`本机已存：${savedMatrixMap.map.slice(1)}。FPGA 断电或重载 ELF 后，需点击“载入本机已存校准”；不会自动写入板载 Flash。`:"校准应用后保存在当前浏览器；关闭网页不会丢失。更换接线后请重新校准。";
+  const bytes=s.keyboard_bytes,errors=Number(s.keyboard_faults||0);
+  $("keyboardByteState").textContent=`接收字节 ${bytes??"—"} · 57 AB 帧头 ${s.keyboard_headers??"—"} · 键盘报告 ${s.keyboard_reports??"—"} · 鼠标报告 ${s.mouse_reports??"—"} · 累计 UART 错误 ${s.keyboard_faults??"—"} · 应答已提交 ${s.keyboard_acks??"—"} · 发送超时 ${s.keyboard_tx_timeouts??"—"}`;
+  const tail=String(s.keyboard_tail||"x").slice(1);
+  $("keyboardByteTail").textContent=tail?tail.match(/.{1,2}/g).join(" ").toUpperCase():"尚未收到原始字节";
+  $("keyboardDiagnosticHint").textContent=bytes===undefined?"新固件会显示最近 16 个原始字节。":errors?"检测到 UART 错误：核对 115200 8N1、共地和信号电平；日志保留累计错误，即使硬件错误位已清除。":!bytes?"尚未从接收 FIFO 取到字节。按 W 并松开，观察计数；若仍为 0，按接线说明做 TX→RX 和 USB 端枚举检查。":!s.keyboard_reports?"已有串口字节，但尚无完整键盘报告。查看是否有 57 AB 01；57 AB 82/88 通常说明模块仍处于状态0/1。":"已解析到键盘报告。按 W 时 keyboard_held 应含 1，松开归零；结束检测后进入三人游戏验证 P2。";
+}

@@ -3,6 +3,7 @@
 #include <limits.h>
 typedef struct {const char *name;ControlType type;int argument;} Command;
 static const Command commands[]={
+ {"input_diag",CT_INPUT_DIAG,1},{"matrix_cal",CT_MATRIX_CAL,1},{"matrix_bind",CT_MATRIX_BIND,1},{"keyboard_sync",CT_KEYBOARD_SYNC,0},
  {"video_recover",CT_VIDEO_RECOVER,0},{"video_dvi",CT_VIDEO_DVI,1},{"coop",CT_COOP_START,1},
  {"video_confirm",CT_VIDEO_CONFIRM,0},{"status",CT_STATUS,0},{"scene",CT_SCENE,1},{"start",CT_START,0},{"pause",CT_PAUSE,0},
  {"restart",CT_RESTART,0},{"menu",CT_MENU,0},{"stress",CT_STRESS,1},{"skill",CT_SKILL,0},

@@ -1853,7 +1853,7 @@ int main(void)
         if(actual_hz!=BSP_CLINT_HZ){bsp_printf("CLOCK MISMATCH: load the matched bit and ELF.\r\n");for(;;);}
     }else if(BSP_CLINT_HZ!=200000000u){bsp_printf("CLOCK ABI missing: OC firmware requires its matched bit.\r\n");for(;;);}
 #endif
-    bsp_printf("\r\n=== TI60-R5.8-VIDEO-COOP-20261025 Sapphire RV32IM @ %d MHz ===\r\n",
+    bsp_printf("\r\n=== TI60-R5.9-INPUT-CAL-20261025 Sapphire RV32IM @ %d MHz ===\r\n",
                (int)(BSP_CLINT_HZ / 1000000u));
 
     if (hdmi_id() != HDMI_ID_VALUE)

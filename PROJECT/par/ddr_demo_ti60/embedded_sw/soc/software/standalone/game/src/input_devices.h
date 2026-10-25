@@ -23,6 +23,11 @@ typedef struct {
     uint8_t rx_state, rx_tag, rx_length, rx_used, rx_data[8], ghost_latched;
     uint32_t rx_last_ms, keyboard_reports, mouse_reports, malformed_frames,
              rollover_reports, ghost_reports, status_reports;
+    uint16_t matrix_raw, matrix_last, matrix_seen, cal_seen;
+    uint32_t matrix_events, keyboard_bytes, keyboard_headers;
+    uint8_t matrix_map[16], cal_map[16], diagnostic, calibrating;
+    uint8_t cal_step, cal_wait, cal_error, map_applied;
+    uint8_t rx_history[16], rx_history_used, rx_history_head, keyboard_down;
 } InputDevices;
 void input_devices_init(InputDevices *d, InputEmit emit, void *opaque);
 /* Row-major: bit 0=S1/R0C0, bit 15=S16/R3C3. Input is already debounced.
@@ -38,4 +43,10 @@ void input_devices_poll(InputDevices *d, uint32_t now_ms);
  * State-2 reports arrive on change, so idle time alone is NOT a disconnect. */
 void input_keyboard_release(InputDevices *d);
 int input_matrix_has_ghost(uint16_t keys);
+/* Diagnostics suppress gameplay but continue HID parsing and state replies.
+ * Calibration records physical S1..S16 -> raw bit; ghost checks stay in raw
+ * electrical coordinates. Changes are staged and applied atomically. */
+int input_set_diagnostic(InputDevices *d,int enabled);
+int input_matrix_calibration(InputDevices *d,int operation); /* 0 cancel,1 begin,2 apply,3 undo */
+int input_matrix_bind(InputDevices *d,unsigned packed); /* (physical index<<4)|raw bit */
 #endif

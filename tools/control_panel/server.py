@@ -23,9 +23,9 @@ def default_log_root():
         return base/'Ti60R5'/'logs'
     return ROOT/'logs/r5'
 
-COMMANDS={'status','scene','start','pause','restart','menu','stress','skill','pick','move','stop','step','delta','count','bullet','square','period','density','auto','vsync','alpha','backend','motion','table','bgm','next','volume','tone','stats','verbose','bench','key','resolution','fast','bars','volume_delta','prev','music','video_confirm','video_recover','video_dvi','coop'}
-NO_ARGUMENT={'status','start','pause','restart','menu','skill','stop','next','prev','bench','fast','video_confirm','video_recover'}
-FIELDS=['timestamp','boot','seq','epoch','scene','phase','count','target','step','bullet','square','alpha','vsync','hw','motion','table','bgm','track','resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','elapsed_us','render_fps','logic_hz','present_fps','repeat_fps','scan_hz','valid','video_uf','audio_uf','logic_us','logic_max_us','submit_us','wait_us','work_us','work_max_us','over','busy','phase1_us','bands_us','profile','font_hit','font_miss','font_reset','label_hit','label_miss','drops','submit_mode','band','cache','overlap','overlap_active','seed_table','seed_build','sort','kpath','rd_bursts','wr_bursts','rd_words','wide','video_rev','bars','tone','volume','bank_sounds','mixer','audio_ctrl','auto','density','stress_auto','stats','verbose','music_auto','music_index','music_total','r2_preset','r2_stage','r2_conditions_match','r2_initial_target','pressure_supported','motion_min_px','player_shots','locator_us','locator_on','enemy_us','player_logic_us','hostile_logic_us','hud_us','band_splits','band_overflow','matrix_auto','core_hz','square_band_bound','players','video_trial','trial_ms','p1_life','p1_skill','p1_score','p1_x','p1_y','p1_held','p2_life','p2_skill','p2_score','p2_x','p2_y','p2_held','p3_life','p3_skill','p3_score','p3_x','p3_y','p3_held','link_supported','link_stage','link_status','link_dvi','link_fault','recoveries','input_supported','matrix_keys','matrix_held','keyboard_held','keyboard_reports','malformed','rollover','ghosts','uart_error']
+COMMANDS={'status','scene','start','pause','restart','menu','stress','skill','pick','move','stop','step','delta','count','bullet','square','period','density','auto','vsync','alpha','backend','motion','table','bgm','next','volume','tone','stats','verbose','bench','key','resolution','fast','bars','volume_delta','prev','music','video_confirm','video_recover','video_dvi','coop','input_diag','matrix_cal','matrix_bind','keyboard_sync'}
+NO_ARGUMENT={'status','start','pause','restart','menu','skill','stop','next','prev','bench','fast','video_confirm','video_recover','keyboard_sync'}
+FIELDS=['timestamp','boot','seq','epoch','scene','phase','count','target','step','bullet','square','alpha','vsync','hw','motion','table','bgm','track','resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','elapsed_us','render_fps','logic_hz','present_fps','repeat_fps','scan_hz','valid','video_uf','audio_uf','logic_us','logic_max_us','submit_us','wait_us','work_us','work_max_us','over','busy','phase1_us','bands_us','profile','font_hit','font_miss','font_reset','label_hit','label_miss','drops','submit_mode','band','cache','overlap','overlap_active','seed_table','seed_build','sort','kpath','rd_bursts','wr_bursts','rd_words','wide','video_rev','bars','tone','volume','bank_sounds','mixer','audio_ctrl','auto','density','stress_auto','stats','verbose','music_auto','music_index','music_total','r2_preset','r2_stage','r2_conditions_match','r2_initial_target','pressure_supported','motion_min_px','player_shots','locator_us','locator_on','enemy_us','player_logic_us','hostile_logic_us','hud_us','band_splits','band_overflow','matrix_auto','core_hz','square_band_bound','players','video_trial','trial_ms','p1_life','p1_skill','p1_score','p1_x','p1_y','p1_held','p2_life','p2_skill','p2_score','p2_x','p2_y','p2_held','p3_life','p3_skill','p3_score','p3_x','p3_y','p3_held','link_supported','link_stage','link_status','link_dvi','link_fault','recoveries','input_supported','matrix_keys','matrix_held','keyboard_held','keyboard_reports','malformed','rollover','ghosts','uart_error','input_diag_supported','input_diag','matrix_events','matrix_last','matrix_seen','matrix_logical','matrix_cal','matrix_step','matrix_cal_error','matrix_wait','matrix_mapped','matrix_map','matrix_candidate','keyboard_down','keyboard_bytes','keyboard_headers','keyboard_tail','keyboard_faults','keyboard_acks','keyboard_tx_timeouts','mouse_reports','status_reports']
 def utc():return datetime.now(timezone.utc).isoformat(timespec='milliseconds')
 def parse_values(line):
     result={}
@@ -46,6 +46,9 @@ def command_wire(request_id,name,value=None):
     if name=='bars' and value not in (0,1):raise ValueError('彩条状态只能为 0 或 1')
     if name=='coop' and value not in (0,1):raise ValueError('三人入口只能选择东方0或萝卜1')
     if name=='video_dvi' and value not in (0,1):raise ValueError('DVI诊断只接受0或1')
+    if name=='input_diag' and value not in (0,1):raise ValueError('输入检测只接受0或1')
+    if name=='matrix_cal' and value not in (0,1,2,3):raise ValueError('校准操作无效')
+    if name=='matrix_bind' and not 0<=value<=255:raise ValueError('矩阵映射超出范围')
     if name=='resolution' and value not in (0,1):raise ValueError('输出模式只能为 0（720P60）或 1（1080P30）')
     return f':{request_id} {name} {value}\n'.encode('ascii')
 
@@ -59,7 +62,7 @@ class Collector:
             self.state['firmware']=line.strip('= ')
         if line.startswith(('R4:','R5:')):self.compatible=True
         tag=line.split(' ',1)[0]
-        if tag in ('S4','A4','V5','E5','I5') or (tag=='T7' and 'seq=' not in line):
+        if tag in ('S4','A4','V5','E5','I5','I9') or (tag=='T7' and 'seq=' not in line):
             self.compatible=True;values=parse_values(line)
             if tag=='I5':values['input_supported']=values.pop('supported',0)
             if tag=='V5':
@@ -83,7 +86,7 @@ class Collector:
         self.state.update({k:v for k,v in data.items() if k not in ('seq','epoch')})
         if not {'M4','F4','P4','C4'}.issubset(self.parts[seq]):return None
         row={'timestamp':utc(),'boot':self.boot}
-        for key in ('resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','video_rev','bars','video_trial','trial_ms','link_supported','link_stage','link_status','link_dvi','link_fault','recoveries','input_supported','matrix_keys','matrix_held','keyboard_held','keyboard_reports','malformed','rollover','ghosts','uart_error'):
+        for key in ('resolution','output_w','output_h','output_hz','render_w','render_h','scale','pending','video_rev','bars','video_trial','trial_ms','link_supported','link_stage','link_status','link_dvi','link_fault','recoveries','input_supported','matrix_keys','matrix_held','keyboard_held','keyboard_reports','malformed','rollover','ghosts','uart_error','input_diag_supported','input_diag','matrix_events','matrix_last','matrix_seen','matrix_logical','matrix_cal','matrix_step','matrix_cal_error','matrix_wait','matrix_mapped','matrix_map','matrix_candidate','keyboard_down','keyboard_bytes','keyboard_headers','keyboard_tail','keyboard_faults','keyboard_acks','keyboard_tx_timeouts','mouse_reports','status_reports'):
             if key in self.state:row[key]=self.state[key]
         for part in ('T7','M4','F4','P4','C4'):row.update(self.parts[seq].get(part,{}))
         for raw,name in [('render10','render_fps'),('logic10','logic_hz'),('present10','present_fps'),('repeat10','repeat_fps'),('scan10','scan_hz')]:
@@ -183,6 +186,8 @@ class Session:
         if name in ('fast','bars') and not self.collector.state.get('accel_supported'):raise ValueError('此功能需要 R5.2 固件；请先下载配套 ELF')
         if name=='volume_delta' and not self.collector.state.get('volume_step_supported'):raise ValueError('音量增减按钮需要包含 volume_step_supported 的新固件')
         if name in ('prev','music') and not self.collector.state.get('music_supported'):raise ValueError('全曲目选择需要 R5.3 ELF')
+        if name in ('input_diag','matrix_cal','matrix_bind','keyboard_sync') and not self.collector.state.get('input_diag_supported'):
+            raise ValueError('输入校准与字节诊断需要R5.9 ELF；当前bit可继续使用R5.8')
         self.request_id=(self.request_id+1)%1000000000
         wire=command_wire(self.request_id,name,value)
         self.serial.write(wire);self.event('TX',id=self.request_id,command=name,value=value,wire=wire.decode().strip())

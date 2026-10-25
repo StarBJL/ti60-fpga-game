@@ -42,7 +42,10 @@ def main():
             if not base: raise RuntimeError('EXE did not report its loopback URL: ' + ''.join(output))
             for asset in ('/', '/app.js', '/style.css', '/wiring'):
                 with urllib.request.urlopen(base + asset, timeout=5) as response:
-                    assert response.status == 200 and response.read(), asset
+                    payload=response.read()
+                    assert response.status == 200 and payload, asset
+                    if asset=='/':assert b'matrixCalBegin' in payload and b'keyboardByteTail' in payload
+                    if asset=='/wiring':assert b'R5.9' in payload and b'J7-20' in payload
             with urllib.request.urlopen(base + '/api/state', timeout=5) as response:
                 state = json.load(response)
             assert state['connected'] is False

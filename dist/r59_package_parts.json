@@ -1,0 +1,32 @@
+{
+  "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz",
+  "bytes": 8527164,
+  "sha256": "bd7666a7e590ba4c8e6e8c7c60046ce35b6b47f473e23c93571ac6f63d2de920",
+  "parts": [
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz.part00",
+      "bytes": 2097152,
+      "sha256": "41b85cb42002fc4c03c9f8425fb125cc3170bb9b422054f4b158515120375471"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz.part01",
+      "bytes": 2097152,
+      "sha256": "c4e2bccf4769aadd3b68bd100ecbf45207b810ccf5d0a75d123dd90296dc53dc"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz.part02",
+      "bytes": 2097152,
+      "sha256": "045d7f37a7e4eda0faeef53150e24405a5c751ac8681b0e9b3249b50d78b6ecb"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz.part03",
+      "bytes": 2097152,
+      "sha256": "413bd135e7865f7cf06f675f2b7dfb3d5e785ad76c88f26e70f278bfed2d2f5c"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz.part04",
+      "bytes": 138556,
+      "sha256": "f9a160d9172464ec19b86ebcd66f2d7ce104c6201647e26bc9c1bf45a5bb9880"
+    }
+  ]
+}

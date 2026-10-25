@@ -130,9 +130,9 @@
       "key": "S15",
       "row": 3,
       "column": 2,
-      "base": "720 / 1080",
+      "base": "读取状态；长按2秒恢复720P",
       "fn": "下一曲",
-      "base_action": "resolution",
+      "base_action": "status",
       "fn_action": "music"
     },
     {
@@ -140,73 +140,82 @@
       "row": 3,
       "column": 3,
       "base": "慢速",
-      "fn": "确认显示 / 状态",
+      "fn": "确认正在试切的显示模式",
       "base_action": "slow",
-      "fn_action": "status"
+      "fn_action": "video_confirm"
     }
   ],
   "pins": [
     {
       "signal": "R0",
-      "j7": 2,
+      "j7": 20,
       "net": "LVDS_P3",
       "ball": "B1",
-      "gpio": "GPIOL_P_17"
+      "gpio": "GPIOL_P_17",
+      "previous_schematic_j7": 2
     },
     {
       "signal": "R1",
-      "j7": 4,
+      "j7": 22,
       "net": "LVDS_N3",
       "ball": "C2",
-      "gpio": "GPIOL_N_17"
+      "gpio": "GPIOL_N_17",
+      "previous_schematic_j7": 4
     },
     {
       "signal": "R2",
-      "j7": 8,
+      "j7": 2,
       "net": "LVDS_P1",
       "ball": "F1",
-      "gpio": "GPIOL_P_14"
+      "gpio": "GPIOL_P_14",
+      "previous_schematic_j7": 8
     },
     {
       "signal": "R3",
-      "j7": 10,
+      "j7": 4,
       "net": "LVDS_N1",
       "ball": "F2",
-      "gpio": "GPIOL_N_14"
+      "gpio": "GPIOL_N_14",
+      "previous_schematic_j7": 10
     },
     {
       "signal": "C0",
-      "j7": 20,
+      "j7": 14,
       "net": "LVDS_P4",
       "ball": "D1",
-      "gpio": "GPIOL_P_16"
+      "gpio": "GPIOL_P_16",
+      "previous_schematic_j7": 20
     },
     {
       "signal": "C1",
-      "j7": 22,
+      "j7": 16,
       "net": "LVDS_N4",
       "ball": "C1",
-      "gpio": "GPIOL_N_16"
+      "gpio": "GPIOL_N_16",
+      "previous_schematic_j7": 22
     },
     {
       "signal": "C2",
       "j7": 26,
       "net": "LVDS_P2",
       "ball": "B2",
-      "gpio": "GPIOL_P_18"
+      "gpio": "GPIOL_P_18",
+      "previous_schematic_j7": 26
     },
     {
       "signal": "C3",
       "j7": 28,
       "net": "LVDS_N2",
       "ball": "A2",
-      "gpio": "GPIOL_N_18"
+      "gpio": "GPIOL_N_18",
+      "previous_schematic_j7": 28
     }
   ],
-  "version": "R5.7",
+  "version": "R5.9",
   "normal_game_players": {
     "P1": "UART / PC",
     "P2": "USB / CH9350L",
     "P3": "4x4 matrix"
-  }
+  },
+  "pinmap_basis": "Manufacturer manual PDF page27/printed26, consistent with observed S7 raw0x4000 under previous schematic wiring; verify actual J28-to-J7 continuity."
 }

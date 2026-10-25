@@ -18,7 +18,7 @@ int main(void){
     input_matrix_snapshot(&d,1u<<10);assert(events[count-1].a==INPUT_STEP_NEXT);
     input_matrix_snapshot(&d,0);input_matrix_snapshot(&d,(1u<<3)|(1u<<14));
     assert(events[count-1].a==INPUT_TRACK_NEXT);input_matrix_snapshot(&d,0);
-    input_matrix_snapshot(&d,1u<<14);assert(events[count-1].a==INPUT_RESOLUTION_NEXT);
+    input_matrix_snapshot(&d,1u<<14);assert(events[count-1].a==INPUT_STATUS);
     input_matrix_snapshot(&d,0);
     assert(input_matrix_has_ghost(0x0033));assert(!input_matrix_has_ghost(0x0013));
     n=count;input_matrix_snapshot(&d,0x0033);assert(d.ghost_latched&&d.ghost_reports==1&&count==n);

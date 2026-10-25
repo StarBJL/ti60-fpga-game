@@ -1,0 +1,37 @@
+{
+  "version": "R5.9-INPUT-CAL",
+  "created_utc": "2026-10-25T10:23:12.252826+00:00",
+  "browser": {
+    "passed": true,
+    "physical_board": false,
+    "checks": [
+      "16-key step-by-step calibration",
+      "duplicate rejection",
+      "atomic apply",
+      "diagnostic release guard",
+      "profile saved across reload",
+      "ACK-checked profile restore",
+      "raw UART bytes",
+      "status sync button",
+      "CSV retention",
+      "mobile layout",
+      "corrected wiring route"
+    ],
+    "errors": []
+  },
+  "input_adapters_asan_ubsan": true,
+  "calibration_permutation_checks": 256,
+  "input_hub_rtl_checks": 111,
+  "real_main_dispatcher_regression": true,
+  "command_and_csv_regression": true,
+  "r2_preset_tests": 14,
+  "console_portability_tests": 6,
+  "hardware_bit_reused_unchanged": "dced75cde6c7d3d80d0a4941b00d0695d54511ee4d587b514c60bfea7c8e52c4",
+  "hardware_build_rerun": false,
+  "720p_rtl_changed": false,
+  "physical_board_programmed": false,
+  "physical_board_retested": false,
+  "usb_reception_fixed_on_board": false,
+  "1080p_monitor_issue_resolved": false,
+  "windows_ci": "pending"
+}

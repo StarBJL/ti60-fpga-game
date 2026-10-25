@@ -1,0 +1,84 @@
+{
+  "version": "TI60-R5.9-INPUT-CAL-20261025",
+  "created_utc": "2026-10-25T10:23:12.254514+00:00",
+  "core_hz": 200000000,
+  "hardware_revision": "R5.8 unchanged",
+  "hardware_sha256": "dced75cde6c7d3d80d0a4941b00d0695d54511ee4d587b514c60bfea7c8e52c4",
+  "bsp_root": "/home/user/fpga_contest/1025/Ti60_R5_DUALVIDEO/PROJECT/par/ddr_demo_ti60/embedded_sw/soc/bsp",
+  "source_sha256": {
+    ".github/workflows/windows-control.yml": "8dbc2c38695a0472d573c552136be11b0bdd6190b0f95e1b37df91e5941cc014",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.c": "dfd55cdfe700314554fb8fa2973c97616a9e534dacdc388483dd6bec9ea96d35",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.h": "da356811328dfb7b431396be1d21e094ec9ac51a05c23a721020a576fa65d65b",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control_runtime.h": "06ac2d5ebff389ced71d26ec3db60578e8474043727dc751e32a26f5ab5abd62",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.c": "e226da35addd66d00e0f9a0b2eef5fa7a0ce7b6f1f734625875483913777c3a1",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.h": "ce1ecc1b855ef6b8cb434ba8a378d971f8d23681a2ba2aa9d508ef96a14e433b",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_runtime.h": "7c4600a6149fe16c6f5e4941c18dc8b8bd4ccf3c52f59f5d625248b274793d63",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c": "c6a1c9785b474eb22fd17048886446525ccf5e50ca8c3a0e29eb1547333609ac",
+    "README.md": "0aeaa3075460363dc23451edb1432d485e8519daba432fda9295ddee3143c2e4",
+    "README_EN.md": "9be98f6d3732db324b8c63f42b3b777aa77af1f67f2cdec3d47dc672d8fac612",
+    "START_HERE.md": "21c398584c0636a97e069fc899c2f5869436cb1eb134f6bc908370af9baa37dc",
+    "build_software.py": "89f246f6767a375865d843ff439a667d61ed79348d3cb128fe68a6f9a866c19f",
+    "docs/INPUT_DEVICES.md": "0c3cd641a33d8a3a3352da1b14b0c504738ba4a367904d5bfc89a6416d6c9ee2",
+    "docs/INPUT_GUIDE.html": "cc8b2c8c1ceb7743939eab1b2042470c156ecda5058be5241402b91e2ab544c3",
+    "docs/R58_INPUT_SCHEMATIC.html": "10964e695928edbb89effef2b93de0cd1cf0b5d7ec6b10595e78526ccf046c81",
+    "docs/R59_INPUT_FIX.html": "9050620b747f32a4f4dc4a918023414075ee8ac874e55969fbc2e9ff25433d25",
+    "docs/R59_INPUT_WIRING.png": "67e2958f6f8b6f763d877a4af956a0d7af00ff73c209d492ce0f22f18da807d2",
+    "docs/R59_INPUT_WIRING.svg": "dea298c18e48a5e4b204f3bd771ac4dace3381637662a22fa3a6842a839ee655",
+    "docs/WIRING_DEMO.html": "c5549faa0cbd25b8471034690d4e0b792d07d783572f0f8c3c133cc74e6fa8c1",
+    "docs/key_layout.json": "438d57c65fe6a92872f5419624e16d705a73c77cb9cdcfbf88b05d3808de5f1c",
+    "tools/control_panel/__pycache__/r2_presets.cpython-312.pyc": "2443fe2bf18440d074ff99fb8869c199c17318f9f1d06c7e2f3c36a665642a5c",
+    "tools/control_panel/__pycache__/serial_ports.cpython-312.pyc": "4b17c9523945dd87cad280676b48b4a1209217c19eedd53eb6f0ff50241ee39d",
+    "tools/control_panel/__pycache__/server.cpython-312.pyc": "61f47805bc4c4c940ff0ea37f9d476391e242daf634d7f8d6468b553c5adbdfa",
+    "tools/control_panel/app.js": "2b1773e51eac71c7a85167a35a419c8e21910998f90691956997f0231d5c46fc",
+    "tools/control_panel/index.html": "0b897afc8cac3260efdab9ff648b2e9b73c8d6bf637eb03f6ddd91003fa33cf8",
+    "tools/control_panel/serial_ports.py": "90bddc34df7d5bdbfb425a62f6cdee8a87c6120b031b1158f01c445d6018bc5d",
+    "tools/control_panel/server.py": "455bcb9dfbc11a7f7e1404ac3d97fd7e9b2414613b33e7243b0c229034125863",
+    "tools/control_panel/style.css": "2a3771bb7bdd387f9a06e47167d4ad08529a64a09f4d877324d507bdfd8b9974",
+    "tools/control_panel/wiring.html": "be6b695228f08d1666f85e58448f6f3f2e3de40349f44ac7bce65fc7d1bc330a",
+    "verification/r5/test_input_devices.c": "a2c323ed29801a8a91e0407938419e99ca9db197fb1b08c4cfe852fc6c77c77f",
+    "verification/r5/test_main.c": "6457ba1cb6b3e950329e22b7d06848602a5fb036464c986a9cc986577629c35c",
+    "verification/r5/windows_console/windows_exe_smoke.py": "fa491e4b80cd9fca5bc5420fd5b30947b8b861fceafc773899a6d93c114be75f"
+  },
+  "memory_regions_bytes": {
+    "debug": {
+      "ram": 9353648,
+      "snd": 10123520,
+      "art": 13589632,
+      "stress": 29742380
+    },
+    "release": {
+      "ram": 9281072,
+      "snd": 10123520,
+      "art": 13589632,
+      "stress": 29742380
+    }
+  },
+  "artifacts": {
+    "ti60_r5_8_unchanged.bit": {
+      "bytes": 2834760,
+      "sha256": "dced75cde6c7d3d80d0a4941b00d0695d54511ee4d587b514c60bfea7c8e52c4"
+    },
+    "README.txt": {
+      "bytes": 1453,
+      "sha256": "26615b9ecd2d0ece31583d599407667505785b969922f0bd25e4fa78550eef28"
+    },
+    "ti60_r5_9_release.launch": {
+      "bytes": 7038,
+      "sha256": "8df259aa725609047e635421535c50e941f7f2f1587424c0af66a44bd1382303"
+    },
+    "ti60_r5_9_release.elf": {
+      "bytes": 10593460,
+      "sha256": "44f25ac803f10f0d728bbb21960c23a6719e4452c9cb98cee91f7a54618da35e"
+    },
+    "ti60_r5_9_debug.elf": {
+      "bytes": 10632224,
+      "sha256": "ad5958621c39e9ed93ea3f39c4bad7f42c80e74e32ac645bd275a95f08ea05b5"
+    },
+    "ti60_r5_9_debug.launch": {
+      "bytes": 7032,
+      "sha256": "6532bb876748ce8e8c916b5e08b5643e9175e1818cfea6ad7d68b004e68ae7a7"
+    }
+  },
+  "physical_board_retested": false,
+  "validation": "verification/r5_9/validation.json"
+}

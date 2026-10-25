@@ -48,6 +48,7 @@ static void control_move(unsigned held){
 }
 static int control_limit(void){return scene==SCENE_SQUARES?sq_count:scene==SCENE_GAME?game_hostile_slots(&game):scene==SCENE_TH?th.stress_cap:3;}
 static void control_input_state(unsigned id);
+static int control_input_command(ControlEvent e);
 static unsigned video_trial_left(void){
     if(!video_trial)return 0;uint32_t elapsed=now()-video_trial_start;
     if(elapsed>=(uint32_t)BSP_CLINT_HZ*10u)return 0;
@@ -93,6 +94,8 @@ static int control_apply(ControlEvent e){
     int v=e.value,changed=1;
     switch(e.type){
     case CT_STATUS:changed=0;break;
+    case CT_INPUT_DIAG:case CT_MATRIX_CAL:case CT_MATRIX_BIND:case CT_KEYBOARD_SYNC:
+        return control_input_command(e);
     case CT_FAST:if(!control_fast())return 0;break;
     case CT_BARS:if(v<0||v>1)return 0;hdmi_test_pattern(v);break;
     case CT_RESOLUTION:

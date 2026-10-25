@@ -683,6 +683,29 @@ int main(int argc, char **argv)
 #if SPROUT_STATS
     {int was=render_sort_keys;handle_char('~');assert(render_sort_keys!=was);}
 #endif
+    /* Real dispatcher regression: physical raw bit14 used to switch HDMI. */
+    mock_hdmi[0x80/4]=0x494e5035u;mock_hdmi[0x50/4]=0;video_switch_state=video_trial=0;
+    input_ready();input_matrix_snapshot(&devices,0x4000);input_matrix_snapshot(&devices,0);
+    assert(!video_switch_state&&!video_trial&&mock_hdmi[0x50/4]==0);
+    matrix_autofire=1;
+    assert(control_apply((ControlEvent){CT_MATRIX_CAL,1,0,1}));assert(devices.diagnostic&&!matrix_autofire);
+    for(unsigned i=0;i<16;i++){
+        unsigned row=i/4,bit=(row==1?3:row==3?1:row)*4+i%4;
+        assert(control_apply((ControlEvent){CT_MATRIX_BIND,(int)((i<<4)|bit),0,1}));
+    }
+    assert(control_apply((ControlEvent){CT_MATRIX_CAL,2,0,1}));
+    assert(control_apply((ControlEvent){CT_INPUT_DIAG,0,0,1}));assert(matrix_autofire==1);
+    input_matrix_snapshot(&devices,0x4000);assert(devices.matrix_held==PAD_RIGHT);
+    assert(pad_source_held(2,now(),BSP_CLINT_HZ/1000u)==PAD_RIGHT);assert(!video_switch_state);
+    assert(control_apply((ControlEvent){CT_INPUT_DIAG,1,0,1}));assert(!pad_source_held(2,now(),BSP_CLINT_HZ/1000u));
+    assert(!control_apply((ControlEvent){CT_INPUT_DIAG,0,0,1}));
+    input_matrix_snapshot(&devices,0);assert(control_apply((ControlEvent){CT_INPUT_DIAG,0,0,1}));
+    assert(!control_apply((ControlEvent){CT_KEYBOARD_SYNC,0,0,0}));
+    assert(control_apply((ControlEvent){CT_INPUT_DIAG,1,0,1}));assert(control_apply((ControlEvent){CT_KEYBOARD_SYNC,0,0,0}));
+    assert(keyboard_ack_pending);keyboard_ack_pending=0;
+    memset(&devices,0,sizeof devices);devices_ready=devices_present=0;mock_hdmi[0x80/4]=0;
+    memset(tx_buf,0,sizeof tx_buf);tx_head=tx_tail=0;
+    puts("PASS real dispatcher: raw0x4000 does not switch video, calibrated S7 drives P3 right, diagnostics release inputs, sync is diagnostic-only");
     scene=SCENE_TH;autoplay=AUTOPLAY_DEFAULT;key_pressed=0;
     return game_main();
 }
