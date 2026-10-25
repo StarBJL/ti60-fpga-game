@@ -1,6 +1,6 @@
 {
   "version": "TI60-R5.9-INPUT-CAL-20261025",
-  "created_utc": "2026-10-25T10:23:12.254514+00:00",
+  "created_utc": "2026-10-25T10:30:06.148015+00:00",
   "core_hz": 200000000,
   "hardware_revision": "R5.8 unchanged",
   "hardware_sha256": "dced75cde6c7d3d80d0a4941b00d0695d54511ee4d587b514c60bfea7c8e52c4",
@@ -26,9 +26,6 @@
     "docs/R59_INPUT_WIRING.svg": "dea298c18e48a5e4b204f3bd771ac4dace3381637662a22fa3a6842a839ee655",
     "docs/WIRING_DEMO.html": "c5549faa0cbd25b8471034690d4e0b792d07d783572f0f8c3c133cc74e6fa8c1",
     "docs/key_layout.json": "438d57c65fe6a92872f5419624e16d705a73c77cb9cdcfbf88b05d3808de5f1c",
-    "tools/control_panel/__pycache__/r2_presets.cpython-312.pyc": "2443fe2bf18440d074ff99fb8869c199c17318f9f1d06c7e2f3c36a665642a5c",
-    "tools/control_panel/__pycache__/serial_ports.cpython-312.pyc": "4b17c9523945dd87cad280676b48b4a1209217c19eedd53eb6f0ff50241ee39d",
-    "tools/control_panel/__pycache__/server.cpython-312.pyc": "61f47805bc4c4c940ff0ea37f9d476391e242daf634d7f8d6468b553c5adbdfa",
     "tools/control_panel/app.js": "2b1773e51eac71c7a85167a35a419c8e21910998f90691956997f0231d5c46fc",
     "tools/control_panel/index.html": "0b897afc8cac3260efdab9ff648b2e9b73c8d6bf637eb03f6ddd91003fa33cf8",
     "tools/control_panel/serial_ports.py": "90bddc34df7d5bdbfb425a62f6cdee8a87c6120b031b1158f01c445d6018bc5d",

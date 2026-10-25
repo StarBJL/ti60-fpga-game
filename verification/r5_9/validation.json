@@ -1,6 +1,6 @@
 {
   "version": "R5.9-INPUT-CAL",
-  "created_utc": "2026-10-25T10:23:12.252826+00:00",
+  "created_utc": "2026-10-25T10:30:06.142862+00:00",
   "browser": {
     "passed": true,
     "physical_board": false,
@@ -33,5 +33,10 @@
   "physical_board_retested": false,
   "usb_reception_fixed_on_board": false,
   "1080p_monitor_issue_resolved": false,
-  "windows_ci": "pending"
+  "windows_ci": {
+    "status": "success",
+    "run_id": 40184863251,
+    "commit": "83bae3d70126e2e892dbb370e8e1086e9ee22998",
+    "url": "https://github.com/18971355314bjl-gif/ti60-fpga-game/actions/runs/40184863251"
+  }
 }

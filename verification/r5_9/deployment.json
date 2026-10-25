@@ -1,0 +1,580 @@
+{
+  "created_utc": "2026-10-25T10:24:53.368155+00:00",
+  "backup": "/home/user/fpga_contest/1025/Ti60_R5_DUALVIDEO/backups/R5_8_before_R5_9_20261025",
+  "files": [
+    {
+      "path": ".github/workflows/windows-control.yml",
+      "sha256": "8dbc2c38695a0472d573c552136be11b0bdd6190b0f95e1b37df91e5941cc014"
+    },
+    {
+      "path": "BOARD_TEST/r5_9/README.txt",
+      "sha256": "26615b9ecd2d0ece31583d599407667505785b969922f0bd25e4fa78550eef28"
+    },
+    {
+      "path": "BOARD_TEST/r5_9/manifest.json",
+      "sha256": "4b92f1c73c9614e7d23cf602e194ef4b22321d0dd1173676d49eca0e2d996d03"
+    },
+    {
+      "path": "BOARD_TEST/r5_9/ti60_r5_8_unchanged.bit",
+      "sha256": "dced75cde6c7d3d80d0a4941b00d0695d54511ee4d587b514c60bfea7c8e52c4"
+    },
+    {
+      "path": "BOARD_TEST/r5_9/ti60_r5_9_debug.elf",
+      "sha256": "ad5958621c39e9ed93ea3f39c4bad7f42c80e74e32ac645bd275a95f08ea05b5"
+    },
+    {
+      "path": "BOARD_TEST/r5_9/ti60_r5_9_debug.launch",
+      "sha256": "6532bb876748ce8e8c916b5e08b5643e9175e1818cfea6ad7d68b004e68ae7a7"
+    },
+    {
+      "path": "BOARD_TEST/r5_9/ti60_r5_9_release.elf",
+      "sha256": "44f25ac803f10f0d728bbb21960c23a6719e4452c9cb98cee91f7a54618da35e"
+    },
+    {
+      "path": "BOARD_TEST/r5_9/ti60_r5_9_release.launch",
+      "sha256": "8df259aa725609047e635421535c50e941f7f2f1587424c0af66a44bd1382303"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.asm",
+      "sha256": "af37f9807aad08963e6324eb46e6c7854570672a672f07904e80541fd68d7665"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.bin",
+      "sha256": "6d4290a52df143ccc9abd8da4d51ec4d749f920ad8e691be4fbaa8bc01ea293a"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.elf",
+      "sha256": "ad5958621c39e9ed93ea3f39c4bad7f42c80e74e32ac645bd275a95f08ea05b5"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.hex",
+      "sha256": "1e520f54dcbfc37e8b6bb9b427a6190c119c4b8b49d5dba8fac9e41d23047f43"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.map",
+      "sha256": "5de943cc5447bb20f2556f00a11fed3b706a0b31b0754e989c417d7a9a0de040"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/audio.o",
+      "sha256": "73c3e628c8924258c8a78af3c08b38d457d6887b6f025175d39868b6b9baac97"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/blit.o",
+      "sha256": "f52331ea65cd3197f8fb61dc5edcb75513ed9a404fc85f426154e555f6c4e7ab"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/control.o",
+      "sha256": "a1797bc361c072faf12b7a6a33ab804813b6cda1b4be6c20af13c3fde9de834d"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/coop_fx.o",
+      "sha256": "084eac6baf979b085c96ec87a23b970c0083154076f3d9cfed8a12a93b720048"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/demo.o",
+      "sha256": "89161915728f67c5076c043dc95bead235180dedc3f894bda8adbf4bcad4a235"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/game.o",
+      "sha256": "01ebd34c27b9914a571334aba48c901126f6390daf9ced4ac3121ab0ebe5f183"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/game_sound.o",
+      "sha256": "b01086857e9b7893a95f0b48ce74bef7355726c23d252bcce6a2e69014c0aa85"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/gfx.o",
+      "sha256": "6b291163fc1b0ae67b0d67c5328200262bf73d1092a8554ac08966d8683f1b8a"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/gfx_hw.o",
+      "sha256": "4492f72433221c38bc7ba10a2bf3776a99090a6a586ba02689857aad460fd522"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/input_devices.o",
+      "sha256": "9f4600a930d0ead7192d25c94e2fdb62afbf46736aa1165ea2bc94705beaec44"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/main.o",
+      "sha256": "4adbe747e2e50c2eefc87733b72ff3a7dcce83c53070b595e58cf156e4234dbc"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/mini_snprintf.o",
+      "sha256": "ef3ed7fd212a71753011d8929fceaea0af819ee060c54821ea03fffe22955ae7"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/music.o",
+      "sha256": "fdd3dc61cb5ae4012d271433cc071c109f03405ddbbae538d4cdeea92ae6e478"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/pad.o",
+      "sha256": "813d8be5f6eda3c535524e8af0c0694449c255972c8e834a54b8879c15e6e7e2"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/render.o",
+      "sha256": "854ede7b420e7682810ca21b8431b5fd774c9dcf76e1efba2b5e5f0b3a32afc5"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/sound_bank.o",
+      "sha256": "cf94f55ed948dd991227d9b834f6b6cac037e16d9ae5e87046c9789e7d75fb27"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/start.o",
+      "sha256": "03fa80f4078f2aa4b02f37fddeccae97088e48d4ec1ec140e42efb3970a72d49"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/stress_sizes.o",
+      "sha256": "cfc9afbb4c2689da7750726beb2b6d7960c391f3d76d8088f52fc9df2c49c1df"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/syscalls.o",
+      "sha256": "ddd4a7ecf678ae8c0623ae2b40d40144ff845a7d61db11e87a5d47f86b260948"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_art.o",
+      "sha256": "e406cea014591c6365e71cac5de747b378c65a839e1c0a1be3711904113110a2"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_game.o",
+      "sha256": "bbe3f314d06d417112d6edae137acfd5b1f9f19fbb0148b73e13ec09f42053f5"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_pattern.o",
+      "sha256": "729219177adfcd269cdf7c30489406ce0f43effb6934392525ea8b234c9819fb"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_pix.o",
+      "sha256": "eedee703204886df5a0c25b3fa54b4155135106f0e4e07f857a535007cdab742"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_render.o",
+      "sha256": "3c1e8f428dba1a3b8681cb3c3b2783424b2a7745b3ecf1ca62d7debeb8a4ae78"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_sound.o",
+      "sha256": "f6772358fabec4c391ff5be9bf7563026f1cb0179b74a85b4ec63f74f2f0826d"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_stage2.o",
+      "sha256": "e171917ae28c7c72106d4c29939e73be7b3193226d05de20e9770442c18285eb"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/obj_files/th_tab.o",
+      "sha256": "56e45623cfa3d3441953bb8763d773a30fd8d983be84e85c673c6ba72b7838ac"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.asm",
+      "sha256": "66ebb2c116d6cfecc45ef0490996f655cd8a31c416d41edec59fe139b69366f4"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.bin",
+      "sha256": "1e5fa081d094110943cff16564a8cd9063ce45f48e0f76f835f2f91c59795231"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.elf",
+      "sha256": "44f25ac803f10f0d728bbb21960c23a6719e4452c9cb98cee91f7a54618da35e"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.hex",
+      "sha256": "8d605bc442d37ccda4fd9e1da062023385f879f0c8db7126f0ab2d326cea8b06"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.map",
+      "sha256": "643834ee39a3a434ced6bd7d8109c1f85d38066b259fed1138db306493898996"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/audio.o",
+      "sha256": "73c3e628c8924258c8a78af3c08b38d457d6887b6f025175d39868b6b9baac97"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/blit.o",
+      "sha256": "c5a4ca4e72c32c548537b4ad8486edf730950b554d54e33775571ffe7c6f762b"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/control.o",
+      "sha256": "a1797bc361c072faf12b7a6a33ab804813b6cda1b4be6c20af13c3fde9de834d"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/coop_fx.o",
+      "sha256": "084eac6baf979b085c96ec87a23b970c0083154076f3d9cfed8a12a93b720048"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/demo.o",
+      "sha256": "034ebe38010c1b22adddaca9aafa23902fe551bbb2b73941e7c35318dda313ea"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/game.o",
+      "sha256": "125b205b5081b7cb7adf147bd6f1da33d5624e108dfa61645266ec47799fbb34"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/game_sound.o",
+      "sha256": "b01086857e9b7893a95f0b48ce74bef7355726c23d252bcce6a2e69014c0aa85"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/gfx.o",
+      "sha256": "6b291163fc1b0ae67b0d67c5328200262bf73d1092a8554ac08966d8683f1b8a"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/gfx_hw.o",
+      "sha256": "93c948fefd287393740cb1ff099c671a4d2e29255a5c5062856246ca4fcfc3a4"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/input_devices.o",
+      "sha256": "9f4600a930d0ead7192d25c94e2fdb62afbf46736aa1165ea2bc94705beaec44"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/main.o",
+      "sha256": "762fe0e45101e86f7d53dc7144206a90d78fa301121674debcd29b61ccb4fe64"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/mini_snprintf.o",
+      "sha256": "ef3ed7fd212a71753011d8929fceaea0af819ee060c54821ea03fffe22955ae7"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/music.o",
+      "sha256": "fdd3dc61cb5ae4012d271433cc071c109f03405ddbbae538d4cdeea92ae6e478"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/pad.o",
+      "sha256": "813d8be5f6eda3c535524e8af0c0694449c255972c8e834a54b8879c15e6e7e2"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/render.o",
+      "sha256": "2f6a88c82934cd22a6ea84ba7a2553c4f312e3c78b21d1e8687b1ad5cc23915e"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/sound_bank.o",
+      "sha256": "cf94f55ed948dd991227d9b834f6b6cac037e16d9ae5e87046c9789e7d75fb27"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/start.o",
+      "sha256": "03fa80f4078f2aa4b02f37fddeccae97088e48d4ec1ec140e42efb3970a72d49"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/stress_sizes.o",
+      "sha256": "cfc9afbb4c2689da7750726beb2b6d7960c391f3d76d8088f52fc9df2c49c1df"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/syscalls.o",
+      "sha256": "ddd4a7ecf678ae8c0623ae2b40d40144ff845a7d61db11e87a5d47f86b260948"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_art.o",
+      "sha256": "e406cea014591c6365e71cac5de747b378c65a839e1c0a1be3711904113110a2"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_game.o",
+      "sha256": "bbe3f314d06d417112d6edae137acfd5b1f9f19fbb0148b73e13ec09f42053f5"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_pattern.o",
+      "sha256": "729219177adfcd269cdf7c30489406ce0f43effb6934392525ea8b234c9819fb"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_pix.o",
+      "sha256": "eedee703204886df5a0c25b3fa54b4155135106f0e4e07f857a535007cdab742"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_render.o",
+      "sha256": "3c1e8f428dba1a3b8681cb3c3b2783424b2a7745b3ecf1ca62d7debeb8a4ae78"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_sound.o",
+      "sha256": "f6772358fabec4c391ff5be9bf7563026f1cb0179b74a85b4ec63f74f2f0826d"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_stage2.o",
+      "sha256": "e171917ae28c7c72106d4c29939e73be7b3193226d05de20e9770442c18285eb"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/obj_files/th_tab.o",
+      "sha256": "56e45623cfa3d3441953bb8763d773a30fd8d983be84e85c673c6ba72b7838ac"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.c",
+      "sha256": "dfd55cdfe700314554fb8fa2973c97616a9e534dacdc388483dd6bec9ea96d35"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control.h",
+      "sha256": "da356811328dfb7b431396be1d21e094ec9ac51a05c23a721020a576fa65d65b"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/control_runtime.h",
+      "sha256": "06ac2d5ebff389ced71d26ec3db60578e8474043727dc751e32a26f5ab5abd62"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.c",
+      "sha256": "e226da35addd66d00e0f9a0b2eef5fa7a0ce7b6f1f734625875483913777c3a1"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.h",
+      "sha256": "ce1ecc1b855ef6b8cb434ba8a378d971f8d23681a2ba2aa9d508ef96a14e433b"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_runtime.h",
+      "sha256": "7c4600a6149fe16c6f5e4941c18dc8b8bd4ccf3c52f59f5d625248b274793d63"
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/main.c",
+      "sha256": "c6a1c9785b474eb22fd17048886446525ccf5e50ca8c3a0e29eb1547333609ac"
+    },
+    {
+      "path": "README.md",
+      "sha256": "0aeaa3075460363dc23451edb1432d485e8519daba432fda9295ddee3143c2e4"
+    },
+    {
+      "path": "README_EN.md",
+      "sha256": "9be98f6d3732db324b8c63f42b3b777aa77af1f67f2cdec3d47dc672d8fac612"
+    },
+    {
+      "path": "START_HERE.md",
+      "sha256": "21c398584c0636a97e069fc899c2f5869436cb1eb134f6bc908370af9baa37dc"
+    },
+    {
+      "path": "build_software.py",
+      "sha256": "89f246f6767a375865d843ff439a667d61ed79348d3cb128fe68a6f9a866c19f"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz",
+      "sha256": "bd7666a7e590ba4c8e6e8c7c60046ce35b6b47f473e23c93571ac6f63d2de920"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz.part00",
+      "sha256": "41b85cb42002fc4c03c9f8425fb125cc3170bb9b422054f4b158515120375471"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz.part01",
+      "sha256": "c4e2bccf4769aadd3b68bd100ecbf45207b810ccf5d0a75d123dd90296dc53dc"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz.part02",
+      "sha256": "045d7f37a7e4eda0faeef53150e24405a5c751ac8681b0e9b3249b50d78b6ecb"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz.part03",
+      "sha256": "413bd135e7865f7cf06f675f2b7dfb3d5e785ad76c88f26e70f278bfed2d2f5c"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.tar.xz.part04",
+      "sha256": "f9a160d9172464ec19b86ebcd66f2d7ce104c6201647e26bc9c1bf45a5bb9880"
+    },
+    {
+      "path": "dist/Ti60_R5_9_INPUT_CAL.zip",
+      "sha256": "a10951d907d9b876d38488786184534767a15cf7a9fa69a4efcc6da5124cd7be"
+    },
+    {
+      "path": "dist/r59_package_parts.json",
+      "sha256": "2a97b1acfef025511873ab8d1260edfcc28d47b62e96c1e96b4e4b49a51106cb"
+    },
+    {
+      "path": "docs/INPUT_DEVICES.md",
+      "sha256": "0c3cd641a33d8a3a3352da1b14b0c504738ba4a367904d5bfc89a6416d6c9ee2"
+    },
+    {
+      "path": "docs/INPUT_GUIDE.html",
+      "sha256": "cc8b2c8c1ceb7743939eab1b2042470c156ecda5058be5241402b91e2ab544c3"
+    },
+    {
+      "path": "docs/R58_INPUT_SCHEMATIC.html",
+      "sha256": "10964e695928edbb89effef2b93de0cd1cf0b5d7ec6b10595e78526ccf046c81"
+    },
+    {
+      "path": "docs/R59_INPUT_FIX.html",
+      "sha256": "9050620b747f32a4f4dc4a918023414075ee8ac874e55969fbc2e9ff25433d25"
+    },
+    {
+      "path": "docs/R59_INPUT_WIRING.png",
+      "sha256": "67e2958f6f8b6f763d877a4af956a0d7af00ff73c209d492ce0f22f18da807d2"
+    },
+    {
+      "path": "docs/R59_INPUT_WIRING.svg",
+      "sha256": "dea298c18e48a5e4b204f3bd771ac4dace3381637662a22fa3a6842a839ee655"
+    },
+    {
+      "path": "docs/WIRING_DEMO.html",
+      "sha256": "c5549faa0cbd25b8471034690d4e0b792d07d783572f0f8c3c133cc74e6fa8c1"
+    },
+    {
+      "path": "docs/key_layout.json",
+      "sha256": "438d57c65fe6a92872f5419624e16d705a73c77cb9cdcfbf88b05d3808de5f1c"
+    },
+    {
+      "path": "tools/control_panel/__pycache__/r2_presets.cpython-312.pyc",
+      "sha256": "2443fe2bf18440d074ff99fb8869c199c17318f9f1d06c7e2f3c36a665642a5c"
+    },
+    {
+      "path": "tools/control_panel/__pycache__/serial_ports.cpython-312.pyc",
+      "sha256": "4b17c9523945dd87cad280676b48b4a1209217c19eedd53eb6f0ff50241ee39d"
+    },
+    {
+      "path": "tools/control_panel/__pycache__/server.cpython-312.pyc",
+      "sha256": "61f47805bc4c4c940ff0ea37f9d476391e242daf634d7f8d6468b553c5adbdfa"
+    },
+    {
+      "path": "tools/control_panel/app.js",
+      "sha256": "2b1773e51eac71c7a85167a35a419c8e21910998f90691956997f0231d5c46fc"
+    },
+    {
+      "path": "tools/control_panel/index.html",
+      "sha256": "0b897afc8cac3260efdab9ff648b2e9b73c8d6bf637eb03f6ddd91003fa33cf8"
+    },
+    {
+      "path": "tools/control_panel/serial_ports.py",
+      "sha256": "90bddc34df7d5bdbfb425a62f6cdee8a87c6120b031b1158f01c445d6018bc5d"
+    },
+    {
+      "path": "tools/control_panel/server.py",
+      "sha256": "455bcb9dfbc11a7f7e1404ac3d97fd7e9b2414613b33e7243b0c229034125863"
+    },
+    {
+      "path": "tools/control_panel/style.css",
+      "sha256": "2a3771bb7bdd387f9a06e47167d4ad08529a64a09f4d877324d507bdfd8b9974"
+    },
+    {
+      "path": "tools/control_panel/wiring.html",
+      "sha256": "be6b695228f08d1666f85e58448f6f3f2e3de40349f44ac7bce65fc7d1bc330a"
+    },
+    {
+      "path": "tools/restore_r59_package.py",
+      "sha256": "a11b51456f5d5506500bd4289c89f966339a67970aa8c4194c3bf9f6277c6fd4"
+    },
+    {
+      "path": "verification/r5/test_input_devices.c",
+      "sha256": "a2c323ed29801a8a91e0407938419e99ca9db197fb1b08c4cfe852fc6c77c77f"
+    },
+    {
+      "path": "verification/r5/test_main.c",
+      "sha256": "6457ba1cb6b3e950329e22b7d06848602a5fb036464c986a9cc986577629c35c"
+    },
+    {
+      "path": "verification/r5/windows_console/windows_exe_smoke.py",
+      "sha256": "fa491e4b80cd9fca5bc5420fd5b30947b8b861fceafc773899a6d93c114be75f"
+    },
+    {
+      "path": "verification/r5_9/browser_results.json",
+      "sha256": "9b53339ff47d666d745c3e67e25a368064b9cdcd6bcaa6c6e4c2f9fc0d947e22"
+    },
+    {
+      "path": "verification/r5_9/browser_test.js",
+      "sha256": "b17e01805109f4fa9e03fde95002c4bffb7ae855b5dcc093801241eda71e605d"
+    },
+    {
+      "path": "verification/r5_9/build_debug.log",
+      "sha256": "bfe762d2ef7efdbc8d76e62faa2ad55cf9baf268c3c9ec0fea132f6a65c3bd33"
+    },
+    {
+      "path": "verification/r5_9/build_release.log",
+      "sha256": "d22f37535da71612681dc4885205afafdf9a36520acc917237aab64ee84e3877"
+    },
+    {
+      "path": "verification/r5_9/calibration.png",
+      "sha256": "7ae825080fd1d8a173f353d06085502f68d3e410c7be9a3424cc3616e6ccc5f3"
+    },
+    {
+      "path": "verification/r5_9/changed_sources.json",
+      "sha256": "6de189ec57775837d34db1a888f090a0fd37a46b8300442aeefb90805f64b210"
+    },
+    {
+      "path": "verification/r5_9/control.log",
+      "sha256": "c8aeab76af87089e4d7f37ab83ad3b709c9788eee463071123cb983671ed4349"
+    },
+    {
+      "path": "verification/r5_9/control_build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verification/r5_9/controls_export.csv",
+      "sha256": "bb0f77ad9e99b51e8825a689eea992a19fa4bc571ed37353ee50e7853fee68cd"
+    },
+    {
+      "path": "verification/r5_9/delivery_paths.json",
+      "sha256": "615ce1552b36f01c72fc594d2c9c5153d3ce2ae40e12a36a91c0fe8393547771"
+    },
+    {
+      "path": "verification/r5_9/diagnostics_mobile.png",
+      "sha256": "350e77c2e6db770e1c6c2dbd5275ed29d05340ab317366ed0418da825fe65dfc"
+    },
+    {
+      "path": "verification/r5_9/github_paths.json",
+      "sha256": "60e3decaf58953544f7fddff090f37ed8656b364a7213ff280680d81aec4d57e"
+    },
+    {
+      "path": "verification/r5_9/input_devices.log",
+      "sha256": "a7b77940f0cc63d49e67a2f815ed3a03c69c00693252beaabf51759df1ae2edc"
+    },
+    {
+      "path": "verification/r5_9/input_diagnostics.png",
+      "sha256": "b3011f6d8e37e050a1417d56a50b0d962fe3be8adbea2b0ab4c75fd648840559"
+    },
+    {
+      "path": "verification/r5_9/input_hub.log",
+      "sha256": "928948aceb6fb4b7e2ec7a234f5e567e8873e1bec9de8cb24c1b7d3ba94bb853"
+    },
+    {
+      "path": "verification/r5_9/input_log_analysis.json",
+      "sha256": "6a751514903cdafea3122f16cc0f841a335654c282164b8756c85f4ce6775c1f"
+    },
+    {
+      "path": "verification/r5_9/main.log",
+      "sha256": "3606dfa85871024bb21edd64149ff8f2cff5d4f4271fc1a9edd3436389a5150f"
+    },
+    {
+      "path": "verification/r5_9/main_build.log",
+      "sha256": "70c134cf24aa4b3446009e9e8f6201879b4939d149a5935d63dbecfbdabf0321"
+    },
+    {
+      "path": "verification/r5_9/main_uart.log",
+      "sha256": "f6e50388fa3a5f1abd575350d94643c597b48e5a895a18daa53bfe273740c048"
+    },
+    {
+      "path": "verification/r5_9/packages.json",
+      "sha256": "059d9c1d11babd7d3cf15d146bd89c5079e674434be22172a36d663d1cf4e0af"
+    },
+    {
+      "path": "verification/r5_9/pty_commands.json",
+      "sha256": "de7d33a218609816ca0b637a7e0e5d5daa87ba00c3912785e4b3be6a5482c6d3"
+    },
+    {
+      "path": "verification/r5_9/pty_console_fixture.py",
+      "sha256": "60537da32e16e567a5c3c817f6765b43110e3ec25e884c9264709596f642e4c8"
+    },
+    {
+      "path": "verification/r5_9/run_browser_check.py",
+      "sha256": "2399d02cf2a31cb7a99d15cd689b8b54d46068ffa85d6d9f76a10bc880b299c2"
+    },
+    {
+      "path": "verification/r5_9/test_input_calibration.c",
+      "sha256": "ee77a230600c399877106f10005b26a6f39c1af63ede1c6fa9f778de069b5617"
+    },
+    {
+      "path": "verification/r5_9/test_protocol.py",
+      "sha256": "4def8c56f5a8518ef244f0e2063e13e3ae199100d4519bdc5ec1c799c0830949"
+    },
+    {
+      "path": "verification/r5_9/validation.json",
+      "sha256": "f033c9406406fa573cc02563b03322aefdf4b819bd57c175985da254972049a4"
+    },
+    {
+      "path": "verification/r5_9/wiring.png",
+      "sha256": "67e2958f6f8b6f763d877a4af956a0d7af00ff73c209d492ce0f22f18da807d2"
+    }
+  ],
+  "preserved": {
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/game_ti.launch": "47e240834f26b37271ea355fb3150fc81c9fbf678a88164802fc47862d70a1ca",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/game_trion.launch": "42aef658a8c33d825420faf8be44b76e0864d232f17f1d9d282ee545ab4e00bc",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/.cproject": "4e2cac6967667e95b1b87bcc675c4eb9d36579042fd452553b4ecda9bfb0bdcb",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/game_tz.launch": "9c3873e2219738dae514c1cda589061af8ff27d62bdc424a1ac229b001aac121",
+    "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/.project": "82ea0dd03f471118aafc8e60c021ca67e37cfabf79a6a29ede4cf7f0ae7ca3a6",
+    "BOARD_TEST/r5_8/ti60_r5_8_release.launch": "1c5bd2fba686ce07dacdb23b22a2298781c2f497469a14de85d3748f39bed29c",
+    "BOARD_TEST/r5_8/ti60_r5_8_debug.elf": "78cfba18a8e5ccf62b167c11a699dde5b7e38e09f75b3eb0f6bdc6a0d11bf0fe",
+    "BOARD_TEST/r5_8/manifest.json": "cc8f489aa9043a5da3a1a62b90d40c9be141c35aaef64399f105abdcfbc7650c",
+    "BOARD_TEST/r5_8/ti60_r5_8.bit": "dced75cde6c7d3d80d0a4941b00d0695d54511ee4d587b514c60bfea7c8e52c4",
+    "BOARD_TEST/r5_8/README.txt": "986622fc7db6ac274a6df8b98b30f444d5df1b3efe7b40efe4e0111115773fa7",
+    "BOARD_TEST/r5_8/ti60_r5_8_debug.launch": "e867e852bab323201ed13a690c51bd4fa58d8e77a8fe159ed45fa248bf9dc95b",
+    "BOARD_TEST/r5_8/ti60_r5_8_release.elf": "29240f6b909b25cd6dbace4185aba89bac579f366ebeb52ebd2660164b37c55e",
+    "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.bit": "dced75cde6c7d3d80d0a4941b00d0695d54511ee4d587b514c60bfea7c8e52c4"
+  },
+  "physical_board_programmed": false,
+  "serial_device_opened": false,
+  "hdmi_rtl_changed": false
+}

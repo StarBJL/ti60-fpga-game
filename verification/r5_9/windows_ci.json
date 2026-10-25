@@ -1,0 +1,70 @@
+{
+  "run_id": 40184863251,
+  "commit": "83bae3d70126e2e892dbb370e8e1086e9ee22998",
+  "status": "success",
+  "url": "https://github.com/18971355314bjl-gif/ti60-fpga-game/actions/runs/40184863251",
+  "artifacts": [
+    {
+      "id": 12595552231,
+      "name": "Ti60-R5-Windows-Console",
+      "bytes": 8865710,
+      "sha256": "sha256:f7a3cce07c6a7fbb8d2ef21fa4690652fc895c8e7be329d48efaaf8ca4b115ee",
+      "expired": false
+    }
+  ],
+  "checks": [
+    {
+      "name": "Set up job",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/checkout@v4",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/setup-python@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify native CMD bootstrap",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build standalone Windows executable",
+      "conclusion": "success"
+    },
+    {
+      "name": "Protocol and Windows branch checks",
+      "conclusion": "success"
+    },
+    {
+      "name": "R2 preset acknowledgement and telemetry checks",
+      "conclusion": "success"
+    },
+    {
+      "name": "Input calibration and diagnostic protocol",
+      "conclusion": "success"
+    },
+    {
+      "name": "Packaged executable HTTP smoke test",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/upload-artifact@v4",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/setup-python@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/checkout@v4",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "conclusion": "success"
+    }
+  ],
+  "local_exe_downloaded": false
+}
