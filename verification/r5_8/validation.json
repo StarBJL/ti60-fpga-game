@@ -399,5 +399,11 @@
   "physical_board_programmed": false,
   "physical_monitor_retested": false,
   "480p_hot_switch_implemented": false,
-  "windows_ci_at_packaging": "pending"
+  "windows_ci_at_packaging": "pending",
+  "windows_ci": {
+    "status": "completed",
+    "conclusion": "success",
+    "run_id": 40177173827,
+    "packaged_wiring_page": true
+  }
 }

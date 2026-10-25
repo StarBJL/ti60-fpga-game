@@ -1,0 +1,22 @@
+{
+  "implementation_commit": "79584ebe06a9746eb8c8c795c0fa3c742156bfa8",
+  "repository": "https://github.com/18971355314bjl-gif/ti60-fpga-game",
+  "windows_ci": {
+    "id": 40177173827,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/18971355314bjl-gif/ti60-fpga-game/actions/runs/40177173827",
+    "artifacts": [
+      {
+        "id": 12592797183,
+        "name": "Ti60-R5-Windows-Console",
+        "bytes": 8864013,
+        "digest": "sha256:883cc4bf3a2f28b1f896f59d69aaf966c829a3d8fa6d591557306d1e4ce99a28"
+      }
+    ]
+  },
+  "native_windows_wiring_page_verified": true,
+  "github_restore": "python tools/restore_r58_package.py",
+  "physical_board_retested": false,
+  "physical_monitor_retested": false
+}

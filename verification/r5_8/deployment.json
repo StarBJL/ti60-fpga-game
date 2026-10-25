@@ -767,6 +767,10 @@
       "sha256": "bd0d92c454ff8f726d3139b24ca45796bfb976b2792d9649d04b879dfe76f84b"
     },
     {
+      "path": "verification/r5_8/github_delivery.json",
+      "sha256": "ffc2dff05f65ff4e29154b92fca3c13f174e88fa3f999038707b68b3d2edda2b"
+    },
+    {
       "path": "verification/r5_8/link_restart/build.log",
       "sha256": "5da989c9ded0509d124e04f9f30b14d09a1f3c390ec974fe73fbdc812ba0224d"
     },
@@ -904,7 +908,7 @@
     },
     {
       "path": "verification/r5_8/validation.json",
-      "sha256": "2dff4dc3e7cfa6c168563333176c204b076d7c72dd42e5be9b64ca3835296623"
+      "sha256": "826a3132ac1c45c77bd4fba2840116b7c99d6f87c4247de3a6d4098278b04643"
     },
     {
       "path": "verification/r5_8/video_checks.json",
