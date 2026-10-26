@@ -21,7 +21,7 @@ def main():
     lines = queue.Queue()
     result = {'platform': sys.platform, 'windows_executed': True, 'serial_device_opened': False, 'passed': False}
     with tempfile.TemporaryDirectory(prefix='Ti60 中文 路径 ') as temporary:
-        process = subprocess.Popen([str(executable), '--port', '0', '--log-root', temporary],
+        process = subprocess.Popen([str(executable), '--no-browser', '--port', '0', '--log-root', temporary],
                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                    text=True, encoding='utf-8', errors='replace',
                                    env={**os.environ, 'PYTHONUTF8':'1', 'PYTHONIOENCODING':'utf-8'})
@@ -44,7 +44,7 @@ def main():
                 with urllib.request.urlopen(base + asset, timeout=5) as response:
                     payload=response.read()
                     assert response.status == 200 and payload, asset
-                    if asset=='/':assert b'matrixCalBegin' in payload and b'keyboardByteTail' in payload
+                    if asset=='/':assert b'matrixCalBegin' in payload and b'keyboardByteTail' in payload and b'r6State' in payload
                     if asset=='/wiring':assert b'R5.9' in payload and b'J7-20' in payload
             with urllib.request.urlopen(base + '/api/state', timeout=5) as response:
                 state = json.load(response)

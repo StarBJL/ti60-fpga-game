@@ -213,7 +213,12 @@ function render(data){
     $("party"+p+"Input").textContent=state[`p${p}_held`]===undefined?"等待独立输入状态":`逻辑位置 (${state[`p${p}_x`]}, ${state[`p${p}_y`]}) · 按键 ${state[`p${p}_held`]}`;
   }
   $("engineState").textContent=engineText(state);
-  const degraded=state.accel_supported&&(!state.hw||state.submit_mode!==2||!state.band||!state.cache||!state.kpath||!state.seed_table||!state.seed_build||!state.overlap||(state.scene===2&&(!state.motion||!state.table)));
+  const r6=connected&&compatible&&state.pipeline_supported===1&&!configuring;
+  for(const b of document.querySelectorAll('[data-r6]'))b.disabled=!r6||(b.dataset.r6==='stage'&&state.scene!==0)||(b.dataset.r6==='ftab'&&!state.ftab)||(b.dataset.r6==='blend'&&!state.kblend)||(['square','ftab'].includes(b.dataset.r6)&&state.scene!==2);
+  $("thStressStages").classList.toggle('hidden',currentScene!==0);
+  $("r6State").textContent=state.pipeline_supported?`VSync 流水 ${state.vpipe?'开':'关'} · Alpha ${['八像素','两像素','K关闭'][state.kmode]??'未知'} · 方块 ${['逐项','CPU＋SQTAB','CPU＋FTAB','硬件＋SQTAB'][state.square_path]??'未知'} · 东方第 ${Number(state.th_stage??0)+1} 关 · 敌弹 ${state.seed_bytes??'—'} B / 热数据 ${state.th_hot_bytes??'—'} B`:'当前固件未报告 R6 能力；新控件暂不可用。';
+
+  const degraded=state.accel_supported&&(!state.hw||state.submit_mode!==2||!state.band||!state.cache||!state.kpath||!state.seed_table||!state.seed_build||!state.overlap||(state.scene===2&&((!state.motion&&state.square_path!==2)||!state.table)));
   $("engineWarning").textContent=degraded?"当前存在关闭的加速项。比较稳定 60 帧上限前，可先恢复加速配置，并保持场景、尺寸、Alpha 和同步条件一致。":state.accel_supported?"加速条件已报告。1080P 输出为 30 Hz；重叠是否实际生效由场景和分辨率决定。":"当前固件未报告完整加速项，无法判定测试基线。";
   $("engineWarning").classList.toggle("degraded",!!degraded);
   const on=x=>x===undefined?"未知":x?"开":"关";

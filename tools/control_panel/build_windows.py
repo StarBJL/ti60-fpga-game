@@ -26,7 +26,7 @@ def main():
                         '--distpath', str(output), '--workpath', str(root / 'build/control-windows'),
                         str(here / 'Ti60Control.spec')], cwd=root, check=True)
         (output / 'Start_Ti60Control.cmd').write_bytes(b'@echo off\r\n"%~dp0Ti60Control.exe" --open %*\r\nif errorlevel 1 pause\r\n')
-        (output / 'README.txt').write_text('Ti60 R5 Windows console\nRun Start_Ti60Control.cmd to open the browser.\nLogs: %LOCALAPPDATA%\\Ti60R5\\logs\nThe console does not open a serial device until you click Connect.\nClose the console window or press Ctrl+C to stop it.\n', encoding='utf-8')
+        (output / 'README.txt').write_text('Ti60 R6 Windows console\nDouble-click Ti60Control.exe to open the browser. No Python installation is required.\nStart_Ti60Control.cmd is also available for command-line options.\nLogs: %LOCALAPPDATA%\\Ti60R5\\logs\nThe console does not open a serial device until you click Connect.\nClose the console window or press Ctrl+C to stop it.\n', encoding='utf-8')
         print('Windows executable created:', output / 'Ti60Control.exe')
         return 0
     except (OSError, subprocess.CalledProcessError) as exc:
