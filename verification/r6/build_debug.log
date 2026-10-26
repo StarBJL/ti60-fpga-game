@@ -1,0 +1,34 @@
+CC src/audio.c
+CC src/blit.c
+CC src/control.c
+CC src/coop_fx.c
+CC src/demo.c
+CC src/game.c
+CC src/game_sound.c
+CC src/gfx.c
+CC src/gfx_hw.c
+CC src/input_devices.c
+CC src/main.c
+CC src/mini_snprintf.c
+CC src/music.c
+CC src/pad.c
+CC src/render.c
+CC src/stress_sizes.c
+CC src/th_art.c
+CC src/th_game.c
+CC src/th_pattern.c
+CC src/th_pix.c
+CC src/th_render.c
+CC src/th_sound.c
+CC src/th_stage2.c
+CC src/th_tab.c
+CC ../common/start.S
+CC sound/sound_bank.S
+CC syscalls.c
+LD game
+Memory region         Used Size  Region Size  %age Used
+             ram:     9066352 B        15 MB     57.64%
+             snd:     7124736 B        16 MB     42.47%
+             art:    18086784 B        32 MB     53.90%
+             hot:         144 B        512 B     28.12%
+          stress:    31248180 B        32 MB     93.13%

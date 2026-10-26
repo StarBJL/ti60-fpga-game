@@ -1,0 +1,9 @@
+VERIFIED PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/sound/sound_bank.bin
+VERIFIED BOARD_TEST/r6/ti60_r6.bit
+VERIFIED PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.bit
+VERIFIED BOARD_TEST/r6/ti60_r6_debug.elf
+VERIFIED PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.elf
+VERIFIED BOARD_TEST/r6/ti60_r6_release.elf
+VERIFIED PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.elf
+VERIFIED PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.v
+8 file(s); 0 failed; verification only

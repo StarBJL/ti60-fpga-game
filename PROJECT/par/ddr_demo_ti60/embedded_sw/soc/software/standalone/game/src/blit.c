@@ -22,10 +22,16 @@ static inline uint32_t blit_time(void) { return clint_getTimeLow(SYSTEM_CLINT_CT
 
 BlitState blit_st;
 uint32_t blit_slot_src[BLIT_L_SLOTS];
+uint8_t blit_slot_ga[BLIT_L_SLOTS];
 uint32_t blit_slot_size[BLIT_L_SLOTS];
 
 /* DDR command list (the engine DMA-reads it; the CPU only writes it) */
-static uint32_t blit_list_buf[BLIT_LIST_WORDS] __attribute__((aligned(256)));
+#ifdef __riscv
+#define DDR_LIST __attribute__((section(".artbss"),aligned(256)))
+#else
+#define DDR_LIST __attribute__((aligned(256)))
+#endif
+static uint32_t blit_list_buf[BLIT_LIST_WORDS] DDR_LIST;
 
 static inline uint32_t lst_addr(const uint32_t *p) { return (uint32_t)(uintptr_t)p; }
 
@@ -303,6 +309,22 @@ void blit_band_set_koff(int off)
     blit_st.band_geo = 0u;                     /* 下一帧重写 BAND_GEO */
 }
 
+int blit_band_set_kmode(int mode)
+{
+    if (!blit_st.has_band) return 2;
+    if (mode == 1 && !blit_st.has_kblend) mode = 0;   /* 旧位流：半透明本来就走窄通路 */
+    blit_wait();
+    blit_st.band_koff = mode >= 2 ? BLIT_BAND_KOFF : mode == 1 ? BLIT_BAND_KBOFF : 0u;
+    blit_st.band_geo = 0u;
+    return blit_band_kmode();
+}
+
+int blit_band_kmode(void)
+{
+    return (blit_st.band_koff & BLIT_BAND_KOFF) ? 2 :
+           ((blit_st.band_koff & BLIT_BAND_KBOFF) || !blit_st.has_kblend) ? 1 : 0;
+}
+
 int blit_band_begin(uint32_t fb, uint32_t pitch, uint32_t rows)
 {
     uint32_t geo, *p;
@@ -431,6 +453,8 @@ int blit_init(void)
     /* 分带合成（CAPS[31]）：默认关，由应用 blit_set_band(1) 打开（要先进 LIST 模式） */
     blit_st.has_band = blit_st.has_list && (blit_rd(BLIT_R_CAPS) & BLIT_CAPS_BAND) != 0;
     /* 加法混合（CAPS2，0xBC）：旧位流这个地址读出 0 */
+    blit_st.has_kblend=(blit_rd(BLIT_R_CAPS2)&BLIT_CAPS2_KBLEND)!=0;
+    blit_st.has_ftab=(blit_rd(BLIT_R_CAPS2)&BLIT_CAPS2_FTAB)!=0;
     blit_st.has_add = (blit_rd(BLIT_R_CAPS2) & BLIT_CAPS2_ADD) != 0;
     {   /* 分带窗口大小（2026-10-21）：720p 位流 2560 字节 / 行、最多 45 带；旧位流 1280 / 32 */
         uint32_t c2 = blit_rd(BLIT_R_CAPS2);

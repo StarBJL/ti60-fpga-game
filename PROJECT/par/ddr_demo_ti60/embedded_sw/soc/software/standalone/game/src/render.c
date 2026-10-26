@@ -498,10 +498,10 @@ int render_seed_table=1;
 static int draw_seeds(Gfx *r,const Game *g,int batch) {
     const Sprite *seeds=g->limit_mode?hostile_sprites:normal_seeds;
     int half=game_seed_half(g),size=game_seed_extent(g);
-    int nh=game_hostile_used(g),i,k=0,drawn=0; const Bullet *hp=nh?game_hostile_at(g,0):0;  /* contiguous pool, slots >= nh are free */
+    int nh=game_hostile_used(g),i,k=0,drawn=0; const Seed *hp=nh?game_hostile_at(g,0):0;  /* contiguous pool, slots >= nh are free */
     if(!batch) {
         for(i=0;i<nh;i++) if(hp[i].active) {
-            const Bullet *b=&hp[i]; int x=b->x/FIX,y=b->y/FIX;
+            const Seed *b=&hp[i]; int x=b->x/FIX,y=b->y/FIX;
             int style=b->style>=0 && b->style<4 ? b->style : 0;
             gfx_blit(r,x-half,y-half,&seeds[style],1);
             ++drawn;
@@ -520,7 +520,7 @@ static int draw_seeds(Gfx *r,const Game *g,int batch) {
         }
     }
     for(i=0;i<nh;i++) if(hp[i].active) {
-        const Bullet *b=&hp[i]; int x=b->x/FIX-half,y=b->y/FIX-half;
+        const Seed *b=&hp[i]; int x=b->x/FIX-half,y=b->y/FIX-half;
         if(x<=-size || y<=-size || x>=SCREEN_W || y>=SCREEN_H) continue;   /* off screen: gfx_blit draws nothing either */
         seed_list[k].x=(int16_t)x; seed_list[k].y=(int16_t)y;
         seed_list[k].sprite=b->style>=0 && b->style<4 ? b->style : 0;
@@ -540,7 +540,7 @@ static Sprite tiny_sprites[4];
 
 int render_seed_part(Gfx *r,const Game *g,int part) {
     int half=game_seed_half(g),size=game_seed_extent(g);
-    int nh=game_hostile_used(g),i,k=0,n=0,sum=0; const Bullet *hp=nh?game_hostile_at(g,0):0;
+    int nh=game_hostile_used(g),i,k=0,n=0,sum=0; const Seed *hp=nh?game_hostile_at(g,0):0;
     switch(part) {
     case SEED_PART_PREP:            /* first 128 on-screen seeds -> prof_list, total count -> prof_n */
         for(i=0;i<4;i++) {
@@ -548,7 +548,7 @@ int render_seed_part(Gfx *r,const Game *g,int part) {
             tiny_sprites[i].pixels=g->limit_mode?&hostile_pixels[i][4*9+4]:&normal_seed_pixels[i][8*17+8]; tiny_sprites[i].alpha=0;
         }
         for(i=0;i<nh;i++) if(hp[i].active) {
-            const Bullet *b=&hp[i]; int x=b->x/FIX-half,y=b->y/FIX-half;
+            const Seed *b=&hp[i]; int x=b->x/FIX-half,y=b->y/FIX-half;
             if(x<=-size || y<=-size || x>=SCREEN_W || y>=SCREEN_H) continue;
             if(k<SEED_CHUNK) {
                 prof_list[k].x=(int16_t)x; prof_list[k].y=(int16_t)y;
@@ -560,7 +560,7 @@ int render_seed_part(Gfx *r,const Game *g,int part) {
         return nh;
     case SEED_PART_WALK:            /* pool walk + on-screen test, no stores */
         for(i=0;i<nh;i++) if(hp[i].active) {
-            const Bullet *b=&hp[i]; int x=b->x/FIX-half,y=b->y/FIX-half;
+            const Seed *b=&hp[i]; int x=b->x/FIX-half,y=b->y/FIX-half;
             if(x<=-size || y<=-size || x>=SCREEN_W || y>=SCREEN_H) continue;
             sum+=x+y+b->style; ++n;
         }
@@ -568,7 +568,7 @@ int render_seed_part(Gfx *r,const Game *g,int part) {
         return n;
     case SEED_PART_BUILD:           /* walk + fill seed_list, nothing submitted */
         for(i=0;i<nh;i++) if(hp[i].active) {
-            const Bullet *b=&hp[i]; int x=b->x/FIX-half,y=b->y/FIX-half;
+            const Seed *b=&hp[i]; int x=b->x/FIX-half,y=b->y/FIX-half;
             if(x<=-size || y<=-size || x>=SCREEN_W || y>=SCREEN_H) continue;
             seed_list[k].x=(int16_t)x; seed_list[k].y=(int16_t)y;
             seed_list[k].sprite=b->style>=0 && b->style<4 ? b->style : 0;

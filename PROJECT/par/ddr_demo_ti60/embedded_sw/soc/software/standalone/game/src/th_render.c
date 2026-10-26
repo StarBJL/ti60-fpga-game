@@ -221,18 +221,42 @@ static void draw_player(const Th *t, Gfx *g, int alpha)
     for(int id=0;id<nplayers;id++)draw_player_body(t,g,alpha,th_player(t,id),id);
 }
 
-static void draw_bullets(const Th *t, Gfx *g)
+/* 第 1 关（2026-10-26）：光晕（A8，在子弹下面）-> 子弹（每桶：成熟的一张表 + 三档淡入表，整表全局 alpha）
+ * -> 发射光（A8 x 淡出）。alpha 特效关掉时淡入表照常不透明画，光晕 / 发射光不画。 */
+static void draw_bullets(const Th *t, Gfx *g, int alpha)
 {
     static const uint8_t order[TBK_COUNT] = { TBK_RICE0, TBK_RICE1, TBK_KUNAI0, TBK_KUNAI1, TBK_STAR,
                                               TBK_PELLET, TBK_ORB, TBK_BIG, TBK_BUBBLE };
-    const int d = t->dbuf;
-    int j;
+    const int d = t->dbuf, fade = t->stage == 0;
+    int j, lv, i;
+    if (fade && alpha) {
+        for (i = 0; i < t->hcount[d]; i++) {
+            const ThHalo *h = &t->halo[d][i];
+            const Sprite *s = &th_spr_halo[h->size][h->color];
+            gfx_blit_alpha(g, h->x - s->width / 2, h->y - s->height / 2, s, 0, h->alpha);
+        }
+    }
     for (j = 0; j < TBK_COUNT; j++) {
         const int b = order[j], n = t->dcount[d][b], h = t->diff==TH_STRESS?th_stress_half[b]:th_bk_hv[b];
-        if (!n) continue;
-        gfx_blit_table(g, t->diff==TH_STRESS?th_stress_bspr[b]:th_bspr[b], th_bspr_n[b], t->draw[d][b], n,
-                       b == TBK_BIG || b == TBK_BUBBLE ? GFX_BLIT_ADD : GFX_BLIT_KEY,
-                       (uint32_t)n * (uint32_t)(4 * h * h));
+        const int mode = b == TBK_BIG || b == TBK_BUBBLE ? GFX_BLIT_ADD : GFX_BLIT_KEY;
+        if (n) gfx_blit_table(g, t->diff==TH_STRESS?th_stress_bspr[b]:th_bspr[b], th_bspr_n[b], t->draw[d][b], n, mode, (uint32_t)n * (uint32_t)(4 * h * h));
+        if (!fade) continue;
+        for (lv = 0; lv < TH_FADE_LV; lv++) {                /* 刚出生的子弹：整表半透明 */
+            const int m = t->fcount[d][lv][b];
+            if (!m) continue;
+            if (alpha) gfx_blit_table_alpha(g, t->diff==TH_STRESS?th_stress_bspr[b]:th_bspr[b], th_bspr_n[b], t->fdraw[d][lv][b], m, mode,
+                                            th_fade_alpha[lv], (uint32_t)m * (uint32_t)(4 * h * h));
+            else       gfx_blit_table(g, t->diff==TH_STRESS?th_stress_bspr[b]:th_bspr[b], th_bspr_n[b], t->fdraw[d][lv][b], m, mode,
+                                      (uint32_t)m * (uint32_t)(4 * h * h));
+        }
+    }
+    if (fade && alpha) {
+        for (i = 0; i < t->nblooms; i++) {
+            const ThBloom *bl = &t->blooms[i];
+            const Sprite *s = &th_spr_halo[bl->size][bl->color];
+            gfx_blit_alpha(g, SX(bl->x) - s->width / 2, SY(bl->y) - s->height / 2, s, 0,
+                           230 * bl->life / TH_BLOOM_LIFE);
+        }
     }
 }
 
@@ -251,11 +275,30 @@ static void draw_phantoms(const Th *t, Gfx *g, int alpha)
 
 /* lasers: beads of additive glow along the beam (any angle, batched), translucent
  * warning dots, moonlight pillars as alpha + additive fills, comets with tails */
+/* 流星（压力模式乘倍率后可上千颗）：头 + 拖尾写进整表（gfx_blit_table，一条 TAB，K 通路加法），
+ * 不再一颗一条列表命令。引擎画这一帧时 CPU 已经在录下一帧，所以和弹幕表一样按 t->dbuf 三套轮换。 */
+static GfxItem comet_head[TH_DRAW_BUFS][TH_MAX_LASERS];
+static GfxItem comet_tail[TH_DRAW_BUFS][TH_MAX_LASERS * TH_COMET_TAIL];
+static inline void put_item(GfxItem *it, int x, int y, int spr)
+{
+    gfx_item_xy(it, x, y);                         /* 一次 32 位 store（见 gfx.h） */
+    it->sprite = spr;
+}
+/* 整表要求每项完全在目标内（引擎 / gfx_blit_list_inside 都不裁剪）：出界的一项改走会裁剪的列表 */
+static inline void comet_item(GfxItem *tab, int *nt, GfxItem *lst, int *nl, int x, int y, int spr, int size, int gw, int gh)
+{
+    if ((unsigned)x <= (unsigned)(gw - size) && (unsigned)y <= (unsigned)(gh - size)) put_item(&tab[(*nt)++], x, y, spr);
+    else if (*nl < 1500) put_item(&lst[(*nl)++], x, y, spr);
+}
+
 static void draw_lasers(const Th *t, Gfx *g, int alpha)
 {
     static GfxItem lz[4][1536];
     static const uint8_t kinds[3] = { TF_GLOW16, TF_GLOW32, TF_GLOW64 }, hf[3] = { 8, 16, 32 };
-    int n[4] = { 0, 0, 0, 0 }, i, k;
+    int n[4] = { 0, 0, 0, 0 }, i, k, nh = 0, nt = 0;
+    GfxItem *const ch = comet_head[t->dbuf], *const ct = comet_tail[t->dbuf];
+    const int gw = g->width, gh = g->height;
+    const int s32 = th_spr_fx[TF_GLOW32][0].width, s16 = th_spr_fx[TF_GLOW16][0].width;   /* 正方形 */
     for (i = 0; i < t->nlasers; i++) {
         const ThLaser *l = &t->lasers[i];
         const int warn = l->t < l->warn && l->kind != TL_COMET;
@@ -273,12 +316,11 @@ static void draw_lasers(const Th *t, Gfx *g, int alpha)
         {
             const int32_t cs = th_cos(l->ang), sn = th_sin(l->ang);
             if (l->kind == TL_COMET) {                       /* head + tail backwards */
-                if (n[1] < 1500) { lz[1][n[1]].x = (int16_t)(SX(l->x) - V(16)); lz[1][n[1]].y = (int16_t)(SY(l->y) - V(16)); lz[1][n[1]++].sprite = l->color; }
-                for (k = 0; k < 8 && n[0] < 1500; k++) {
+                comet_item(ch, &nh, lz[1], &n[1], SX(l->x) - V(16), SY(l->y) - V(16), l->color, s32, gw, gh);
+                for (k = 0; k < TH_COMET_TAIL; k++) {
                     const int d = k * 6;                     /* playfield px; (d * cs) >> 6 = Q8 */
-                    lz[0][n[0]].x = (int16_t)(SX(l->x - ((d * cs) >> 6)) - V(8));
-                    lz[0][n[0]].y = (int16_t)(SY(l->y - ((d * sn) >> 6)) - V(8));
-                    lz[0][n[0]++].sprite = k < 2 ? TC_WHITE : l->color;
+                    comet_item(ct, &nt, lz[0], &n[0], SX(l->x - ((d * cs) >> 6)) - V(8), SY(l->y - ((d * sn) >> 6)) - V(8),
+                               k < 2 ? TC_WHITE : l->color, s16, gw, gh);
                 }
                 continue;
             }
@@ -306,6 +348,9 @@ static void draw_lasers(const Th *t, Gfx *g, int alpha)
             }
         }
     }
+    /* 流星先画（纯加法，和后面的列表谁先谁后结果一样） */
+    if (nt) gfx_blit_table(g, th_spr_fx[TF_GLOW16], TC_COLORS, ct, nt, GFX_BLIT_ADD, (uint32_t)nt * (uint32_t)(s16 * s16));
+    if (nh) gfx_blit_table(g, th_spr_fx[TF_GLOW32], TC_COLORS, ch, nh, GFX_BLIT_ADD, (uint32_t)nh * (uint32_t)(s32 * s32));
     for (k = 0; k < 3; k++) gfx_blit_list(g, th_spr_fx[kinds[k]], lz[k], n[k], GFX_BLIT_ADD);
     gfx_blit_list(g, th_spr_fx[TF_GLOW16], lz[3], n[3], GFX_BLIT_ADD);
 }
@@ -456,14 +501,15 @@ static void draw_frame(const Th *t, Gfx *g, ThRenderInfo info)
 
 static void draw_menus(const Th *t, Gfx *g)
 {
-    const char *diffs[TH_MENU_N] = { "开始 普通", "开始 极难", "第二关练习", 0 };
-    char sl[32];
+    const char *diffs[TH_MENU_N] = { "开始 普通", "开始 极难", "第二关练习", 0, 0 };
+    char sl[32],sl2[32];
     static const char *const pause[3] = { "继续", "重新开始", "标题" };
     const int cx = TH_PF_X + TH_PF_W / 2;
     char s[160];
     int i;
-    snprintf(sl, sizeof sl, "压力 X%d %s", th_stress_levels[t->stress_level], t->stress_auto ? "自动" : "");
-    diffs[3] = sl;
+    snprintf(sl,sizeof sl,"压力 1 X%d %s",th_stress_levels[t->stress_level],t->stress_auto?"自动":"");
+    snprintf(sl2,sizeof sl2,"压力 2 X%d %s",th_stress_levels[t->stress_level],t->stress_auto?"自动":"");
+    diffs[3]=sl;diffs[4]=sl2;
     if (t->mode == TH_TITLE) {
         fa(g, TH_PF_X, TH_PF_Y, TH_PF_W, TH_PF_H, 0, 96);
         label_c(g, cx, 90, "东方", 6, C_GOLD);
@@ -504,7 +550,7 @@ void th_render(const Th *t, Gfx *g, ThRenderInfo info)
         draw_items(t, g);
         draw_player(t, g, alpha);
     }
-    draw_bullets(t, g);
+    draw_bullets(t, g, alpha);
     if (t->nphantoms) draw_phantoms(t, g, alpha);
     if (t->nlasers) draw_lasers(t, g, alpha);
     if (t->mode == TH_PLAY || t->mode == TH_PAUSE) {

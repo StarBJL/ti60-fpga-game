@@ -1,0 +1,208 @@
+{
+  "old_bytes": 10123520,
+  "new_bytes": 7124736,
+  "bgm_count": 10,
+  "sfx_count": 23,
+  "entries": {
+    "shot": {
+      "frames": 960,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "enemy_fire": {
+      "frames": 1200,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "hit": {
+      "frames": 720,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "kill": {
+      "frames": 6000,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "graze": {
+      "frames": 960,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "item": {
+      "frames": 1200,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "powerup": {
+      "frames": 7200,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "extend": {
+      "frames": 8880,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "bomb_get": {
+      "frames": 4800,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "bomb": {
+      "frames": 28800,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "death": {
+      "frames": 16800,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "spell": {
+      "frames": 12000,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "capture": {
+      "frames": 9600,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "phase": {
+      "frames": 12000,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "boss_dead": {
+      "frames": 48000,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "warning": {
+      "frames": 18000,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "timeout": {
+      "frames": 1200,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "select": {
+      "frames": 720,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "ok": {
+      "frames": 1920,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "pause": {
+      "frames": 2880,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "clear": {
+      "frames": 16800,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "over": {
+      "frames": 28800,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "laser": {
+      "frames": 9600,
+      "rate": 24000,
+      "loop": 4294967295,
+      "format": 1
+    },
+    "bgm_title": {
+      "frames": 407076,
+      "rate": 22050,
+      "loop": 0,
+      "format": 1
+    },
+    "bgm_menu2": {
+      "frames": 441000,
+      "rate": 22050,
+      "loop": 0,
+      "format": 1
+    },
+    "bgm_stage1": {
+      "frames": 294000,
+      "rate": 22050,
+      "loop": 0,
+      "format": 1
+    },
+    "bgm_stage2": {
+      "frames": 330750,
+      "rate": 22050,
+      "loop": 0,
+      "format": 1
+    },
+    "bgm_boss1": {
+      "frames": 264600,
+      "rate": 22050,
+      "loop": 0,
+      "format": 1
+    },
+    "bgm_boss2": {
+      "frames": 278526,
+      "rate": 22050,
+      "loop": 0,
+      "format": 1
+    },
+    "bgm_garden": {
+      "frames": 364965,
+      "rate": 22050,
+      "loop": 0,
+      "format": 1
+    },
+    "bgm_garden2": {
+      "frames": 352800,
+      "rate": 22050,
+      "loop": 0,
+      "format": 1
+    },
+    "bgm_stress": {
+      "frames": 282240,
+      "rate": 22050,
+      "loop": 0,
+      "format": 1
+    },
+    "bgm_stress2": {
+      "frames": 306782,
+      "rate": 22050,
+      "loop": 0,
+      "format": 1
+    }
+  },
+  "sha256": "d554a982ccf64be6f261d0b68e39b12af8af0a4247300cc975b62d353b2279cc",
+  "passed": true
+}

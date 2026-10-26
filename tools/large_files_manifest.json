@@ -1,52 +1,317 @@
 {
   "version": 1,
-  "reason": "GitHub REST rejected exact-size 55.9 MB text tree and 43.7 MB binary blob requests with HTTP 422 input too large; original files are preserved losslessly.",
+  "reason": "R6 exact binaries and generated netlist split into <=2 MiB gzip parts for the authenticated GitHub API. Run tools/restore_large_files.py after cloning.",
   "files": [
     {
-      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.v",
-      "size": 55888638,
-      "sha256": "48f438f482e466066dc774e4e2a1075fa7720f90f98ca05dc249c670bda47956",
-      "git_sha": "c9df440a0ab372b441ac28cbbb9d058d3e3cddf5",
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/sound/sound_bank.bin",
+      "size": 7124736,
+      "sha256": "d554a982ccf64be6f261d0b68e39b12af8af0a4247300cc975b62d353b2279cc",
+      "git_sha": "ca3c079317d49cca3aaffbda4b1dd0a63e63baa1",
       "mode": "100644",
-      "archive_size": 6920302,
-      "archive_sha256": "9b668b26f61c0558c0517661281bc018775778eb596b25c958a425a685a507cd",
+      "archive_size": 6091770,
+      "archive_sha256": "65a28ad1be71f57bea43e58f710a05d1d46bfd7c0cf6f4ce7099fe8e609b966c",
       "parts": [
         {
-          "path": ".github_large_files/48f438f482e466066dc774e4e2a1075fa7720f90f98ca05dc249c670bda47956/part000.gz",
-          "size": 6920302,
-          "sha256": "9b668b26f61c0558c0517661281bc018775778eb596b25c958a425a685a507cd"
+          "path": ".github_large_files/d554a982ccf64be6f261d0b68e39b12af8af0a4247300cc975b62d353b2279cc/r6part000.gz",
+          "size": 1048576,
+          "sha256": "73532b7c4aa2bdf681d0d81065c594112b0935bf46008842ed7ea4588fc3e22e"
+        },
+        {
+          "path": ".github_large_files/d554a982ccf64be6f261d0b68e39b12af8af0a4247300cc975b62d353b2279cc/r6part001.gz",
+          "size": 1048576,
+          "sha256": "87e14cc525b4a2feb006c3c9eea4f3b34c416d066e7ce3c34f1b9f68df6d4251"
+        },
+        {
+          "path": ".github_large_files/d554a982ccf64be6f261d0b68e39b12af8af0a4247300cc975b62d353b2279cc/r6part002.gz",
+          "size": 1048576,
+          "sha256": "08132060bba4909a14539b0f2c8e1c91df40e56565d5a6401e652b323b2dfb89"
+        },
+        {
+          "path": ".github_large_files/d554a982ccf64be6f261d0b68e39b12af8af0a4247300cc975b62d353b2279cc/r6part003.gz",
+          "size": 1048576,
+          "sha256": "44b8fe845448638453ce6a6140ba40bd08d39bf884944b4641aa9233e7cbcf79"
+        },
+        {
+          "path": ".github_large_files/d554a982ccf64be6f261d0b68e39b12af8af0a4247300cc975b62d353b2279cc/r6part004.gz",
+          "size": 1048576,
+          "sha256": "298b1d49d9ef75951678b2fe010211d48292a060d44dc8663f7a11be75e156f9"
+        },
+        {
+          "path": ".github_large_files/d554a982ccf64be6f261d0b68e39b12af8af0a4247300cc975b62d353b2279cc/r6part005.gz",
+          "size": 848890,
+          "sha256": "857dbf225a3d9ff60a9462fe2b85942287e581710cc85e464df590ce3b1897df"
         }
       ]
     },
     {
-      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.bin",
-      "size": 43673856,
-      "sha256": "e61671628df2178945bf3ef9012111baa5bbb232c964aab65e951cdb93400680",
-      "git_sha": "a1552556c43e8d482d5e8bc9da553add6c25f179",
-      "mode": "100755",
-      "archive_size": 8699813,
-      "archive_sha256": "6f0c5299b8ceecb1a11668f3573725b797b692c9fa083c9bd38ecc283b5ef318",
+      "path": "BOARD_TEST/r6/ti60_r6.bit",
+      "size": 2870358,
+      "sha256": "370c0329da032a478f24476d714434d447f5f31ac437088ba4110cc15f650e7e",
+      "git_sha": "1dfd522275402744ef9180d58aa499ededc2a35f",
+      "mode": "100644",
+      "archive_size": 1160916,
+      "archive_sha256": "f252965f3d74c8b594563760aa9e227f1eaf8c1a5a7198a7d412436cd7166324",
       "parts": [
         {
-          "path": ".github_large_files/e61671628df2178945bf3ef9012111baa5bbb232c964aab65e951cdb93400680/part000.gz",
-          "size": 8699813,
-          "sha256": "6f0c5299b8ceecb1a11668f3573725b797b692c9fa083c9bd38ecc283b5ef318"
+          "path": ".github_large_files/370c0329da032a478f24476d714434d447f5f31ac437088ba4110cc15f650e7e/r6part000.gz",
+          "size": 1048576,
+          "sha256": "a478a1b929f1349bd10feffc386239d44aa95b63f83b4d8eb707fd7bd3b4498d"
+        },
+        {
+          "path": ".github_large_files/370c0329da032a478f24476d714434d447f5f31ac437088ba4110cc15f650e7e/r6part001.gz",
+          "size": 112340,
+          "sha256": "ac97f766312d9c6462bf78359295a7600ef13264c69fe08ea9d9633c04f3d82b"
         }
       ]
     },
     {
-      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.bin",
-      "size": 43673856,
-      "sha256": "0f44ae91cae0adb7c009554e71b1d4bacbb95e9417fa5bc1811b840356e699e6",
-      "git_sha": "62e739c949cb896af57a39d87829b315c2d1c52c",
-      "mode": "100755",
-      "archive_size": 8680319,
-      "archive_sha256": "d51747c93823c6c4625954d6dc77d957aa4be9bd44688b3c1e6913de48d1eaee",
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.bit",
+      "size": 2870358,
+      "sha256": "370c0329da032a478f24476d714434d447f5f31ac437088ba4110cc15f650e7e",
+      "git_sha": "1dfd522275402744ef9180d58aa499ededc2a35f",
+      "mode": "100644",
+      "archive_size": 1160916,
+      "archive_sha256": "f252965f3d74c8b594563760aa9e227f1eaf8c1a5a7198a7d412436cd7166324",
       "parts": [
         {
-          "path": ".github_large_files/0f44ae91cae0adb7c009554e71b1d4bacbb95e9417fa5bc1811b840356e699e6/part000.gz",
-          "size": 8680319,
-          "sha256": "d51747c93823c6c4625954d6dc77d957aa4be9bd44688b3c1e6913de48d1eaee"
+          "path": ".github_large_files/370c0329da032a478f24476d714434d447f5f31ac437088ba4110cc15f650e7e/r6part000.gz",
+          "size": 1048576,
+          "sha256": "a478a1b929f1349bd10feffc386239d44aa95b63f83b4d8eb707fd7bd3b4498d"
+        },
+        {
+          "path": ".github_large_files/370c0329da032a478f24476d714434d447f5f31ac437088ba4110cc15f650e7e/r6part001.gz",
+          "size": 112340,
+          "sha256": "ac97f766312d9c6462bf78359295a7600ef13264c69fe08ea9d9633c04f3d82b"
+        }
+      ]
+    },
+    {
+      "path": "BOARD_TEST/r6/ti60_r6_debug.elf",
+      "size": 7651152,
+      "sha256": "bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a",
+      "git_sha": "8f659d3ac2e97fd8af689b8e459d3d08d557ff82",
+      "mode": "100644",
+      "archive_size": 6335735,
+      "archive_sha256": "81b58aa61d8ad7f97a397cf8450b0f96f205ba48670963726cb3d7ce29733408",
+      "parts": [
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part000.gz",
+          "size": 1048576,
+          "sha256": "971decd0c5d6f4667226fd066694bbe69d153b45a937c9e60b5498110ab857ac"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part001.gz",
+          "size": 1048576,
+          "sha256": "4aa3b6de1ccf6e2aee1749f85fc77d29ff51d8922a8af62dc22d920aae7dabbd"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part002.gz",
+          "size": 1048576,
+          "sha256": "6bda3d542826e7d653f8b5c43b688ae27d519a4288ce6abb1739c46f4766e306"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part003.gz",
+          "size": 1048576,
+          "sha256": "b03ff8d2ea61c2ddfface94fa20fd5fc4fed0a9c27fa4eb4ed22767a552d4d81"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part004.gz",
+          "size": 1048576,
+          "sha256": "28483c3ec707900e4960623e68da0fba692d4ea1955cb82cc7c13728bb5690ec"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part005.gz",
+          "size": 1048576,
+          "sha256": "f60c78ec8eb396855548b41b30f63d7d03ef03d4339e6b32976003e1604fffe7"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part006.gz",
+          "size": 44279,
+          "sha256": "7f271f28cedd09609b1621ca532f8079743c2053e69318f176e0d8333459bee6"
+        }
+      ]
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/game.elf",
+      "size": 7651152,
+      "sha256": "bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a",
+      "git_sha": "8f659d3ac2e97fd8af689b8e459d3d08d557ff82",
+      "mode": "100644",
+      "archive_size": 6335735,
+      "archive_sha256": "81b58aa61d8ad7f97a397cf8450b0f96f205ba48670963726cb3d7ce29733408",
+      "parts": [
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part000.gz",
+          "size": 1048576,
+          "sha256": "971decd0c5d6f4667226fd066694bbe69d153b45a937c9e60b5498110ab857ac"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part001.gz",
+          "size": 1048576,
+          "sha256": "4aa3b6de1ccf6e2aee1749f85fc77d29ff51d8922a8af62dc22d920aae7dabbd"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part002.gz",
+          "size": 1048576,
+          "sha256": "6bda3d542826e7d653f8b5c43b688ae27d519a4288ce6abb1739c46f4766e306"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part003.gz",
+          "size": 1048576,
+          "sha256": "b03ff8d2ea61c2ddfface94fa20fd5fc4fed0a9c27fa4eb4ed22767a552d4d81"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part004.gz",
+          "size": 1048576,
+          "sha256": "28483c3ec707900e4960623e68da0fba692d4ea1955cb82cc7c13728bb5690ec"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part005.gz",
+          "size": 1048576,
+          "sha256": "f60c78ec8eb396855548b41b30f63d7d03ef03d4339e6b32976003e1604fffe7"
+        },
+        {
+          "path": ".github_large_files/bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a/r6part006.gz",
+          "size": 44279,
+          "sha256": "7f271f28cedd09609b1621ca532f8079743c2053e69318f176e0d8333459bee6"
+        }
+      ]
+    },
+    {
+      "path": "BOARD_TEST/r6/ti60_r6_release.elf",
+      "size": 7608304,
+      "sha256": "52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb",
+      "git_sha": "08bc2f0de55cb5d07b4950a25d08fcd2a6606e84",
+      "mode": "100644",
+      "archive_size": 6315313,
+      "archive_sha256": "313db698e36c4af3d0ac81e975e08107805717258dc475d3b1d5210be41455d4",
+      "parts": [
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part000.gz",
+          "size": 1048576,
+          "sha256": "b103313876b79a5aa9f2877c1c34ab37fcf5c6f994a27c8c91d2d38f7a84f04f"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part001.gz",
+          "size": 1048576,
+          "sha256": "32f327b4885251ff24085cad25295b79d5fd29e1d27aa345f18a27e320a6b290"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part002.gz",
+          "size": 1048576,
+          "sha256": "63f8fc537b05416e8b66ceb625120f87f4b4213b6129a6f1bba37196dbe3db24"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part003.gz",
+          "size": 1048576,
+          "sha256": "c5a02ead75d423277ea0c027de25ab210440af84b4d98d35c6d632d83717c543"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part004.gz",
+          "size": 1048576,
+          "sha256": "ef7b95bbcd67583c82ee856ad0091deaa8214760f2e1402a61aa088b9e7c1a84"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part005.gz",
+          "size": 1048576,
+          "sha256": "7eaff4903769fc06f44f1ea7ce1df519a51b9393799635b1b59e7c04242443f6"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part006.gz",
+          "size": 23857,
+          "sha256": "421df33eac6d5484b63235610effc6c18ba9bfef803a9202fa1f5ea14094590a"
+        }
+      ]
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_release/game.elf",
+      "size": 7608304,
+      "sha256": "52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb",
+      "git_sha": "08bc2f0de55cb5d07b4950a25d08fcd2a6606e84",
+      "mode": "100644",
+      "archive_size": 6315313,
+      "archive_sha256": "313db698e36c4af3d0ac81e975e08107805717258dc475d3b1d5210be41455d4",
+      "parts": [
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part000.gz",
+          "size": 1048576,
+          "sha256": "b103313876b79a5aa9f2877c1c34ab37fcf5c6f994a27c8c91d2d38f7a84f04f"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part001.gz",
+          "size": 1048576,
+          "sha256": "32f327b4885251ff24085cad25295b79d5fd29e1d27aa345f18a27e320a6b290"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part002.gz",
+          "size": 1048576,
+          "sha256": "63f8fc537b05416e8b66ceb625120f87f4b4213b6129a6f1bba37196dbe3db24"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part003.gz",
+          "size": 1048576,
+          "sha256": "c5a02ead75d423277ea0c027de25ab210440af84b4d98d35c6d632d83717c543"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part004.gz",
+          "size": 1048576,
+          "sha256": "ef7b95bbcd67583c82ee856ad0091deaa8214760f2e1402a61aa088b9e7c1a84"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part005.gz",
+          "size": 1048576,
+          "sha256": "7eaff4903769fc06f44f1ea7ce1df519a51b9393799635b1b59e7c04242443f6"
+        },
+        {
+          "path": ".github_large_files/52038e0893dc660ee429214d502b849374440f2ab88096e985f4f1c08527d9eb/r6part006.gz",
+          "size": 23857,
+          "sha256": "421df33eac6d5484b63235610effc6c18ba9bfef803a9202fa1f5ea14094590a"
+        }
+      ]
+    },
+    {
+      "path": "PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.v",
+      "size": 55864148,
+      "sha256": "1a6ffa7698baa7c95256bfec97c970d8aac76e8c813621eec805750eb6264499",
+      "git_sha": "dc86e3b4e6271a0af8c0e19315c93c71b719bd74",
+      "mode": "100644",
+      "archive_size": 6688580,
+      "archive_sha256": "fce1dc03eef6d9ed7012ac882c2450b94f5e832ae26e9aa432d59d590389db2c",
+      "parts": [
+        {
+          "path": ".github_large_files/1a6ffa7698baa7c95256bfec97c970d8aac76e8c813621eec805750eb6264499/r6part000.gz",
+          "size": 1048576,
+          "sha256": "79fcc356adc00bf76a8c95888a83829b883dc52777d9f9405497c614cbb8159e"
+        },
+        {
+          "path": ".github_large_files/1a6ffa7698baa7c95256bfec97c970d8aac76e8c813621eec805750eb6264499/r6part001.gz",
+          "size": 1048576,
+          "sha256": "a30abc1e99295e90ae74c1b76513de8f8fb11c1fc41351dadc45e8c1646e6b7f"
+        },
+        {
+          "path": ".github_large_files/1a6ffa7698baa7c95256bfec97c970d8aac76e8c813621eec805750eb6264499/r6part002.gz",
+          "size": 1048576,
+          "sha256": "dfe92873c1397f56c5ddb35ca195fcabb2eabd85925655e05e49cdcc83f93374"
+        },
+        {
+          "path": ".github_large_files/1a6ffa7698baa7c95256bfec97c970d8aac76e8c813621eec805750eb6264499/r6part003.gz",
+          "size": 1048576,
+          "sha256": "05c9ab248b3db5fd313dd643fbbc4d6396466ba9ad0a4c3861d424bcc3026c65"
+        },
+        {
+          "path": ".github_large_files/1a6ffa7698baa7c95256bfec97c970d8aac76e8c813621eec805750eb6264499/r6part004.gz",
+          "size": 1048576,
+          "sha256": "a75156c8d81298b9537ec4720c134ac961adf180f04479503285f3c1d4191c9b"
+        },
+        {
+          "path": ".github_large_files/1a6ffa7698baa7c95256bfec97c970d8aac76e8c813621eec805750eb6264499/r6part005.gz",
+          "size": 1048576,
+          "sha256": "67277afaaef391a8c7b24c6a065195450e8a94726e46c0bdd462ac4a4955303c"
+        },
+        {
+          "path": ".github_large_files/1a6ffa7698baa7c95256bfec97c970d8aac76e8c813621eec805750eb6264499/r6part006.gz",
+          "size": 397124,
+          "sha256": "11b9f2ba2b469c1cfa8b758582e69e11433490c33c0a022ab94f4b3adb0964dc"
         }
       ]
     }

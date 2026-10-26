@@ -1,0 +1,37 @@
+[
+  {
+    "stage": 0,
+    "players": 1,
+    "stress": 0,
+    "ticks": 4800,
+    "passed": true
+  },
+  {
+    "stage": 0,
+    "players": 3,
+    "stress": 0,
+    "ticks": 4800,
+    "passed": true
+  },
+  {
+    "stage": 1,
+    "players": 1,
+    "stress": 0,
+    "ticks": 4800,
+    "passed": true
+  },
+  {
+    "stage": 1,
+    "players": 3,
+    "stress": 0,
+    "ticks": 4800,
+    "passed": true
+  },
+  {
+    "stage": 0,
+    "players": 1,
+    "stress": 1,
+    "ticks": 4800,
+    "passed": true
+  }
+]

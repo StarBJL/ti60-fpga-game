@@ -378,13 +378,13 @@ int game_hostile_slots(const Game *g) {
         slots=g->stress_bullet_target;
     return s && slots>s->shots ? s->shots : slots;
 }
-const Bullet *game_hostile_at(const Game *g, int index) {
+const Seed *game_hostile_at(const Game *g, int index) {
     if (index<0 || index>=game_hostile_slots(g)) return 0;
     if (g->limit_mode && g->limit_shots) return &g->limit_shots[index];
     return &g->hostile[index];
 }
-static Bullet *hostile_slot(Game *g, int index) {
-    return (Bullet *)game_hostile_at(g, index);
+static Seed *hostile_slot(Game *g, int index) {
+    return (Seed *)game_hostile_at(g, index);
 }
 int game_hostile_count(const Game *g) { return g->hostile_active; }
 int game_player_count(const Game *g) { int n=0;for(int i=0;i<g->player_count;i++)n+=game_player(g,i)->player_active;return n; }
@@ -411,8 +411,8 @@ int game_dropped_shots(const Game *g) { return g->dropped_shots; }
 static int grow_limit_shots(Game *g) {
     const StressSettings *s=stress(g);
     int next=g->limit_shot_cap<256 ? 256 : g->limit_shot_cap*2;
-    Bullet *grown;
-    const Bullet *old=g->limit_shots ? g->limit_shots : g->hostile;
+    Seed *grown;
+    const Seed *old=g->limit_shots ? g->limit_shots : g->hostile;
     int old_cap=g->limit_shots ? g->limit_shot_cap : MAX_HOSTILE_BULLETS;
     if (next<=old_cap) next=old_cap*2;
     if (s && next>s->shots) next=s->shots;
@@ -420,7 +420,7 @@ static int grow_limit_shots(Game *g) {
     if (next<=old_cap || !g->config.grow_shots) return 0;
     grown=g->config.grow_shots(g->config.user,old,old_cap,next);
     if (!grown) return 0;
-    memset(grown+old_cap,0,(size_t)(next-old_cap)*sizeof(Bullet));
+    memset(grown+old_cap,0,(size_t)(next-old_cap)*sizeof(Seed));
     g->limit_shots=grown; g->limit_shot_cap=next; return 1;
 }
 /*
@@ -446,15 +446,15 @@ static void hostile_mark_free(Game *g, int from, int to) {
     }
     g->hostile_indexed=to;
 }
-static void release_hostile(Game *g, Bullet *b, int index) {
+static void release_hostile(Game *g, Seed *b, int index) {
     b->active=0;
     g->hostile_free[index>>5]|=1u<<(index&31);
     g->hostile_free_sum[index>>10]|=1u<<((index>>5)&31);
     --g->hostile_active;
 }
-static Bullet *take_hostile(Game *g) {
+static Seed *take_hostile(Game *g) {
     int s,k=-1;
-    for (s=0;s<GAME_HOSTILE_SUMS;s++) if (g->hostile_free_sum[s]) {
+    for (s=0;s<(g->hostile_indexed+1023)/1024;s++) if (g->hostile_free_sum[s]) {
         int w=s*32+lowest_bit(g->hostile_free_sum[s]);
         k=w*32+lowest_bit(g->hostile_free[w]);
         break;
@@ -473,17 +473,18 @@ static Bullet *take_hostile(Game *g) {
     return hostile_slot(g,k);
 }
 static void hostile_shot(Game *g, const Enemy *e, int vx, int vy, int damage, int style) {
-    Bullet *b=take_hostile(g);
+    Seed *b=take_hostile(g);
     if (!b) return;
-    b->active=1; b->x=e->x; b->y=e->y; b->vx=vx; b->vy=vy;
-    b->life=g->limit_mode ? stress(g)->shot_life : 300; b->damage=damage; b->style=style;
+    b->active=(uint8_t)clamp(damage,1,255); b->x=e->x; b->y=e->y;
+    b->vx=(int16_t)vx; b->vy=(int16_t)vy;
+    b->life=(int16_t)(g->limit_mode ? stress(g)->shot_life : 300); b->style=(uint8_t)style;
 }
 
 /* Change the firing limit without inventing projectiles. New slots remain
  * free until an enemy fires; lowering the limit retires only excess slots.
  * The current/previous DMA draw tables remain untouched. */
 void game_set_stress_bullets(Game *g, int count) {
-    int i,cap,used=0,active=0;Bullet *pool;
+    int i,cap,used=0,active=0;Seed *pool;
     if(g->stress_tier!=STRESS_CUSTOM)return;
     cap=g->limit_shots?g->limit_shot_cap:MAX_HOSTILE_BULLETS;
     if(cap>MAX_HOSTILE_BULLETS)cap=MAX_HOSTILE_BULLETS;
@@ -569,12 +570,12 @@ static void begin_run(Game *g, uint32_t seed, int tier) {
     int i;
     int previous_target=g->stress_tier==STRESS_CUSTOM?g->stress_bullet_target:0;
     int players=g->player_count==3?3:1;
-    Bullet *extended=g->limit_shots;
+    Seed *extended=g->limit_shots;
     int extended_cap=g->limit_shot_cap;
     GameConfig config=g->config;
     memset(g,0,sizeof(*g));
     g->limit_shots=extended; g->limit_shot_cap=extended_cap; g->config=config;g->player_count=1;
-    if (extended && extended_cap>0) memset(extended,0,(size_t)extended_cap*sizeof(Bullet));
+    if (extended && extended_cap>0) memset(extended,0,(size_t)extended_cap*sizeof(Seed));
     g->rng=seed ? seed : 0x12345678u; g->phase=PLAYING;
     g->stress_tier=tier; g->limit_mode=tier!=0;
     g->stress_bullet_target=tier==STRESS_CUSTOM && previous_target>0?
@@ -773,10 +774,10 @@ static uint32_t gclock(void) { return game_clock ? game_clock() : 0u; }
  * surviving centres are inside [16,1264] x [87,666], so every sprite is fully
  * inside 1280x720. This removes clipping/proximity/extra-player branches. */
 static __attribute__((noinline)) int pressure_hostile_update(Game *g,GfxItem *draw,int half,int *used){
-    int n=g->hostile_used,count=0;Bullet *pool=g->limit_shots?g->limit_shots:g->hostile;
+    int n=g->hostile_used,count=0;Seed *pool=g->limit_shots?g->limit_shots:g->hostile;
     const int px=g->x,py=g->y;int can_hit=!g->invincible,last=0;
     for(int i=0;i<n;i++){
-        Bullet *b=&pool[i];if(!b->active)continue;
+        Seed *b=&pool[i];if(!b->active)continue;
         int x=b->x+b->vx,y=b->y+b->vy;
         if(STRESS_WRAP){
             if(x<30*FIX)x+=1220*FIX;else if(x>1250*FIX)x-=1220*FIX;
@@ -786,7 +787,7 @@ static __attribute__((noinline)) int pressure_hostile_update(Game *g,GfxItem *dr
         if(--b->life<=0||(!STRESS_WRAP&&(x<16*FIX||x>1264*FIX||y<87*FIX||y>666*FIX))){release_hostile(g,b,i);continue;}
         if(can_hit&&(unsigned)(px-x+24*FIX)<48u*FIX&&(unsigned)(py-y+24*FIX)<48u*FIX){
             int dx=(px-x)/FIX,dy=(py-y)/FIX;
-            if(dx*dx+dy*dy<18*18){g->hp-=b->damage;g->invincible=45;g->hurt_flash=10;g->sfx|=GS_HURT;particles(g,px,py,1,10);can_hit=0;}
+            if(dx*dx+dy*dy<18*18){g->hp-=b->active;g->invincible=45;g->hurt_flash=10;g->sfx|=GS_HURT;particles(g,px,py,1,10);can_hit=0;}
         }
         last=i+1;
         GfxItem *item=&draw[count++];gfx_item_xy(item,(x>>8)-half,(y>>8)-half);item->sprite=b->style<GAME_SEED_STYLES?b->style:0;
@@ -799,7 +800,7 @@ static void game_tick_core(Game *g, Input in) {
     if(g->phase==UPGRADE){Input shared=in;in=g->player_input[g->upgrade_actor];in.pressed|=shared.pressed&(KEY_MENU|KEY_RESTART|KEY_PAUSE);}
     int i,j,mx,my,vx,vy,seconds,n_hostile,hostile_used,n_draw=0,n_clip=0,n_player[GAME_PLAYERS]={0};
     const int seed_half=game_seed_half(g),seed_size=game_seed_extent(g);
-    Bullet *hostile_pool;
+    Seed *hostile_pool;
     const int seed_buf=(g->seed_draw_buf+1)%3;
     GfxItem *seed_draw=g->seed_draw[seed_buf];   /* 写另一张，上一帧的表引擎可能还在读 */
     uint32_t t,t1;
@@ -952,7 +953,7 @@ static void game_tick_core(Game *g, Input in) {
     if(pressure)n_draw=pressure_hostile_update(g,seed_draw,seed_half,&hostile_used);
     else {
     for (i=0;i<n_hostile;i++) {
-        Bullet *b=&hostile_pool[i]; int dx,dy;
+        Seed *b=&hostile_pool[i]; int dx,dy;
         if (!b->active) continue;
         b->x+=b->vx; b->y+=b->vy;
         if (pressure && STRESS_WRAP) {
@@ -974,7 +975,7 @@ static void game_tick_core(Game *g, Input in) {
                 if(p->hp<=0||p->invincible||(unsigned)(p->x-b->x+24*FIX)>=48u*FIX||(unsigned)(p->y-b->y+24*FIX)>=48u*FIX)continue;
                 int radius=(b->style==2?15:b->style==3?13:11)*3/2;
                 int dx=(p->x-b->x)/FIX,dy=(p->y-b->y)/FIX;
-                if(dx*dx+dy*dy<radius*radius){player_context(g,pi);g->hp-=b->damage;g->invincible=45;g->hurt_flash=10;g->sfx|=GS_HURT;particles(g,g->x,g->y,1,10);}
+                if(dx*dx+dy*dy<radius*radius){player_context(g,pi);g->hp-=b->active;g->invincible=45;g->hurt_flash=10;g->sfx|=GS_HURT;particles(g,g->x,g->y,1,10);}
             }
             player_context(g,0);
         }else if (can_hit &&
@@ -983,7 +984,7 @@ static void game_tick_core(Game *g, Input in) {
             int hit_radius=(pressure?12:b->style==2?15:b->style==3?13:11)*3/2;
             dx=(player_x-b->x)/FIX; dy=(player_y-b->y)/FIX;
             if (dx*dx+dy*dy<hit_radius*hit_radius) {
-                g->hp-=b->damage; g->invincible=45; g->hurt_flash=10; g->sfx|=GS_HURT;
+                g->hp-=b->active; g->invincible=45; g->hurt_flash=10; g->sfx|=GS_HURT;
                 particles(g,player_x,player_y,1,10);
                 can_hit=0;
             }

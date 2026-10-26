@@ -440,7 +440,7 @@ static uint32_t bot_steer_reference(const Game *g, uint32_t frame)
     }
     slots = game_hostile_used(g);                    /* slots above are all free */
     for (i = 0; i < slots; i++) {
-        const Bullet *b = game_hostile_at(g, 0) + i;   /* contiguous pool */
+        const Seed *b = game_hostile_at(g, 0) + i;   /* contiguous pool */
         int dx, dy, d2;
         if (!b || !b->active) continue;
         dx = px - b->x / FIX; dy = py - b->y / FIX;
@@ -570,6 +570,21 @@ static void finish(void)
     poll_matrix_rescue(1u<<14,3100);assert(video_recoveries==rescue_before+1);
     poll_matrix_rescue(0,3200);poll_matrix_rescue((1u<<14)|(1u<<3),7000);assert(video_recoveries==rescue_before+1);
     puts("PASS explicit three-player start from demo/pressure, link quiet/stabilize/restart, DVI request and bounded failure recovery");
+
+    scene=SCENE_SQUARES;use_hw=0;set_seed_mode(1);
+    assert(control_apply((ControlEvent){CT_SQUARE_PATH,2,900,1}));
+    assert(use_hw&&blit_st.mode==BLIT_MODE_LIST&&demo_square_path()==2);
+    assert(control_apply((ControlEvent){CT_KMODE,1,901,1}));
+    assert(blit_band_kmode()==1&&!(blit_st.band_koff&BLIT_BAND_KOFF));
+    assert(control_apply((ControlEvent){CT_KMODE,0,902,1})&&blit_band_kmode()==0);
+    assert(control_apply((ControlEvent){CT_VPIPE,0,903,1})&&!vpipe);
+    assert(control_apply((ControlEvent){CT_VPIPE,1,904,1})&&vpipe);
+    assert(!control_apply((ControlEvent){CT_VPIPE,2,905,1}));
+    scene=SCENE_TH;assert(control_apply((ControlEvent){CT_STRESS_STAGE,1,906,1}));
+    assert(th.stage==1&&th.start_stage==1&&th.diff==TH_STRESS&&th.player_count==1&&!autoplay);
+    assert(control_apply((ControlEvent){CT_STRESS_STAGE,0,907,1}));assert(th.stage==0);
+    assert(!control_apply((ControlEvent){CT_SQUARE_PATH,2,908,1}));
+    puts("PASS R6 dispatcher: FTAB prerequisites, K fallback status, VSync A/B, independent stress stages and invalid-state rejection");
 
     printf(errors ? "FAIL (%u)\n" : "PASS\n", errors);
     if (ulog) fclose(ulog);

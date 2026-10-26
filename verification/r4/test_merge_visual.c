@@ -20,7 +20,7 @@ static void fixture(int pressure,int level,int n){
     g.level=level;g.limit_mode=pressure;g.stress_tier=pressure?STRESS_CUSTOM:0;
     g.ticks=g.visual_ticks=100;g.seed_draw_ok=0;g.weapon_idle_ticks=0;g.weapon_heading=0;
     for(int k=0;k<n;k++){int cell=(k*97)%400;
-        g.hostile[k]=(Bullet){1,(602+cell%20*4)*FIX,(338+cell/20*4)*FIX,0,0,1000,0,k%4};}
+        g.hostile[k]=(Seed){(602+cell%20*4)*FIX,(338+cell/20*4)*FIX,0,0,1000,1,k%4};}
     g.hostile_active=g.hostile_used=n;
 }
 static void actor(unsigned char *a){
@@ -37,7 +37,8 @@ static void actor(unsigned char *a){
 }
 static int projectile_hit(int wx,int wy){
     for(int pool=0;pool<2;pool++)for(int k=0;k<(pool?MAX_BULLETS:g.hostile_used);k++){
-        const Bullet *b=pool?&g.bullets[k]:&g.hostile[k];if(!b->active)continue;
+        Bullet converted={0};if(!pool){const Seed *z=&g.hostile[k];converted=(Bullet){!!z->active,z->x,z->y,z->vx,z->vy,z->life,z->active,z->style};}
+        const Bullet *b=pool?&g.bullets[k]:&converted;if(!b->active)continue;
         const Sprite *s=pool?render_laser_asset(b->style):render_projectile_asset(g.limit_mode,b->style);
         int x=wx-b->x/FIX+s->width/2,y=wy-b->y/FIX+s->height/2;
         if(x>=0&&x<s->width&&y>=0&&y<s->height&&s->pixels[y*s->width+x]!=COLOR_KEY)return 1;
@@ -140,7 +141,7 @@ int main(void){
         for(int k=0;k<NPIX;k++)gold[k]=COLOR_KEY;
         Gfx expected;gfx_begin(&expected,gold,1280,720);
         for(int k=0;k<g.hostile_used;k++)if(g.hostile[k].active){
-            const Bullet *b=&g.hostile[k];const Sprite *a=render_projectile_asset(1,b->style);
+            const Seed *b=&g.hostile[k];const Sprite *a=render_projectile_asset(1,b->style);
             gfx_blit(&expected,b->x/FIX-a->width/2,b->y/FIX-a->height/2,a,1);
         }
         int visible=0;for(int y=300;y<450;y++)for(int x=560;x<720;x++){
@@ -154,7 +155,7 @@ int main(void){
     game_set_seed_size(&g,13);render_set_pressure_size(13);
     puts("PASS pressure: no near indexing, coverage/fade/outline/marker; every last projectile pixel covers the actor in all 7 sizes");
     fixture(1,7,0);g.hostile_used=g.hostile_active=40000;
-    for(int i=0;i<40000;i++)g.hostile[i]=(Bullet){1,(60+(i*137)%1160)*FIX,(140+(i*53)%480)*FIX,0,0,1000,0,i%4};
+    for(int i=0;i<40000;i++)g.hostile[i]=(Seed){(60+(i*137)%1160)*FIX,(140+(i*53)%480)*FIX,0,0,1000,1,i%4};
     g.invincible=10000;game_tick(&g,(Input){0});compare_modes();dump("stress40k.rgb565");
     fixture(0,1,0);g.phase=TITLE;frame(2,1);dump("title.rgb565");g.phase=STRESS_SELECT;frame(2,1);dump("stress_menu.rgb565");
     g.phase=UPGRADE;g.level=7;g.choices[0]=NOVA;g.choices[1]=MULTISHOT;g.choices[2]=POWER;frame(2,1);dump("upgrade.rgb565");
@@ -166,7 +167,7 @@ int main(void){
     }game_set_seed_size(&g,13);render_set_pressure_size(13);}
     fixture(1,7,0);assert(game_set_seed_size(&g,1));assert(render_set_pressure_size(1));
     g.hostile_used=g.hostile_active=MAX_HOSTILE_BULLETS;
-    for(int i=0;i<MAX_HOSTILE_BULLETS;i++)g.hostile[i]=(Bullet){1,(60+i%1160)*FIX,(140+(i/1160)%480)*FIX,0,0,1000,0,i%4};
+    for(int i=0;i<MAX_HOSTILE_BULLETS;i++)g.hostile[i]=(Seed){(60+i%1160)*FIX,(140+(i/1160)%480)*FIX,0,0,1000,1,i%4};
     g.invincible=10000;game_tick(&g,(Input){0});assert(g.seed_draw_n==99999);compare_modes();
     puts("PASS 99999 visible bullets: exact backend pixel equality, including slots above 65535");
     puts("PASS all seven carrot visual sizes: independent locator coverage and backend equality");

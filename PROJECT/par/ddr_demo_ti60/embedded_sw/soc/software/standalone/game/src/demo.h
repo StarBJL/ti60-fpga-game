@@ -41,4 +41,9 @@ void demo_squares_render(Gfx *gfx, RenderInfo info, int count);
 /* period = frames each picture stays on screen (1 = new picture every frame) */
 void demo_images_render(Gfx *gfx, RenderInfo info, uint32_t frame, int period);
 
+/* 0 CPU individual fills; 1 CPU SQTAB; 2 CPU FTAB snapshots; 3 MOT2 SQTAB. */
+int demo_set_square_path(int path);
+int demo_square_path(void);
+int demo_fill_table_active(void);
+void demo_square_alpha(int alpha);
 #endif

@@ -27,6 +27,7 @@ MEMORY
   ram  (wxai!r) : ORIGIN = 0x00001000, LENGTH = 15M
   snd  (r)      : ORIGIN = 0x02000000, LENGTH = 16M
   art  (rw)     : ORIGIN = 0x04000000, LENGTH = 32M
+  hot (rw)      : ORIGIN = 0xF9000C00, LENGTH = 512
   stress (rw)   : ORIGIN = 0x06000000, LENGTH = 32M
 }
 
@@ -176,6 +177,10 @@ SECTIONS
   /* 1.5x danmaku art (th_art.c ART_BIG): big buffers above the band bins, not loaded */
   /* Initialized explicitly by game_init/th_init. Never downloaded or cleared
      by startup. The DDR AXI address space is 28 bits (256 MiB). */
+  /* Dead boot scratch only; game stack remains in DDR. Last OCR word is reserved
+     for the existing memory benchmark. No bytes are downloaded to this section. */
+  .hotbss (NOLOAD) : ALIGN(16) { *(.hotbss) } >hot :NONE
+  ASSERT(SIZEOF(.hotbss) <= 512, "hot scratch exceeds reserved OCR window")
   .stressbss (NOLOAD) : ALIGN(256)
   {
     __stress_start = .;

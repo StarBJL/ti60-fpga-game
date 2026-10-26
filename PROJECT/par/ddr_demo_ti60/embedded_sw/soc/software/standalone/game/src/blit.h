@@ -282,6 +282,7 @@ enum { BLIT_ST_WSTALL, BLIT_ST_AWWAIT, BLIT_ST_AWSTALL, BLIT_ST_ARSTALL,
 #define BLIT_BAND_MAX_PITCH 1280u       /* 带缓冲一行最多这么多字节（旧位流；CAPS2[2] 时 2560） */
 #define BLIT_BAND_MAX_BANDS 32u         /* 旧位流；新位流看 CAPS2[15:8]（45 = 720 行） */
 #define BLIT_BAND_KOFF      (1u << 31)
+#define BLIT_BAND_KBOFF     (1u << 30)
 /* 桶区：0x08000000..0x0ACFFFFF，每带 1 MiB = 32768 条命令；45 带 45 MiB */
 #ifndef BLIT_BAND_BIN_BASE
 #define BLIT_BAND_BIN_BASE  0x08000000u
@@ -293,7 +294,7 @@ enum { BLIT_ST_WSTALL, BLIT_ST_AWWAIT, BLIT_ST_AWSTALL, BLIT_ST_ARSTALL,
 /* 2026-10-11（200 MHz 实测）：原来是缓冲的一半，可用空间只有一半，流水时每秒回绕 10 次左右，
  * 每次要等引擎把整个列表画完（qstall 约 2.5 ms/次）。一帧最多约 6000 字，留 8192 就够。 */
 #ifndef BLIT_BAND_ROOM
-#define BLIT_BAND_ROOM      (BLIT_LIST_WORDS / 2u < 8192u ? BLIT_LIST_WORDS / 2u : 8192u)
+#define BLIT_BAND_ROOM      (BLIT_LIST_WORDS / 2u < 32768u ? BLIT_LIST_WORDS / 2u : 32768u)
 #endif
 
 /* 引擎计数器快照（blit_perf_snap）：两次快照相减（blit_perf_diff）就是这段时间的量。
@@ -348,6 +349,9 @@ typedef struct {
 #define BLIT_L_TAB(n)          (0x20000000u | ((uint32_t)(n) & 0xFFFFu))   /* 后面跟表地址字 */
 #define BLIT_L_BANDS           0x30000000u   /* 后面跟帧缓冲基地址字 */
 #define BLIT_L_ENDB            0x40000000u
+/* R6 FTAB opcode 7; opcode 6 is reserved for the existing SQTAB ABI. */
+#define BLIT_L_FTAB(n) (0x70000000u | ((uint32_t)(n) & 0xFFFFu))
+#define BLIT_L_FTAB_ADD (1u << 26)
 #define BLIT_L_TAB_MAX   0xFFFFu      /* 一条 TAB 最多的项数 */
 #define BLIT_L_TAB_MAX_XY 4095        /* 表项 x、y 只用 12 位 */
 #define BLIT_L_SLOTS     64u
@@ -392,7 +396,7 @@ typedef struct {
  * 分带 + 流水帧时引擎一直在跑上一帧，只有它空闲的帧（有逻辑 tick 的帧）才回到缓冲开头，
  * 所以留够几十帧的量（2026-10-10：16384 -> 65536 字；2026-10-11：131072 字 = 512 KB）。 */
 #ifndef BLIT_LIST_WORDS
-#define BLIT_LIST_WORDS  131072u
+#define BLIT_LIST_WORDS  524288u
 #endif
 /* 未发布的字攒到这么多就写一次 LIST_END（在记录边界检查）。 */
 #ifndef BLIT_LIST_KICK
@@ -416,6 +420,8 @@ typedef struct {
 #define BLIT_CAPS2_ADD   (1u << 0)
 #define BLIT_CAPS2_DBG   (1u << 1)      /* DBG0..3（0xC0..0xCC） */
 #define BLIT_CAPS2_WIN2560 (1u << 2)    /* 分带窗口每行 2560 字节（1280 像素，720p，2026-10-21） */
+#define BLIT_CAPS2_KBLEND (1u << 4)
+#define BLIT_CAPS2_FTAB (1u << 5)
 #define BLIT_CAPS2_MAXB(c) (((c) >> 8) & 0xFFu)   /* 一帧最多几带（0 = 旧位流，按 32） */
 /* 只有宽度不超过这么多像素的拷贝才走源缓存：精灵、字模、敌人、宝石都在内，
  * 整屏 / 背景这类大图不进缓存（会把缓存冲掉，且按 8 字的行读比 64 字 burst 慢）。 */
@@ -503,6 +509,7 @@ typedef struct {
     uint32_t  lwraps;     /* @lwraps：缓冲写满、等引擎读完后回到开头的累计次数（计入 stall）。 */
     /* ---- 分带合成（D） ---- */
     int       has_band;   /* @has_band：CAPS[31]，引擎有分带合成时为 1。 */
+    int       has_kblend,has_ftab;
     int       has_add;    /* @has_add：CAPS2[0]，引擎有加法混合（CMD[6]）时为 1。 */
     uint32_t  band_max_pitch;  /* @band_max_pitch：分带帧最大行距（字节）：1280 或 2560（CAPS2[2]）。 */
     uint32_t  band_max_bands;  /* @band_max_bands：分带帧最多几带：32 或 CAPS2[15:8]（45）。 */
@@ -531,6 +538,7 @@ extern BlitState blit_st;
 /* 精灵槽的软件标签（gfx_hw.c 批量精灵用）：槽中已定义的 SRC 与 SIZE|key 位。
  * blit_init() / blit_set_mode() 置为无效值。 */
 extern uint32_t blit_slot_src[BLIT_L_SLOTS];
+extern uint8_t blit_slot_ga[BLIT_L_SLOTS];
 extern uint32_t blit_slot_size[BLIT_L_SLOTS];
 
 /* 检查 ID；找到引擎后等待空闲、清性能计数和错误，并同步软件影子与参数寄存器。
@@ -594,6 +602,8 @@ void      blit_list_slot(uint32_t slot, uint32_t src, uint32_t sstr, uint32_t si
 int  blit_set_band(int on);
 /* K 通路（每拍 8 像素）开 / 关，A/B 对比用；先等引擎空闲。 */
 void blit_band_set_koff(int off);
+int blit_band_set_kmode(int mode);
+int blit_band_kmode(void);
 /* 一帧开始（gfx_hw 调用）：fb = 帧缓冲地址（256 字节对齐），pitch = 行距（字节，16 的倍数，
  * 256..1280），rows = 行数（16 的倍数，<= 512）。条件满足时写 BANDS，返回 1；
  * 否则返回 0，这一帧照旧直接画。 */

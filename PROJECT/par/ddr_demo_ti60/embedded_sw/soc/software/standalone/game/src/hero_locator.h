@@ -136,9 +136,9 @@ static void prepare_player_locator_state(const Game *g,const GamePlayer *actor){
             live_rows-=locator_cover(left,rows[style],size,b->x-ox,b->y-oy);
         }
     }else{
-        int end=game_hostile_used(g);const Bullet *pool=end?game_hostile_at(g,0):0;
+        int end=game_hostile_used(g);const Seed *pool=end?game_hostile_at(g,0):0;
         for(int i=0;i<end&&live_rows>0;i++)if(pool[i].active){
-            const Bullet *b=&pool[i];int x=b->x/FIX-half,y=b->y/FIX-half;
+            const Seed *b=&pool[i];int x=b->x/FIX-half,y=b->y/FIX-half;
             if(x<=ox-size||x>=ox+LOC_W||y<=oy-size||y>=oy+LOC_H)continue;
             int style=(unsigned)b->style<4u?b->style:0;++count;
             live_rows-=locator_cover(left,rows[style],size,x-ox,y-oy);

@@ -80,7 +80,7 @@ static void tiers_and_geometry(void){
     }
 }
 static void collisions_and_events(void){
-    empty();g.hostile[0]=(Bullet){1,g.x,g.y,0,0,1000,3,2};g.hostile_active=g.hostile_used=1;
+    empty();g.hostile[0]=(Seed){g.x,g.y,0,0,1000,3,2};g.hostile_active=g.hostile_used=1;
     for(int i=0;i<12;i++)game_tick(&g,(Input){0});assert(g.hostile[0].active&&g.hp==100);
     g.invincible=0;game_tick(&g,(Input){0});assert(g.hp==97&&g.hostile[0].active&&(g.sfx&GS_HURT));
     empty();Enemy *e=&g.enemies[0];*e=(Enemy){0};e->active=1;e->x=g.x+100*FIX;e->y=g.y;e->hp=e->max_hp=1;e->attack_timer=1000;g.enemy_count=1;

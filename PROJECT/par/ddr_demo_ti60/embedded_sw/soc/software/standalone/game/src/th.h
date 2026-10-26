@@ -63,9 +63,23 @@ typedef struct {
     int16_t  aux_spd;               /* TBF_REDIR：改向后的速度 */
     uint16_t aux_ang;               /* TBF_REDIR：改向角（TBF_AIM 时为相对瞄准角的偏移） */
     uint8_t  kind, color, flags, timer;
-    uint8_t  spin, bk, sp, pad2;    /* spin：星弹转动相位；bk / sp：绘制桶和桶内图号（th_fire / 改角度时算好，
+    uint8_t  spin, bk, sp, age;     /* age：出生后的 tick 数（到 TH_FADE_TICKS 停，第 1 关淡入用；之后不再写）；
+                                       spin：星弹转动相位；bk / sp：绘制桶和桶内图号（th_fire / 改角度时算好，
                                        热循环里不再按种类分支；星弹再加转动帧） */
 } ThBullet;                         /* 32 B */
+/* 弹幕热循环用的紧凑副本（2026-10-26）：16 B，一条 64 B 缓存行装 4 颗（ThBullet 只装 2 颗）。
+ * 每颗弹每 tick 只读这一份；位置以这里为准（ThBullet 的 x / y 只在发射时写，之后不再更新）。
+ * vx / vy / bk / sp 和 ThBullet 一致：只在慢路径（timer、改向、反弹）里改，先改 ThBullet 再抄过来。
+ * 新弹在 bullets_update 开头从 ThBullet 抄过来（th_fire 之后图案还会改 timer / acc / flags，所以晚一点抄）。 */
+typedef struct {
+    int32_t x, y;                   /* Q8 */
+    int16_t vx, vy;
+    uint8_t bk, sp, spin, slow;     /* slow：TH_S_*，非 0 才去读 ThBullet */
+} ThHotBullet;                      /* 16 B */
+#define TH_S_TIMER  0x01            /* timer > 0（变速 / 转向 / 到时改向） */
+#define TH_S_BOUNCE 0x02            /* TBF_BOUNCE */
+#define TH_S_YOUNG  0x04            /* 第 1 关刚出生：淡入表 */
+#define TH_S_HALO   0x08            /* 第 1 关：垫光晕（发射时按 spin 和当时的弹数选定） */
 
 typedef struct { int32_t x, y, vx, vy; int16_t dmg; uint8_t kind, active; int16_t target; uint8_t owner,pad; } ThShot;
 typedef struct { int32_t x, y, vy; uint8_t kind, active, autoc, pad; } ThItem;
@@ -76,7 +90,9 @@ typedef struct { const Sprite *s; int32_t x, y, vy; uint16_t life, total; } ThGh
  * 所以数量有上限（压力模式也不乘倍率）。bk / sp 同 ThBullet。 */
 typedef struct { int32_t x, y; int16_t vx, vy; uint16_t ph, dph; uint8_t bk, sp, grazed, pad; } ThPhantom;
 #define TH_MAX_PHANTOMS 384
-/* 激光：BEAM 从原点沿 ang 射出（预警虚线 -> 变粗 -> 收细），PILLAR 竖直月光柱（整列），COMET 拖尾流星（只有头部判定） */
+/* 激光：BEAM 从原点沿 ang 射出（预警虚线 -> 变粗 -> 收细），PILLAR 竖直月光柱（整列），COMET 拖尾流星（只有头部判定）。
+ * 压力模式流星也乘倍率（2026-10-26，th_stage2.c comets()）：池子 1024 个，最后 TH_LASER_RESERVE 个只给光束 / 光柱；
+ * 倍率多出来的流星 pad = 1（不冒火花，免得占满特效池）。 */
 enum { TL_BEAM, TL_PILLAR, TL_COMET };
 typedef struct {
     int32_t x, y, vx, vy;           /* 原点（Q8）和移动速度；BEAM 可跟随 Boss（follow） */
@@ -85,8 +101,29 @@ typedef struct {
     int16_t t, warn, on;            /* 已过 tick / 预警 tick / 发射 tick（之后 10 tick 收细消失） */
     uint8_t kind, color, follow, pad;
 } ThLaser;
-#define TH_MAX_LASERS 48
+#define TH_MAX_LASERS 1024
+#define TH_LASER_RESERVE 16
+#define TH_COMET_TAIL 8             /* 每颗流星的拖尾段数（GLOW16） */
 #define TH_MAX_GHOSTS 512
+
+/* 第 1 关（压力测试也用它）的半透明弹幕（2026-10-26）：
+ *   淡入（全局 alpha）：刚射出的子弹前 TH_FADE_TICKS 个 tick 按年龄分 TH_FADE_LV 档写进淡入表，
+ *     每档一张表、整表一个透明度（gfx_blit_table_alpha：一条 TAB，分带时走 K 通路 8 像素/拍）；
+ *     某档的表满了就照常画（不透明）。
+ *   光晕（逐像素 A8）：子弹下面垫一圈柔和的彩色光晕（A8 径向渐变 x 全局 alpha 呼吸；大玉 / 泡弹用大号），
+ *     每帧最多 TH_HALO_MAX 个（A8 拷贝走窄通路，每个一条命令，所以限量）；弹数 > 4096 时预算按
+ *     256 x 4096 / 弹数 递减，按 spin 固定挑一部分子弹（不闪），16 px 网格去重。
+ *   发射光（逐像素 A8）：th_ring / th_fan 出弹时在发射点亮一下（A8 光斑，TH_BLOOM_LIFE tick 淡出）；
+ *     弹数 > 8192 时最多 TH_MAX_BLOOMS / 3 个。 */
+#define TH_FADE_LV    3
+#define TH_FADE_TICKS 9
+#define TH_FADE_MAX   1024
+#define TH_HALO_MAX   256
+#define TH_HALO_SIZES 3
+#define TH_MAX_BLOOMS 48
+#define TH_BLOOM_LIFE 14
+typedef struct { int16_t x, y; uint8_t size, color, alpha, pad; } ThHalo;      /* x,y = 屏幕上的中心 */
+typedef struct { int32_t x, y; uint8_t color, size, life, pad; } ThBloom;      /* 游戏区坐标 Q8 */
 
 enum { TI_POWER, TI_POINT, TI_BIGP, TI_BOMB, TI_LIFE, TI_STAR, TI_KINDS };
 enum { TF_SPARK, TF_GLOW16, TF_GLOW32, TF_GLOW64, TF_RING, TF_KINDS };
@@ -132,7 +169,8 @@ enum { TS_SHOT, TS_FIRE, TS_HIT, TS_KILL, TS_GRAZE, TS_ITEM, TS_POWERUP, TS_EXTE
 #define TS_BIT(e) (1u << (e))
 enum { TH_NORMAL, TH_LUNATIC, TH_STRESS, TH_DIFFS };
 #define TH_STAGES  2
-#define TH_MENU_N  4                /* 标题菜单：NORMAL / LUNATIC / 第 2 关练习 / STRESS */
+#define TH_MENU_N  5                /* 标题菜单：NORMAL / LUNATIC / 第 2 关练习 / STRESS 第 1 关 / STRESS 第 2 关
+                                       （2026-10-26：压力模式按关分开，打完这一关回标题，不再接着进第 2 关） */
 
 #define TH_PLAYER_FIELDS \
     int32_t px,py; \
@@ -155,6 +193,7 @@ typedef struct Th {
     /* objects */
     ThBullet bullets[TH_MAX_BULLETS];
     int nbullets, peak_bullets, dropped;
+    int hot_n;                      /* bullets[0 .. hot_n) 已经抄进 hot[]（见 ThHotBullet） */
     ThShot shots[TH_MAX_SHOTS];
     ThItem items[TH_MAX_ITEMS];     /* 道具、特效都是紧凑数组（前 nitems / nfx 个有效，删除 = 最后一个补位）：
                                        以前每 tick / 每帧把 1024 + 1536 个槽整个扫几遍，全是 DDR 缓存缺失 */
@@ -174,6 +213,8 @@ typedef struct Th {
     ThLaser lasers[TH_MAX_LASERS];
     int nlasers;
     int moon_t;                     /* 第 2 关终符：巨大满月升起（tick） */
+    ThBloom blooms[TH_MAX_BLOOMS];  /* 发射光（第 1 关） */
+    int nblooms;
     int flash;                      /* 白光 0..255 */
     int bg_y;                       /* 背景卷动（像素，Q8） */
     int spell_bg;                   /* 符卡背景淡入 0..255 */
@@ -183,6 +224,12 @@ typedef struct Th {
     /* 每个桶一张表，容量都是 TH_MAX_BULLETS：弹幕循环直接写进去（不再先写临时表再按桶搬一遍）。
      * 3 x 9 x 99999 x 8 B = 21.6 MB，在独立 DDR .stressbss 中 */
     GfxItem draw[TH_DRAW_BUFS][TBK_COUNT][TH_MAX_BULLETS];
+    /* 第 1 关：淡入表（年龄档 x 桶）和光晕表，和 draw[] 同一个 dbuf 轮流写 */
+    int fcount[TH_DRAW_BUFS][TH_FADE_LV][TBK_COUNT];
+    GfxItem fdraw[TH_DRAW_BUFS][TH_FADE_LV][TBK_COUNT][TH_FADE_MAX];
+    int hcount[TH_DRAW_BUFS];
+    ThHalo halo[TH_DRAW_BUFS][TH_HALO_MAX];
+    ThHotBullet hot[TH_MAX_BULLETS];/* 16 * TH_MAX_BULLETS 字节，在 dbuf 之后：换关不清（hot_n 会清） */
     int32_t bot_fx, bot_fy;
     uint32_t prof[3];               /* 上一 tick（th_clock 时钟数）：出弹 + Boss + 杂兵 / 自机弹 + 弹幕循环 / 道具 + 特效 */         /* 自动驾驶：上一 tick 弹幕循环里顺便算出的近处子弹斥力 */
     /* statistics */
@@ -307,6 +354,9 @@ extern const char th_pix_bigfairy[2][48 * 48 + 1], th_pix_boss[2][64 * 80 + 1];
 extern Sprite th_spr_item[TI_KINDS], th_spr_fx[TF_KINDS][TC_COLORS], th_spr_life, th_spr_bombicon;
 extern Sprite th_spr_bg, th_spr_bg_spell, th_spr_frame;
 extern Sprite th_spr_bomb_ring;
+/* 第 1 关半透明弹幕的 A8 图（2026-10-26）：光晕 3 种大小（1x 下 24 / 40 / 72 px）x 8 色，发射光 = 光晕的最大号 */
+extern Sprite th_spr_halo[TH_HALO_SIZES][TC_COLORS];
+extern const uint8_t th_fade_alpha[TH_FADE_LV];
 /* alpha 特效用的图（都带 A8 平面）：符卡立绘（Boss 放大 2 倍，下沿渐隐）、低速时自机周围的魔法阵（8 帧转动）、
  * 符卡时 Boss 身后的大魔法阵（4 帧转动） */
 #define TH_FOCUS_FRAMES 8

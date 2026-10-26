@@ -21,12 +21,17 @@ typedef struct { int width,height; const Pixel *pixels; const uint8_t *alpha; } 
 #define GFX_BLIT_ADD 2
 /* One entry of a batched draw list: sprites[sprite] at (x,y), see gfx_blit_list. */
 typedef struct { int16_t x,y; int32_t sprite; } GfxItem;
-/* Publish XY in one aligned word instead of two write-through halfword stores.
- * memcpy preserves strict aliasing; all supported builds are little endian. */
+/* GCC may_alias keeps strict aliasing valid and emits one aligned RV32 sw.
+ * GfxItem has 4-byte alignment; all supported targets are little endian. */
+typedef uint32_t __attribute__((may_alias)) GfxXYWord;
 static inline void gfx_item_xy(GfxItem *item,int x,int y){
-    uint32_t xy=(uint16_t)x|((uint32_t)(uint16_t)y<<16);
-    __builtin_memcpy(item,&xy,sizeof xy);
+    *(GfxXYWord *)(void *)item=(uint16_t)x|((uint32_t)(uint16_t)y<<16);
 }
+/* 填充表的一项（2026-10-26，gfx_fill_table / 引擎 FTAB）：w x h 的纯色块画在 (x,y)，
+ * 自己的颜色和 alpha（255 = 不透明）。8 字节，格式就是引擎读的格式，用下面两个宏写。 */
+typedef struct { uint32_t xyw, cha; } GfxFillItem;
+#define GFX_FILL_XYW(x,y,w) ((uint32_t)(x) | ((uint32_t)(y) << 12) | ((uint32_t)(w) << 24))
+#define GFX_FILL_CHA(c,h,a) ((uint32_t)(c) | ((uint32_t)(h) << 16) | ((uint32_t)(a) << 24))
 typedef struct {
     void (*begin_frame)(void *context);
     void (*solid_fill)(void *context,int x,int y,int w,int h,Pixel color);
@@ -55,6 +60,8 @@ typedef struct {
     void (*add_fill)(void *context,int x,int y,int w,int h,Pixel color,int alpha);
     void (*add_copy)(void *context,int x,int y,const Sprite *sprite,
         int src_x,int src_y,int w,int h,int color_key,int alpha);
+    int (*fill_table)(void *context,const GfxFillItem *it,int n,int add);
+    int (*copy_table_ga)(void *context,const Sprite *sprites,int nsprites,const GfxItem *it,int n,int mode,int alpha);
 } GfxOps;
 
 /*
@@ -108,6 +115,9 @@ void gfx_blit_list_inside(Gfx *gfx,const Sprite *sprites,const GfxItem *it,int n
  * CPU 只写 2 个列表字；做不了时自动退回 gfx_blit_list_inside，画面完全相同。
  */
 void gfx_blit_table(Gfx *gfx,const Sprite *sprites,int nsprites,const GfxItem *it,int n,int key_enabled,uint32_t pixels);
+/* Caller supplies immutable, in-bounds entries; fallbacks preserve pixels. */
+int gfx_fill_table(Gfx *gfx,const GfxFillItem *it,int n,int add);
+void gfx_blit_table_alpha(Gfx *gfx,const Sprite *sprites,int nsprites,const GfxItem *it,int n,int mode,int alpha,uint32_t pixels);
 /*
  * Alpha blending, alpha = 0..255 (global). Destination is read back, so this
  * costs read + write per pixel (twice the bus traffic of fill/blit).

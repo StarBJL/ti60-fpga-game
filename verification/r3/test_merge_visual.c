@@ -20,7 +20,7 @@ static void fixture(int pressure,int level,int n){
     g.level=level;g.limit_mode=pressure;g.stress_tier=pressure?STRESS_CUSTOM:0;
     g.ticks=g.visual_ticks=100;g.seed_draw_ok=0;g.weapon_idle_ticks=0;g.weapon_heading=0;
     for(int k=0;k<n;k++){int cell=(k*97)%400;
-        g.hostile[k]=(Bullet){1,(602+cell%20*4)*FIX,(338+cell/20*4)*FIX,0,0,1000,0,k%4};}
+        g.hostile[k]=(Seed){(602+cell%20*4)*FIX,(338+cell/20*4)*FIX,0,0,1000,0,k%4};}
     g.hostile_active=g.hostile_used=n;
 }
 static void actor(unsigned char *a){
@@ -115,7 +115,7 @@ int main(void){
     }
     puts("PASS 80/65 hysteresis, four-step fade, replay stability, hidden body at full fade, 3 distinct outline buffers and gameplay immutability");
     fixture(1,7,0);g.hostile_used=g.hostile_active=40000;
-    for(int i=0;i<40000;i++)g.hostile[i]=(Bullet){1,(60+(i*137)%1160)*FIX,(140+(i*53)%480)*FIX,0,0,1000,0,i%4};
+    for(int i=0;i<40000;i++)g.hostile[i]=(Seed){(60+(i*137)%1160)*FIX,(140+(i*53)%480)*FIX,0,0,1000,0,i%4};
     g.invincible=10000;game_tick(&g,(Input){0});compare_modes();dump("stress40k.rgb565");
     fixture(0,1,0);g.phase=TITLE;frame(2,1);dump("title.rgb565");g.phase=STRESS_SELECT;frame(2,1);dump("stress_menu.rgb565");
     g.phase=UPGRADE;g.level=7;g.choices[0]=NOVA;g.choices[1]=MULTISHOT;g.choices[2]=POWER;frame(2,1);dump("upgrade.rgb565");

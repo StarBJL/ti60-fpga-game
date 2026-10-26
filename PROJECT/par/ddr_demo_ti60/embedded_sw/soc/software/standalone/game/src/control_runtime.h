@@ -22,7 +22,7 @@ static int control_fast(void){
     blit_wait();set_hw(1);band_want=1;set_seed_mode(2);
     blit_band_set_koff(0);blit_set_cache(1);
     blit_st.has_table=(blit_rd(BLIT_R_CAPS)&BLIT_CAPS_TABLE)!=0;
-    overlap=1;
+    overlap=1;vpipe=1;
 #if SPROUT_STATS
     render_seed_table=1;render_sort_keys=1;
 #endif
@@ -35,10 +35,10 @@ static int control_fast(void){
     return 1;
 }
 static void control_engine_state(unsigned id){
-    tx_printf("E5 id=%u accel_supported=1 volume_step_supported=1 submit_mode=%d band=%d band_want=%d cache=%d overlap=%d overlap_active=%d seed_table=%d seed_build=%d sort=%d kpath=%d rd_bursts=%u wr_bursts=%u rd_words=%u wide=%u\r\n",
+    tx_printf("E5 id=%u accel_supported=1 volume_step_supported=1 submit_mode=%d band=%d band_want=%d cache=%d overlap=%d overlap_active=%d seed_table=%d seed_build=%d sort=%d kpath=%d rd_bursts=%u wr_bursts=%u rd_words=%u wide=%u vpipe=%d pipeline_supported=1 kblend=%d kmode=%d ftab=%d square_path=%d th_stage=%d seed_bytes=16 th_hot_bytes=16\r\n",
       id,seed_mode(),blit_st.band,band_want,!!blit_st.cflag,overlap,
-      use_hw&&overlap&&scene!=SCENE_SQUARES&&!hdmi_mode_1080(),blit_st.has_table,
-      render_seed_table,render_sort_keys,!blit_st.band_koff,blit_st.rd_max,blit_st.wr_max,blit_st.rw_max,blit_st.wide);
+      use_hw&&overlap&&(scene!=SCENE_SQUARES||demo_fill_table_active())&&!hdmi_mode_1080(),blit_st.has_table,
+      render_seed_table,render_sort_keys,!(blit_st.band_koff & BLIT_BAND_KOFF),blit_st.rd_max,blit_st.wr_max,blit_st.rw_max,blit_st.wide,vpipe,blit_st.has_kblend,blit_band_kmode(),blit_st.has_ftab,demo_square_path(),th.stage);
 }
 static int bounded(int v,int lo,int hi){return v<lo?lo:v>hi?hi:v;}
 static void control_fence(void){if(hw_avail)blit_wait();}
@@ -96,6 +96,16 @@ static int control_apply(ControlEvent e){
     case CT_STATUS:changed=0;break;
     case CT_INPUT_DIAG:case CT_MATRIX_CAL:case CT_MATRIX_BIND:case CT_KEYBOARD_SYNC:
         return control_input_command(e);
+    case CT_KMODE:if(v<0||v>2||!hw_avail||!blit_st.has_band)return 0;blit_band_set_kmode(v);break;
+    case CT_SQUARE_PATH:
+        if(scene!=SCENE_SQUARES||!hw_avail||v<0||v>3||!blit_st.has_list)return 0;
+        if(!demo_set_square_path(v))return 0;
+        set_hw(1);if(v)set_seed_mode(2);break;
+    case CT_STRESS_STAGE:
+        if(v<0||v>=TH_STAGES||scene!=SCENE_TH)return 0;
+        control_fence();autoplay=0;th_bot_last=0;key_pressed=th_edge=0;control_move(0);
+        th_start_stage(&th,TH_STRESS,v);th_stress_set_auto(&th,0);th_rebuild_draw(&th);break;
+    case CT_VPIPE:if(v<0||v>1)return 0;control_fence();vpipe=v;break;
     case CT_FAST:if(!control_fast())return 0;break;
     case CT_BARS:if(v<0||v>1)return 0;hdmi_test_pattern(v);break;
     case CT_RESOLUTION:

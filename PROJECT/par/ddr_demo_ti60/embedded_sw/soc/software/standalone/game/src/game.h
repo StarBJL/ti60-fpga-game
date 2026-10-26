@@ -31,6 +31,10 @@ typedef struct { int active, x, y, hp, max_hp, kind, spawn, hit, id, attack_time
  * signed32; packed damage/style preserve all current values. 24B vs 32B. */
 typedef struct { int active, x, y; int16_t vx, vy; int life; uint16_t damage; uint8_t style,owner; } Bullet;
 typedef char bullet_is_24_bytes[sizeof(Bullet)==24?1:-1];
+/* Hostile hot state: four records per 64-byte cache line. active is damage,
+ * zero is a free slot; emitted damage <= 40, speed <= 1000, life <= 720. */
+typedef struct {int32_t x,y;int16_t vx,vy,life;uint8_t active,style;} Seed;
+typedef char seed_must_be_16_bytes[sizeof(Seed)==16?1:-1];
 typedef struct { int active, x, y, value; } Gem;
 typedef struct { int life, total, x, y, vx, vy, color, size; } Particle;
 
@@ -38,9 +42,9 @@ typedef struct { int life, total, x, y, vx, vy, color, size; } Particle;
  * Optional host allocator used only when limit mode exhausts the fixed pool.
  * Bare-metal ports leave these callbacks NULL and count dropped shots instead.
  */
-typedef Bullet *(*GameGrowShots)(void *user, const Bullet *old_pool,
+typedef Seed *(*GameGrowShots)(void *user, const Seed *old_pool,
     int old_capacity, int new_capacity);
-typedef void (*GameReleaseShots)(void *user, Bullet *pool);
+typedef void (*GameReleaseShots)(void *user, Seed *pool);
 /*
  * Free-slot index of the enemy-seed pool: one bit per slot (1 = free) and one
  * summary bit per 32 slots (1 = that word still has a free slot). Taking the
@@ -64,7 +68,7 @@ typedef struct {
 @int spawn_timer, next_enemy_id, enemy_count, banner, hurt_flash：敌人和事件ui
 @int muzzle, horde_left, horde_timer, horde_ticks, boss_pending, bosses_killed, limit_mode, stress_tier：特殊事件状态
 @Bullet bullets[MAX_BULLETS]:玩家弹幕
-@Bullet hostile[MAX_HOSTILE_BULLETS]：敌方弹幕
+@Seed hostile[MAX_HOSTILE_BULLETS]：敌方弹幕
 @gems：经验宝石
 @Particle：特效
 */
@@ -93,9 +97,9 @@ typedef struct {
     Event event;
     Enemy enemies[MAX_ENEMIES];
     Bullet bullets[MAX_BULLETS];
-    Bullet hostile[MAX_HOSTILE_BULLETS];
+    Seed hostile[MAX_HOSTILE_BULLETS];
     /* Limit-mode extension supplied by the host. NULL means fixed-pool mode. */
-    Bullet *limit_shots;
+    Seed *limit_shots;
     int limit_shot_cap, dropped_shots;
     /* Free-slot index of the active enemy-seed pool (maintained by game.c). */
     uint32_t hostile_free[GAME_HOSTILE_WORDS];
@@ -154,7 +158,7 @@ const char *game_upgrade_name(int id);
 const char *game_upgrade_line(int id, int line);
 int game_enemy_radius(int kind);
 int game_hostile_slots(const Game *game);
-const Bullet *game_hostile_at(const Game *game, int index);
+const Seed *game_hostile_at(const Game *game, int index);
 int game_hostile_count(const Game *game);
 int game_player_count(const Game *game);
 int game_total_bullets(const Game *game);

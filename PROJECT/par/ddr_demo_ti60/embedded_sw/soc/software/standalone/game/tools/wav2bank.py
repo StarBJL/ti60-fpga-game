@@ -112,13 +112,24 @@ def resample(chans, src, dst):
     try:
         import numpy as np
         out = []
+        # windowed-sinc interpolation (Kaiser, 48 taps; cut-off 0.9 x the lower Nyquist):
+        # no scipy needed, no aliasing of the noise drums / hats when going down to 22 kHz
+        half = 24
+        fc = 0.9 * min(1.0, dst / src)                     # relative to the source Nyquist
         for c in chans:
             x = np.asarray(c, dtype=float)
-            if dst < src:                                      # simple low-pass before decimating
-                k = max(1, int(round(src / dst)))
-                x = np.convolve(x, np.ones(k) / k, mode='same')
             n = int(len(x) * dst / src)
-            out.append(list(np.interp(np.arange(n) * src / dst, np.arange(len(x)), x)))
+            t = np.arange(n) * (src / dst)
+            base = np.floor(t).astype(np.int64)
+            y = np.zeros(n)
+            xp = np.concatenate([np.zeros(half), x, np.zeros(half + 1)])
+            for k in range(-half + 1, half + 1):
+                d = t - (base + k)                              # distance in source samples
+                r = np.clip(d / half, -1.0, 1.0)
+                w = np.i0(8.0 * np.sqrt(1.0 - r * r)) / np.i0(8.0)    # continuous Kaiser window
+                h = fc * np.sinc(fc * d) * w
+                y += h * xp[base + k + half]
+            out.append(list(y))
         return out
     except ImportError:
         pass

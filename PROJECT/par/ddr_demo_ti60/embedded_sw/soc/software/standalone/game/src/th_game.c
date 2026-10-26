@@ -99,10 +99,11 @@ ThBullet *th_fire(Th *t, int32_t x, int32_t y, uint16_t ang, int spd, int kind, 
 {
     ThBullet *b;
     if (t->nbullets >= (t->diff == TH_STRESS ? t->stress_cap : 16384)) { ++t->dropped; return 0; }
+    if (t->hot_n > t->nbullets) t->hot_n = t->nbullets;
     b = &t->bullets[t->nbullets++];
     t->sfx |= TS_BIT(TS_FIRE);
     memset(b, 0, sizeof *b);
-    b->pad2=0;b->x = x; b->y = y; b->ang = ang; b->spd = (int16_t)spd;
+    b->age=0;b->x = x; b->y = y; b->ang = ang; b->spd = (int16_t)spd;
     b->vx = (int16_t)((spd * th_cos(ang)) >> 14);
     b->vy = (int16_t)((spd * th_sin(ang)) >> 14);
     b->kind = (uint8_t)kind; b->color = (uint8_t)color;
@@ -111,9 +112,27 @@ ThBullet *th_fire(Th *t, int32_t x, int32_t y, uint16_t ang, int spd, int kind, 
     return b;
 }
 
+/* 发射光（第 1 关，2026-10-26）：出弹点亮一个 A8 光斑，TH_BLOOM_LIFE tick 淡出 */
+static void th_bloom(Th *t, int32_t x, int32_t y, int color, int kind)
+{
+    ThBloom *bl;
+    int i;
+    /* 弹数 > 8192 时最多 16 个（满屏弹幕时看不出来，省引擎窄通路） */
+    if (t->stage != 0 || t->nblooms >= (t->nbullets > 8192 ? TH_MAX_BLOOMS / 3 : TH_MAX_BLOOMS)) return;
+    /* 同一处（16 px 内）还亮着前半段的发射光就不再叠一个（Boss 连射时不会叠成一大团白） */
+    for (i = 0; i < t->nblooms; i++) {
+        const int32_t dx = t->blooms[i].x - x, dy = t->blooms[i].y - y;
+        if (t->blooms[i].life > TH_BLOOM_LIFE / 2 && dx < 16 * TH_ONE && dx > -16 * TH_ONE && dy < 16 * TH_ONE && dy > -16 * TH_ONE) return;
+    }
+    bl = &t->blooms[t->nblooms++];
+    bl->x = x; bl->y = y; bl->color = (uint8_t)color; bl->life = TH_BLOOM_LIFE;
+    bl->size = (uint8_t)(kind == TB_BIG || kind == TB_BUBBLE ? 2 : 1);
+}
+
 void th_ring(Th *t, int32_t x, int32_t y, int n, uint16_t ang0, int spd, int kind, int color)
 {
     int i;
+    th_bloom(t, x, y, color, kind);
     /* big glowing kinds (32 / 64 px, additive) at most x4: at x32 they would only
      * white out the screen (and cost the most pixels) */
     n *= (kind == TB_BIG || kind == TB_BUBBLE) && t->dens > 4 ? 4 : t->dens;
@@ -123,6 +142,7 @@ void th_ring(Th *t, int32_t x, int32_t y, int n, uint16_t ang0, int spd, int kin
 void th_fan(Th *t, int32_t x, int32_t y, int n, uint16_t ang, uint16_t spread, int spd, int kind, int color)
 {
     int i;
+    th_bloom(t, x, y, color, kind);
     if (t->dens > 1) {
         uint32_t sp = (uint32_t)spread + (uint32_t)spread * (uint32_t)(t->dens - 1) / 4u;
         n = n * t->dens;
@@ -242,11 +262,14 @@ void th_clear_bullets(Th *t, int to_items)
     const int step = t->nbullets / (TH_MAX_GHOSTS - 32) + 1;
     for (i = 0; i < t->nbullets; i++) {
         const ThBullet *b = &t->bullets[i];
-        if (to_items && made < 600 && (i & 3) == 0) { th_drop(t, TI_STAR, b->x, b->y); ++made; }
+        /* 位置以 hot[] 为准（本 tick 刚发、还没抄过去的除外） */
+        const int32_t bx = i < t->hot_n ? t->hot[i].x : b->x, by = i < t->hot_n ? t->hot[i].y : b->y;
+        if (to_items && made < 600 && (i & 3) == 0) { th_drop(t, TI_STAR, bx, by); ++made; }
         if (to_items) t->score += 10;
-        if (i % step == 0) bullet_ghost(t, b->bk, b->sp, b->x, b->y);
+        if (i % step == 0) bullet_ghost(t, b->bk, b->sp, bx, by);
     }
     t->nbullets = 0;
+    t->hot_n = 0;
     for (i = 0; i < t->nphantoms; i++) {
         const ThPhantom *p = &t->phantoms[i];
         if (to_items && (i & 3) == 0) th_drop(t, TI_STAR, p->x, p->y);
@@ -761,6 +784,8 @@ static void fx_update(Th *t)
         gh->y += gh->vy;
     }
     if (t->cutin_t) --t->cutin_t;
+    for (i = 0; i < t->nblooms; i++)
+        if (--t->blooms[i].life == 0) { t->blooms[i] = t->blooms[--t->nblooms]; --i; }
     for (i = 0; i < t->nfx; i++) {
         ThFx *f = &t->fx[i];
         if (--f->life == 0) { *f = t->fx[--t->nfx]; --i; continue; }
@@ -819,7 +844,7 @@ static void lasers_update(Th *t)
             if ((uint32_t)(l->x + PX(80)) > (uint32_t)PX(TH_PF_W + 160) || (uint32_t)(l->y + PX(80)) > (uint32_t)PX(TH_PF_H + 160)) {
                 *l = t->lasers[--t->nlasers]; --i; continue;
             }
-            if ((l->t & 3) == 0) th_fx(t, TF_SPARK, l->color, l->x, l->y, -l->vx / 4, -l->vy / 4, 16);
+            if ((l->t & 3) == 0 && !l->pad) th_fx(t, TF_SPARK, l->color, l->x, l->y, -l->vx / 4, -l->vy / 4, 16);
         } else {
             if (act >= 0 && act < l->on) l->w = (int16_t)(l->w + (l->wmax + 7) / 8 > l->wmax ? l->wmax : l->w + (l->wmax + 7) / 8);
             else if (act >= l->on) {
@@ -856,12 +881,76 @@ static void lasers_update(Th *t)
 }
 
 /* ---------------------------------------------------------------- bullets (hot loop) */
+/* 每桶写指针放片上 RAM（2026-10-26 板上 x48、1.5 万颗：弹幕循环 1170 ns/颗）。D$ 是写直通，每个 store 都上总线，
+ * 引擎忙时一次 DDR store 约 128 ns（启动测速 "DDR store sequential 50 / 127"）；以前每颗 7 次：age、x、y、
+ * 栈上的 cnt[桶]++（栈也在 DDR）、表项 x、y、sprite。现在 age 只在出生的头几 tick 写、表项 x|y 合成一个字、
+ * 计数改成这里的写指针，剩 4 次 DDR store。
+ * OCR = 0xF9000000 起 4 KB 片上 RAM（store 约 35 ns）：引导程序只用前约 1.1 KB（808 B 代码，见
+ * ip/soc/EfxSapphireSoc.v_toplevel_system_ramA_*.bin，+ 256 B 栈），这里用 0xF9000C00 起 144 B；
+ * main.c 的测速只碰最后一个字（会恢复）。主机测试用普通静态变量。 */
+typedef struct { GfxItem *wp[TBK_COUNT]; GfxItem *fwp[TH_FADE_LV][TBK_COUNT]; } ThHot;
+#if defined(__riscv)
+static ThHot th_hot_ocr __attribute__((section(".hotbss"),aligned(16)));
+#define TH_HOT (&th_hot_ocr)
+#else
+static ThHot th_hot_host;
+#define TH_HOT (&th_hot_host)
+#endif
+
+/* 慢路径（2026-10-26 热 / 冷拆分）：timer（变速、转向、到时改向）。先改 ThBullet，再把 vx / vy / bk / sp 抄回 hot。
+ * 和原来的写法逐位相同（th_host 的 eq 测试对比过）。 */
+static void bullet_timer(ThBullet *q, ThHotBullet *h, int32_t px, int32_t py)
+{
+    --q->timer;
+    if (q->acc || q->angv) {
+        int s = q->spd + q->acc;
+        q->spd = (int16_t)(s < 0 ? 0 : s);
+        q->ang = (uint16_t)(q->ang + q->angv);
+        q->vx = (int16_t)((q->spd * th_cos(q->ang)) >> 14);
+        q->vy = (int16_t)((q->spd * th_sin(q->ang)) >> 14);
+        if (q->angv) th_bullet_sprite(q);
+    }
+    if (!q->timer && (q->flags & TBF_REDIR)) {
+        q->ang = (uint16_t)(((q->flags & TBF_AIM) ? th_atan2(py - h->y, px - h->x) : q->ang) + q->aux_ang);
+        q->spd = q->aux_spd;
+        q->acc = 0; q->angv = 0;
+        q->vx = (int16_t)((q->spd * th_cos(q->ang)) >> 14);
+        q->vy = (int16_t)((q->spd * th_sin(q->ang)) >> 14);
+        q->flags &= (uint8_t)~TBF_REDIR;
+        th_bullet_sprite(q);
+    }
+    h->vx = q->vx; h->vy = q->vy; h->bk = q->bk; h->sp = q->sp;
+}
+
+/* 板上（2026-10-26）x48、1.5 万颗：弹幕循环 1232 ns/颗，反汇编看每颗已经只有 4 次 DDR store，瓶颈其实是
+ * (1) 读 32 B 的 ThBullet：一条 64 B 缓存行只有 2 颗，引擎忙时一次缺失约 850 ns -> 每颗约 430 ns；
+ * (2) 每颗约 106 条指令、8 次跳转（GCC 把常见路径排在了跳转后面）。
+ * 现在：每颗只读 16 B 的 hot[i]（每颗约 210 ns 的缺失）；timer / 反弹 / 淡入 / 光晕都标在 hot.slow 里，
+ * 常见的弹（没有 timer、不反弹、成年、不带光晕）一次判断就走直线快路径（__builtin_expect 排布）。 */
+#define TH_LIKELY(c)   __builtin_expect(!!(c), 1)
+#define TH_UNLIKELY(c) __builtin_expect(!!(c), 0)
 static void bullets_update(Th *t)
 {
     ThBullet *b = t->bullets;
+    ThHotBullet *const hb = t->hot;
     const int d = (t->dbuf + 1) % TH_DRAW_BUFS;       /* this tick's tables (the engine may read the other two) */
     GfxItem *dst[TBK_COUNT];
-    int n = t->nbullets, i, j, cnt[TBK_COUNT], hit = 0;
+    ThHot *const hot = TH_HOT;
+    int n = t->nbullets, i, j, hit = 0;
+    /* 第 1 关（压力测试也是）：淡入表 + 光晕表（2026-10-26，见 th.h TH_FADE_*） */
+    const int fade = t->stage == 0;
+    int (*const fc)[TBK_COUNT] = t->fcount[d];
+    ThHalo *const hal = t->halo[d];
+    int hn = 0, lv, hs = 0;
+    /* 光晕预算随弹数减少：<= 4096 颗时 256 个，再多按 256 x 4096 / n（1.5 万颗约 70 个）。那时满屏都是弹，
+     * 光晕几乎看不出来，却占引擎窄通路和源缓存（板上 x48：开 alpha 引擎 19 ms / 关 15.5 ms）。
+     * 新弹按 spin（发射时随机）挑 1/2^hs 标 TH_S_HALO：同一颗子弹一直有或一直没有光晕，不会闪。 */
+    const int hmax = n <= 4096 ? TH_HALO_MAX : TH_HALO_MAX * 4096 / n;
+    while ((n >> hs) > hmax + hmax / 4 && hs < 8) ++hs;
+    const unsigned hmask = (1u << hs) - 1u;
+    /* 光晕按 16 px 网格去重：一格只垫一个（一串子弹 / 刚出生挤在一起的不会叠成十几层，也省引擎时间） */
+    static uint32_t hcell[(1280 / 16) * (720 / 16) / 32 + 1];
+    if (fade) memset(hcell, 0, sizeof hcell);
     int32_t bfx = 0, bfy = 0;
     const int32_t px = t->px, py = t->py;
     const int can_hit = !(t->invuln || t->bomb_t || t->dying || t->invincible) && t->mode == TH_PLAY;
@@ -870,41 +959,51 @@ static void bullets_update(Th *t)
     /* screen mapping of the current view (see TH_SX / TH_SY), hoisted out of the loop */
     const int v_s2 = th_view.s2, v_ox = th_view.ox, v_oy = th_view.oy;
     const int v_w = 640 * v_s2 / 2, v_h = 480 * v_s2 / 2;
-    for (j = 0; j < TBK_COUNT; j++) { dst[j] = t->draw[d][j]; cnt[j] = 0; }
+    for (j = 0; j < TBK_COUNT; j++) { dst[j] = hot->wp[j] = t->draw[d][j]; }
+    for (lv = 0; lv < TH_FADE_LV; lv++) for (j = 0; j < TBK_COUNT; j++) hot->fwp[lv][j] = t->fdraw[d][lv][j];
+    /* 上个 tick 之后发的弹：抄进 hot[]（图案在 th_fire 之后才设 timer / flags，所以在这里抄） */
+    if (t->hot_n > n) t->hot_n = n;
+    for (i = t->hot_n; i < n; i++) {
+        const ThBullet *q = &b[i];
+        ThHotBullet *h = &hb[i];
+        h->x = q->x; h->y = q->y; h->vx = q->vx; h->vy = q->vy;
+        h->bk = q->bk; h->sp = q->sp; h->spin = q->spin;
+        h->slow = (uint8_t)((q->timer ? TH_S_TIMER : 0) | (q->flags & TBF_BOUNCE ? TH_S_BOUNCE : 0) |
+                            (fade && q->age < TH_FADE_TICKS ? TH_S_YOUNG : 0) |
+                            (fade && !(q->spin & hmask) ? TH_S_HALO : 0));
+    }
     for (i = 0; i < n; i++) {
-        ThBullet *q = &b[i];
+        ThHotBullet *const h = &hb[i];
         int32_t x, y, dx, dy;
         int bucket, half, sx, sy;
-        if (q->timer) {
-            --q->timer;
-            if (q->acc || q->angv) {
-                int s = q->spd + q->acc;
-                q->spd = (int16_t)(s < 0 ? 0 : s);
-                q->ang = (uint16_t)(q->ang + q->angv);
-                q->vx = (int16_t)((q->spd * th_cos(q->ang)) >> 14);
-                q->vy = (int16_t)((q->spd * th_sin(q->ang)) >> 14);
-                if (q->angv) th_bullet_sprite(q);
+        unsigned s = h->slow;
+        if (TH_UNLIKELY(s & (TH_S_TIMER | TH_S_YOUNG))) {
+            ThBullet *const q = &b[i];
+            if (s & TH_S_YOUNG) {                        /* 年龄只在淡入期间数（到 TH_FADE_TICKS 停） */
+                if (++q->age >= TH_FADE_TICKS) s &= ~TH_S_YOUNG;
             }
-            if (!q->timer && (q->flags & TBF_REDIR)) {
-                q->ang = (uint16_t)(((q->flags & TBF_AIM) ? th_atan2(py - q->y, px - q->x) : q->ang) + q->aux_ang);
-                q->spd = q->aux_spd;
-                q->acc = 0; q->angv = 0;
-                q->vx = (int16_t)((q->spd * th_cos(q->ang)) >> 14);
-                q->vy = (int16_t)((q->spd * th_sin(q->ang)) >> 14);
-                q->flags &= (uint8_t)~TBF_REDIR;
-                th_bullet_sprite(q);
+            if (s & TH_S_TIMER) {
+                bullet_timer(q, h, px, py);
+                if (!q->timer) s &= ~TH_S_TIMER;
             }
+            h->slow = (uint8_t)s;
         }
-        x = q->x + q->vx; y = q->y + q->vy;
-        q->x = x; q->y = y;
-        if ((q->flags & TBF_BOUNCE) && (x < 0 || x > PX(TH_PF_W))) {
+        x = h->x + h->vx; y = h->y + h->vy;
+        h->x = x; h->y = y;
+        if (TH_UNLIKELY(s & TH_S_BOUNCE) && (x < 0 || x > PX(TH_PF_W))) {
+            ThBullet *const q = &b[i];
+            q->vx = h->vx;
             q->vx = (int16_t)-q->vx; q->ang = (uint16_t)(32768u - q->ang);
             q->flags &= (uint8_t)~TBF_BOUNCE;
             th_bullet_sprite(q);
+            h->vx = q->vx; h->bk = q->bk; h->sp = q->sp;
+            h->slow = (uint8_t)(s &= ~TH_S_BOUNCE);
         }
         /* outside the playfield + 40 px: remove (the last one takes the slot) */
-        if ((uint32_t)(x + PX(40)) > (uint32_t)PX(TH_PF_W + 80) || (uint32_t)(y + PX(40)) > (uint32_t)PX(TH_PF_H + 80)) {
-            b[i] = b[--n];
+        if (TH_UNLIKELY((uint32_t)(x + PX(40)) > (uint32_t)PX(TH_PF_W + 80) || (uint32_t)(y + PX(40)) > (uint32_t)PX(TH_PF_H + 80))) {
+            --n;
+            b[i] = b[n];
+            hb[i] = hb[n];
             --i;
             continue;
         }
@@ -912,14 +1011,15 @@ static void bullets_update(Th *t)
         for(int pi=0;pi<t->player_count;pi++){
             const ThPlayer *pl=th_player(t,pi);if(pl->out)continue;
             int32_t dx=x-pl->px,dy=y-pl->py;
-            if((uint32_t)(dx+PX(40))<(uint32_t)PX(80)&&(uint32_t)(dy+PX(40))<(uint32_t)PX(80)){
+            if(TH_UNLIKELY((uint32_t)(dx+PX(40))<(uint32_t)PX(80)&&(uint32_t)(dy+PX(40))<(uint32_t)PX(80))){
+                ThBullet *q=&b[i];
                 int32_t ex=dx>>4,ey=dy>>4,d2=ex*ex+ey*ey;
                 int32_t radius=brad16[q->kind]+PLAYER_R*16,graze=radius+GRAZE_R*16;
                 int can=!(pl->invuln||pl->bomb_t||pl->dying||t->invincible)&&t->mode==TH_PLAY;
-                unsigned bit=1u<<pi;int grazed=t->player_count>1?(q->pad2&bit):(q->flags&TBF_GRAZED);
+                unsigned bit=1u<<pi;unsigned mask=1u<<(pi+5);int grazed=q->flags&mask;
                 if(d2<radius*radius&&can)hit|=bit;
                 else if(d2<graze*graze&&!grazed&&t->mode==TH_PLAY&&!pl->dying){
-                    q->pad2|=bit;if(pi==0)q->flags|=TBF_GRAZED;
+                    q->flags|=(uint8_t)mask;if(pi==0)q->flags|=TBF_GRAZED;
                     th_context(t,pi);++t->graze;t->score+=500;t->sfx|=TS_BIT(TS_GRAZE);
                     th_fx(t,TF_SPARK,TC_WHITE,x,y,-dx>>3,-dy>>3,12);
                 }
@@ -928,26 +1028,58 @@ static void bullets_update(Th *t)
             }
         }
         /* draw item, only if fully on screen: straight into its bucket's table */
-        bucket = q->bk;
+        bucket = h->bk;
         half = t->diff==TH_STRESS?th_stress_half[bucket]:th_bk_hv[bucket];
         sx = ((x + (TH_PF_X << 8)) * v_s2) >> 9; sy = ((y + (TH_PF_Y << 8)) * v_s2) >> 9;   /* centre */
         /* cull with the full (square) box; the sprite may be a tight box inside it */
-        if ((uint32_t)(sx - half) > (uint32_t)(v_w - 2 * half) || (uint32_t)(sy - half) > (uint32_t)(v_h - 2 * half)) continue;
+        if (TH_UNLIKELY((uint32_t)(sx - half) > (uint32_t)(v_w - 2 * half) || (uint32_t)(sy - half) > (uint32_t)(v_h - 2 * half))) continue;
         {
-            GfxItem *it = &dst[bucket][cnt[bucket]++];
-            const int spr = bucket == TBK_STAR ? q->sp + (int)(((star_t + q->spin) >> 2) & (TH_STAR_FRAMES - 1)) : q->sp;
-            it->x = (int16_t)(sx + v_ox - (t->diff==TH_STRESS?th_stress_cx[bucket][spr]:th_bspr_cx[bucket][spr]));
-            it->y = (int16_t)(sy + v_oy - (t->diff==TH_STRESS?th_stress_cy[bucket][spr]:th_bspr_cy[bucket][spr]));
+            const int spr = bucket == TBK_STAR ? h->sp + (int)(((star_t + h->spin) >> 2) & (TH_STAR_FRAMES - 1)) : h->sp;
+            GfxItem *it;
+            if (TH_UNLIKELY(s & (TH_S_YOUNG | TH_S_HALO))) {
+                const ThBullet *const q = &b[i];
+                lv = q->age / 3;
+                if ((s & TH_S_YOUNG) && (it = hot->fwp[lv][bucket]) < t->fdraw[d][lv][bucket] + TH_FADE_MAX)
+                    hot->fwp[lv][bucket] = it + 1;                   /* 刚出生：淡入表 */
+                else {
+                    it = hot->wp[bucket]; hot->wp[bucket] = it + 1;
+                    if ((s & TH_S_HALO) && hn < hmax) {
+                        /* 子弹下面垫 A8 光晕（每帧预算 hmax 个），透明度随时间呼吸；
+                         * 大玉 / 泡弹用大号光晕，小弹（米弹 / 苦无 / 小弹 / 星弹）淡一些 */
+                        const unsigned cell = (unsigned)(sy >> 4) * (1280u / 16u) + (unsigned)(sx >> 4);
+                        if (cell < (1280u / 16u) * (720u / 16u) && !(hcell[cell >> 5] & (1u << (cell & 31u)))) {
+                            ThHalo *hh = &hal[hn++];
+                            const int big = bucket == TBK_BIG || bucket == TBK_BUBBLE || bucket == TBK_ORB;
+                            hcell[cell >> 5] |= 1u << (cell & 31u);
+                            hh->x = (int16_t)(sx + v_ox); hh->y = (int16_t)(sy + v_oy);
+                            hh->size = (uint8_t)(bucket == TBK_BIG ? 1 : bucket == TBK_BUBBLE ? 2 : 0);
+                            hh->color = q->color;
+                            hh->alpha = (uint8_t)((big ? 182 : 142) + (((star_t << 2) + h->spin) & 63) - 32);   /* 150..213 / 110..173 */
+                        }
+                    }
+                }
+            } else {
+                it = hot->wp[bucket]; hot->wp[bucket] = it + 1;
+            }
+            /* x、y 一次 32 位 store（gfx_item_xy，见 gfx.h：不能用 memcpy） */
+            gfx_item_xy(it, sx + v_ox - (t->diff==TH_STRESS?th_stress_cx[bucket][spr]:th_bspr_cx[bucket][spr]), sy + v_oy - (t->diff==TH_STRESS?th_stress_cy[bucket][spr]:th_bspr_cy[bucket][spr]));
             it->sprite = spr;
         }
     }
     t->nbullets = n;
+    t->hot_n = n;
     if (n > t->peak_bullets) t->peak_bullets = n;
     for(int pi=0;pi<t->player_count;pi++)if(hit&(1<<pi)){th_context(t,pi);player_hit(t);}
     th_context(t,0);
     t->bot_fx = bfx; t->bot_fy = bfy;
     t->drawn = 0;
-    for (j = 0; j < TBK_COUNT; j++) { t->dcount[d][j] = cnt[j]; t->drawn += cnt[j]; }
+    for (j = 0; j < TBK_COUNT; j++) { const int c = (int)(hot->wp[j] - dst[j]); t->dcount[d][j] = c; t->drawn += c; }
+    for (lv = 0; lv < TH_FADE_LV; lv++)
+        for (j = 0; j < TBK_COUNT; j++) {
+            const int c = (int)(hot->fwp[lv][j] - t->fdraw[d][lv][j]);
+            fc[lv][j] = c; t->drawn += c;
+        }
+    t->hcount[d] = hn;
     t->dbuf = d;
 }
 
@@ -1102,8 +1234,8 @@ static void th_tick_core(Th *t, uint32_t held, uint32_t pressed, int bot)
             const int k = (int)(t->tick / 240u % 4u);
             th_start_stage(t, dd[k], ds[k]);
         } else if (pressed & (PAD_SHOT | PAD_START)) {
-            static const uint8_t md[TH_MENU_N] = { TH_NORMAL, TH_LUNATIC, TH_NORMAL, TH_STRESS };
-            th_start_stage(t, md[t->menu], t->menu == 2);
+            static const uint8_t md[TH_MENU_N] = { TH_NORMAL, TH_LUNATIC, TH_NORMAL, TH_STRESS, TH_STRESS };
+            th_start_stage(t, md[t->menu], t->menu == 2 || t->menu == 4);
             t->sfx |= TS_BIT(TS_OK);
         }
         t->bg_y = (t->bg_y + 64) % PX(TH_PF_H);
@@ -1127,7 +1259,8 @@ static void th_tick_core(Th *t, uint32_t held, uint32_t pressed, int bot)
         if (t->score > t->hiscore) t->hiscore = t->score;
         if ((t->respawn_t > 60 && (pressed & (PAD_SHOT | PAD_START))) || (bot && t->respawn_t > 300) ||
             (t->mode == TH_CLEAR && t->respawn_t > 480)) {
-            if (t->mode == TH_CLEAR && t->stage + 1 < TH_STAGES) { next_stage(t); return; }
+            /* 压力模式只测选中的那一关：打完回标题 */
+            if (t->mode == TH_CLEAR && t->stage + 1 < TH_STAGES && t->diff != TH_STRESS) { next_stage(t); return; }
             t->mode = TH_TITLE; t->menu = 0; t->nbullets = 0;
         }
         fx_update(t);
@@ -1193,12 +1326,13 @@ void th_tick(Th *t,uint32_t held,uint32_t pressed,int bot){
 
 /* Rebuild current geometry without advancing time, collision or RNG; caller fenced GPU. */
 void th_rebuild_draw(Th *t){
+    memset(t->fcount,0,sizeof t->fcount);memset(t->hcount,0,sizeof t->hcount);
     int d=t->dbuf;memset(t->dcount[d],0,sizeof t->dcount[d]);
     for(int i=0;i<t->nbullets;i++){
-        const ThBullet *b=&t->bullets[i];int k=b->bk;
+        const ThBullet *b=&t->bullets[i];const ThHotBullet *hb=i<t->hot_n?&t->hot[i]:0;int k=hb?hb->bk:b->bk;
         int sp=k==TBK_STAR?b->sp+(int)(((t->tick+b->spin)>>2)&(TH_STAR_FRAMES-1)):b->sp;
         int h=t->diff==TH_STRESS?th_stress_half[k]:th_bk_hv[k];
-        int x=((b->x+(TH_PF_X<<8))*th_view.s2)>>9,y=((b->y+(TH_PF_Y<<8))*th_view.s2)>>9;
+        int x=(((hb?hb->x:b->x)+(TH_PF_X<<8))*th_view.s2)>>9,y=(((hb?hb->y:b->y)+(TH_PF_Y<<8))*th_view.s2)>>9;
         int w=640*th_view.s2/2,vh=480*th_view.s2/2;
         if((uint32_t)(x-h)>(uint32_t)(w-2*h)||(uint32_t)(y-h)>(uint32_t)(vh-2*h))continue;
         GfxItem *it=&t->draw[d][k][t->dcount[d][k]++];

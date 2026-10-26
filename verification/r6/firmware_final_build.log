@@ -1,0 +1,2 @@
+debug : /data/users/user/codex_tmp/ti60_r6_work/Ti60_R6/BOARD_TEST/r6/ti60_r6_debug.elf ; log: /data/users/user/codex_tmp/ti60_r6_work/Ti60_R6/verification/r6/build_debug.log
+release : /data/users/user/codex_tmp/ti60_r6_work/Ti60_R6/BOARD_TEST/r6/ti60_r6_release.elf ; log: /data/users/user/codex_tmp/ti60_r6_work/Ti60_R6/verification/r6/build_release.log

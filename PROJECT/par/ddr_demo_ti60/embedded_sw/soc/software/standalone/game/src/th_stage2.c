@@ -10,8 +10,9 @@
  *   - wisps (TE_WISP): translucent ghost flames (A8 sprites) that fade in;
  *   - a mid-boss (the stage clock stops while it is up), the full moon rising
  *     behind the last spell card (t->moon_t).
- * Ring / fan bullet counts scale with t->dens like stage 1; phantoms and lasers
- * do not (stress mode would only multiply alpha commands).
+ * Ring / fan bullet counts scale with t->dens like stage 1; phantoms, beams and
+ * pillars do not (stress mode would only multiply alpha commands). Comets do in
+ * stress mode (2026-10-26, comets() below; additive glows on the K path).
  */
 #include "th.h"
 
@@ -30,6 +31,31 @@ static void phantom_ring(Th *t, int32_t x, int32_t y, int n, uint16_t a0, int sp
     for (i = 0; i < n; i++)
         th_phantom(t, x, y, (uint16_t)(a0 + (uint32_t)i * 65536u / (uint32_t)n), spd, kind, color,
                    (uint16_t)(ph0 + (uint32_t)i * 4096u), 900);
+}
+
+/* 流星（TL_COMET）：压力模式按倍率 t->dens 多发（2026-10-26），普通 / Lunatic 不变（随机数序列也不变）。
+ * 第 1 颗照原样；其余的出发点在 +-spread 内、往回 0..30 px，角度 +-10 度，速度 80..120 %，随机散开，
+ * 标成副本（pad = 1：不冒火花）。激光池最后 TH_LASER_RESERVE 个留给光束 / 光柱。 */
+static void comets(Th *t, int32_t x, int32_t y, uint16_t a, int32_t spd, int color, int32_t spread)
+{
+    const int n = t->diff == TH_STRESS ? t->dens : 1;
+    int i;
+    for (i = 0; i < n; i++) {
+        int32_t cx = x, cy = y, cs = spd;
+        uint16_t ca = a;
+        ThLaser *l;
+        if (i) {
+            if (t->nlasers >= TH_MAX_LASERS - TH_LASER_RESERVE) return;
+            cx += (int32_t)(th_rand(t) % (uint32_t)(2 * spread + 1)) - spread;
+            cy -= (int32_t)(th_rand(t) % (uint32_t)PX(30));
+            ca = (uint16_t)(a + (uint16_t)DEG((int)(th_rand(t) % 21u) - 10));
+            cs = spd * (80 + (int32_t)(th_rand(t) % 41u)) / 100;
+        }
+        l = th_laser(t, TL_COMET, cx, cy, ca, 0, 10, 0, 0, color);
+        if (!l) return;
+        l->pad = (uint8_t)(i != 0);
+        l->vx = (int32_t)((cs * th_cos(ca)) >> 14); l->vy = (int32_t)((cs * th_sin(ca)) >> 14);
+    }
 }
 
 /* ---------------------------------------------------------------- enemies */
@@ -83,9 +109,7 @@ static void f_meteor(Th *t, ThEnemy *e)
 {
     e->vx = e->em.dir * (PX(1) + 64); e->vy = 0;
     if (e->timer % 22 == 0 && e->x > 0 && e->x < PX(TH_PF_W)) {
-        ThLaser *l = th_laser(t, TL_COMET, e->x, e->y, DEG(90 - e->em.dir * 25), 0, 10, 0, 0,
-                              (e->timer / 22) & 1 ? TC_YELLOW : TC_CYAN);
-        if (l) { l->vx = (int32_t)((PX(4) * th_cos(l->ang)) >> 14); l->vy = (int32_t)((PX(4) * th_sin(l->ang)) >> 14); }
+        comets(t, e->x, e->y, DEG(90 - e->em.dir * 25), PX(4), (e->timer / 22) & 1 ? TC_YELLOW : TC_CYAN, PX(40));
     }
     if (e->timer % 70 == 35) th_ring(t, e->x, e->y, 8, (uint16_t)th_rand(t), PX(2), TB_STAR, TC_YELLOW);
 }
@@ -249,8 +273,7 @@ static void b_spell2(Th *t, ThEmitter *m, int tick)
         const int from_left = (tick / 120) & 1;
         const int32_t x = from_left ? -PX(20) + PX((int)(th_rand(t) % 200u)) : PX(TH_PF_W + 20) - PX((int)(th_rand(t) % 200u));
         const uint16_t a = from_left ? DEG(60 + (int)(th_rand(t) % 15u)) : DEG(120 - (int)(th_rand(t) % 15u));
-        ThLaser *l = th_laser(t, TL_COMET, x, -PX(20), a, 0, 10, 0, 0, (tick / 6) % 3 == 0 ? TC_WHITE : TC_YELLOW);
-        if (l) { l->vx = (int32_t)((PX(5) * th_cos(a)) >> 14); l->vy = (int32_t)((PX(5) * th_sin(a)) >> 14); }
+        comets(t, x, -PX(20), a, PX(5), (tick / 6) % 3 == 0 ? TC_WHITE : TC_YELLOW, PX(100));
     }
     if (tick % 40 == 20) {
         th_ring(t, BX, BY, 15, m->ang, PX(2), TB_STAR, TC_YELLOW);

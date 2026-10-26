@@ -1,165 +1,80 @@
-# Ti60 R5：RISC-V + FPGA 2D 游戏渲染引擎
+# Ti60 FPGA 游戏与图形加速器 · R6
 
-当前交付 **R5.9-INPUT-CAL**：修正矩阵接线文档（厂商手册与原理图冲突，S7实测与手册吻合），S15短按不再切1080P，加入16键校准、短按记录和USB原始字节诊断。新ELF在`BOARD_TEST/r5_9`，沿用未改动的R5.8 bit。见[接线修订与测试步骤](docs/R59_INPUT_FIX.html)。Git克隆后运行`python tools/restore_r59_package.py`恢复精确ELF；本机工程已包含完整文件。USB实板链路和1080P显示器兼容性仍待验证。以下为历史交付记录。
+R6 在 R5.9 三人游戏和输入校准版本上，合入 `09_Ti60F225_hardjtag_demo` 的帧流水、数据布局、全局 Alpha 快速通路、填充表和东方特效。保留两个游戏的同屏三人合作、压力模式 99999 容量、尺寸档位、十首原创音乐、中文界面和现有接线。
 
-当前交付 **R5.8-VIDEO-COOP**：新增HDMI输出停发/复位/重启、黑屏恢复720P、1080P DVI诊断、明确的两款三人新局入口，以及完整双键盘接线图。720P正常显示行为保持；PH27QB2实屏黑屏是否解决仍待复测。本轮配套200MHz bit/ELF在`BOARD_TEST/r5_8`，见[处理报告](docs/R58_BOARD_FIX.html)和[接线附图](docs/R58_INPUT_SCHEMATIC.html)。
+**720P 显示 RTL、PLL、引脚约束和时序约束与 R5.9 配套硬件相同。** 本次唯一修改的硬件源码是 `PROJECT/rtl/blit/blit_engine.v`。采用真实 200 MHz 核心时钟，没有用新增伪路径或放宽周期换取通过。1080P30 原有功能和试切换恢复仍保留；PANDA PH27QB2 的实屏兼容问题尚未由这次修改解决，不能把仿真恢复通过视为显示器已通过。
 
-当前交付候选 **R5.7-COOP-PERF**：普通萝卜/东方同屏三人（UART / CH9350L / 矩阵），压力热路径与方块分带优化；**720P 显示链路保留原样**。200 / 202.083333 / 205MHz 均有配套 bit 与 ELF，见 [R5.7 实现与验证报告](docs/R57_REPORT.html)、[下载清单](BOARD_TEST/r5_7/manifest.json)。新版本板上稳定帧率尚未测试；1080P 黑屏仍需彩条/显示器验证，已加10秒自动回720P；480P尚未实现。上位机源码版本为`R5.7-COOP-PERF`。
+## 直接运行和下载
 
-GitHub克隆后先运行 `python3 tools/restore_r57_package.py`（Windows可用 `python`），自动拼接校验分卷并恢复 `BOARD_TEST/r5_7` 中全部配套bit/ELF。GitHub大文件接口拒绝单个ELF，因此使用无损分卷；本地交付目录已含完整文件。
+- Windows：解压 `Ti60_R6_Windows.zip` 后双击 `Ti60Control.exe`。程序内含 Python 和 pyserial，自动打开本机浏览器，不需要安装 Python。选串口并点击连接之后才打开设备；默认自动选空闲网页端口。关闭控制台窗口或 Ctrl+C 结束。
+- Linux：在工程根目录运行 `bash Start_Control_Panel.sh`。也可显式指定 `--port 8765`；如果旧服务还在运行，先关闭旧服务，或使用 `--port 0` 自动选端口。
+- 配套硬件：`BOARD_TEST/r6/ti60_r6.bit`。
+- 带完整指标的软件：`BOARD_TEST/r6/ti60_r6_debug.elf`。`ti60_r6_release.elf` 减少测量开销，用于展示；请不要把两者的测试数据混在一组。
+- 新 IDE 工程名为 `game_r6`。导入 `PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game` 的现有工程；常规编译输出和下载路径为 `build/game.elf`，不指向旧 R5 工程。BSP 根位置在 `PROJECT/par/ddr_demo_ti60/embedded_sw/soc`，具体板级文件位于其 `bsp/efinix/EfxSapphireSoc`。
+- 移动工程后，可运行 `python3 tools/configure_launch.py` 生成指向配套预编译 ELF 的启动配置。此脚本只写配置，不下载硬件。
+- 启动串口横幅应包含 `TI60-R6-PIPE-KBLEND-FTAB-20261026`。状态中的 `kblend=1 ftab=1` 表示检测到本次硬件功能；文件校验值见 `BOARD_TEST/r6/manifest.json`。
 
-下面保留各历史版本说明，其版本号与资源数字不代表R5.7。
+## 本次实现
 
-最新版本 **R5.6**：萝卜压力模式取消定位轮廓、遮挡渐隐与近身索引，让弹幕直接覆盖角色。继续使用 R5.5 bit，下载 `BOARD_TEST/r5_6/` 的新 ELF。详见 [实现与收益估算](docs/R5_6_LOCATOR_OFF.md)；99,999 容量与小尺寸沿用 R5.5，实际帧率增益待上板测量。
-
-**R5.3 软件更新：** [完整说明与 R2 对照](docs/R5_3_SETTINGS_MUSIC.md)。全 10 首切换、人物轮廓缓存、自动演示循环优化与更明确的加速状态。新 ELF 在 `BOARD_TEST/r5_3`，继续配套已验证的 R5.2.1 bit；上板性能恢复幅度待复测。完整包见 `dist/Ti60_R5_3_MUSIC_PERF.tar.xz`。
-
-**2026-10-24 R5.2 音视频硬件基线： [BOARD_TEST/r5_2](BOARD_TEST/r5_2) 的新 bit / ELF。** 修复 HDMI 音频子包位序、同步边沿；加入加速状态遥测及恢复按钮。见 [问题证据、修复和复测步骤](docs/BOARD_FIX_R5_2.md)。下文 R5 数字及根目录旧二进制是历史基线，不代表 R5.2 的实际板上验收。最新 Linux / Windows 源码上位机页脚应显示 `R5.2-BOARD-FIX`；原预编译 Windows EXE 是旧版。
-
-[English](README_EN.md) · [按键与接线 HTML](docs/INPUT_GUIDE.html) · [照片方向接线图](docs/WIRING_DEMO.html) · [赛题对应说明](docs/CONTEST_MAPPING_ZH.md) · [待填实板测试表](docs/BOARD_TEST_PLAN.csv)
-
-本工程用于全国大学生嵌入式芯片与系统设计竞赛易灵思 **赛题二：基于 RISC-V 与 FPGA 异构架构的 2D 图形渲染加速引擎**。Sapphire RISC-V 执行游戏逻辑，定制 BitBlt 引擎通过 AXI4 直接读写 DDR3，完成图块拷贝、纯色填充、透明色去背与 Alpha 混合，HDMI 输出图像及声音。
-
-R5 基于 R4/R3 的完整工程，保留 R19 移植的七级萝卜人物、双枪、升级、主动技能和遮挡定位，以及东方弹幕、方块、图片、中文 UI 和音频。新增 Windows 适配的上位机、矩阵/CH9350L 输入、物理 720p60 / 1080p30 切换，以及针对片上 RAM 和读取额度关键路径的优化。
-
-**两种输出模式都在 1280×720 画布渲染。1080p30 是 3:2 最近邻放大到 1920×1080，不是原生 1080p 渲染。** 当前 74.375 MHz 像素 PLL 对应约 60.101 / 30.051 Hz。固件为 1080 模式保留独立 60 Hz 游戏逻辑调度；主循环模型已验证 30 Hz 输出与 60 Hz 逻辑，但真实负载上限和显示器兼容性仍由上板测试确定。
-
-## 最终 Ti60 目标实现结果
-
-Efinity 2026.1 已完成最终 map、interface、布局布线和 bit 生成。报告中的全部受约束时钟关系 setup / hold 为正；核心保持 **200 MHz**。
-
-| 指标 | 历史 R2 / R4 | 最终 R5 | 变化 |
-|---|---:|---:|---:|
-| XLR | 55,848 / 60,800 | **58,518 / 60,800（96.25%）** | +2,670 |
-| 片上 RAM block | 253 / 256 | **253 / 256（98.83%）** | 总量不变，仍余 3 |
-| DSP | 32 / 160 | **32 / 160** | 不变 |
-| core 200 MHz setup slack | +0.053 ns | **+0.118 ns** | 改善 0.065 ns |
-| core 200 MHz hold slack | +0.025 ns | **+0.028 ns** | 改善 0.003 ns |
-
-Blitter 两处浅队列确实释放 **4 块 RAM**，新显示扫描缓存使用 3 块，CH9350 UART RX FIFO 使用 1 块，因此整机是 `253 − 4 + 3 + 1 = 253`。这是为新增功能腾出空间，不是整机 RAM 使用下降 4 块。通用 Alpha 仍是每拍两像素，本轮没有声称已扩展为 4/8 像素 Alpha。
-
-最终 `ti60_r5.bit` 为 **2,811,948 B**，SHA-256：`25dc85470b3f73f929ef75c60eb06880a7c46533f30c26820a40eb5def85ac83`。该结果证明本次受约束目标实现通过，不等于已测得板上最大稳定元素数、温度、功耗或外设兼容性。所有实板验收仍待用户填写。
-
-## 取文件与运行
-
-交付文件集中在 `BOARD_TEST/`，以 [manifest.json](BOARD_TEST/manifest.json) 中的版本、SHA-256 和验证状态为准。
-
-| 文件 | 用途 |
+| 部分 | 实现与边界 |
 |---|---|
-| `BOARD_TEST/ti60_r5.bit` | 含双输出模式、输入外设与本轮硬件修改的 R5 位流 |
-| `BOARD_TEST/ti60_r5_debug.elf` | 完整测量、屏上 CPU/HW 对照、诊断键；优先用于赛题验收 |
-| `BOARD_TEST/ti60_r5_release.elf` | 精简统计版本；用于对比统计开销 |
-| `BOARD_TEST/manifest.json` | 交付文件哈希、源码与构建验证状态 |
-| `docs/INPUT_GUIDE.html` | 离线可用的 16 键布局、接线、协议、全部快捷键指南 |
+| 帧流水 | 四个帧缓冲区分别避开当前显示、已排队翻页和引擎在绘制的缓冲。等待前一翻页的动作移到真正提交下一翻页之前；完整且未拆分的分带帧允许跨帧重叠。VSync 下每圈最多发一次翻页，可能增加一帧延迟。 |
+| 萝卜热数据 | 敌弹 `Seed` 为 16 字节，原版为 24 字节；`active` 存放伤害，0 表示空槽。保留玩家弹所有权、三人碰撞、NOVA、升级及压力模式不自动开枪、不计算定位轮廓的规则。 |
+| 东方热数据 | 16 字节热数组保存每帧位置、速度和绘制索引，32 字节冷数据保存转向、加速等低频字段。新发射弹在发射器补完参数后同步；删除、清弹和尺寸重建都读取当前热位置。三人擦弹位保存在独立保留标志位。 |
+| 坐标写入 | 对齐且带 `may_alias` 的 32 位存储发布 XY，避免 RV32 编译器把 4 字节 memcpy 拆成四个字节写。 |
+| 全局 Alpha | 分带 K 通路支持每拍八像素的全局 Alpha FILL、缓存 COPY 和加法混合。新增 DSP 实现分别计算源、目的加权项，保持完整 Alpha 精度与四级流水冒险检查。逐像素 A8 仍走原通路。 |
+| FTAB | 新增指令号 **7**、CAPS2 bit5；每项 8 字节，包含 XY、宽高、颜色和 Alpha。原 SQTAB 指令号 **6**、CAPS2 bit3 和 MOT2 保留。超过 65535 项分成多条表指令，分带容量溢出时结束分带并按原顺序连续绘制。 |
+| 方块对照 | 保留 Q4 运动、原八色和奇偶透明图案。CPU＋FTAB 使用三份不可变 DMA 表；CPU＋SQTAB、MOT2＋SQTAB 和逐项提交可直接切换。配置变化的额外建表先排空引擎，避免覆盖在读表。 |
+| 东方特效 | 第一关增加三档出生淡入、限量 A8 呼吸光晕及发射闪光；第二关流星头部和拖尾批量提交。两关压力模式独立选择，压力第二关流星按倍率增加并为光束保留槽位。普通两关仍支持三人合作。 |
+| 音乐 | 保留 10 首原创循环曲和 23 个音效。BGM 改为 22050 Hz、16 位单声道，混音器仍输出原有 HDMI 音频格式。音库从 10,123,520 降到 7,124,736 字节，曲目时长和循环点校验通过。 |
 
-先加载配套 bit，再加载 ELF。R4 及更早位流不含 R5 新输入与分辨率功能；R5 固件通过 `VID5` / `INP5` 能力检查保护相关入口。不要把 R19 的 185 MHz / 640×480 位流与本版 ELF 混用。工程构建脚本只生成文件，不自动烧写设备。
+小量绘制写指针使用引导完成后空闲 OCR 的 `0xF9000C00` 起 144 字节；链接脚本明确保留 512 字节区域，游戏栈仍在 DDR。它没有增加片上 RAM 块。
 
-Windows 可直接解压 **`dist/Ti60_R5_Windows_Console.zip`** 并双击其中的 **`Start_Ti60Control.cmd`**，使用已构建的独立 EXE，无需另装 Python。源码版双击工程根目录 **`Start_Control_Panel.cmd`**；Linux 运行 **`./Start_Control_Panel.sh`**。源码启动需要 Python 3.10+ 和 pyserial，启动器可建立工程内隔离环境。浏览器连接本机串口服务，选择开发板日志串口、115200 baud，再点击连接。打开页面不会自动发送控制指令。原 `Open_Serial_Log.cmd` 已转到新入口。
+## 当前资源和时序
 
-Windows 原生 COM 口、UTF-8 中文日志和中文/空格路径已适配。[真正的 Windows CI](https://github.com/18971355314bjl-gif/ti60-fpga-game/actions/runs/39987343020) 已在 Windows Server 2025 x64 / Python 3.12.10 上通过原生 CMD 启动、6 项移植性测试、EXE 构建与打包后 HTTP/UI 资源检查。预编译程序位于 `dist/windows/Ti60Control.exe`，证据在 `verification/r5/windows_console/windows_ci_validation.json`。**用户 Windows 10/11 的实际 USB 串口驱动、键盘和真实板卡仍待验收**。需重新打包时在 Windows 运行 `Build_Windows_Control_Panel.cmd`，详见 [使用与打包说明](docs/windows_zh-en.md)。
+| 指标 | R6 最终实现 |
+|---|---:|
+| 真实核心时钟 | 200 MHz |
+| 像素时钟 | 74.375 MHz，原值 |
+| XLR | 59,147 / 60,800（97.28%） |
+| RAM 块 | 253 / 256（98.83%） |
+| DSP | 80 / 160（50.00%） |
+| 核心 setup slack | +0.259 ns |
+| 核心 hold slack | +0.026 ns |
+| 全部 14 个 setup/hold 关系 | 通过 |
+| 18 组 Gray 总线偏斜 | setup/hold 均通过；该检查不等于完整 CDC 功能证明 |
 
-## 操作与容量
+初次合入八像素 Alpha 的候选占用 60,603 XLR、56 DSP；后续使用更多 DSP 的等价算术减少了 1,456 XLR。与原 R5 硬件 58,661 XLR、32 DSP 相比，最终增加 486 XLR、48 DSP，换取新增功能；RAM 块数保持相同。
 
-| 功能 | 控制方式 / 范围 |
-|---|---|
-| 四个场景 | 东方、萝卜、运动方块、图片；网页选择或 `n` |
-| 移动 / 射击 / 技能 | 浏览器或 CH：WASD/方向、Z/空格、X/J、Shift 低速、Enter 确认、Esc 暂停 |
-| 数量步长 | **100 / 10 / 1**；F6 / F7 / F8，矩阵 S11 循环 |
-| 增减目标数量 | `+ / -` 或网页按钮；上位机分开显示目标和实际活动数量 |
-| 萝卜敌弹容量 | 自定义压力 **1—40,000**；尺寸 9 / 13 / 17 / 25 px |
-| 东方敌弹容量 | 压力模式 **1—16,384**；尺寸 75 / 100 / 125 / 150%；密度与容量独立 |
-| 方块容量 | **1—30,000**；混合 6—40 px 或固定 6 / 8 / 12 / 16 / 24 / 32 / 40 px |
-| HDMI 输出 | F9、矩阵 S15 或上位机按钮切 720p60 / 1080p30 |
-| 图形对照 | `g` CPU/HW；`e` Alpha；`v` VSync；debug `f` 统计、`c` 自动轮换 CPU/HW |
-| 音乐 | 10 首原创像素风循环曲 + 23 个保留音效；`;` BGM，反斜杠下一首 |
+编译后的 DDR 分区占用和每个文件的 SHA-256 以发布清单为准。`99999` 是对象容量上限，**不表示任意尺寸、透明度和场景下都能达到 60 FPS**。本次不提供未经实板测得的帧率提升百分比或十分钟稳定上限。
 
-容量是对象池和输入边界，**不保证最大数量仍能稳定 60 FPS**。尺寸档位只改变压力弹体显示，碰撞半径、伤害、速度和轨迹沿用既有玩法，激光宽度不受该档位影响。方块面积、Alpha 比例、CPU 逻辑和 DDR 竞争都会改变可持续数量。
+## 操作与测试
 
-赛题要求的 60 FPS 极限挑战应在 **720p 模式且 Alpha + Color Key 开启**时测量。1080p30 的物理新帧呈现上限约 30 FPS，不能用 CPU 的 60 Hz 逻辑或超过 30 的渲染循环数代替它。
+上位机保留音量增减、十首音乐选择、100/10/1 步进、原 R2 负载预设、三人入口、矩阵校准和 USB 原始字节诊断。新增：
 
-## 外设与接线
+- 东方第一关／第二关压力入口。
+- VSync 帧流水开／关。
+- Alpha 八像素、原两像素通路和关闭 K 通路对照。
+- 方块 CPU＋FTAB、硬件运动＋SQTAB、CPU＋SQTAB、逐项提交。
+- CSV 记录 `vpipe`、`kmode`、`ftab`、`square_path`、`th_stage`，便于固定条件比较。
 
-矩阵是 4 行 × 4 列、8 根信号线；使用同一个 **1.8 V Bank 1B**。行接 J7 2/4/8/10，列接 J7 20/22/26/28。CH9350L 使用独立 **3.3 V UART**：模块 TX→J7 32、模块 RX←J7 34，模块另接经确认的 5 V 电源和地。J7 剩余 3.3 V 信号为 37/38/39/40。
+P1 使用上位机键盘，P2 为 CH9350L USB 键盘，P3 为 4×4 矩阵。接线和 S1–S16 功能见上位机的离线接线页 `/wiring`；本次没有更换引脚或交换 TX/RX。三人启动仍先确认退出输入检测，防止检测模式吞掉游戏按键。
 
-这些数字是主板 **J7** 的针号。绿色 2×20 转接排针方向、矩阵排针线序须通过通断测量确认；不能按彩线颜色直接接。原理图和手册部分 J7 映射不同，文档已按原理图网络→球位交叉核对，并给出 Efinity GPIO 名称。
+验证记录在 `verification/r6`，包括 2,105,344 组 Alpha/ADD 输入组合、99999 方块真实 RTL、24 组 FTAB/SQTAB 画面与表缓冲比较、两关单人／三人各 4800 tick 的逻辑等价检查、输入 RTL、720P 原显示链路回归及桌面／手机浏览器 PTY 测试。Windows EXE 在原生 Windows CI 运行过启动、HTTP 资源、中文路径及不自动连接串口检查。**这些是仿真、模型和构建证据，不是 FPGA 实板帧率。**
 
-矩阵 S4 为 Fn，S11 选数量步长，S12 选尺寸，S15 切输出。CH9350L 配置下位机 USB Host、状态 2、115200 8N1，按固定 8 字节 HID 键盘报告解析。当前不支持状态 0/1 可变长帧和专用 NKRO。完整键位、鬼键抑制、热拔插边界、APB 地址与 C 接口见 [输入实现文档](docs/INPUT_DEVICES.md) 和 [HTML 图解](docs/INPUT_GUIDE.html)。
+建议上板先用配套 debug ELF，以原尺寸和数量复测，然后分别只改一个开关。记录 720P60 下实际呈现帧率、逻辑频率、video/audio 欠流、窗口最大耗时、分带拆分和十分钟运行结果；再切换 release ELF验证展示稳定性。1080P30 实屏兼容单独记录，不混入 720P 性能结果。
 
-## 赛题为何由本工程实现
+## 构建
 
-| 条款 | 实现位置 |
-|---|---|
-| RISC-V 游戏逻辑 | `game.c`、`th_game.c`、`th_pattern.c`、`th_stage2.c`、`demo.c` |
-| COPY / FILL / Alpha / Color Key | `PROJECT/rtl/blit/blit_engine.v`；软件接口 `blit.c`、`gfx_hw.c` |
-| AXI4 直接访问 DDR3、burst/FIFO | `blit_engine.v`、`blit_axi_wide.v`、仲裁器与 DDR3 控制器 |
-| C 寄存器驱动与双缓冲 | `blit.h` / `blit.c`、`hdmi_fb.h`、`main.c` 帧提交与交换 |
-| HDMI、实际呈现与重复帧计数 | `PROJECT/rtl/hdmi/hdmi_fb.v`、`hdmi_island.v` |
-| 方块 / 图片基础 Demo、屏上 CPU/HW 对照 | `demo.c`、`main.c` HUD/测量窗口 |
-| 高负载互动游戏、极限测量 | 游戏场景、100/10/1 与尺寸控制、统一遥测、日志导出 |
+从 GitHub 克隆后，先运行 `python3 tools/restore_large_files.py` 恢复当前版本的音库、配套 bit／ELF 和生成网表；所有分块及原文件均校验 SHA-256。源码交付 ZIP 已含完整音库，不需要恢复。旧的 build/outflow 编译产物已从当前 Git 树清理，历史版本保留在 Git 历史和版本化 BOARD_TEST 目录。
 
-完整逐条映射、验收方式、技术细节和证据边界见 [中文说明](docs/CONTEST_MAPPING_ZH.md) / [English mapping](docs/CONTEST_MAPPING_EN.md)。本赛题最低显示要求为 **640×480 @ 60 Hz**；不要将其他赛题的最低参数混入验收。
-
-## 工程结构与构建
+Linux 或 Windows 安装 Efinity 2026.1 和配套 RISC-V 工具链后：
 
 ```text
-PROJECT/rtl/                         Ti60 RTL：BitBlt、HDMI、音频、输入、DDR
-PROJECT/par/ddr_demo_ti60/            Efinity 工程、约束、IP 与 outflow
-  embedded_sw/soc/software/standalone/game/
-    src/                            RISC-V C 固件
-    sound/                          音库和原创音轨
-    game.ld                         DDR 程序/声音/美术区域
-tools/control_panel/                Windows/Linux 本机串口上位机
-tools/                              音乐/字库/启动配置生成工具
-BOARD_TEST/                         配套 bit、ELF、哈希清单
-docs/                               中英文设计/接线/赛题/优化/测试表
-verification/r5/                    本轮离线验证与目标构建日志
-verification/r4/                    继承的历史 R4 离线验证
-logs/                               历史实板日志与后续采集目录
+python3 build_software.py --stats both
+python3 build_hardware.py --flow compile
 ```
 
-硬件目标是 **易灵思 Ti60F225**，最终硬件构建使用 **Efinity 2026.1**。Vivado 2021.2 仅用于可移植 RTL 的行为验证/分析，不能生成本器件可用 bit，也不能替代 Ti60 的 timing/resource 报告。
+可用 `--toolchain` 或 `--efinity` 指定安装位置，Windows 下按本机 Python 命令替换 `python3`。音库重建在 game 目录执行 `python3 tools/wav2bank.py --list sound/r6_sounds.txt`。工程自带可直接使用的音库和所有引用的 ROM 初始化文件。硬件构建不会自动上板，只有通过完整时序检查的 bit 才复制到 BOARD_TEST。
 
-```bash
-# 软件：需 Efinity RISC-V SDK、GNU make；默认生成 debug 和 release
-python3 build_software.py --toolchain /path/to/efinity-riscv-ide/toolchain/bin
-
-# 硬件：使用配套版本 Efinity，执行完整 map / place / route / bit 流程
-python3 build_hardware.py --efinity /path/to/efinity/2026.1 --flow compile
-
-# 工程移动或复制到 Windows 后重新生成 IDE 的绝对路径配置
-python3 tools/configure_launch.py
-```
-
-两种显示模式仍使用 1280×720 RGB565 framebuffer，每帧 1,843,200 B，放在相隔 2 MiB 的 DDR 槽中。程序区域 15 MiB，音库区域 16 MiB，美术区域 32 MiB；字体和音乐占用的是这些 **外部 DDR** 区域。原生 1080 framebuffer 需约 3.96 MiB，不能直接塞进本版 2 MiB 槽中。详见 linker 与显示实现。
-
-## 验证、优化和后续实板指标
-
-[资源与时序优化报告](docs/optimization_zh.md) / [English report](docs/optimization_en.md) 说明队列 RAM 调整、`rf_res` 读取额度关键路径及 Alpha 后续路线。最终目标实现数见上表；完整证据为 [Efinity 资源报告](PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.place.rpt) 和 [时序报告](PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.timing.rpt)，Vivado 行为验证是独立证据。
-
-R5 离线验证包括输入 C 适配器（ASan/UBSan）、矩阵/UART RTL、HDMI 双模式行为、主循环 30 Hz 输出 / 60 Hz 逻辑模型、Windows CI 原生启动/EXE 构建及静态服务检查、Linux PTY 浏览器回归。HTML 指南使用真正浏览器检查离线加载、Fn、步长、数量、分辨率演示、搜索、明暗主题和桌面/390 px 窄屏布局。各项日志保留在 `verification/r5/`；完整结果以其中的记录及 manifest 为准。
-
-历史 R2 日志和 R4 主机模型只作基线，不作为 R5 新成绩。新板卡数据由用户补入 [BOARD_TEST_PLAN.csv](docs/BOARD_TEST_PLAN.csv)：该表已列出启动、双模式、矩阵、CH9350L、Windows、玩法、尺寸、Alpha、CPU/HW、最大负载、音乐、长稳和资源检查，测量值与结论均留空。上位机自动保存原始 UART、配置事件 JSONL 和同序号完整测量窗口 CSV。
-
-实体输入还输出 `I5`：设备能力、保持态、键盘报告、截断帧、rollover、鬼键、状态报告与 UART 错误，便于与上板操作对应。CH9350L 状态帧应答已实现，模块兼容性仍需实测。
-
-建议报告实际活动数、render FPS、logic Hz、present FPS、scan/repeat Hz、视频/音频 UF 增量、最大工作时间、引擎错误、温度和功耗。扫描频率不是新画面帧率，目标数量也不是实际活动数量。
-
-## 来源与许可
-
-`docs/references/` 保留赛题、板卡和 CH9350 协议资料及 SHA-256；第三方文档、Efinix IP/SDK、字体和原有素材保留各自许可。Noto 字体许可位于 `ART/UI_R4/Noto_CJK_LICENSE.txt`。原创循环曲由 `tools/create_original_music.py` 生成；曲目清单和 WAV 在游戏 `sound/original_r4/`。本工程用于用户授权的私有仓库协作，不给整个第三方工程重新套用一个开放源码许可证。
-
-
-## GitHub 完整工程还原
-
-仓库保持私有。源码、IP、图片、音乐、bit、ELF、Windows EXE、测试与日志按原文件保存。仅 3 个超出 GitHub REST 接口接受范围的生成文件采用无损 gzip 归档；原始字节、大小、SHA256 和 Git blob SHA 均记录在 `tools/large_files_manifest.json`，数据位于 `.github_large_files/`，没有省略这些文件。两份约 29 MB 的 `game.hex` 仍直接按原文件保存。
-
-从 GitHub 克隆或下载后，在工程根目录运行：
-
-```sh
-python3 tools/restore_large_files.py
-python3 tools/restore_large_files.py --verify
-```
-
-Windows 使用 `py -3 tools/restore_large_files.py` 与 `py -3 tools/restore_large_files.py --verify`。还原工具只用 Python 标准库；默认不会覆盖已经修改的文件，校验正确的文件直接跳过。确定需要覆盖本地修改时才使用 `--force`。本地完整交付文件夹已经包含原始大文件，可以直接 `--verify`。
-
-归档仅对应 `PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.map.v`（55,888,638 字节）、调试 `game/build/game.bin` 与发布 `game/build_release/game.bin`（各 43,673,856 字节，完整路径见清单）。运行还原后，这些文件回到原来的路径及可执行权限。上传方式与自动审批拒绝导入工作流的记录见 `verification/github_upload.txt`；最终方案通过普通 GitHub API 上传及本地恢复，不安装工程导入自动化。
+私密源码仓库：[StarBJL/ti60-fpga-game](https://github.com/StarBJL/ti60-fpga-game)。Windows 原生构建：[run 40329064648](https://github.com/StarBJL/ti60-fpga-game/actions/runs/40329064648)。

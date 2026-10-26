@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build R5 firmware with the existing Efinity toolchain, without touching RTL."""
 from pathlib import Path
-import argparse, hashlib, json, os, shutil, subprocess, re
+import argparse, hashlib, json, os, shutil, subprocess, re, sys
 
 root=Path(__file__).resolve().parent
 parser=argparse.ArgumentParser()
@@ -24,7 +24,9 @@ if not make:
     if p.is_file():make=str(p)
 if not make:parser.error('GNU make is required')
 game=root/'PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game'
-out=root/'verification/r5_9';out.mkdir(parents=True,exist_ok=True)
+if not (game/'sound/sound_bank.bin').is_file():
+    subprocess.run([sys.executable,str(root/'tools/restore_large_files.py')],cwd=root,check=True)
+out=root/'verification/r6';out.mkdir(parents=True,exist_ok=True)
 prefix=str(gcc.parent/'riscv-none-elf-')
 env=dict(os.environ);env['PATH']=str(Path(make).parent)+os.pathsep+str(gcc.parent)+os.pathsep+env.get('PATH','')
 for stats in ([1,0] if args.stats=='both' else [int(args.stats)]):
@@ -32,12 +34,12 @@ for stats in ([1,0] if args.stats=='both' else [int(args.stats)]):
     log=out/('build_'+name+'.log')
     with log.open('w') as f:
         subprocess.run([make,'-B','-j4','OBJDIR='+obj,'STATS='+str(stats),'DEBUG=no','BENCH=yes','SOUND=1','RISCV_BIN='+prefix],cwd=game,env=env,stdout=f,stderr=subprocess.STDOUT,check=True)
-    dest=root/'BOARD_TEST/r5_9'/('ti60_r5_9_'+name+'.elf');dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(game/obj/'game.elf',dest)
+    dest=root/'BOARD_TEST/r6'/('ti60_r6_'+name+'.elf');dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(game/obj/'game.elf',dest)
     print(name,':',dest,'; log:',log)
-manifest=root/'BOARD_TEST/r5_9/manifest.json'
+manifest=root/'BOARD_TEST/r6/manifest.json'
 if manifest.exists():
     data=json.loads(manifest.read_text());data['board_downloaded']=False;data['board_fps_measured']=False;data['validation_status']='rebuild_requires_retesting'
-    for p in (root/'BOARD_TEST/r5_9').glob('*'):
+    for p in (root/'BOARD_TEST/r6').glob('*'):
         if p.is_file() and p.suffix in ('.elf','.bit','.launch'):
             data.setdefault('artifacts',{})[p.name]={'path':p.relative_to(root).as_posix(),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}
     data['source_sha256']={str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in list((game/'src').glob('*'))+list((root/'tools/control_panel').glob('*')) if p.is_file()}

@@ -1,0 +1,14 @@
+gameplay 0 PASS R3 gameplay: 32 headings x 1..6 shots; muzzle alignment; 16/32-shot skill and cooldown; seven upgrades and appearances; four tiers and 1K..40K; native corners; triple DMA tables; invulnerability preserves bullets; audio events
+
+audio 0 PASS carrot audio: title/play/boss BGM, shot/hit/kill event routing, rate limiting, pause attenuation and defeat cue
+
+control 0 PASS physical/PC OR, independent release, unlimited physical hold, atomic protocol, malformed/overflow frames, 100/10/1 steps, held and short-tap edges, release timeout, physical packet counters unchanged
+
+main 0 in the engine 67113 (91%); stuck dumps 0, model fault 0 lerr 0 berr 0
+pad: 2 packets, 1 bad (want 2 / 1), autoplay switched off by the pad: 1
+R3 skill casts 0; native scenes and controls exercised
+video model fullframes 720=564 1080=48; render canvas=1280x720
+PASS 1080 trial confirm and automatic timeout return to 720p
+PASS explicit three-player start from demo/pressure, link quiet/stabilize/restart, DVI request and bounded failure recovery
+PASS
+

@@ -1,0 +1,36 @@
+name               rate format        frames  seconds       KB loop
+shot              24000 s16              960     0.04      1.9 -
+enemy_fire        24000 s16             1200     0.05      2.3 -
+hit               24000 s16              720     0.03      1.4 -
+kill              24000 s16             6000     0.25     11.7 -
+graze             24000 s16              960     0.04      1.9 -
+item              24000 s16             1200     0.05      2.3 -
+powerup           24000 s16             7200     0.30     14.1 -
+extend            24000 s16             8880     0.37     17.3 -
+bomb_get          24000 s16             4800     0.20      9.4 -
+bomb              24000 s16            28800     1.20     56.2 -
+death             24000 s16            16800     0.70     32.8 -
+spell             24000 s16            12000     0.50     23.4 -
+capture           24000 s16             9600     0.40     18.8 -
+phase             24000 s16            12000     0.50     23.4 -
+boss_dead         24000 s16            48000     2.00     93.8 -
+warning           24000 s16            18000     0.75     35.2 -
+timeout           24000 s16             1200     0.05      2.3 -
+select            24000 s16              720     0.03      1.4 -
+ok                24000 s16             1920     0.08      3.8 -
+pause             24000 s16             2880     0.12      5.6 -
+clear             24000 s16            16800     0.70     32.8 -
+over              24000 s16            28800     1.20     56.2 -
+laser             24000 s16             9600     0.40     18.8 -
+bgm_title         22050 s16           407076    18.46    795.1 0
+bgm_menu2         22050 s16           441000    20.00    861.3 0
+bgm_stage1        22050 s16           294000    13.33    574.2 0
+bgm_stage2        22050 s16           330750    15.00    646.0 0
+bgm_boss1         22050 s16           264600    12.00    516.8 0
+bgm_boss2         22050 s16           278526    12.63    544.0 0
+bgm_garden        22050 s16           364965    16.55    712.8 0
+bgm_garden2       22050 s16           352800    16.00    689.1 0
+bgm_stress        22050 s16           282240    12.80    551.2 0
+bgm_stress2       22050 s16           306782    13.91    599.2 0
+bank /data/users/user/codex_tmp/ti60_r6_work/Ti60_R6/PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/sound/sound_bank.bin: 33 sounds, 6957.8 KB (6.79 MB of 16); JTAG download ~35 s at 200 KB/s
+wrote /data/users/user/codex_tmp/ti60_r6_work/Ti60_R6/PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/sound/sound_bank.S (make SOUND=1 links it into game.elf)

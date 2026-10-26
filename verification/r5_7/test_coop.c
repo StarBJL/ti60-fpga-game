@@ -22,7 +22,7 @@ static void game_checks(void){
  memset(shots,0,sizeof shots);for(int i=0;i<MAX_BULLETS;i++)if(g.bullets[i].active)++shots[g.bullets[i].owner];
  assert(shots[0]==16&&shots[1]==16&&shots[2]==16);
  quiet_game();memset(in,0,sizeof in);g.party[1].invincible=0;
- g.hostile[0]=(Bullet){1,g.party[1].x,g.party[1].y,0,0,1000,5,0};g.hostile_active=g.hostile_used=1;
+ g.hostile[0]=(Seed){g.party[1].x,g.party[1].y,0,0,1000,5,0};g.hostile_active=g.hostile_used=1;
  game_tick_coop(&g,in);assert(g.hp==100&&g.party[1].hp==95&&g.party[2].hp==100&&g.hostile[0].active);
  quiet_game();g.gems[0]=(Gem){1,g.party[2].x,g.party[2].y,2};game_tick_coop(&g,in);
  assert(g.xp==0&&g.party[1].xp==0&&g.party[2].xp==2);

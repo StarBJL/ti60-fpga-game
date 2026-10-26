@@ -16,6 +16,9 @@ static int bound_count,bound_valid;
 unsigned demo_band_bound(void){return bound_valid&&bound_revision==square_revision?square_band_bound:0;}
 
 static int fixed_square_size,motion_min_px=6;
+static int fill_table_on=1,fill_alpha=1,fill_db,fill_build,fill_meta,fill_old_count;
+static unsigned fill_revision=1,fill_rev[3];
+static int fill_count[3],fill_alphas[3];
 int demo_motion_min_size(void){return motion_min_px;}
 int demo_square_size(void){return fixed_square_size;}
 static const Pixel square_palette[8]={
@@ -51,6 +54,31 @@ static Square squares[DEMO_MAX_SQUARES] __attribute__((aligned(256)));
 static uint32_t square_pixels[DEMO_MAX_SQUARES+1],square_alpha_pixels[DEMO_MAX_SQUARES+1];
 static Square benchmark_snapshot[DEMO_MAX_SQUARES] __attribute__((aligned(256)));
 typedef char square_is_eight_bytes[sizeof(Square)==8?1:-1];
+#ifdef __riscv
+#define FILL_STORE __attribute__((section(".artbss"),aligned(256)))
+#else
+#define FILL_STORE __attribute__((aligned(256)))
+#endif
+/* Three immutable DMA snapshots: retain Q4 motion and the original eight colours. */
+static GfxFillItem fill_tables[3][DEMO_MAX_SQUARES] FILL_STORE;
+int demo_fill_table_active(void){return fill_table_on&&table_on&&!demo_motion_enabled()&&blit_st.mode==BLIT_MODE_LIST&&blit_st.has_ftab;}
+int demo_square_path(void){return demo_motion_enabled()?3:demo_fill_table_active()?2:table_on?1:0;}
+int demo_set_square_path(int path){
+    if(path<0||path>3||(path==2&&!blit_st.has_ftab)||(path==3&&(!motion_ok||motion_fault||(fixed_square_size&&fixed_square_size<motion_min_px))))return 0;
+    if(blit_st.depth)blit_wait();
+    motion_on=path==3;table_on=path!=0;fill_table_on=path==2;return 1;
+}
+void demo_square_alpha(int alpha){fill_alpha=!!alpha;}
+static void fill_begin(int count){
+    fill_db=(fill_db+1)%3;fill_build=1;fill_old_count=fill_count[fill_db];
+    fill_meta=fill_rev[fill_db]!=fill_revision||fill_alphas[fill_db]!=fill_alpha;
+    fill_count[fill_db]=count;fill_rev[fill_db]=fill_revision;fill_alphas[fill_db]=fill_alpha;
+}
+static inline void fill_item(int i,const Square *s){
+    const uint32_t sz=(s->motion>>16)&255u;
+    fill_tables[fill_db][i].xyw=GFX_FILL_XYW((s->xy&65535u)>>4,s->xy>>20,sz);
+    if(fill_meta||i>=fill_old_count)fill_tables[fill_db][i].cha=GFX_FILL_CHA(square_palette[s->motion>>24],sz,fill_alpha&&(i&1)?150:255);
+}
 static Sprite images[3];
 static uint32_t rng = 0x2545F491u;
 
@@ -91,7 +119,7 @@ static void gen_image(Pixel *p, int kind)
 void demo_init(uint32_t img_base)
 {
     static const char *names[3] = { "图像一", "图像二", "图像三" };
-    int i;bound_valid=0;
+    int i;bound_valid=0;++fill_revision;
     for (i = 0; i < 3; i++) {
         Gfx g;
         Pixel *p = (Pixel *)(uintptr_t)(img_base + (uint32_t)i * 0x200000u);
@@ -158,7 +186,7 @@ void demo_reset_squares(void)
 {
     int i;if(blit_st.depth)blit_wait();
     if(motion_ok && (MOT_REG(8)&1u))return;
-    rng=0x2545F491u;
+    rng=0x2545F491u;++fill_revision;
     for(i=0;i<DEMO_MAX_SQUARES;i++){
         uint32_t size;new_square(&squares[i]);size=(squares[i].motion>>16)&255u;
         square_pixels[i+1]=square_pixels[i]+size*size;
@@ -171,7 +199,7 @@ int demo_set_square_size(int pixels){
     if(pixels!=0&&pixels!=1&&pixels!=3&&(pixels<6||pixels>40))return 0;
     if(blit_st.depth)blit_wait();
     if(motion_ok&&(MOT_REG(8)&1u))return 0;
-    blit_dcache_invalidate();fixed_square_size=pixels;bound_valid=0;
+    blit_dcache_invalidate();fixed_square_size=pixels;++fill_revision;bound_valid=0;
     square_pixels[0]=square_alpha_pixels[0]=0;
     for(int i=0;i<DEMO_MAX_SQUARES;i++){
         Square *s=&squares[i];uint32_t size=pixels?(uint32_t)pixels:6u+((uint32_t)i*2654435761u)%35u;
@@ -195,6 +223,7 @@ static void square_cpu_step(int count)
         if(y<(TOP_H<<4)){y=(TOP_H<<5)-y;vy=-vy;}if(y>my){y=2*my-y;vy=-vy;}
         s->xy=((uint32_t)y<<16)|(uint32_t)x;
         s->motion=(m&0xffff0000u)|((uint32_t)(uint8_t)vy<<8)|(uint8_t)vx;
+        if(fill_build)fill_item(i,s);
     }
     blit_fence();
 }
@@ -221,11 +250,14 @@ static int square_hw_step(int count)
 void demo_squares_tick(int count)
 {
     uint32_t t;if(count<0)count=0;if(count>DEMO_MAX_SQUARES)count=DEMO_MAX_SQUARES;
-    /* The table is a DMA source. Never update it while the previous frame reads it. */
-    if(blit_st.depth)blit_wait();
+    /* SQTAB/MOT2 share an in-place source. FTAB uses three snapshots, so its
+     * previous two frames may still be read while the CPU updates motion. */
+    fill_build=0;
+    if(demo_fill_table_active())fill_begin(count);
+    else if(blit_st.depth)blit_wait();
     t=DEMO_CLOCK();
     if(!motion_fault){if(demo_motion_enabled())square_hw_step(count);else square_cpu_step(count);}
-    tick_cycles=DEMO_CLOCK()-t;++square_revision;
+    tick_cycles=DEMO_CLOCK()-t;++square_revision;fill_build=0;
 }
 
 /* Same initial objects, one CPU and one hardware tick; compare every output byte.
@@ -264,7 +296,22 @@ void demo_squares_render(Gfx *g, RenderInfo info, int count)
         overlay(g,info,"720p 运动方块压力测试","硬件运动出错，已停止；请重新启动程序");
         return;
     }
-    if(info.hw && table_on && blit_st.mode==BLIT_MODE_LIST && (blit_rd(BLIT_R_CAPS2)&8u)){
+    if(info.hw&&demo_fill_table_active()){
+        /* Startup, count/size/Alpha changes, or a render without a preceding tick:
+         * build a new snapshot rather than edit a table still read by the engine. */
+        if(fill_rev[fill_db]!=fill_revision||fill_count[fill_db]!=count||fill_alphas[fill_db]!=!!info.alpha_fx){
+            /* Exceptional rebuild may consume a second ring slot this loop.
+             * Drain first so the following tick cannot reuse an in-flight slot. */
+            if(blit_st.depth)blit_wait();
+            fill_alpha=!!info.alpha_fx;fill_begin(count);
+            blit_dcache_invalidate();for(i=0;i<count;i++)fill_item(i,&squares[i]);
+            fill_build=0;blit_fence();
+        }
+        gfx_fill_table(g,fill_tables[fill_db],count,0);++table_frames;
+        g->fills+=(uint32_t)count-(info.alpha_fx?(uint32_t)count/2u:0u);
+        g->pixels_written+=square_pixels[count];
+        if(info.alpha_fx){g->alphas+=(uint32_t)count/2u;g->alpha_pixels+=square_alpha_pixels[count];}
+    }else if(info.hw && table_on && blit_st.mode==BLIT_MODE_LIST && (blit_rd(BLIT_R_CAPS2)&8u)){
         const GfxHwTarget *t=(const GfxHwTarget *)g->context;
         uint32_t *p;
         blit_list_draw_ctx(t->fb,t->pitch,0);

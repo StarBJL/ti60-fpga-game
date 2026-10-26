@@ -30,6 +30,7 @@ static uint32_t bm_lwords;                /* words decoded (host statistics only
 #endif
 static uint32_t bm_sq_count,bm_sq_alpha,bm_sq_items,bm_sq_commands;
 static uint32_t bm_ltab;                  /* TAB 记录：等地址字时 = 项数 + 1，否则 0 */
+static uint32_t bm_lftab, bm_lfadd;       /* FTAB 记录（2026-10-26）：同上；ADD 位 */
 
 /* band mode (D, CAPS[31]). The model draws every command at once, so a band frame
  * is modelled by its visible rules only: BANDS clears the frame to black (the
@@ -206,6 +207,22 @@ static void bm_list_word(uint32_t w)
             bm_exec_f(f,(bm_sq_alpha&&(i&1)?150u:255u)<<8);
         }return;
     }
+    if (bm_lftab) {                                   /* FTAB 的地址字：逐项填充 */
+        uint32_t k, n = bm_lftab - 1u, a = w & ~3u;
+        bm_lftab = 0;
+        for (k = 0; k < n; k++, a += 8u) {
+            const uint32_t w0 = bm_rd32(a), w1 = bm_rd32(a + 4u);
+            const uint32_t x = w0 & 0xFFFu, y = (w0 >> 12) & 0xFFFu, fw = w0 >> 24, fh = (w1 >> 16) & 0xFFu;
+            uint32_t f[9];
+            if (!fw || !fh) continue;
+            memcpy(f, bm_lctx, sizeof f);
+            f[0] = bm_lctx[BM_L_BASE] + ((y * (bm_lctx[BM_L_DSTR] & 0xFFFFu) + 2u * x) & 0x1FFFFFFu);
+            f[6] = (fh << 16) | fw;
+            f[7] = w1 & 0xFFFFu;
+            bm_exec_f(f, ((w1 >> 24) << 8) | (bm_lfadd ? 0x40u : 0u));   /* FILL, global alpha, ADD */
+        }
+        return;
+    }
     if (bm_ltab) {                                    /* TAB 的地址字：逐项画 8 B 的表项 */
         uint32_t k, n = bm_ltab - 1u, a = w & ~3u;
         bm_ltab = 0;
@@ -230,6 +247,11 @@ static void bm_list_word(uint32_t w)
         if(BLIT_MODEL_SQTAB && (w>>28)==6u){
             if((w&0x0ffe0000u)||(w&65535u)>30000u){bm_lerr=1;return;}
             bm_sq_count=(w&65535u)+1u;bm_sq_alpha=(w>>16)&1u;return;
+    }
+        if ((w >> 28) == 7u) {                        /* FTAB：下一个字是填充表地址 */
+            bm_lftab = (w & 0xFFFFu) + 1u;
+            bm_lfadd = (w >> 26) & 1u;
+            return;
         }
         if ((w >> 28) == 2u) {                        /* TAB：下一个字是表地址 */
             bm_ltab = (w & 0xFFFFu) + 1u;
@@ -285,7 +307,7 @@ uint32_t blit_model_rd(uint32_t off)
     case 0x98: return bm_brecip;
     case 0x9C: return bm_bbin;
     case 0xA0: return BLIT_MODEL_FRAMES_DONE(bm_frames);
-    case 0xBC: return BLIT_MODEL_WIN > 1280u ? (3u | 4u | (BLIT_MODEL_SQTAB?8u:0u) | (45u << 8)) : 1u;   /* CAPS2: [0] add [2] 2560 window [15:8] bands */
+    case 0xBC: return BLIT_MODEL_WIN > 1280u ? (3u | 4u | 16u | 32u | (BLIT_MODEL_SQTAB?8u:0u) | (45u << 8)) : 1u;   /* CAPS2: [0] add [2] 2560 window [15:8] bands */
     case 0x38: return bm_lptr;
     case 0x3C: return bm_lend;
     case 0x40: return 0;
@@ -346,6 +368,7 @@ static void blit_model_reset(void)
     bm_lctx[BM_L_DSTR] = 1280u;
     bm_lctx[BM_L_KEY] = 0xF81Fu;
     bm_lptr = bm_lend = bm_lerr = bm_lhdr = bm_lmask = bm_lwords = bm_ltab = 0;
+    bm_lftab = bm_lfadd = 0;
     memset(bm_cvalid, 0, sizeof bm_cvalid);
     bm_chit = bm_cmiss = 0;bm_sq_count=bm_sq_items=bm_sq_commands=0;
     bm_bgeo = (30u << 16) | 1280u; bm_brecip = 209716u; bm_bbin = 0x03000000u | 18u;

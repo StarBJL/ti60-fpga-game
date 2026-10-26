@@ -159,9 +159,10 @@ static void hw_copy_list_hw(const GfxHwTarget *t, const Sprite *sprites, const G
                 const uint32_t scmd = cmd | blit_cache_flag(s->width);
                 const uint32_t tag = size | mode_tag(scmd);
                 sw = BLIT_L_DRAW(slot, 0u);
-                if (blit_slot_src[slot] != src || blit_slot_size[slot] != tag) {
+                if (blit_slot_src[slot] != src || blit_slot_size[slot] != tag || blit_slot_ga[slot] != 255u) {
                     blit_slot_src[slot] = src;
                     blit_slot_size[slot] = tag;
+                    blit_slot_ga[slot] = 255u;
                     if (slot < LIST_PRE) pre[slot] = 0u;   /* 别的精灵占过这个 slot */
                     if (dma) blit_st.lwp = p;
                     blit_list_slot(slot, src, (uint32_t)s->width * 2u, size, scmd);
@@ -248,11 +249,13 @@ static void hw_copy_list(void *context, const Sprite *sprites, const GfxItem *it
  * 只在 LIST 模式、引擎有 TAB、nsprites <= 64、DRAW 偏移放得下时使用，否则返回 0
  * （gfx_blit_table 改走 copy_list）。表在引擎读完前不能改（调用者保证）。
  */
-static int hw_copy_table(void *context, const Sprite *sprites, int nsprites,
-                         const GfxItem *it, int n, int key)
+/* 精灵表（TAB）。ga = 全局透明度（2026-10-26：255 = 原来的不透明 / 色键 / 加法；< 255 = 整张表半透明，
+ * 加法时 = 加法强度），分带模式下照样走 K 通路。槽按 (源地址, 尺寸 + 模式, 透明度) 缓存。 */
+static int hw_table(void *context, const Sprite *sprites, int nsprites,
+                    const GfxItem *it, int n, int key, uint32_t ga)
 {
     const GfxHwTarget *t = (const GfxHwTarget *)context;
-    const uint32_t cmd = BLIT_COPY | mode_flags(key) | BLIT_GA(BLIT_OPAQUE);
+    const uint32_t cmd = BLIT_COPY | mode_flags(key) | BLIT_GA(ga);
     uint32_t a = addr_of(it), *p;
     int s;
 
@@ -267,9 +270,10 @@ static int hw_copy_table(void *context, const Sprite *sprites, int nsprites,
         const uint32_t src = addr_of(sp->pixels), size = blit_size(sp->width, sp->height);
         const uint32_t scmd = cmd | blit_cache_flag(sp->width);
         const uint32_t tag = size | mode_tag(scmd);
-        if (blit_slot_src[s] != src || blit_slot_size[s] != tag) {
+        if (blit_slot_src[s] != src || blit_slot_size[s] != tag || blit_slot_ga[s] != (uint8_t)ga) {
             blit_slot_src[s] = src;
             blit_slot_size[s] = tag;
+            blit_slot_ga[s] = (uint8_t)ga;
             blit_list_slot((uint32_t)s, src, (uint32_t)sp->width * 2u, size, scmd);
         }
     }
@@ -288,9 +292,46 @@ static int hw_copy_table(void *context, const Sprite *sprites, int nsprites,
     return 1;
 }
 
+/* 填充表（FTAB，CAPS2[5]，2026-10-26）：一条记录 + 表地址，引擎自己读表逐项填充 */
+static int hw_fill_table(void *context, const GfxFillItem *it, int n, int add)
+{
+    const GfxHwTarget *t = (const GfxHwTarget *)context;
+    uint32_t a = addr_of(it), *p;
+    if (blit_st.mode != BLIT_MODE_LIST || !blit_st.has_ftab || (a & 3u) ||
+        t->pitch * (uint32_t)(BLIT_MAX_H + 1) > BLIT_L_MAX_OFF + 1u)
+        return 0;
+    blit_band_admit((uint32_t)n);
+    blit_list_draw_ctx(t->fb, t->pitch, 0);
+    while (n > 0) {                                /* 一条 FTAB 最多 65535 项 */
+        const int k = n > (int)BLIT_L_TAB_MAX ? (int)BLIT_L_TAB_MAX : n;
+        p = blit_list_reserve(2u);
+        p[0] = BLIT_L_FTAB(k) | (add && blit_st.has_add ? BLIT_L_FTAB_ADD : 0u);
+        p[1] = a;
+        blit_st.lwp = p + 2;
+        BLIT_STAT(blit_st.cmds += (uint32_t)k);
+        BLIT_STAT(++blit_st.ltabs);
+        a += (uint32_t)k * (uint32_t)sizeof(GfxFillItem);
+        n -= k;
+    }
+    blit_list_kick();
+    return 1;
+}
+
+static int hw_copy_table(void *context, const Sprite *sprites, int nsprites,
+                         const GfxItem *it, int n, int key)
+{
+    return hw_table(context, sprites, nsprites, it, n, key, BLIT_OPAQUE);
+}
+static int hw_copy_table_ga(void *context, const Sprite *sprites, int nsprites,
+                            const GfxItem *it, int n, int key, int alpha)
+{
+    return hw_table(context, sprites, nsprites, it, n, key, clamp_alpha(alpha));
+}
+
 const GfxOps gfx_hw_ops = {
     hw_begin, hw_fill, hw_copy, hw_end, hw_fill_alpha, hw_copy_alpha,
-    hw_publish, hw_wait_idle, hw_copy_list, hw_copy_table, hw_add_fill, hw_add_copy
+    hw_publish, hw_wait_idle, hw_copy_list, hw_copy_table, hw_add_fill, hw_add_copy,
+    hw_fill_table, hw_copy_table_ga
 };
 
 void gfx_begin_hw(Gfx *gfx, GfxHwTarget *t, uint32_t fb, int width, int height)

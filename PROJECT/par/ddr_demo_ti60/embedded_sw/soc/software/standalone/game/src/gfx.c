@@ -149,6 +149,37 @@ void gfx_blit_list_inside(Gfx *g,const Sprite *sprites,const GfxItem *it,int n,i
     g->ops->copy_list(g->context,sprites,it,n,key_enabled);
     count_batch(g,key_enabled,n,pixels);
 }
+void gfx_blit_table_alpha(Gfx *g,const Sprite *sprites,int nsprites,const GfxItem *it,int n,int mode,int alpha,uint32_t pixels) {
+    int i;
+    if(n<=0 || alpha<=0) return;
+    if(alpha>=255) { gfx_blit_table(g,sprites,nsprites,it,n,mode,pixels); return; }
+    if(g->ops && g->ops->copy_table_ga && g->width<=4096 && g->height<=4096 &&
+       g->ops->copy_table_ga(g->context,sprites,nsprites,it,n,mode,alpha)) {
+        g->alphas+=(uint32_t)n; g->alpha_pixels+=pixels; g->pixels_written+=pixels;
+        return;
+    }
+    for(i=0;i<n;i++) {
+        const Sprite *s=&sprites[it[i].sprite];
+        if(mode&GFX_BLIT_ADD) gfx_blit_add(g,it[i].x,it[i].y,s,(mode&GFX_BLIT_KEY)!=0,alpha);
+        else                  gfx_blit_alpha(g,it[i].x,it[i].y,s,(mode&GFX_BLIT_KEY)!=0,alpha);
+    }
+}
+int gfx_fill_table(Gfx *g,const GfxFillItem *it,int n,int add) {
+    int i;
+    if(n<=0) return 0;
+    if(g->ops && g->ops->fill_table && g->width<=4096 && g->height<=4096 &&
+       g->ops->fill_table(g->context,it,n,add)) return 1;
+    for(i=0;i<n;i++) {                              /* 逐项（CPU 后端 / 没有 FTAB 的位流） */
+        const uint32_t a=it[i].xyw,b=it[i].cha;
+        const int x=(int)(a&0xFFFu),y=(int)((a>>12)&0xFFFu),w=(int)(a>>24),h=(int)((b>>16)&0xFFu),al=(int)(b>>24);
+        const Pixel c=(Pixel)(b&0xFFFFu);
+        if(!w || !h) continue;
+        if(add) gfx_fill_add(g,x,y,w,h,c,al);
+        else if(al==255) gfx_fill_rect(g,x,y,w,h,c);
+        else gfx_fill_alpha(g,x,y,w,h,c,al);
+    }
+    return 0;
+}
 void gfx_blit_table(Gfx *g,const Sprite *sprites,int nsprites,const GfxItem *it,int n,int key_enabled,uint32_t pixels) {
     if(n<=0) return;
     /* 引擎表项的 x、y 只有 12 位：目标不超过 4096x4096 时（项都在目标内）才交给 copy_table */

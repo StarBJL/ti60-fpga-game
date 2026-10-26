@@ -270,6 +270,7 @@ static int player_pick[3],player_slow[3],matrix_autofire=1;
 static uint32_t key_pressed;          /* edge keys waiting for the next tick */
 static int      autoplay = AUTOPLAY_DEFAULT;
 static int      vsync    = VSYNC_DEFAULT;
+static int      vpipe    = 1; /* R6: one completed band frame may overlap the next CPU frame */
 static int      show_stats = SPROUT_STATS;   /* 统计面板 'f'：只有 STATS=1 版有 */
 static int      alpha_fx   = 1;
 static int      batch_list = 1;       /* hostile seeds via gfx_blit_list ('k') */
@@ -599,7 +600,7 @@ static void handle_legacy_char(char c)
         break;
     case '4':                             /* 分带里的 K 通路（每拍 8 像素）开 / 关 */
         if (!hw_avail || !blit_st.has_band) { tx_puts("[no band mode (CAPS[31]) in this bitstream]\r\n"); break; }
-        blit_band_set_koff(!blit_st.band_koff);
+        blit_band_set_koff(!(blit_st.band_koff & BLIT_BAND_KOFF));
         stats_reset = 1;
         tx_puts(blit_st.band_koff ? "[band K path OFF: sprites / fills on the 2 px/clk path]\r\n"
                                   : "[band K path ON: cached copies and fills at 8 px/clk]\r\n");
@@ -718,9 +719,9 @@ static uint32_t bot_steer(const Game *g, uint32_t frame)
     slots = game_hostile_used(g);                    /* slots above are all free */
     /* The pool cannot change during steering. Resolve its mode/capacity once,
        rather than calling the out-of-line lookup for every hostile bullet. */
-    const Bullet *pool = slots ? game_hostile_at(g,0) : 0;
+    const Seed *pool = slots ? game_hostile_at(g,0) : 0;
     for (i = 0; pool && i < slots; i++) {
-        const Bullet *b = pool + i;
+        const Seed *b = pool + i;
         int dx, dy, d2;
         if (!b || !b->active) continue;
         dx = px - b->x / FIX; dy = py - b->y / FIX;
@@ -1310,6 +1311,29 @@ typedef struct {                 /* one frame */
     int      ticked;
 } Frame;
 
+/* R6: wait only at presentation. Keep queued and in-flight framebuffers owned. */
+static void present(Frame *f, uint32_t fb)
+{
+    if (vsync && hdmi_flip_pending()) {
+        const uint32_t t0 = now();
+        while (hdmi_flip_pending()) {
+            tx_pump(); poll_uart();
+            /* 卡死诊断：翻页等了 1 s 还没完成 = HDMI 扫描 DMA 停了（DDR 读口卡住？） */
+            if (now() - t0 > TICKS_PER_US * 1000000u && !flip_stuck) {
+                flip_stuck = 1;
+                tx_flush();
+                bsp_printf("\r\n!! HDMI flip pending > 1 s: STATUS=%x FRAME_CNT=%x FB_ADDR=%x FB_CUR=%x UF_CNT=%x\r\n",
+                           (unsigned)HDMI_STATUS, (unsigned)HDMI_FRAME_CNT, (unsigned)HDMI_FB_ADDR,
+                           (unsigned)HDMI_FB_CUR, (unsigned)HDMI_UF_CNT);
+                if (hw_avail) blit_stuck("vsync wait (HDMI flip)");
+            }
+        }
+        f->vsync += now() - t0;
+    }
+    hdmi_flip(fb);
+}
+
+
 typedef struct {                 /* sums over one window */
     uint32_t t0, frames, ticks;
     uint32_t present0,repeat0,scan0,video0,audio0,prs;
@@ -1575,11 +1599,11 @@ static void print_telemetry(const WinStats *s){
     unsigned id=++telemetry_seq;int count=scene==SCENE_SQUARES?sq_count:scene==SCENE_GAME?game_hostile_count(&game):scene==SCENE_TH?th.nbullets:3;
     GfxFontStats fs=gfx_font_stats();
     control_party_line("seq",id);control_input_state(0);if(video_trial)control_video_state(0);
-    tx_printf("M4 seq=%u epoch=%u scene=%d phase=%d count=%d target=%d step=%d bullet=%d square=%d alpha=%d vsync=%d hw=%d motion=%d table=%d bgm=%d submit_mode=%d band=%d cache=%d overlap=%d overlap_active=%d seed_table=%d seed_build=%d sort=%d kpath=%d rd_bursts=%u wr_bursts=%u rd_words=%u wide=%u\r\n",
+    tx_printf("M4 seq=%u epoch=%u scene=%d phase=%d count=%d target=%d step=%d bullet=%d square=%d alpha=%d vsync=%d hw=%d motion=%d table=%d bgm=%d submit_mode=%d band=%d cache=%d overlap=%d overlap_active=%d seed_table=%d seed_build=%d sort=%d kpath=%d rd_bursts=%u wr_bursts=%u rd_words=%u wide=%u vpipe=%d kmode=%d ftab=%d square_path=%d th_stage=%d\r\n",
       id,settings_epoch,scene,scene==SCENE_TH?th.mode:scene==SCENE_GAME?game.phase:0,count,control_limit(),count_step,
       scene==SCENE_TH?th_pressure_scale():game_seed_size(),demo_square_size(),alpha_fx,vsync,use_hw,demo_motion_enabled(),demo_table_enabled(),music_enabled(),
-      seed_mode(),blit_st.band,!!blit_st.cflag,overlap,use_hw&&overlap&&scene!=SCENE_SQUARES&&!hdmi_mode_1080(),
-      blit_st.has_table,render_seed_table,render_sort_keys,!blit_st.band_koff,blit_st.rd_max,blit_st.wr_max,blit_st.rw_max,blit_st.wide);
+      seed_mode(),blit_st.band,!!blit_st.cflag,overlap,use_hw&&overlap&&(scene!=SCENE_SQUARES||demo_fill_table_active())&&!hdmi_mode_1080(),
+      blit_st.has_table,render_seed_table,render_sort_keys,!(blit_st.band_koff & BLIT_BAND_KOFF),blit_st.rd_max,blit_st.wr_max,blit_st.rw_max,blit_st.wide,vpipe,blit_band_kmode(),blit_st.has_ftab,demo_square_path(),th.stage);
     tx_printf("F4 seq=%u elapsed_us=%u render10=%u logic10=%u present10=%u repeat10=%u scan10=%u valid=%u video_uf=%u audio_uf=%u drops=%u\r\n",
       id,s->el_us,s->fps10,s->logic10,s->present10,s->repeat10,s->scan10,s->prs,s->video_delta,s->audio_delta,tx_dropped);
     tx_printf("P4 seq=%u logic_us=%u logic_max_us=%u submit_us=%u wait_us=%u work_us=%u work_max_us=%u over=%u busy=%u phase1_us=%u bands_us=%u profile=%d\r\n",
@@ -1853,7 +1877,7 @@ int main(void)
         if(actual_hz!=BSP_CLINT_HZ){bsp_printf("CLOCK MISMATCH: load the matched bit and ELF.\r\n");for(;;);}
     }else if(BSP_CLINT_HZ!=200000000u){bsp_printf("CLOCK ABI missing: OC firmware requires its matched bit.\r\n");for(;;);}
 #endif
-    bsp_printf("\r\n=== TI60-R5.9-INPUT-CAL-20261025 Sapphire RV32IM @ %d MHz ===\r\n",
+    bsp_printf("\r\n=== TI60-R6-PIPE-KBLEND-FTAB-20261026 Sapphire RV32IM @ %d MHz ===\r\n",
                (int)(BSP_CLINT_HZ / 1000000u));
 
     if (hdmi_id() != HDMI_ID_VALUE)
@@ -1990,7 +2014,7 @@ int main(void)
     stats_reset = 1;
 
     for (;;) {
-        uint32_t ta, t1, t2, tl, t3, tend, cur, back;
+        uint32_t ta, t1, t2, tl, t3, tend, cur, back, vs0;
 #if SPROUT_STATS
         uint32_t stall0;
 #endif
@@ -2010,27 +2034,13 @@ int main(void)
         }
         memset(&f, 0, sizeof(f));
 
-        /* 1. vsync_wait: the previously requested buffer must be on screen */
+        /* Build the next frame immediately; present() waits before a new flip. */
         ta = now();
-        if (vsync)
-            while (hdmi_flip_pending()) {
-                tx_pump(); poll_uart();
-                /* 卡死诊断：翻页等了 1 s 还没完成 = HDMI 扫描 DMA 停了（DDR 读口卡住？） */
-                if (now() - ta > TICKS_PER_US * 1000000u && !flip_stuck) {
-                    flip_stuck = 1;
-                    tx_flush();
-                    bsp_printf("\r\n!! HDMI flip pending > 1 s: STATUS=%x FRAME_CNT=%x FB_ADDR=%x FB_CUR=%x UF_CNT=%x\r\n",
-                               (unsigned)HDMI_STATUS, (unsigned)HDMI_FRAME_CNT, (unsigned)HDMI_FB_ADDR,
-                               (unsigned)HDMI_FB_CUR, (unsigned)HDMI_UF_CNT);
-                    if (hw_avail) blit_stuck("vsync wait (HDMI flip)");
-                }
-            }
-        f.vsync = now() - ta;
 
         /* 流水关了（切到 CPU 后端 / 关了分带）但还挂着一帧：等它画完翻出来 */
         if (pend_fb && !(use_hw && blit_st.band)) {
             blit_wait();
-            hdmi_flip(pend_fb);
+            present(&f, pend_fb);
             last_req = pend_fb;
             pend_fb = 0;
         }
@@ -2054,7 +2064,8 @@ int main(void)
          *    logic runs after the submit instead (step 4b), while the engine
          *    draws: the frame shows the state before this tick, the next frame
          *    shows it -> same picture sequence, one tick later on screen. */
-        ahead = use_hw && overlap && scene != SCENE_SQUARES && !hdmi_mode_1080();
+        demo_square_alpha(alpha_fx);
+        ahead = use_hw && overlap && (scene != SCENE_SQUARES || demo_fill_table_active()) && !hdmi_mode_1080();
         if (!ahead) run_logic(&f, frame, &next_tick);
         t1 = now();
 #if SPROUT_STATS
@@ -2098,10 +2109,9 @@ int main(void)
         else if (scene == SCENE_IMAGES) demo_images_render(&gfx, info, frame, img_period);
         else                            render_game(&game, &gfx, info);
         gfx_end(&gfx);
-        /* 这一帧是不是完整的一个分带帧（BANDS..ENDB，中途没被列表回绕拆开）：是才能流水。
-         * vsync 开着时不流水：那时每圈循环 = 一个 tick，必须每圈正好翻一次页（等这一帧画完再翻，
-         * 16.7 ms 里时间足够）；流水只用在不限帧（vsync 关）时。 */
-        piped = scene != SCENE_SQUARES && !vsync && use_hw && blit_st.bseq - bseq0 == 1u && blit_st.bsplits == bsplit0 && !blit_st.band_open;
+        /* Only a complete, unsplit band frame can retain ownership across loops.
+         * Square motion still writes its DMA source in place, so it drains first. */
+        piped = (scene != SCENE_SQUARES || demo_fill_table_active()) && (!vsync || vpipe) && use_hw && blit_st.bseq - bseq0 == 1u && blit_st.bsplits == bsplit0 && !blit_st.band_open;
 #if SPROUT_STATS
         if (use_hw) {
             f.qend  = blit_queue_used();      /* commands still waiting after the last push */
@@ -2131,6 +2141,7 @@ int main(void)
          *     may change now) */
         if (ahead) run_logic(&f, frame, &next_tick);
         tl = now();
+        vs0 = f.vsync;
 
         /* 5. tail_wait: the frame must be complete in DDR before the flip
          *    (overlap: only what is left after the logic)
@@ -2138,17 +2149,19 @@ int main(void)
          * 分带流水：这一帧（back）交给引擎后不等它；这里等的是上一帧（pend_fb），画完就翻页。
          * 引擎画上一帧的时间和 CPU 录这一帧 + 跑逻辑是重叠的，所以一般不用等。 */
         if (piped) {
+            int flipped=0;
             if (pend_fb) {
                 uint32_t spins = 0;
                 while (!blit_band_done(pend_seq))
                     if ((++spins & (BLIT_STUCK_SPINS - 1u)) == 0) blit_stuck("frame wait (band pipeline)");
-                hdmi_flip(pend_fb);
+                present(&f, pend_fb);
                 last_req = pend_fb;
+                flipped=1;
             }
             pend_fb = back;
             pend_seq = blit_st.bseq;
-            if (blit_band_done(pend_seq)) {    /* 这一帧也已经画完（比如跑了一个 tick）：马上翻，不多拖一帧 */
-                hdmi_flip(pend_fb);
+            if ((!vsync || !flipped) && blit_band_done(pend_seq)) {    /* 这一帧也已经画完（比如跑了一个 tick）：马上翻，不多拖一帧 */
+                present(&f, pend_fb);
                 last_req = pend_fb;
                 pend_fb = 0;
             }
@@ -2158,11 +2171,11 @@ int main(void)
              * 这一帧更新，直接翻这一帧 */
             if (use_hw || pend_fb) blit_wait();
             pend_fb = 0;
+            present(&f, back);
             t3 = now();
-            hdmi_flip(back);
             last_req = back;
         }
-        f.tail += t3 - tl;
+        f.tail += t3 - tl - (f.vsync-vs0);
         /* 弹幕压力自动档：这一帧除了等 vsync 以外的全部时间 */
         if (scene == SCENE_TH) th_stress_frame(&th, per_us(t3-ta-f.vsync,1), hdmi_mode_1080()?2u*TH_FRAME_BUDGET_US:TH_FRAME_BUDGET_US);
         ++frame;

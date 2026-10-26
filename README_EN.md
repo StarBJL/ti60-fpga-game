@@ -1,153 +1,74 @@
-# Ti60 R5: RISC-V + FPGA 2D Game Rendering Engine
+# Ti60 FPGA Games and Graphics Accelerator — R6
 
-Current delivery **R5.9-INPUT-CAL** corrects the matrix pin guide: the manufacturer schematic disagrees with its manual, and the observed S7/raw-bit14 result matches the manual. Matrix short presses cannot request 1080p. The console supports staged sixteen-key calibration, retained short-press state and raw UART byte diagnostics. Use the new ELF in `BOARD_TEST/r5_9` with the unchanged R5.8 bitstream. See the [bilingual wiring and test guide](docs/R59_INPUT_FIX.html). After cloning, run `python tools/restore_r59_package.py` to restore exact binaries. USB board reception and 1080p monitor compatibility remain unverified. Historical releases follow.
+R6 selectively integrates the scheduling, data-layout, Alpha, FTAB and Touhou improvements from `09_Ti60F225_hardjtag_demo` into the existing R5.9 project. Both games retain three-player local co-op, calibrated matrix/USB inputs, 99,999-object stress capacity, size presets, Chinese UI, and ten original music tracks.
 
-Current delivery **R5.8-VIDEO-COOP** adds bounded HDMI link restart, emergency720p recovery,1080-only DVI diagnostics, explicit three-player starts and the complete two-keyboard wiring addendum. Normal720p behavior is preserved. The PH27QB2 blackout awaits physical retesting. Use the matched200MHz artifacts in `BOARD_TEST/r5_8`. See the[bilingual report](docs/R58_BOARD_FIX.html) and[wiring addendum](docs/R58_INPUT_SCHEMATIC.html).
+The only modified hardware source is `PROJECT/rtl/blit/blit_engine.v`. HDMI RTL, the real PLL settings, pin assignments and timing constraints are unchanged. The core runs at **200 MHz**. This release does not claim to resolve PANDA PH27QB2 compatibility with the existing 1080p30 mode. Video recovery simulations are not monitor validation.
 
-Current candidate: **R5.7-COOP-PERF**. Normal carrot/Touhou games support independent UART, USB and matrix players. Pressure data/loop and square band admission are optimized. **The 720p display path is preserved.** Matched 200, 202.083333 and 205MHz artifacts are in `BOARD_TEST/r5_7/`. Read the [bilingual implementation and validation report](docs/R57_REPORT.html#english). New board FPS gains are unmeasured. The reported 1080p monitor blackout is unresolved; a 10-second trial timeout now restores720p. 480p is not implemented. Current source console identifies as`R5.7-COOP-PERF`.
+## Run and program
 
-After cloning, run `python tools/restore_r57_package.py` to verify/reassemble the archive and restore all matched bit/ELF files. The connector rejected individual ELF uploads; checked binary parts preserve the exact originals. Local delivery already contains full artifacts.
+- **Windows:** extract `Ti60_R6_Windows.zip` and double-click `Ti60Control.exe`. Python and pyserial are bundled. A browser opens on an available loopback port; no serial device opens until Connect is clicked. Close the console window or press Ctrl+C to stop it.
+- **Linux:** run `bash Start_Control_Panel.sh` from the project root. `--port 0` selects a free port; `--port 8765` requests a fixed port.
+- **Matched hardware:** `BOARD_TEST/r6/ti60_r6.bit`.
+- **Measured firmware:** `BOARD_TEST/r6/ti60_r6_debug.elf`; use `ti60_r6_release.elf` for lower-overhead presentation. Keep benchmark results from the two builds separate.
+- Import the existing Eclipse project under `PROJECT/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game`. Its project name is **game_r6**, and its normal build/download target is `build/game.elf`. Relative links avoid accidentally compiling the previous project.
+- BSP root: `PROJECT/par/ddr_demo_ti60/embedded_sw/soc`; board support files are in `bsp/efinix/EfxSapphireSoc` beneath it.
+- `python3 tools/configure_launch.py` generates a launch configuration for the prebuilt debug ELF after moving the project. It never programs hardware.
+- The UART boot banner contains `TI60-R6-PIPE-KBLEND-FTAB-20261026`. `kblend=1 ftab=1` confirms the new hardware capabilities. SHA-256 values are recorded in the release manifest.
 
-Historical versions and their resource numbers follow.
+## Implementation
 
-Latest revision **R5.6** removes locator coverage, fading, markers and nearby indexing from carrot stress mode. Bullets cover the actor directly; normal gameplay retains its locator. Use the unchanged R5.5 bit with the new ELF in `BOARD_TEST/r5_6/`. See [implementation and conditional benefit estimate](docs/R5_6_LOCATOR_OFF.md). Actual board FPS gains are not yet measured.
-
-**R5.3 firmware update:** [R2 comparison and changes](docs/R5_3_SETTINGS_MUSIC.md). Full ten-track selection, immutable hero-outline caching and invariant autoplay lookup. New ELF files are in `BOARD_TEST/r5_3`; hardware reuses the validated R5.2.1 bit. Actual throughput recovery requires board retesting. Complete bundle: `dist/Ti60_R5_3_MUSIC_PERF.tar.xz`.
-
-**2026-10-24 R5.2 audio/video hardware baseline: matched bit / ELF in [BOARD_TEST/r5_2](BOARD_TEST/r5_2).** HDMI audio status/parity packing and transmitted VSYNC alignment are corrected. Render-path settings are visible in telemetry and can be restored explicitly. See [evidence and retest procedure](docs/BOARD_FIX_R5_2.md). Original R5 results and root-level binaries below remain a historical baseline. Current source console identifies as `R5.2-BOARD-FIX`; the bundled old Windows EXE does not include this patch.
-
-[中文](README.md) · [Interactive input and wiring guide](docs/INPUT_GUIDE.html) · [Photo-oriented wiring diagram](docs/WIRING_DEMO.html) · [Contest requirements](docs/CONTEST_MAPPING_EN.md) · [Board validation worksheet](docs/BOARD_TEST_PLAN.csv)
-
-This project addresses Efinix contest topic 2: **a 2D graphics rendering accelerator based on a heterogeneous RISC-V and FPGA architecture**. A Sapphire RISC-V CPU runs game logic. A custom BitBlt engine directly accesses DDR3 over AXI4 for block copy, solid fill, color keying, and Alpha blending. HDMI carries video and audio.
-
-R5 extends the full R4/R3 project, retaining the R19-derived seven-level carrot character, dual guns, upgrades, active skill, and occlusion locator. Danmaku, moving squares, image switching, Chinese UI, and audio remain available. New work adds Windows control-console support, matrix/CH9350L input, physical 720p60 / 1080p30 switching, and on-chip-memory/read-credit-path optimization.
-
-**Both output modes render at 1280×720. The 1920×1080 mode is 3:2 nearest-neighbor enlargement, not native 1080p rendering.** The current 74.375 MHz pixel PLL produces approximately 60.101 / 30.051 Hz. Firmware maintains an independent nominal 60 Hz gameplay schedule in 1080 mode. A host main-loop model verifies 30 Hz output with 60 Hz logic; actual load limits and monitor compatibility require board testing.
-
-## Final Ti60 target implementation
-
-Efinity 2026.1 completed the final map, interface, placement/routing, and bitstream generation. All constrained setup/hold relationships in the final report are positive. The core remains at **200 MHz**.
-
-| Metric | Historical R2 / R4 | Final R5 | Change |
-|---|---:|---:|---:|
-| XLR | 55,848 / 60,800 | **58,518 / 60,800 (96.25%)** | +2,670 |
-| On-chip RAM blocks | 253 / 256 | **253 / 256 (98.83%)** | Unchanged total; 3 free |
-| DSP | 32 / 160 | **32 / 160** | Unchanged |
-| Core 200 MHz setup slack | +0.053 ns | **+0.118 ns** | +0.065 ns |
-| Core 200 MHz hold slack | +0.025 ns | **+0.028 ns** | +0.003 ns |
-
-The two shallow blitter queues free **four RAM blocks**. The new scanout line cache uses three, and the CH9350 UART RX FIFO uses one: `253 − 4 + 3 + 1 = 253`. This makes room for the new functions; it is not a four-block reduction in total device RAM use. General Alpha remains two pixels per cycle; a four/eight-pixel Alpha path is a future optimization, not a delivered claim.
-
-The final `ti60_r5.bit` is **2,811,948 bytes**, SHA-256 `25dc85470b3f73f929ef75c60eb06880a7c46533f30c26820a40eb5def85ac83`. This establishes passing constrained target implementation, not measured board sprite limits, power, temperature, or peripheral compatibility. Board acceptance results remain for the user to fill in.
-
-## Deliverables and quick start
-
-Use the paired artifacts in `BOARD_TEST/`. [manifest.json](BOARD_TEST/manifest.json) identifies their versions, SHA-256 hashes, and verification state.
-
-| File | Purpose |
+| Change | Implementation and limits |
 |---|---|
-| `BOARD_TEST/ti60_r5.bit` | R5 dual-video and input-device hardware |
-| `BOARD_TEST/ti60_r5_debug.elf` | Detailed metrics, on-screen CPU/HW comparison, and diagnostics; recommended for contest validation |
-| `BOARD_TEST/ti60_r5_release.elf` | Reduced statistics overhead |
-| `BOARD_TEST/manifest.json` | Artifact hashes and build/verification evidence |
-| `docs/INPUT_GUIDE.html` | Self-contained offline key layout, wiring, protocol, and shortcut guide |
+| Frame scheduling | Four buffers exclude the scanned, requested and in-flight GPU frame. Waiting for the previous flip is deferred until the next presentation. Complete, unsplit band frames may overlap the following CPU frame with VSync enabled. At most one flip is requested per loop with VSync. This can add one frame of latency. |
+| Carrot hot records | Hostile `Seed` records shrink from 24 to 16 bytes. `active` stores damage; zero marks a free slot. Player ownership, NOVA, upgrades and independent co-op collisions remain. Stress mode retains its disabled player auto-shots and disabled locator/proximity/fade/overlay work. |
+| Touhou hot/cold split | A 16-byte hot array carries current position, velocity and draw indices; the 32-byte cold array retains pattern parameters. New bullets are synchronized after emitters finish setting parameters. Removal, clearing and resize rebuilding use current hot coordinates. Independent graze flags are preserved. |
+| XY publishing | One aligned, alias-safe RV32 word store replaces the four byte stores emitted for the former memcpy helper. |
+| Global Alpha | The eight-pixel K path handles banded global-Alpha fills, cached copies and additive blending. Spare DSPs compute both weighted terms, preserving exact rounding. Per-pixel A8 remains on the existing narrow path. K1–K4 dependencies remain checked. |
+| Generic FTAB | **Opcode 7**, CAPS2 bit5, eight-byte entries carrying XY, dimensions, color and Alpha. Existing **SQTAB opcode 6**, CAPS2 bit3 and MOT2 remain available. Tables larger than 65,535 entries are split into multiple commands. Capacity overflow ends band mode and continues in original drawing order. |
+| Square A/B paths | Original Q4 motion, eight colors and alternating Alpha are retained. CPU+FTAB uses three immutable snapshots. CPU+SQTAB, MOT2+SQTAB and individual fills remain selectable. Exceptional metadata rebuilds drain the engine before ring reuse. |
+| Touhou effects | Stage 1 adds three birth-Alpha levels, budgeted A8 halos and emitter blooms. Stage 2 batches comet heads/tails; stress comets scale with density while reserving beam slots. Both stress stages have separate entry buttons. Both normal stages retain co-op. |
+| Sound bank | All ten original BGM loops and 23 sound effects are retained. BGM uses 22,050 Hz 16-bit mono PCM; the existing HDMI output format is unchanged. Bank size decreases from 10,123,520 to 7,124,736 bytes. Loop points and durations are checked. |
 
-Load the matching bitstream before the ELF. Older R4 bitstreams do not contain the new input and video hardware. Firmware checks `VID5` / `INP5` capability identifiers. Do not mix the R19 185 MHz / 640×480 bitstream with R5 firmware. Build scripts produce files and do not program the board automatically.
+A 144-byte pointer scratch area uses dead boot OCR space at `0xF9000C00`. The linker reserves 512 bytes explicitly, and the game stack remains in DDR. This does not allocate another block RAM.
 
-On Windows, unpack **`dist/Ti60_R5_Windows_Console.zip`** and run its **`Start_Ti60Control.cmd`** for the prebuilt standalone EXE; no separate Python installation is required. For source operation, double-click the project-root **`Start_Control_Panel.cmd`**. On Linux, run **`./Start_Control_Panel.sh`**. Source operation requires Python 3.10+ and pyserial; the launcher can create a local isolated environment. Select the board’s debug UART at 115200 baud and connect. Opening the browser alone does not open the serial port or send commands. The old `Open_Serial_Log.cmd` redirects to the new launcher.
+## Routed result
 
-COM ports, UTF-8/Excel-friendly logs, and Chinese/space-containing paths are supported. A [real Windows CI run](https://github.com/18971355314bjl-gif/ti60-fpga-game/actions/runs/39987343020) on Windows Server 2025 x64 / Python 3.12.10 passed native CMD startup, six portability tests, EXE packaging, and a packaged HTTP/UI-resource smoke test. The executable is `dist/windows/Ti60Control.exe`; evidence is at `verification/r5/windows_console/windows_ci_validation.json`. **The user’s Windows 10/11 USB serial drivers and physical FPGA/keyboard remain validation items.** To rebuild the EXE, run `Build_Windows_Control_Panel.cmd` on Windows. See [operation and packaging](docs/windows_zh-en.md).
+| Item | Final R6 |
+|---|---:|
+| Core / pixel clock | 200 MHz / 74.375 MHz |
+| XLR | 59,147 / 60,800, 97.28% |
+| Block RAM | 253 / 256, 98.83% |
+| DSP | 80 / 160, 50.00% |
+| Core setup slack | +0.259 ns |
+| Core hold slack | +0.026 ns |
+| Setup/hold clock relationships | All 14 pass |
+| Gray-bus skew checks | 18 groups pass setup and hold; not a complete functional CDC proof |
 
-## Controls and boundaries
+The initial integrated Alpha candidate used 60,603 XLR and 56 DSP. Moving both weighted terms into DSPs saved 1,456 XLR. Relative to the original R5 hardware (58,661 XLR, 32 DSP), final R6 adds 486 XLR and 48 DSP for the new functions; the RAM block count stays the same. Constraints were not weakened to obtain closure.
 
-| Function | Controls or range |
-|---|---|
-| Scenes | Danmaku, carrot survival, moving squares, image switching; GUI or `n` |
-| Movement / shooting / skill | Browser or CH: WASD/arrows, Z/Space, X/J, Shift slow, Enter confirm, Esc pause |
-| Count steps | **100 / 10 / 1** via F6/F7/F8; matrix S11 cycles |
-| Count change | `+ / -` or buttons; target cap and actual active count are separate telemetry |
-| Carrot hostile bullets | Custom stress cap **1–40,000**; sizes 9/13/17/25 px |
-| Danmaku bullets | Stress cap **1–16,384**; sizes 75/100/125/150%; density is separate |
-| Squares | **1–30,000**; mixed 6–40 px or fixed 6/8/12/16/24/32/40 px |
-| HDMI modes | F9, matrix S15, or GUI buttons: 720p60 / 1080p30 |
-| Rendering comparison | `g` CPU/HW; `e` Alpha; `v` VSync; debug `f` statistics and `c` automatic comparison |
-| Music | Ten original chiptune loops and 23 retained sound effects; `;` BGM, backslash next track |
+99,999 is an object-capacity limit, **not a demonstrated 60-FPS limit** at every size or effect setting. No post-change FPGA frame-rate or ten-minute stability result has been fabricated.
 
-Allocated capacity is **not a guarantee of stable 60 FPS** at the maximum count. Stress bullet size changes visuals, while collision radius, damage, speed, and trajectories retain their existing behavior. Laser widths are unchanged. Covered area, Alpha, CPU logic, and DDR contention affect sustainable load.
+## Controls and validation
 
-Run the contest’s 60 FPS sprite-limit challenge in **720p mode with Alpha and Color Key enabled**. A physical 1080p30 output presents at most about 30 new frames per second; a 60 Hz logic counter cannot replace presentation FPS.
+The console retains volume steps, all ten tracks, count steps of 100/10/1, R2 workload presets, co-op entry, matrix calibration and USB byte diagnostics. New controls select VSync frame pipelining, eight-/two-pixel Alpha, all four square paths, and separate stage stress tests. CSV logs include `vpipe`, `kmode`, `ftab`, `square_path` and `th_stage`.
 
-## Input hardware
+P1 uses the PC console, P2 a USB keyboard through CH9350L, and P3 the 4×4 matrix. Existing wiring and S1–S16 assignments remain documented in the console's offline `/wiring` page. Co-op startup still confirms diagnostic mode is disabled before enabling controls.
 
-The passive 4×4 matrix uses eight signals in **1.8 V Bank 1B**. Rows connect to J7 2/4/8/10, columns to 20/22/26/28. CH9350L uses a separate **3.3 V UART**: module TX→J7 32 and module RX←J7 34, with verified 5 V module power and common ground. J7 37/38/39/40 remain available as 3.3 V signal pins.
+Evidence under `verification/r6` includes 2,105,344 blend/add input combinations, real RTL tests with 99,999 squares, 24 FTAB/SQTAB pixel and snapshot comparisons, 4,800-tick old/new gameplay comparisons for each normal stage with one and three players, input RTL checks, unchanged-720p output regression, and desktop/mobile PTY browser tests. Native Windows CI executed the packaged EXE and checked its assets, Unicode paths, loopback API and no automatic serial connection.
 
-Numbers refer to the main board’s **J7**, not an assumed orientation of the green 2×20 breakout. Determine cable row/column order and adapter continuity before connection. The manual and schematic disagree at some J7 entries; the guide follows schematic net-to-ball tracing and names the Efinity GPIO resources.
+Use matched bit/debug ELF for the first board run. Hold workload, object size, Alpha, output mode and audio settings constant; change one optimization switch at a time. Record presented FPS, logic Hz, video/audio underflows, worst window time, band splits and ten-minute stability. Validate physical 1080p30 compatibility separately.
 
-Matrix S4 is Fn, S11 selects count step, S12 size, and S15 output mode. Configure CH9350L as USB Host/downstream, state 2, 115200 8N1, using fixed eight-byte HID boot-keyboard reports. State-0/1 variable frames and proprietary NKRO are not supported. Full mapping, ghost suppression, disconnect limitations, APB registers, and C APIs are in [INPUT_DEVICES.md](docs/INPUT_DEVICES.md) and the [interactive HTML](docs/INPUT_GUIDE.html).
+## Build
 
-## Implementation and contest coverage
+After cloning GitHub, run `python3 tools/restore_large_files.py` to restore the current sound bank, matched bit/ELF and generated netlist. Both chunks and original files are SHA-256 checked. The source ZIP already contains its complete sound bank. Stale active build/outflow products were removed from the current Git tree; older versions remain in Git history and versioned BOARD_TEST directories.
 
-CPU gameplay is in `game.c`, `th_game.c`, `th_pattern.c`, `th_stage2.c`, and `demo.c`. `blit_engine.v` handles COPY/FILL/Alpha/Key and command lists; `blit_axi_wide.v` provides a wide path for eligible operations. APB controls registers while AXI4 moves image data directly to/from DDR3. Bursts, queues, source caching, outstanding-request control, and band composition improve memory efficiency.
-
-`blit.c` / `gfx_hw.c` expose the C hardware interface; `gfx.c` shares the drawing API with a CPU backend. `main.c` handles completed-frame publication and multiple framebuffers. `hdmi_fb.v` scans completed frames, generates modes, and records new/repeated presentations. `hdmi_island.v` supplies HDMI metadata/audio. The debug HUD keeps CPU/HW FPS and timing for the required on-screen comparison.
-
-The full [English mapping](docs/CONTEST_MAPPING_EN.md) and [Chinese mapping](docs/CONTEST_MAPPING_ZH.md) match every base and advanced requirement to code and acceptance evidence. This topic’s minimum display requirement is **640×480 at 60 Hz**; 720/1080 switching is an extension.
-
-## Repository layout and reproducible builds
+With Efinity 2026.1 and its RISC-V toolchain installed:
 
 ```text
-PROJECT/rtl/                         BitBlt, HDMI, audio, input, DDR RTL
-PROJECT/par/ddr_demo_ti60/            Efinity project, constraints, IP, outflow
-  embedded_sw/soc/software/standalone/game/
-    src/                            RISC-V firmware
-    sound/                          Sound bank and original music
-    game.ld                         DDR linker regions
-tools/control_panel/                Windows/Linux loopback serial console
-BOARD_TEST/                         Paired bit/ELF artifacts and manifest
-docs/                               Requirements, wiring, optimization, test worksheet
-verification/r5/                    Current offline and target-build evidence
-verification/r4/                    Historical R4 offline checks
-logs/                               Historical board logs and later acquisitions
+python3 build_software.py --stats both
+python3 build_hardware.py --flow compile
 ```
 
-The hardware target is **Efinix Ti60F225**, built with **Efinity 2026.1**. Vivado 2021.2 is used only for portable behavioral RTL analysis/testing; it cannot generate a Ti60 bitstream or certify Ti60 resource/timing results.
+Use `--toolchain` or `--efinity` to override installation paths. On Windows, use the installed Python command. Rebuild the audio bank from the game directory with `python3 tools/wav2bank.py --list sound/r6_sounds.txt`. The source package already includes the bank and all referenced ROM initialization files. Hardware builds never program a board; only timing-passing output is promoted into BOARD_TEST.
 
-```bash
-python3 build_software.py --toolchain /path/to/efinity-riscv-ide/toolchain/bin
-python3 build_hardware.py --efinity /path/to/efinity/2026.1 --flow compile
-python3 tools/configure_launch.py
-```
-
-Software builds require GNU make and the Efinity RISC-V SDK. Both debug and release builds are generated by default. The launch configuration helper regenerates absolute IDE paths after moving the project or copying it to Windows.
-
-Both modes use a 1,843,200-byte 1280×720 RGB565 framebuffer in 2 MiB-spaced DDR slots. Linker regions are 15 MiB program RAM, 16 MiB sound, and 32 MiB art. Fonts and music occupy **external DDR**, not those capacities in on-chip block RAM. Native 1080 RGB565 would require about 3.96 MiB per frame and cannot be inserted into the current slots without a memory-map redesign.
-
-## Evidence and remaining board measurements
-
-The [optimization report](docs/optimization_en.md) / [中文报告](docs/optimization_zh.md) covers queue RAM changes, the `rf_res` read-credit path, and the Alpha optimization roadmap. The final target results are above; evidence is in the [Efinity resource report](PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.place.rpt) and [timing report](PROJECT/par/ddr_demo_ti60/outflow/ddr_demo_ti60.timing.rpt). Behavioral verification remains a separate evidence category.
-
-R5 offline verification includes C input parsing under ASan/UBSan, matrix/UART RTL, dual-video behavior, 30 Hz output / 60 Hz logic host scheduling, native Windows CI startup/packaging/service tests, and a browser connected to a real Linux PTY. The HTML guide was checked in a real browser for offline loading, Fn, step/count controls, mode demo, filtering, light/dark themes, and desktop/390 px layout. Evidence resides in `verification/r5/`; consult its logs and the manifest for individual results.
-
-Historical R2 board logs and R4 host tests remain baseline evidence, not new R5 scores. [BOARD_TEST_PLAN.csv](docs/BOARD_TEST_PLAN.csv) includes boot, display switching, physical input, Windows, gameplay, sizes, Alpha, CPU/HW comparison, maximum load, audio, endurance, and resource checks. Measured values and conclusions are intentionally blank for the user to complete. The console preserves raw UART, configuration events, and complete same-sequence telemetry windows.
-
-Physical input also emits `I5` capability, held-state, keyboard-report, malformed-frame, rollover, ghost, status-report, and UART-error diagnostics. The CH9350L state response is implemented; real-module compatibility still requires board validation.
-
-Record actual active count, render FPS, logic Hz, actual presentation FPS, scan/repeat rate, video/audio underflow deltas, worst work time, engine faults, temperature, and power. Scan rate is not presentation rate, and a requested cap is not the current active count.
-
-## Provenance and licensing
-
-`docs/references/` contains the contest, board, and CH9350 references with SHA-256 hashes. Third-party documents, Efinix IP/SDK, fonts, and inherited art retain their original terms. Noto licensing is at `ART/UI_R4/Noto_CJK_LICENSE.txt`. Original loops are generated by `tools/create_original_music.py`, with source WAVs and manifest under the firmware’s `sound/original_r4/` directory. This project is prepared for the user’s authorized private repository; it does not relicense all bundled third-party materials under a new blanket open-source license.
-
-
-## Restore the complete GitHub snapshot
-
-This repository is private. Source, IP, images, music, bitstreams, ELF files, the Windows EXE, tests, and logs are stored as ordinary exact files. Only three generated files exceed the accepted GitHub REST request size: the 55,888,638-byte mapped Verilog netlist and the two 43,673,856-byte `game.bin` images. Their complete bytes are preserved in lossless gzip parts under `.github_large_files/`; `tools/large_files_manifest.json` records original paths, byte counts, SHA256, Git blob SHA, and executable modes. Both roughly 29 MB `game.hex` files remain ordinary repository files.
-
-After cloning or downloading, run from the repository root:
-
-```sh
-python3 tools/restore_large_files.py
-python3 tools/restore_large_files.py --verify
-```
-
-On Windows, use `py -3` instead of `python3`. The script uses only the Python standard library. Correct existing files are skipped; locally modified files are protected unless `--force` is explicitly supplied. The complete local delivery already contains the original files and can be checked directly with `--verify`. The restored files return to their original paths and modes. See `verification/github_upload.txt` for the upload-method record: the rejected asset-import automation was not installed or run; the final method uses ordinary GitHub APIs plus explicit local restoration.
+[Private repository](https://github.com/StarBJL/ti60-fpga-game) · [Native Windows build 40329064648](https://github.com/StarBJL/ti60-fpga-game/actions/runs/40329064648).

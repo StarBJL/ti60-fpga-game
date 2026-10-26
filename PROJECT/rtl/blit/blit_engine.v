@@ -128,6 +128,15 @@
 //                    slots before the TAB record. LIST_END may still be moved
 //                    meanwhile; LIST_ADDR/LIST_END read back the main list.
 //                    LIST_WORD writes stall until the table is done.
+//   [31:28]=7 FTAB   [26] ADD  [15:0] n, then one word: byte address of a fill
+//                    table (CAPS2[5], 2026-10-26). Like TAB, 8 bytes per item:
+//                    {w[31:24], y[23:12], x[11:0]} {alpha[31:24], h[23:16],
+//                    colour[15:0]}; every item is a FILL of w x h at
+//                    BASE + y * DSTR + x * 2 with its own colour and global
+//                    alpha (255 = opaque; ADD: additive). Items with w or h = 0
+//                    are skipped. Same rules as TAB (inside the target, table
+//                    unchanged until done). Many small rectangles (particles,
+//                    bars, the squares demo) without one list record each.
 //
 // Source cache (CAPS[27] = 1): 16 KB, direct mapped, 512 lines x 32 bytes, in
 // block RAM. Only the source stream of COPY commands that carry the cache flag
@@ -204,6 +213,8 @@
 //   (RES   [31:28]=5: the 8-word bin record, only ever written by the engine)
 //   0x94 BAND_GEO    RW  [15:0] frame row stride in bytes (x16, 256..WIN_BYTES)
 //                        [21:16] bands (1..45; frame = bands x 16 rows, <= 720)
+//                        [30] K path blends off (2026-10-25: global-alpha FILL / COPY
+//                             back on the narrow path, A/B)
 //                        [31] K path off (everything on the narrow path)
 //   0x98 BAND_RECIP  RW  [20:0] floor(2^24 / (stride / 16)) + 1 (row of an address)
 //   0x9C BAND_BIN    RW  [31:12] bin area  [4:0] log2(bytes per band bin), 12..20;
@@ -215,6 +226,10 @@
 //   0xBC CAPS2       RO  [0] additive blend (CMD[6], REC[26], SLOT[26])
 //                        [1] debug registers DBG0..3 (0xC0..0xCC)
 //                        [2] band window rows of 2560 bytes (1280 px, 720p)
+//                        [5] FTAB list record (fill table, see "List words")
+//                        [4] K path blends: global-alpha FILL / cached COPY (keyed
+//                            or not, also additive with alpha) at 8 px/clk in band
+//                            mode, same result as the narrow path (2026-10-25)
 //                        [15:8] max bands (45)
 //   (during a band frame the PIXEL stall classes 0x74..0x80 and PERF_WCLK stop)
 // Change BAND_GEO / BAND_RECIP / BAND_BIN only while no band frame is active.
@@ -298,7 +313,7 @@ module blit_engine #(
     localparam [RING_AW+1:0] RING_WORDS = 1 << RING_AW;
     localparam [WF_AW+1:0]   WF_WORDS   = 1 << WF_AW;
     localparam               MAXB       = 45;        // band frame: <= 45 bands (720 rows)
-    localparam [31:0]        CAPS2_VAL  = 32'h0000000B | ((WIN_BYTES == 2560) ? 32'h4 : 32'h0) | (MAXB << 8);
+    localparam [31:0]        CAPS2_VAL  = 32'h0000003B | ((WIN_BYTES == 2560) ? 32'h4 : 32'h0) | (MAXB << 8);
     localparam [31:0]        CAPS_VAL   = 32'h80000000 | (1 << 30) | (1 << 29) | (1 << 28) | (1 << 27) | (1 << 26) | (1 << 25) | (1 << 24) | (RING_AW << 16) | (WF_AW << 8) | CQ_AW;
 
     assign m_arsize  = 3'b010;
@@ -330,6 +345,7 @@ module blit_engine #(
     reg  [15:0] bg_s;                   // BAND_GEO[15:0]: frame row stride (bytes, x16, <= WIN_BYTES)
     reg  [5:0]  bg_nb;                  // BAND_GEO[21:16]: number of 16-row bands (1..MAXB)
     reg         bg_koff;                // BAND_GEO[31]: K path off (narrow path for everything)
+    reg         bg_kboff;               // BAND_GEO[30]: global-alpha blends not on the K path
     reg  [20:0] bg_recip;               // BAND_RECIP: floor(2^24 / (stride / 16)) + 1
     reg  [31:0] bg_bin;                 // BAND_BIN[31:12]: bin area
     reg  [4:0]  bg_sh;                  // BAND_BIN[4:0]: log2(bytes per band bin), 12..20
@@ -428,7 +444,7 @@ module blit_engine #(
             r_w <= 11'd0; r_h <= 11'd0;
             r_rdmax <= 5'd16; r_wrmax <= 8'd128; r_rdwmax <= 11'd1024;
             x_off <= 1'b0; x_wth <= 4'd0; x_minw8 <= 8'd16; x_rdwmax <= 11'd256;
-            bg_s <= 16'd1280; bg_nb <= 6'd30; bg_koff <= 1'b0; bg_recip <= 21'd209716;
+            bg_s <= 16'd1280; bg_nb <= 6'd30; bg_koff <= 1'b0; bg_kboff <= 1'b0; bg_recip <= 21'd209716;
             bg_bin <= 32'h03000000; bg_sh <= 5'd18;
             bg_binsz <= 32'h00040000; bg_capm <= 16'hE000;
         end else if (apb_wr) begin
@@ -439,6 +455,7 @@ module blit_engine #(
                     bg_nb   <= (apb_pwdata[21:16] == 6'd0) ? 6'd1 :
                                (apb_pwdata[21:16] > MAXB) ? MAXB : apb_pwdata[21:16];
                     bg_koff <= apb_pwdata[31];
+                    bg_kboff <= apb_pwdata[30];
                 end
                 6'h26: bg_recip <= apb_pwdata[20:0];
                 6'h27: begin
@@ -513,7 +530,7 @@ module blit_engine #(
             6'h22:   apb_prdata = perf_wclk;
             6'h23:   apb_prdata = perf_xwbeat;
             6'h24:   apb_prdata = perf_xrbeat;
-            6'h25:   apb_prdata = {bg_koff, 9'd0, bg_nb, bg_s};
+            6'h25:   apb_prdata = {bg_koff, bg_kboff, 8'd0, bg_nb, bg_s};
             6'h26:   apb_prdata = {11'd0, bg_recip};
             6'h27:   apb_prdata = {bg_bin[31:12], 7'd0, bg_sh};
             6'h28:   apb_prdata = bc_frames;
@@ -556,7 +573,10 @@ module blit_engine #(
     wire        q_nop   = (q_w == 11'd0) | (q_h == 11'd0);
     // D: K path (band mode only) = opaque or keyed COPY through the source cache, or
     // opaque FILL: 8 px per clock straight into the band window
-    wire        q_k     = bm & ~bg_koff & ~q_nop & ~q_blnd0 & (~q_op | q_cache);   // opaque / keyed / pure add
+    // K path: opaque / keyed / additive and (2026-10-25) global-alpha blends; A8 plane copies
+    // stay on the narrow path (per-pixel alpha needs a second source stream)
+    wire        q_k     = bm & ~bg_koff & ~q_nop & ~q_apl & ~((q_ga != 8'hFF) & bg_kboff) &
+                          (~q_op | q_cache);
     // C2: opaque, phase-aligned COPY or opaque FILL, wide enough -> wide path
     wire        q_wide0 = ~x_off & ~q_nop & ~q_blend & ~q_keyen & (q_w >= {x_minw8, 3'd0}) &
                           (~q_op | ((q_dst[3:0] == q_src[3:0]) & (q_dstr[3:0] == q_sstr[3:0])));
@@ -1442,6 +1462,9 @@ module blit_engine #(
     reg sq_table, sq_odd, sq_alpha;
     reg [7:0] sq_size;
     reg [15:0] sq_color;
+    reg         tb_fill, tb_fadd;        // FTAB: fill table (ADD), per item w / h / colour / alpha
+    reg  [7:0]  tb_fw, tb_fh, tb_fa;
+    reg  [15:0] tb_fc;
     reg  [27:0] tb_prod;                 // y * DSTR
     reg  [24:0] tb_off;                  // y * DSTR + x * 2
     // list context
@@ -1486,6 +1509,7 @@ module blit_engine #(
     wire        hdr_bnds = (lw[31:28] == 4'd3);              // D: BANDS
     wire        hdr_endb = (lw[31:28] == 4'd4);              // D: ENDB
     wire        hdr_res  = (lw[31:28] == 4'd5);              // D: RES (only in bins)
+    wire        hdr_ftab = (lw[31:28] == 4'd7);              // FTAB (fill table)
     wire        hdr_bok  = hdr_bnds & ~bc_act;               // BANDS outside a band frame
     wire        hdr_eok  = hdr_endb & (bc_state == BC_P1);   // ENDB inside one
     assign      endb_call = hdr_take & ~bm & hdr_eok;
@@ -1506,7 +1530,9 @@ module blit_engine #(
 
     wire        l_push_rec  = d_args_done & ~d_word[10] & ~d_full;
     wire        d_drawing   = (d_state == D_DRAW) | (d_state == D_TDRW);
-    wire        l_push_draw = d_drawing & ~d_full;
+    // FTAB items with w or h = 0 are skipped (nothing pushed)
+    wire        tb_fnop     = tb_fill & ((tb_fw == 8'd0) | (tb_fh == 8'd0));
+    wire        l_push_draw = d_drawing & ~d_full & ~((d_state == D_TDRW) & tb_fnop);
     assign      l_push      = l_push_rec | l_push_draw;
     // RES (phase 2): the 7th word completes the command record
     wire        res_push    = d_res_last & lf_valid & y_in_ok;
@@ -1523,7 +1549,12 @@ module blit_engine #(
     wire [CQ_W-1:0] cq_ldraw = {sl_q[83], 1'b0, sl_q[82], sl_q[81:74], sl_q[73:70], l_key, l_color,
                                 sl_q[69:59], sl_q[58:48], l_astr, l_aad,
                                 sl_q[47:32], sl_q[31:0], l_dstr, sl_dst};
-    assign      cq_ldin = d_drawing ? ((sq_table & (d_state == D_TDRW)) ? cq_lsquare : cq_ldraw) : cq_lrec;
+    // FTAB item: FILL {add, inv 0, cache 0, alpha, flags 0 (FILL), KEY, colour, h, w, A, ASTR,
+    //             SRC, SSTR (unused), DSTR, BASE + offset}
+    wire [CQ_W-1:0] cq_lfill = {tb_fadd, 2'b00, tb_fa, 4'b0000, l_key, tb_fc,
+                                {3'd0, tb_fh}, {3'd0, tb_fw}, l_astr, l_aad,
+                                l_sstr, l_src, l_dstr, sl_dst};
+    assign      cq_ldin = d_drawing ? ((sq_table & (d_state == D_TDRW)) ? cq_lsquare : (tb_fill & (d_state == D_TDRW)) ? cq_lfill : cq_ldraw) : cq_lrec;
 
     always @(posedge clk) begin
         if (rst) begin
@@ -1537,6 +1568,7 @@ module blit_engine #(
             tb_cnt <= 16'd0; tb_skip <= 8'd0;
             sq_table<=0;sq_odd<=0;sq_alpha<=0;sq_size<=0;sq_color<=0;
             tb_x <= 12'd0; tb_y <= 12'd0; tb_slot <= 6'd0;
+            tb_fill <= 1'b0; tb_fadd <= 1'b0; tb_fw <= 8'd0; tb_fh <= 8'd0; tb_fa <= 8'd0; tb_fc <= 16'd0;
             tb_prod <= 28'd0; tb_off <= 25'd0;
             d_endb <= 1'b0; d_rc <= 3'd0; d_res <= 224'd0;
         end else begin
@@ -1551,7 +1583,11 @@ module blit_engine #(
                         if (bm)            d_state <= hdr_res ? D_RES : D_HDR;  // bins: RES only
                         else if (hdr_draw) d_state <= D_DRAW;
                         else if (hdr_rec)  d_state <= D_ARGS;
-                        else if (hdr_tab)  d_state <= D_TADR;
+                        else if (hdr_tab | hdr_ftab) begin
+                            d_state <= D_TADR;
+                            tb_fill <= hdr_ftab;
+                            tb_fadd <= lw[26];
+                        end
                         else if (hdr_bok)  d_state <= D_BFB;
                         else if (hdr_eok) begin
                             // ENDB: drop the prefetched main list words (refetched
@@ -1602,8 +1638,9 @@ module blit_engine #(
                     if (tb_cnt == 16'd0) begin
                         d_state <= D_HDR;
                     end else if (lf_valid) begin
-                        tb_x     <= sq_table ? lf_dout[15:4] : lf_dout[11:0];
-                        tb_y     <= sq_table ? lf_dout[31:20] : lf_dout[27:16];
+                        tb_x <= sq_table ? lf_dout[15:4] : lf_dout[11:0];
+                        tb_y <= sq_table ? lf_dout[31:20] : tb_fill ? lf_dout[23:12] : lf_dout[27:16];
+                        tb_fw <= lf_dout[31:24];
                         d_state <= D_TSP;
                     end
                 end
@@ -1618,6 +1655,9 @@ module blit_engine #(
                             4:sq_color<=16'h9bdc;5:sq_color<=16'heb50;
                             6:sq_color<=16'h7698;7:sq_color<=16'hf77a;
                         endcase
+                        tb_fc    <= lf_dout[15:0];
+                        tb_fh    <= lf_dout[23:16];
+                        tb_fa    <= lf_dout[31:24];
                         tb_prod  <= tb_y * l_dstr;
                         d_state <= D_TOFF;
                     end
@@ -1629,7 +1669,7 @@ module blit_engine #(
                 end
 
                 D_TDRW: begin
-                    if (~d_full) begin
+                    if (~d_full | tb_fnop) begin
                         tb_cnt   <= tb_cnt - 16'd1;
                         sq_odd <= ~sq_odd;
                         d_state <= D_TXY;
@@ -1666,7 +1706,7 @@ module blit_engine #(
     end
 
     wire lerr_set = hdr_take & (bm ? ~hdr_res
-                                   : ~(hdr_draw | hdr_rec | hdr_slot | hdr_tab | hdr_bok | hdr_eok));
+                                   : ~(hdr_draw | hdr_rec | hdr_slot | hdr_tab | hdr_ftab | hdr_bok | hdr_eok));
 
     // =========================================================================
     // PIXEL : ring read, colour key, alpha blend -> W FIFO
@@ -2595,7 +2635,9 @@ module blit_engine #(
     assign x_wstrb   = (fu_on | bn_own) ? 16'hFFFF : xw_strb;
     assign x_wlast   = fu_on ? (fu_wc[3:0] == 4'hF) : bn_own ? bn_wbeat : xw_last;
 
-    // ---- K path: cached COPY (opaque / keyed) and opaque FILL, 8 px per clock ------
+    // ---- K path: cached COPY (opaque / keyed) and FILL, 8 px per clock ------------
+    // (2026-10-25: also with a global alpha < 255 = blend, or additive with alpha:
+    //  those beats read the window like the additive ones, K2 -> K3 multiply, K4 write)
     // WALK   one token per clock: a source cache line of the current row (lines
     //        already checked for the row before are skipped), or the row alone
     //        (FILL, or no new line). Stage B looks the line up in the tag RAM;
@@ -2608,7 +2650,8 @@ module blit_engine #(
     //        another row may still need is only replaced when the queue is empty.
     // Everything the token needs is a register: the row values (first line to
     // check, last line, row-only flag) are worked out when the row before ends.
-    reg         kw_v, kw_op, kw_keyen, kw_ro, kw_add;
+    reg         kw_v, kw_op, kw_keyen, kw_ro, kw_add, kw_bl;
+    reg  [8:0]  kw_a9;                  // blend factor 0..256 (global alpha + alpha[7])
     reg  [15:0] kw_key, kw_color, kw_sstr, kw_dstr;
     reg  [10:0] kw_w, kw_rows;
     reg  [31:0] kw_sr, kw_er, kw_dr;    // source row: first byte, last byte; destination row
@@ -2627,7 +2670,7 @@ module blit_engine #(
     wire [11:0] kw_ll   =  {9'd0, kw_dr[3:1]} + {1'b0, kw_w} - 12'd1;
     // row info {op, keyen, key, color, window beat, dst lane, beats, last lane,
     //           source beat (cache index), source lane}
-    wire [74:0] kw_info = {kw_add, kw_op, kw_keyen, kw_key, kw_color, kw_dx[15:4], kw_dr[3:1],
+    wire [84:0] kw_info = {kw_bl, kw_a9, kw_add, kw_op, kw_keyen, kw_key, kw_color, kw_dx[15:4], kw_dr[3:1],
                            kw_nb[8:0], kw_ll[2:0], kw_sr[13:4], kw_sr[3:1]};
     wire [31:0] kq_se   = q_src + {20'd0, q_w, 1'b0} - 32'd1;    // first row of a new command
     wire        kb_adv;
@@ -2637,6 +2680,7 @@ module blit_engine #(
     always @(posedge clk) begin
         if (rst) begin
             kw_v <= 1'b0; kw_op <= 1'b0; kw_keyen <= 1'b0; kw_ro <= 1'b0; kw_add <= 1'b0;
+            kw_bl <= 1'b0; kw_a9 <= 9'd0;
             kw_key <= 16'd0; kw_color <= 16'd0; kw_sstr <= 16'd0; kw_dstr <= 16'd0;
             kw_w <= 11'd0; kw_rows <= 11'd0; kw_sr <= 32'd0; kw_er <= 32'd0; kw_dr <= 32'd0;
             kw_Lc <= 27'd0;
@@ -2645,6 +2689,8 @@ module blit_engine #(
             kw_op    <= q_op;
             kw_keyen <= q_keyen & q_op;
             kw_add   <= q_add;
+            kw_bl    <= (q_ga != 8'hFF);       // blend (or additive with alpha): multiply in K2/K3
+            kw_a9    <= {1'b0, q_ga} + {8'd0, q_ga[7]};
             kw_key   <= q_key;
             kw_color <= q_color;
             kw_sstr  <= q_sstr;
@@ -2677,12 +2723,12 @@ module blit_engine #(
     // stage B: tag lookup (the tag RAM was read in the clock the token was made)
     reg         kb_v, kb_line, kb_rl, kb_res, kb_hit, kb_ev;
     reg  [26:0] kb_L;
-    reg  [74:0] kb_info;
+    reg  [84:0] kb_info;
     reg  [7:0]  kf_iss, kf_done;        // cache line fills issued / written (any path)
     wire        kq_full, kq_valid, kc_pop;
     wire [3:0]  kq_count;
-    wire [82:0] kq_dout;
-    reg         kc_v, k1_v, k2_v, k3_v;
+    wire [92:0] kq_dout;
+    reg         kc_v, k1_v, k2_v, k3_v, k4_v;
     // Timing (2026-10-11): row-queue room and "compose quiet" are registered,
     // conservatively (a push in the same clock counts, a pop is ignored):
     //   kq_room  = at most 3 of the 4 queue RAM entries used -> a push fits
@@ -2712,7 +2758,7 @@ module blit_engine #(
     always @(posedge clk) begin
         if (rst) begin
             kb_v <= 1'b0; kb_line <= 1'b0; kb_rl <= 1'b0; kb_res <= 1'b0;
-            kb_hit <= 1'b0; kb_ev <= 1'b0; kb_L <= 27'd0; kb_info <= 75'd0;
+            kb_hit <= 1'b0; kb_ev <= 1'b0; kb_L <= 27'd0; kb_info <= 85'd0;
             kf_iss <= 8'd0; kf_done <= 8'd0;
             kq_room <= 1'b0; kc_quiet <= 1'b0;
         end else begin
@@ -2739,16 +2785,16 @@ module blit_engine #(
         end
     end
 
-    blit_rfifo #(.DW(83), .AW(2)) u_kq (
+    blit_rfifo #(.DW(93), .AW(2)) u_kq (
         .clk(clk), .rst(rst),
         .push(kq_push), .din({kq_fs, kb_info}), .full(kq_full), .space(),
         .pop(kc_pop), .dout(kq_dout), .valid(kq_valid), .count(kq_count)
     );
 
     // compose
-    reg  [74:0] kc_i;
+    reg  [84:0] kc_i;
     reg  [11:0] kc_war;                 // window beat of the current output beat
-    reg  [11:0] k1_wa, k2_wa, k3_wa;
+    reg  [11:0] k1_wa, k2_wa, k3_wa, k4_wa;
     reg  [8:0]  kc_k;                   // output beat of the row
     wire [2:0]  kc_slo   = kc_i[2:0];
     wire [9:0]  kc_sb    = kc_i[12:3];
@@ -2761,13 +2807,16 @@ module blit_engine #(
     wire        kc_keyen = kc_i[72];
     wire        kc_op    = kc_i[73];
     wire        kc_add   = kc_i[74];
+    wire [8:0]  kc_a9    = kc_i[83:75];
+    wire        kc_bl    = kc_i[84];
+    wire        kc_rdw   = kc_add | kc_bl;                // the beat reads the window
     wire        kc_last  = (kc_k == kc_nob - 9'd1);
-    wire [7:0]  kc_fd    = kf_done - kq_dout[82:75];
+    wire [7:0]  kc_fd    = kf_done - kq_dout[92:85];
     wire        kc_fok   = ~kc_fd[7];                   // fills of the row are written
-    // additive beats read the window (address kc_war, data in K1): a beat whose
-    // window beat is still being written by K1..K3 waits (overlapping sprites)
-    wire        kc_hz    = kc_v & kc_add & ((k1_v & (k1_wa == kc_war)) | (k2_v & (k2_wa == kc_war)) |
-                                            (k3_v & (k3_wa == kc_war)));
+    // additive / blend beats read the window (address kc_war, data in K1): a beat whose
+    // window beat is still being written by K1..K4 waits (overlapping sprites)
+    wire        kc_hz    = kc_v & kc_rdw & ((k1_v & (k1_wa == kc_war)) | (k2_v & (k2_wa == kc_war)) |
+                                            (k3_v & (k3_wa == kc_war)) | (k4_v & (k4_wa == kc_war)));
     assign      kc_pop   = kq_valid & kc_fok & (~kc_v | (kc_last & ~kc_hz));
     // out beat k = source pixels from beat (sb + k + floor((slo - dlo) / 8)) on,
     // shifted by (slo - dlo) mod 8 lanes
@@ -2779,13 +2828,15 @@ module blit_engine #(
     wire [7:0]  kc_ml    = (kc_k == 9'd0) ? (8'hFF << kc_dlo) : 8'hFF;
     wire [7:0]  kc_mh    = kc_last ? (8'hFF >> (3'd7 - kc_ll)) : 8'hFF;
 
-    reg         k1_sel, k1_op, k1_keyen, k2_ke, k1_add, k2_add;
+    reg         k1_sel, k1_op, k1_keyen, k2_ke, k1_add, k2_add, k1_bl, k2_bl, k3_bl;
+    reg  [8:0]  k1_a9, k2_a9;
     reg  [2:0]  k1_sh;
     reg  [15:0] k1_key, k1_color, k2_key;
-    reg  [7:0]  k1_m, k2_m, k3_en;
-    reg  [127:0] k2_d, k3_d, k2_dst;
-    // K1: cache data out -> 256 -> 128 bit shift (window data of additive beats).
-    // K2: colour key, saturating add.  K3: window write.
+    reg  [7:0]  k1_m, k2_m, k3_en, k4_en;
+    reg  [127:0] k2_d, k3_d, k2_dst, k4_d;
+    // K1: cache data out -> 256 -> 128 bit shift (window data of additive / blend beats).
+    // K2: colour key, saturating add; blend: |src - dst| x alpha (registered in the
+    //     blit_blend565 lanes).  K3: blend sum / round / pack.  K4: window write.
     wire [127:0] k1_e  = {cd3_q, cd2_q, cd1_q, cd0_q};     // even beat of the line
     wire [127:0] k1_o  = {cd7_q, cd6_q, cd5_q, cd4_q};     // odd beat
     wire [255:0] k1_pr = k1_sel ? {k1_e, k1_o} : {k1_o, k1_e};
@@ -2801,6 +2852,18 @@ module blit_engine #(
     blit_add565 u_ka6 (.a(k2_dst[111:96]), .b(k2_d[111:96]), .y(k2_s6));
     blit_add565 u_ka7 (.a(k2_dst[127:112]), .b(k2_d[127:112]), .y(k2_s7));
     wire [127:0] k2_sum = {k2_s7, k2_s6, k2_s5, k2_s4, k2_s3, k2_s2, k2_s1, k2_s0};
+    // blend lanes: inputs K2, products registered, result valid in K3 (same formula as
+    // the narrow path P5/P6: (src*a + dst*(256-a) + 128) >> 8, additive dst*256 + src*a)
+    wire [15:0]  k3_b0, k3_b1, k3_b2, k3_b3, k3_b4, k3_b5, k3_b6, k3_b7;
+    blit_blend565 u_kb0 (.clk(clk), .s(k2_d[15:0]),    .d(k2_dst[15:0]),    .a(k2_a9), .add(k2_add), .y(k3_b0));
+    blit_blend565 u_kb1 (.clk(clk), .s(k2_d[31:16]),   .d(k2_dst[31:16]),   .a(k2_a9), .add(k2_add), .y(k3_b1));
+    blit_blend565 u_kb2 (.clk(clk), .s(k2_d[47:32]),   .d(k2_dst[47:32]),   .a(k2_a9), .add(k2_add), .y(k3_b2));
+    blit_blend565 u_kb3 (.clk(clk), .s(k2_d[63:48]),   .d(k2_dst[63:48]),   .a(k2_a9), .add(k2_add), .y(k3_b3));
+    blit_blend565 u_kb4 (.clk(clk), .s(k2_d[79:64]),   .d(k2_dst[79:64]),   .a(k2_a9), .add(k2_add), .y(k3_b4));
+    blit_blend565 u_kb5 (.clk(clk), .s(k2_d[95:80]),   .d(k2_dst[95:80]),   .a(k2_a9), .add(k2_add), .y(k3_b5));
+    blit_blend565 u_kb6 (.clk(clk), .s(k2_d[111:96]),  .d(k2_dst[111:96]),  .a(k2_a9), .add(k2_add), .y(k3_b6));
+    blit_blend565 u_kb7 (.clk(clk), .s(k2_d[127:112]), .d(k2_dst[127:112]), .a(k2_a9), .add(k2_add), .y(k3_b7));
+    wire [127:0] k3_bl_d = {k3_b7, k3_b6, k3_b5, k3_b4, k3_b3, k3_b2, k3_b1, k3_b0};
     wire [7:0]   k2_km = {k2_ke & (k2_d[127:112] == k2_key), k2_ke & (k2_d[111:96] == k2_key),
                           k2_ke & (k2_d[95:80]   == k2_key), k2_ke & (k2_d[79:64]  == k2_key),
                           k2_ke & (k2_d[63:48]   == k2_key), k2_ke & (k2_d[47:32]  == k2_key),
@@ -2808,15 +2871,16 @@ module blit_engine #(
 
     always @(posedge clk) begin
         if (rst) begin
-            kc_v <= 1'b0; k1_v <= 1'b0; k2_v <= 1'b0; k3_v <= 1'b0;
+            kc_v <= 1'b0; k1_v <= 1'b0; k2_v <= 1'b0; k3_v <= 1'b0; k4_v <= 1'b0;
             kc_i <= 75'd0; kc_k <= 9'd0; kc_war <= 12'd0;
         end else begin
             k1_v <= kc_v & ~kc_hz;               // a waiting beat leaves a bubble
             k2_v <= k1_v;
             k3_v <= k2_v;
+            k4_v <= k3_v;
             if (kc_pop) begin
                 kc_v   <= 1'b1;
-                kc_i   <= kq_dout[74:0];
+                kc_i   <= kq_dout[84:0];
                 kc_k   <= 9'd0;
                 kc_war <= kq_dout[39:28];
             end else if (kc_v & ~kc_hz) begin
@@ -2835,29 +2899,37 @@ module blit_engine #(
         k1_color <= kc_color;
         k1_wa    <= kc_war;
         k1_add   <= kc_add;
+        k1_bl    <= kc_bl;
+        k1_a9    <= kc_a9;
         k1_m     <= kc_ml & kc_mh;
         k2_wa    <= k1_wa;
         k2_d     <= k1_px;
         k2_dst   <= wn_q;                    // window beat k1_wa (read in the kc clock)
         k2_add   <= k1_add;
+        k2_bl    <= k1_bl;
+        k2_a9    <= k1_a9;
         k2_m     <= k1_m;
         k2_ke    <= k1_op & k1_keyen;
         k2_key   <= k1_key;
         k3_wa    <= k2_wa;
         k3_d     <= k2_add ? k2_sum : k2_d;
         k3_en    <= k2_m & ~k2_km;
+        k3_bl    <= k2_bl;
+        k4_wa    <= k3_wa;
+        k4_d     <= k3_bl ? k3_bl_d : k3_d;
+        k4_en    <= k3_en;
     end
 
-    assign k_idle = ~kw_v & ~kb_v & (kq_count == 4'd0) & ~kc_v & ~k1_v & ~k2_v & ~k3_v;
+    assign k_idle = ~kw_v & ~kb_v & (kq_count == 4'd0) & ~kc_v & ~k1_v & ~k2_v & ~k3_v & ~k4_v;
 
     // ---- window: 8 lanes x 16 bit x WIN_BYTES beats (one writer at a time) -------
     wire         wn_x  = bm & x_mode & xr_v;                     // wide R beat
-    wire [11:0]  wn_wa = k3_v ? k3_wa : p6_win ? p6_wq[13:2] : wn_x ? xw_wb :
+    wire [11:0]  wn_wa = k4_v ? k4_wa : p6_win ? p6_wq[13:2] : wn_x ? xw_wb :
                          fu_clr ? fu_clra : cl_a;
-    wire [7:0]   wn_we = k3_v ? k3_en : p6_win ? p6_wen : wn_x ? xw_pm :
+    wire [7:0]   wn_we = k4_v ? k4_en : p6_win ? p6_wen : wn_x ? xw_pm :
                          (fu_clr | (bc_state == BC_CLR)) ? 8'hFF : 8'h00;
-    wire [127:0] wn_wd = k3_v ? k3_d : p6_win ? {4{p6_data}} : wn_x ? xr_d : 128'd0;
-    // read port: flush, else the K path (additive beats), else the narrow path
+    wire [127:0] wn_wd = k4_v ? k4_d : p6_win ? {4{p6_data}} : wn_x ? xr_d : 128'd0;
+    // read port: flush, else the K path (additive / blend beats), else the narrow path
     // (K and narrow never run at the same time)
     wire [11:0]  wn_ra = fu_on ? fu_rb : kc_v ? kc_war : c_wq[13:2];
     blit_win #(.PARTS((WIN_BYTES + 511) / 512)) u_win (.clk(clk), .we(wn_we), .wa(wn_wa), .wd(wn_wd),
@@ -2871,7 +2943,7 @@ module blit_engine #(
         end else begin
             if (bc_p1)                             perf_p1    <= perf_p1    + 32'd1;
             if (fu_on | (bc_state == BC_CLR))      perf_flush <= perf_flush + 32'd1;
-            if (k3_v)                              perf_kbeat <= perf_kbeat + 32'd1;
+            if (k4_v)                              perf_kbeat <= perf_kbeat + 32'd1;
             if (bn_awi)                            perf_recs  <= perf_recs  + 32'd1;
             if (bc_act & ~bc_p1)                   perf_band  <= perf_band  + 32'd1;
             if (~k_idle)                           perf_kclk  <= perf_kclk  + 32'd1;
@@ -2995,7 +3067,7 @@ module blit_engine #(
     assign dbg1 = {ax_out, 3'd0, bd_count, lf_inflight, t_cnt, bd_v};
     // DBG2 [31:24] kf_iss [23:16] kf_done [15:8] fills the queue head waits for
     //      [7:4] kq_count [3] kq_valid [2] kc_v [1] kc_fok [0] kc_hz
-    assign dbg2 = {kf_iss, kf_done, kq_dout[82:75], kq_count, kq_valid, kc_v, kc_fok, kc_hz};
+    assign dbg2 = {kf_iss, kf_done, kq_dout[92:85], kq_count, kq_valid, kc_v, kc_fok, kc_hz};
     // DBG3 [31] kw_v [30] kb_v [29] kb_res [28] kb_hit [27] kb_ev [26] kb_rl [25] kb_line
     //      [24] kq_room [23] kc_quiet [22] c_qok [21] kb_fill_raw [20] l_len_v [19] l_urgent
     //      [18:17] f_state [16:14] bc_state [13] k1_v [12] k2_v [11] k3_v [10] x_mode
@@ -3191,6 +3263,44 @@ module blit_win_lane #(
                 ((rs == 3'd3) & (PARTS > 3)) ? q3 : (PARTS > 4) ? q4 : q2;
 endmodule
 
+
+// =============================================================================
+// blit_blend565 (2026-10-25): K path blend lane, one pixel. Registered products,
+// combinational result one clock later. a = 0..256.
+//   blend    : (s*a + d*(256-a) + 128) >> 8 = (d*256 + 128 +- |s-d|*a) >> 8
+//   additive : (d*256 + 128 + s*a) >> 8, saturated per channel
+// Bit-identical to the narrow path (P5/P6). Unsigned only (vsim, no $signed).
+// =============================================================================
+module blit_blend565 (
+    input  wire        clk,
+    input  wire [15:0] s,
+    input  wire [15:0] d,
+    input  wire [8:0]  a,
+    input  wire        add,
+    output wire [15:0] y
+);
+    // Use spare DSPs for both weighted terms. This removes eight lanes of
+    // abs-difference comparators, conditional subtractors and sign muxes from
+    // the logic fabric. Arithmetic and the single registered stage are exact.
+    wire [8:0] da = add ? 9'd256 : (9'd256 - a);
+    reg [13:0] srp, drp, sbp, dbp;
+    reg [14:0] sgp, dgp;
+    always @(posedge clk) begin
+        srp <= {9'd0,s[15:11]} * {5'd0,a};
+        drp <= {9'd0,d[15:11]} * {5'd0,da};
+        sbp <= {9'd0,s[4:0]} * {5'd0,a};
+        dbp <= {9'd0,d[4:0]} * {5'd0,da};
+        sgp <= {9'd0,s[10:5]} * {6'd0,a};
+        dgp <= {9'd0,d[10:5]} * {6'd0,da};
+    end
+    wire [14:0] rsum = {1'b0,srp} + {1'b0,drp} + 15'd128;
+    wire [15:0] gsum = {1'b0,sgp} + {1'b0,dgp} + 16'd128;
+    wire [14:0] bsum = {1'b0,sbp} + {1'b0,dbp} + 15'd128;
+    assign y = {(rsum[14:13]!=0)?5'd31:rsum[12:8],
+                (gsum[15:14]!=0)?6'd63:gsum[13:8],
+                (bsum[14:13]!=0)?5'd31:bsum[12:8]};
+
+endmodule
 
 // =============================================================================
 // blit_add565: RGB565 a + b per channel, saturated (additive blend, K path)

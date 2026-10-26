@@ -110,6 +110,8 @@ Sprite th_spr_player[4], th_spr_option, th_spr_hitbox, th_spr_shot_main, th_spr_
 Sprite th_spr_enemy[TE_KINDS][4][2], th_spr_boss[TH_STAGES][2], th_spr_boss_aura;
 Sprite th_spr_item[TI_KINDS], th_spr_fx[TF_KINDS][TC_COLORS], th_spr_life, th_spr_bombicon;
 Sprite th_spr_bg, th_spr_bg_spell, th_spr_frame, th_spr_bomb_ring;
+Sprite th_spr_halo[TH_HALO_SIZES][TC_COLORS];
+const uint8_t th_fade_alpha[TH_FADE_LV] = { 80, 150, 215 };   /* 淡入的三档透明度（年龄 0-2 / 3-5 / 6-8 tick） */
 Sprite th_spr_portrait[TH_STAGES], th_spr_focus[TH_FOCUS_FRAMES], th_spr_magic[TH_MAGIC_FRAMES];
 
 /* art scale of the sprites being drawn: 2 = 1x (640x480), 3 = 1.5x (720p view).
@@ -477,6 +479,26 @@ static void a8_set(Sprite *s, int x, int y, Pixel c, int a)
 {
     ((Pixel *)s->pixels)[y * s->width + x] = c;
     ((uint8_t *)s->alpha)[y * s->width + x] = (uint8_t)a;
+}
+
+/* 第 1 关弹幕光晕（2026-10-26）：A8 径向渐变，中心不透明度 peak，外圈平滑到 0；
+ * 颜色是弹的颜色往白色调一点，中心再亮一些（逐像素：颜色和透明度都随半径变） */
+static Sprite halo(int size, int c, int peak)
+{
+    const int N = AS(size);
+    Sprite s = mk_a(N, N);
+    int x, y;
+    if (!s.pixels) return s;
+    for (y = 0; y < N; y++) for (x = 0; x < N; x++) {
+        const int X = HX(x, N), Y = HX(y, N);
+        const int r = (int)isqrt((uint32_t)(X * X + Y * Y));   /* half px */
+        int f;
+        if (r >= N) continue;
+        f = (N - r) * 256 / N;                                 /* 0 edge .. 256 centre */
+        f = f * f >> 8;                                         /* soft falloff */
+        a8_set(&s, x, y, pcol(c, 60 + (f * 140 >> 8), 256), peak * f >> 8);
+    }
+    return s;
 }
 
 /* spell card cut-in: the casting boss frame (pixel map m, w x h) at 2x (1.5x view: 3x,
@@ -1071,6 +1093,11 @@ static void make_sprites(void)
     th_spr_life = star_bullet(TC_PURPLE, 0);
     th_spr_bombicon = star_bullet(TC_GREEN, 0);
     th_spr_bomb_ring = glow(64, TC_WHITE, 200, 140);
+    for (c = 0; c < TC_COLORS; c++) {                    /* 第 1 关弹幕：光晕 / 发射光（A8） */
+        th_spr_halo[0][c] = halo(24, c, 190);
+        th_spr_halo[1][c] = halo(40, c, 180);
+        th_spr_halo[2][c] = halo(72, c, 170);
+    }
 }
 
 void th_art_init(void)

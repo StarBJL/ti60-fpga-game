@@ -1,0 +1,4 @@
+PASS co-op diagnostic exit, keyboard capture, exact response guards, failure paths and independent input telemetry (PTY only)
+PTY fixture stopped
+PTY fixture ready /dev/pts/4
+
