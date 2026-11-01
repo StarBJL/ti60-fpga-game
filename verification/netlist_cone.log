@@ -1,4 +1,0 @@
-netlist: D:\FPGA_competition\Ti60_720p_MERGE_R2_ZH_FULL\PROJECT\sim\blit\..\..\par\ddr_demo_ti60\outflow\ddr_demo_ti60.map.v
-cone of u_blit/rd_words[10:0]: 100 cells, 44 inputs
-  formula: rd_words + registered increments: rdi_m rdi_x - bl_rvalid - 4 * bx_rvalid
-OK: 0 / 3000 random vectors differ

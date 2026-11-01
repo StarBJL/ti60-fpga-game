@@ -1,0 +1,32 @@
+{
+  "generator": "built-in image_gen",
+  "format": "RGB565 little-endian followed by A8, LZ4 block",
+  "entries": [
+    {
+      "name": "blue_sabertooth",
+      "symbol": "ultimate_tiger",
+      "dimensions": [
+        640,
+        360
+      ],
+      "raw_bytes": 691200,
+      "packed_bytes": 319822,
+      "raw_sha256": "5a6ded2a8734e43f9ab1f3a98422fecb69b373126458879de41a37a9917f1423",
+      "source_sha256": "567503db13e729a3a1e48e2c8e7bee888677c25c7f3117d4b2fc227f13ef7f71",
+      "transparent_pixels": 63316
+    },
+    {
+      "name": "pink_phoenix",
+      "symbol": "ultimate_phoenix",
+      "dimensions": [
+        768,
+        432
+      ],
+      "raw_bytes": 995328,
+      "packed_bytes": 353396,
+      "raw_sha256": "bfefd72a38b669c2c8f4d9818f9de3bf2969a4a7560e3ca90f60a5dd70267187",
+      "source_sha256": "32c9e2e23678b49e5955d0175ffa38c999e6cdc3f1549ae7da015ea6df679a73",
+      "transparent_pixels": 145676
+    }
+  ]
+}

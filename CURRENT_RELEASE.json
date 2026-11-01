@@ -1,0 +1,42 @@
+{
+  "revision": "V6-225MHz-compact-ultimates-sixfold-swarm-20261101",
+  "package_kind": "clean hardware/software/assets/host with current bit and ELF files",
+  "source_directory": "Ti60_V6_225M_INTEGRATED_20261101",
+  "default_clock_hz": 225000000,
+  "hardware_project": "par/ddr_demo_ti60/ddr_demo_ti60.xml",
+  "software_project": "par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game",
+  "default_bit": "BOARD_TEST/verified_225/ti60_v6_225m_hdmi_audio_sync_fix.bit",
+  "default_bit_sha256": "e11ea435bb22e23a0999f806aea265b4c7872d003ee93f7f29c75b9fd1e3d1d8",
+  "default_elf": "BOARD_TEST/verified_225/ti60_verified_225_debug.elf",
+  "recommended_debug_elf": "BOARD_TEST/verified_225/ti60_verified_225_debug.elf",
+  "recommended_release_elf": "BOARD_TEST/verified_225/ti60_verified_225_release.elf",
+  "compiled_elfs": {
+    "BOARD_TEST/verified_225/ti60_verified_225_debug.elf": {
+      "kind": "debug",
+      "path": "BOARD_TEST/verified_225/ti60_verified_225_debug.elf",
+      "sha256": "0d8d6720095dcd4dc6039cf7e4d76d0dedf7c9d860d9cea38213171cb7df3c9c",
+      "bytes": 17368568,
+      "ram_bytes": 14820832,
+      "art_bytes": 33475968,
+      "new_voice_bank_unchanged": true,
+      "compressed_visual_masters_unchanged": true,
+      "enemy_slots": 384
+    },
+    "BOARD_TEST/verified_225/ti60_verified_225_release.elf": {
+      "kind": "release",
+      "path": "BOARD_TEST/verified_225/ti60_verified_225_release.elf",
+      "sha256": "defc550138270d387b05f5d8f9ded25c0e98d2b7badbe7dbe7142bbc82b1c77d",
+      "bytes": 17325560,
+      "ram_bytes": 14747888,
+      "art_bytes": 33475968,
+      "new_voice_bank_unchanged": true,
+      "compressed_visual_masters_unchanged": true,
+      "enemy_slots": 384
+    }
+  },
+  "source_digest": "519462fd560c452441f663b1f787391cf12e3dcc62f50352903c6d2624d2d9d9",
+  "voice_bank_sha256": "7b2b63f41a2bad6ee2e4f850e6c4a9e1c409c3e69ab3f09098db21a82c7bb1f7",
+  "host_launcher_windows": "Start_Control_Panel.cmd",
+  "host_launcher_linux": "Start_Control_Panel.sh",
+  "packaging_only": true
+}

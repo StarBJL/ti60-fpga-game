@@ -1,8 +1,0 @@
-{
-  "passed": true,
-  "bit_identical_elf": true,
-  "sha256": "bb9e259363a801cf6518d395ecce6bff83ebc119b07f855d638074b4e31c6b2a",
-  "source_files": 583,
-  "hardware_reference_checks": 46,
-  "rom_references_checked": 28
-}

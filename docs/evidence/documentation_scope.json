@@ -1,0 +1,40 @@
+{
+  "documentation_only": true,
+  "existing_files_verified_unchanged": 697,
+  "runtime_files_modified": [],
+  "new_files": [
+    "README.md",
+    "docs/EXPLANATION_GUIDE.md",
+    "docs/GITHUB_ABOUT.txt",
+    "docs/PERFORMANCE_RECORD_TEMPLATE.csv",
+    "docs/evidence/software_payload.json",
+    "docs/evidence/timing_summary.json",
+    "docs/evidence/hdmi_sync_build.json",
+    "docs/evidence/software_native.json",
+    "docs/demo/compact_ultimate_fx.mp4",
+    "docs/images/blue_tiger.png",
+    "docs/images/pink_phoenix.png",
+    "docs/images/gameplay_preview.png"
+  ],
+  "current_revision": "V6-225MHz-compact-ultimates-sixfold-swarm-20261101",
+  "default_bit_sha256": "e11ea435bb22e23a0999f806aea265b4c7872d003ee93f7f29c75b9fd1e3d1d8",
+  "elf_sha256": {
+    "BOARD_TEST/verified_225/ti60_verified_225_debug.elf": "0d8d6720095dcd4dc6039cf7e4d76d0dedf7c9d860d9cea38213171cb7df3c9c",
+    "BOARD_TEST/verified_225/ti60_verified_225_release.elf": "defc550138270d387b05f5d8f9ded25c0e98d2b7badbe7dbe7142bbc82b1c77d"
+  },
+  "relative_links_resolve": true,
+  "code_fences_balanced": true,
+  "runtime_compilation_rerun": false,
+  "board_tested": false,
+  "largest_existing_file": {
+    "bytes": 24635605,
+    "path": "par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/campaign_art_data.c"
+  },
+  "evidence_note": "Copied selected prior build/verification records; documentation work does not create new hardware or gameplay performance results.",
+  "mermaid_diagrams_checked": 3,
+  "preview_viewports": [
+    1280,
+    390
+  ],
+  "github_uploaded": false
+}

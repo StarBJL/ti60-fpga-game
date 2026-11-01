@@ -1,3 +1,0 @@
-/data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/PROJECT/rtl/input/input_hub.v:3: warning: timescale for input_hub inherited from another file.
-/data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/verification/r5/input_hub_tb.v:1: ...: The inherited timescale is here.
-/data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/PROJECT/rtl/input/input_hub.v:100: warning: @* is sensitive to all 64 words in array 'rx_fifo'.

@@ -1,0 +1,42 @@
+[
+  {
+    "key": "moss",
+    "prompt": "Use case: stylized-concept. Production game sprite atlas for a top-down Chinese fantasy bullet-hell game. Transparent RGBA background, no scenery, no floor, no grid lines, no labels, no text, no shadows outside the character. Crisp polished hand-painted pixel-art-inspired shapes, readable silhouettes at 60 pixels, mostly frontal view from slightly above. Canvas wide, exact 4 equal columns x 2 equal rows, with generous transparent margins around EACH sprite, no overlap, centered precisely within each cell. First row four distinct enemies left-to-right: melee, ranged, elite, boss. Second row the SAME four enemies in visibly different attack poses. Moss Court: a moss armoured mandrake with thorn fists; a hollow log seed-spitting archer; an ancient vine-knight elite with root shield; a huge antlered elder tree sovereign boss. Leaf-green, warm bark, amber sap.",
+    "source": "/data/users/user/codex_state/generated_images/01a18d4f-649b-7e70-be9c-c6795fab28c6/exec-8e242f8c-3277-4677-8db8-be3d7bc19761.png"
+  },
+  {
+    "key": "jade",
+    "prompt": "Use case: stylized-concept. Production game sprite atlas for a top-down Chinese fantasy bullet-hell game. Transparent RGBA background, no scenery, no floor, no grid lines, no labels, no text, no shadows outside the character. Crisp polished hand-painted pixel-art-inspired shapes, readable silhouettes at 60 pixels, mostly frontal view from slightly above. Canvas wide, exact 4 equal columns x 2 equal rows, with generous transparent margins around EACH sprite, no overlap, centered precisely within each cell. First row four distinct enemies left-to-right: melee, ranged, elite, boss. Second row the SAME four enemies in visibly different attack poses. Jade Palace: a jade terracotta spear guard; a bronze bell crossbow automaton; a jade lion sentinel elite with heavy halberd; a crowned jade qilin monarch boss. Mint jade, aged bronze, ivory.",
+    "source": "/data/users/user/codex_state/generated_images/01a18d4f-649b-7e70-be9c-c6795fab28c6/exec-cb74bb9e-7e89-4abe-a610-2465ebdfd818.png"
+  },
+  {
+    "key": "thunder",
+    "prompt": "Use case: stylized-concept. Production game sprite atlas for a top-down Chinese fantasy bullet-hell game. Transparent RGBA background, no scenery, no floor, no grid lines, no labels, no text, no shadows outside the character. Crisp polished hand-painted pixel-art-inspired shapes, readable silhouettes at 60 pixels, mostly frontal view from slightly above. Canvas wide, exact 4 equal columns x 2 equal rows, with generous transparent margins around EACH sprite, no overlap, centered precisely within each cell. First row four distinct enemies left-to-right: melee, ranged, elite, boss. Second row the SAME four enemies in visibly different attack poses. Thunder City: an electric clockwork hound; a coil-backed lightning gunner; a storm-armoured samurai elite; a thunder dragon engine boss with two turbine wings. Cobalt, cyan electric light, dark steel.",
+    "source": "/data/users/user/codex_state/generated_images/01a18d4f-649b-7e70-be9c-c6795fab28c6/exec-8f66e6cd-944f-4dca-b21f-a5153363398a.png"
+  },
+  {
+    "key": "ember",
+    "prompt": "Use case: stylized-concept. Production game sprite atlas for a top-down Chinese fantasy bullet-hell game. Transparent RGBA background, no scenery, no floor, no grid lines, no labels, no text, no shadows outside the character. Crisp polished hand-painted pixel-art-inspired shapes, readable silhouettes at 60 pixels, mostly frontal view from slightly above. Canvas wide, exact 4 equal columns x 2 equal rows, with generous transparent margins around EACH sprite, no overlap, centered precisely within each cell. First row four distinct enemies left-to-right: melee, ranged, elite, boss. Second row the SAME four enemies in visibly different attack poses. Ember Palace: a volcanic salamander warrior; a brazier-headed fire-urn thrower; an obsidian molten-axe elite; a blazing phoenix demon monarch boss. Vermilion, black obsidian, hot gold.",
+    "source": "/data/users/user/codex_state/generated_images/01a18d4f-649b-7e70-be9c-c6795fab28c6/exec-a501a140-1731-4b79-a07b-3d870fdcc854.png"
+  },
+  {
+    "key": "astral",
+    "prompt": "Use case: stylized-concept. Production game sprite atlas for a top-down Chinese fantasy bullet-hell game. Transparent RGBA background, no scenery, no floor, no grid lines, no labels, no text, no shadows outside the character. Crisp polished hand-painted pixel-art-inspired shapes, readable silhouettes at 60 pixels, mostly frontal view from slightly above. Canvas wide, exact 4 equal columns x 2 equal rows, with generous transparent margins around EACH sprite, no overlap, centered precisely within each cell. First row four distinct enemies left-to-right: melee, ranged, elite, boss. Second row the SAME four enemies in visibly different attack poses. Astral Sanctum: a crescent-masked shadow sentinel; a floating crystal orb astrologer; a violet winged staff-wielding high-priest elite; a six-winged star oracle boss. Violet, pearl-white, celestial gold.",
+    "source": "/data/users/user/codex_state/generated_images/01a18d4f-649b-7e70-be9c-c6795fab28c6/exec-aa7e306a-a823-4029-bf5a-ca8f95212118.png"
+  },
+  {
+    "key": "dragon",
+    "prompt": "Use case: stylized-concept. Production game sprite atlas for a top-down Chinese fantasy bullet-hell game. Transparent RGBA background, no scenery, no floor, no grid lines, no labels, no text, no shadows outside the character. Crisp polished hand-painted pixel-art-inspired shapes, readable silhouettes at 60 pixels, mostly frontal view from slightly above. Canvas wide, exact 4 equal columns x 2 equal rows, with generous transparent margins around EACH sprite, no overlap, centered precisely within each cell. First row four distinct enemies left-to-right: melee, ranged, elite, boss. Second row the SAME four enemies in visibly different attack poses. Twin Dragon Temple: a red dragon scale soldier; a blue dragon ice crossbow priest; a red-and-blue twin-blade guardian elite; a coiled red and blue double-headed dragon king boss. Crimson, icy blue and ornate gold.",
+    "source": "/data/users/user/codex_state/generated_images/01a18d4f-649b-7e70-be9c-c6795fab28c6/exec-fa904f0e-4fc8-4c87-abf8-32c614de8106.png"
+  },
+  {
+    "key": "ultimate",
+    "prompt": "Production transparent game sprite atlas, 4 columns and 2 rows, 8 separate full-body images of the same final boss. Center each sprite in each cell with wide empty margins. Pixel-art-inspired high-quality fantasy game art, clear small-size silhouettes. No background, no text, no labels. ENDLESS FINAL BOSS: THE ECLIPSE DRAGON EMPEROR, one huge imposing six-crystal armoured carrot-dragon deity, crown with six differently shaped crystals, paired red and blue dragon heads on shoulders and black-gold root armour. Four poses columns: composed idle, raised claw channeling six crystals, wide double dragon breath attack, wounded enraged purple eclipse aura. Second row the same four poses with more advanced enraged armour, always recognizably the same boss.",
+    "source": "/data/users/user/codex_state/generated_images/01a18d4f-649b-7e70-be9c-c6795fab28c6/exec-4e9fffbd-239f-4ccc-86b8-feb16a8aef34.png"
+  },
+  {
+    "key": "heroes",
+    "prompt": "Production transparent game sprite atlas, exactly 4 columns and 3 rows, 12 separate full-body carrot-character action sprites, equal sized cells, centered with wide empty margins, no overlap. Crisp polished Chinese fantasy pixel-art-inspired game art. No text, no labels, no grid, no scene. THREE playable tiny carrot heroes. Exactly FOUR columns and THREE rows. Row1 orange carrot gunslinger with green leaves and two gold handguns. Row2 blue-white carrot sword knight with leaf plume and large cyan blade. Row3 pink carrot mage with leaf hat and violet star staff. Each row SAME hero in four distinct full-body action poses: col1 aiming / ready; col2 ordinary attack recoil or sword slash or staff jab; col3 ultimate wind-up with lifted weapon and gathered energy; col4 ultimate release with flared leaves and spread stance. Preserve hero identity and weapon between frames. No surrounding beam or projectile, keep only body and weapon plus small glow.",
+    "source": "/data/users/user/codex_state/generated_images/01a18d4f-649b-7e70-be9c-c6795fab28c6/exec-cd16c518-4b48-4e85-b470-f457510ae34b.png"
+  }
+]

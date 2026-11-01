@@ -1,0 +1,5 @@
+python312.zip
+.
+../vendor
+../control_panel
+import site

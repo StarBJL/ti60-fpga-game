@@ -1,0 +1,311 @@
+# V6 unified font and language dictionary.
+UART	串口
+USB / KEYPAD	USB / 矩阵
+USB	USB
+KEYPAD	矩阵键盘
+KILLS %03d	击杀 %03d
+DOWN	倒下
+HP %d/%d	生命 %d/%d
+SHOTS %d	子弹 %d
+TEAM LV %02d	全队 %02d 级
+XP %d/%d	经验 %d/%d
+SPROUT RUN	萝卜快跑
+LOW	低档
+MID	中档
+HIGH	高档
+CUSTOM	自定义
+%s F%d S%d/%d %dPX	%s 敌 %d 弹 %d/%d %d像素
+ENDLESS / FOES %03d	无尽模式 / 敌人 %03d
+HEALTH	生命
+WORK MS	耗时 毫秒
+BUDGET	预算
+- + COUNT   BRACKETS SIZE	- + 数量   方括号键 大小
+UART: AT N ENTER SETS COUNT	串口：AT N 回车 设定数量
+SURVIVED	存活
+KILLS	击杀
+LEVEL %02d	等级 %02d
+%s %02dS	%s %02d秒
+HORDE	敌潮
+BOSS	首领
+3 PLAYERS: UART / USB KEYBOARD / KEYPAD   P PAUSE   M MENU	三人：串口 / USB 键盘 / 矩阵键盘   P 暂停   M 菜单
+2 PLAYERS: UART / USB KEYBOARD OR KEYPAD   P PAUSE   M MENU	双人：串口 / USB 键盘或矩阵键盘   P 暂停   M 菜单
+WASD MOVE   P PAUSE   M MENU	WASD 移动   P 暂停   M 菜单
+HW BLIT	硬件绘制
+CPU DRAW	CPU 绘制
+AUTO FIRE	自动射击
+SHOW %d FPS	显示 %d 帧
+RENDER %d FPS	渲染 %d 帧
+%d.%d MS	%d.%d 毫秒
+STRESS TEST / M TO MENU	压力测试 / M 返回菜单
+MASSIVE HORDE / KEEP MOVING	大批敌人来袭 / 不要停下
+ROOT KING / DODGE THE RED SEEDS	根之王 / 躲开红色种子
+UPGRADE READY / KEEP GROWING	升级完成 / 继续成长
+ENDLESS / SURVIVE AS LONG AS YOU CAN	无尽模式 / 尽量活下去
+ROOT KING %d/%d  x%d	根之王 %d/%d  x%d
+%s %d FPS %d.%d MS	%s %d 帧 %d.%d 毫秒
+%s -- FPS	%s -- 帧
+FRAME TIME US	每帧耗时 微秒
+LOGIC %d MAX %d VSYNC %d	逻辑 %d 最大 %d 同步 %d
+SUBMIT %d QSTALL %d TAIL %d	提交 %d 排队 %d 收尾 %d
+SEEDS %d HUD %d SCENE %d %s	弹幕 %d 界面 %d 场景 %d %s
+SHOTS %d/%d DROP %d	弹幕 %d/%d 丢弃 %d
+FILL %u BLIT %u ALPHA %u	填充 %u 复制 %u 半透明 %u
+G: SWITCH TO BITBLT ENGINE	G：切到 BITBLT 引擎
+CPU	CPU
+HW	硬件
+PLAYERS - NEW RUN	人数 - 重新开局
+PLAYERS	人数
+TEAM LEVEL %d / EVERYONE PICKS ONE	全队 %d 级 / 每人选一张
+ALL PICKED - GO!	都选好了，出发！
+PRESS 1 / 2 / 3 ON YOUR OWN KEYS - P1 MAY PICK FOR THE OTHERS	各自按 1 / 2 / 3 选择，P1 可以替其他人选
+CHOOSING...	选择中
+READY	已选好
+PICKED!	已选择！
+A TINY SURVIVAL GAME	小小生存游戏
+@carrot SPROUT	萝卜	9
+@carrot RUN	快跑	6
+ONE POTATO. ENDLESS TROUBLE.	一个萝卜，无尽的麻烦。
+DODGE. AUTO-FIRE. COLLECT. GROW.	躲避、自动射击、收集、成长。
+ENTER TO START	回车 开始
+L STRESS TEST	L 压力测试
+CHOOSE LOW / MEDIUM / HIGH / CUSTOM	可选 低 / 中 / 高 / 自定义
+STRESS TEST	压力测试
+SELECT LOAD / CLICK OR PRESS 1-4	选择负载 / 点击或按 1-4
+1 LOW / 32 FOES / 1024 SHOTS	1 低档 / 32 个敌人 / 1024 发
+2 MEDIUM / 64 FOES / 2048 SHOTS	2 中档 / 64 个敌人 / 2048 发
+3 HIGH / 128 FOES / 4096 SHOTS	3 高档 / 128 个敌人 / 4096 发
+4 CUSTOM / 128 FOES / %d SHOTS	4 自定义 / 128 个敌人 / %d 发
+CUSTOM: - + COUNT / BRACKETS SIZE	自定义：- + 数量 / 方括号键 大小
+ESC / M / BACKSPACE TO TITLE	ESC / M / 退格 返回标题
+TIME TO GROW	成长时刻
+P%d LEVEL %d / CHOOSE YOUR UPGRADE	P%d 等级 %d / 选择升级
+LEVEL %d / CHOOSE YOUR UPGRADE	等级 %d / 选择升级
+PRESS %d	按 %d
+1 / 2 / 3 OR CLICK A CARD	按 1 / 2 / 3 或点击卡片
+TAKE A BREATHER	歇口气
+THE GARDEN CAN WAIT.	菜园可以等一等。
+P / ESC TO RESUME	P / ESC 继续
+M / CLICK TO TITLE	M / 点击 返回标题
+BACK TO THE SOIL	回归泥土
+A SMALL POTATO. A BRAVE RUN.	小小萝卜，勇敢一战。
+TIME %02d:%02d	时间 %02d:%02d
+TEAM %d KILLS / BEST LEVEL %d	全队击杀 %d / 最高等级 %d
+%d KILLS / LEVEL %d	击杀 %d / 等级 %d
+BOSSES DEFEATED %d	击败首领 %d
+ENTER TO TRY AGAIN	回车 再来一局
+R RESTART   F1 STATS	R 重新开始   F1 统计
+P1: UART + USB KEYBOARD + KEYPAD	P1：串口 + USB 键盘 + 矩阵键盘
+P1: UART   P2: USB KEYBOARD / KEYPAD	P1：串口   P2：USB 键盘 / 矩阵键盘
+P1: UART   P2: USB KEYBOARD   P3: KEYPAD	P1：串口   P2：USB 键盘   P3：矩阵键盘
+QUICK TRIGGER	快速扳机
+HEAVY SEEDS	重型种子
+RUNNING ROOTS	奔跑根须
+HEARTY HARVEST	丰收之心
+GREEN MAGNET	绿色磁铁
+DOUBLE SPROUT	双生嫩芽
+SHOOT FASTER	射得更快
+-3 TICKS PER SHOT	每发间隔 -3
+MORE SEEDS. LESS WAIT.	更多种子，更少等待。
+DAMAGE +1	伤害 +1
+EVERY SEED HITS HARDER	每颗种子更有力
+SMALL SEED. BIG IMPACT.	小种子，大威力。
+MOVE SPEED UP	移动加速
+DODGE THE SWARM	躲开敌群
+KEEP THOSE ROOTS MOVING.	根须动起来。
+MAX HEALTH +20	生命上限 +20	3
+RESTORE 40 HEALTH	恢复40生命	3
+A LITTLE EXTRA STAYING POWER.	多一点耐力。
+PICKUP RANGE +40	拾取范围 +40	3
+COLLECT XP FROM AFAR	远处也能吸经验
+BRING THE HARVEST TO YOU.	收获自己找上门。
+PROJECTILES +1	弹数 +1
+FIRE A WIDER VOLLEY	齐射更宽
+A LITTLE HELP FROM A FRIEND.	朋友帮一把。
+BONUS %u	奖励 %u
+GET SPELL CARD BONUS!!	获得符卡奖励！！
+BULLETS %d	弹幕 %d
+STRESS X%d %s	压力 X%d %s
+AUTO	自动
+MANUAL  - +	手动  - +
+LOAD %d%%  CAP %d	负载 %d%%  上限 %d
+LOAD %d%%	负载 %d%%
+AUTOPLAY DEMO	自动演示
+LUNATIC	疯狂难度
+RENDER %d FPS %s	渲染 %d 帧 %s
+STRESS 1  X%d %s	压力 第一关  X%d %s
+STRESS 2  X%d %s	压力 第二关  X%d %s
+START  NORMAL	开始  普通难度
+START  LUNATIC	开始  疯狂难度
+STAGE 2 PRACTICE	第二关练习
+RESUME	继续
+RESTART	重新开始
+TITLE	返回标题
+SPROUT	东方	9
+DANMAKU	
+TI60 RISC-V + BITBLT	TI60 RISC-V + BITBLT
+ARROWS MOVE  Z AUTO SHOT  X BOMB  SHIFT SLOW	方向键 移动  Z 自动射击开关  X 符卡  SHIFT 低速
+SHOT OFF	射击 关
+KEYBOARD: TOOLS/PC PAD.PY  UART: WASD 1 BOMB 2 SLOW	键盘：TOOLS/PC PAD.PY  串口：WASD 1 符卡 2 低速
+PAUSED	暂停	6
+GAME OVER	游戏结束	6
+SCORE %u	得分 %u
+STAGE CLEAR!	过关！	6
+ALL CLEAR!	全部通关！	6
+CLEAR BONUS %d	过关奖励 %d
+GRAZE %d  POINT %d	擦弹 %d  点数 %d
+HISCORE	最高分
+SCORE	得分
+PLAYER	残机
+BOMB	符卡
+POWER	火力
+GRAZE	擦弹
+POINT	点数
+TI60 BITBLT	TI60 BITBLT
+STAGE 1	第一关	5
+STAGE 2	第二关	5
+SPROUTING FLOWER FIELD	萌芽花田
+MOONLIT SEA OF CLOUDS	月下云海
+WARNING!	警告！	5
+STAR SIGN: TWIN GALAXY	星符「双子星河」
+RAIN SIGN: BENDING SHOWER	雨符「弯曲骤雨」
+FINAL: PRISM FLOWER	终符「棱镜之花」
+PHANTOM SIGN: LUNAR MIRAGE	幻符「月之蜃景」
+FINAL: FULL MOON NIGHT	终符「满月之夜」
+MOON SIGN: SILVER PILLARS	月符「白银之柱」
+STAR SIGN: METEOR SHOWER	星符「流星雨」
+DRAW %d US	绘制 %d 微秒
+CPU %d FPS %d.%d MS	CPU %d 帧 %d.%d 毫秒
+CPU -- FPS	CPU -- 帧
+HW %d FPS %d.%d MS	硬件 %d 帧 %d.%d 毫秒
+HW -- FPS	硬件 -- 帧
+LOGIC %d DRAW %d VSYNC %d US   N NEXT  G CPU/HW  -/+ LOAD  V VSYNC  E ALPHA	逻辑 %d 绘制 %d 同步 %d 微秒   N 下一个  G CPU/硬件  -/+ 负载  V 同步  E 半透明
+%d SQUARES %dX%d PX%s  %dX%d  FILL %u ALPHA %u PIXELS %u	%d 个方块 %dX%d 像素%s  %dX%d  填充 %u 半透明 %u 像素 %u
+ HALF TRANSLUCENT	 半透明
+%d SQUARES 6-40 PX%s  %dX%d  FILL %u ALPHA %u PIXELS %u	%d 个方块 6-40 像素%s  %dX%d  填充 %u 半透明 %u 像素 %u
+BITBLT DEMO: MOVING SQUARES	BITBLT 演示：运动方块
+- + COUNT  BRACKETS SIZE  AT N ENTER SET	- + 数量  方括号键 大小  AT N 回车 设定
+%dX%d COPY EVERY FRAME, PICTURE %d/4, SWITCH EVERY %d FRAME%s	%dX%d 每帧整图复制，图片 %d/4，每 %d 帧切换一次
+BITBLT DEMO: IMAGE SWITCHING	BITBLT 演示：图片切换
+IMAGE 1	图片 1	7
+IMAGE 2	图片 2	7
+IMAGE 3	图片 3	7
+ULT SHOOTER	烈焰贯穿！	3
+ULT WARRIOR	霜刃，破阵！	3
+ULT MAGE	星辉，降临！	3
+ENDLESS	无限模式	3
+RAPID CANNON	疾速双枪	3
+LASER CORE	烈焰核心	3
+SWIFT BOOTS	轻羽靴	3
+SURVIVAL KIT	活力补给	3
+CRYSTAL RADAR	晶体雷达	3
+FOCUSED VOLLEY	聚焦齐射	3
+SOLAR OVERLOAD	烈阳过载	3
+BEAM EXPANSION	光柱扩散	3
+QUICK CHARGE	蓄能加速	3
+WIND RUNNER	疾风行者	3
+QUICK SLASH	急速圆斩	3
+FROST BLADE	寒霜之刃	3
+BATTLE STEP	战斗步伐	3
+IRON HEART	铁壁之心	3
+BATTLE MAGNET	战场磁力	3
+BLADE FORCE	凝聚刀势	3
+GLACIAL WRATH	冰川之怒	3
+FROST DOMAIN	霜刃领域	3
+BLADE RECHARGE	剑意回流	3
+PERFECT PARRY	完美格挡	3
+RUNE FLOW	符文流动	3
+HOLY LANCE	神圣星枪	3
+ASTRAL STEP	星界步伐	3
+LIFE RUNE	生命符文	3
+STAR MAGNET	星辉引力	3
+STAR SPLIT	多重星弹	3
+STAR COLLAPSE	群星坍缩	3
+CONSTELLATION	星座扩展	3
+MANA RECOVERY	魔力回流	3
+ARCANE BARRIER	秘法护罩	3
+STRONGER BOSS DAMAGE	强化对首领输出	3
+ULTIMATE DAMAGE +25%	大招伤害 +25%	3
+CLEAR A WIDER AREA	清除更大范围敌弹	3
+ULTIMATE REACH +12	大招范围 +12	3
+MORE ULTIMATE CASTS	更频繁释放大招	3
+ULTIMATE COOLDOWN -0.6S	大招冷却减少 0.6秒	3
+ALWAYS ACTIVE	持续生效	3
+MOVE SPEED +45	移动速度 +45	3
+MORE REFLECTED SHOTS	反弹数量增加	3
+PARRY COOLDOWN -0.25S	反弹冷却减少 0.25秒	3
+EXTRA SHIELD EVERY 2 RANKS	每两级增加护罩次数	3
+SHIELD COOLDOWN -0.5S	护罩冷却减少 0.5秒	3
+SHORT CIRCULAR STRIKE	近身全圆周伤害	3
+STRONGER MAGIC	强化法术输出	3
+STRONGER BULLETS	强化弹丸输出	3
+ULTIMATE COOLDOWN -0.2S	大招冷却减少 0.2秒	3
+CONVERGING SHOTS / DMG +2	聚焦弹道 / 伤害 +2	3
+PROJECTILES +1 (MAX 3)	弹丸 +1 / 最多3发	3
+EASIER CRYSTAL PICKUP	更容易吸收晶体	3
+MOSS COURT	青苔庭院	3
+JADE PALACE	青玉龙殿	3
+THUNDER CITY	雷霆云城	3
+EMBER PALACE	赤焰熔宫	3
+ASTRAL SANCTUM	星辉圣域	3
+TWIN DRAGONS	双龙神殿	3
+ANCIENT ROOT KING	古树之王	3
+JADE QILIN	青玉麒麟	3
+THUNDER ENGINE	雷霆机龙	3
+EMBER PHOENIX	赤焰魔凰	3
+ASTRAL ORACLE	六翼星谕	3
+TWIN DRAGON KING	双首龙王	3
+ECLIPSE EMPEROR	蚀日龙皇	3
+MY DOMAIN. YOUR FINAL REST.	踏入我的领地，就化作养分！	3
+LEAVE THE JADE PALACE!	玉殿禁地，擅入者退散！	3
+THUNDER LEAVES NO ESCAPE!	雷霆已至，无处可逃！	3
+LET THE FLAMES CONSUME ALL!	让烈焰，吞没一切！	3
+THE STARS FORETELL YOUR END!	群星已定，你的终局！	3
+BOW BEFORE ICE AND FIRE!	冰火交汇，万物臣服！	3
+SIX CRYSTALS. ONE FINAL ECLIPSE!	六晶归一，迎接终焉！	3
+FLAME PIERCER!	烈焰贯穿！	3
+FROST BLADE!	霜刃，破阵！	3
+STARFALL!	星辉，降临！	3
+FLAME PIERCER	烈焰贯穿	3
+FROST TEMPEST	霜刃风暴	3
+CELESTIAL RAIN	星辉天降	3
+ULTIMATE	大招	3
+CHARGING	蓄力	3
+UNLEASHED	释放	3
+BOSS APPROACHING	首领降临	3
+SIX REALMS / THREE CLASSES	六大秘境 / 三大职业	3
+ENDLESS W%d	无限第%d波	3
+S%d %02dS	第%d关 %02d秒	3
+6 / 6 ENDLESS / WAVE %d / POWER +%d	无限模式 / 第%d波 / 成长 +%d	3
+%d / 6 %s %02dS	第%d关 %s %02d秒	3
+ENDLESS / SIX CLANS / ECLIPSE EVERY 3 WAVES	无限挑战 / 六族混战 / 每三波蚀日龙皇	3
+SURVIVE 40S / DEFEAT BOSS BY 60S	坚持40秒 / 60秒内击败首领	3
+SWIFT / SHOTS %d	疾风被动 / 弹丸 %d	3
+PARRY %dS / SHOTS %d	反弹冷却 %d秒 / 弹丸 %d	3
+SHIELD %d / RECHARGE %dS	护罩 %d层 / 冷却 %d秒	3
+CAMPAIGN / FOES %03d	秘境挑战 / 敌人 %03d	3
+MELEE DAMAGE +4	近战伤害 +4	3
+MAGIC DAMAGE +3	法术伤害 +3	3
+SHOT DAMAGE +2	射击伤害 +2	3
+ATTACK FASTER / DMG +1	攻速提升 / 伤害 +1	3
+DASH RECHARGE -0.13S	瞬移冷却减少 0.13秒	3
+MOVE SPEED +80	移动速度 +80	3
+RECOVERING	收招	3
+SIX REALMS CLEARED	六境挑战完成	3
+TIME LIMIT REACHED	挑战时间已到	3
+HWWORD	硬件字流	3
+HWLIST	硬件列表	3
+LIST	列表	3
+CALLS	逐项	3
+Q %d/%d:%d BLT %d%% RD %d WR %d MB/S	队列 %d/%d:%d 绘制 %d%% 读 %d 写 %d MB/S	3
+SUB %d QST %d TAIL %d VS %d US  BLT %d%% RD %d WR %d MB/S  N G - + V	提交 %d 排队 %d 等待 %d 同步 %d 微秒 绘制 %d%% 读 %d 写 %d MB/S N G - + V	3
+IMAGE 4	图片四	3
+TWIN DRAGONS DEFEATED	双龙已被击败	3
+ENTER / R TO RESTART	回车 / R 重新开始	3
+LOCAL AREA / MAX 4 RANKS	局部范围 / 最多4级	3
+FROST RADIUS +10 (MAX 160)	剑气半径 +10 / 上限160	3
+BLOOM RADIUS +12 (MAX 180)	花爆半径 +12 / 上限180	3
+BLADE SHOTS +1 (MAX 4)	剑气 +1 / 最多4发	3
+PROJECTILES +1 (MAX 5)	弹丸 +1 / 最多5发	3
+PROJECTILES +1 (MAX 6)	弹丸 +1 / 最多6发	3
+SPEED UP TO +80 / DASH UP	移速和瞬移强化	3
+PICKUP MAX 320	拾取范围上限320	3

@@ -1,4 +1,0 @@
-Verified: BOARD_TEST/r5_8/ti60_r5_8_release.elf
-Verified: BOARD_TEST/r5_8/ti60_r5_8_debug.elf
-Verified: BOARD_TEST/r5_8/ti60_r5_8.bit
-R5.8 archive and all matched bit/ELF files restored and SHA256 verified.

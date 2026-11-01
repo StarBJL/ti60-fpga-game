@@ -4,10 +4,11 @@ const pendingCommands=new Map();let statusSynced=false;
 let pressureCapability=-1;
 let coopStartBusy=false,lastInputDiagnostic=0;
 let presetCatalog=[],presetCatalogError="",presetRequestPending=false,presetRequestedOperation=null;
+let visiblePresetGroup="萝卜弹幕";
 let token="",cursor=0,connected=false,compatible=false,dualvideo=false,currentScene=-1,snapshot=null,lastAck=0,queue=Promise.resolve(),polling=false,held=0,lastHeld=-1,lastError="";
 const tracks={bgm_title:"像素晨光",bgm_menu2:"星灯菜单",bgm_stage1:"云端疾行",bgm_stage2:"月下航线",bgm_boss1:"赤色风暴",bgm_boss2:"终幕回响",bgm_garden:"萝卜田野",bgm_garden2:"森林夜行",bgm_stress:"压力脉冲",bgm_stress2:"数字方阵","?":"未播放"};
 const sceneNames=["东方","萝卜","方块","图片"];
-const boolFields={alpha:"alpha",vsync:"vsync",hardware:"hw",autoplay:"auto",motion:"motion",table:"table",bgm:"bgm",tone:"tone",verbose:"verbose",stats:"stats"};
+const boolFields={alpha:"alpha",vsync:"vsync",hardware:"hw",autoplay:"auto",table:"table",bgm:"bgm",tone:"tone",verbose:"verbose",stats:"stats"};
 function notice(text,kind=""){const e=$("notice");e.textContent=text;e.className="notice "+kind;}
 async function api(path,body){
   const opts=body===undefined?{}:{method:"POST",headers:{"Content-Type":"application/json","X-Ti60-Token":token},body:JSON.stringify(body)};
@@ -23,28 +24,49 @@ function cmd(command,value){
   });queue.catch(e=>notice(e.message,"error"));return queue;
 }
 function setHeld(mask){held=mask;sendHeld();document.querySelectorAll("[data-held]").forEach(e=>e.classList.toggle("held",!!(held&Number(e.dataset.held))));}
-function sendHeld(force=false){if(connected&&compatible&&(force||held||lastHeld!==held)){lastHeld=held;cmd("move",held).catch(()=>{});}}
-function release(){held=0;lastHeld=-1;setHeld(0);keys.clear();pointerBits.clear();}
+const padClient="keys_"+Math.random().toString(36).slice(2);let padSequence=0,padSending=false;
+async function sendHeld(force=false){
+  if(!connected||!compatible||padSending||(!force&&!held&&lastHeld===held))return;
+  const mask=held;padSending=true;
+  try{
+    if(snapshot?.pad4)await api("/api/pad",{mask,seq:++padSequence,client:padClient});
+    else await cmd("move",mask);
+    lastHeld=mask;
+  }catch(e){notice(e.message,"error");lastHeld=-1;}
+  finally{padSending=false;if(connected&&compatible&&lastHeld>=0&&held!==lastHeld)sendHeld();}
+}
+function release(){keys.clear();pointerBits.clear();padHeldBits=0;held=0;lastHeld=-1;setHeld(0);}
 const keys=new Map(),pointerBits=new Map();
-function updateHeld(){let value=0;for(const v of keys.values())value|=v;for(const v of pointerBits.values())value|=v;setHeld(value);}
+let padHeldBits=0;   /* 手柄（Gamepad API）按住的键，和键盘 / 屏幕按钮合起来 */
+function updateHeld(){let value=padHeldBits;for(const v of keys.values())value|=v;for(const v of pointerBits.values())value|=v;setHeld(value);}
 const keyBits={ArrowUp:1,ArrowDown:2,ArrowLeft:4,ArrowRight:8,w:1,W:1,s:2,S:2,a:4,A:4,d:8,D:8,z:16,Z:16," ":16,x:32,X:32,j:32,J:32,Shift:64,Escape:128,Enter:256};
+/* 可打印键 -> 串口字符。中文输入法下标点会变成全角（' -> ’）或 key = "Process"：按物理键位（e.code）换回 ASCII（2026-10-28） */
+const codeAscii={Quote:["'",'"'],Semicolon:[";",":"],Comma:[",","<"],Period:[".",">"],Slash:["/","?"],Backquote:["`","~"],BracketLeft:["[","{"],BracketRight:["]","}"],Backslash:["\\","|"],Minus:["-","_"],Equal:["=","+"]};
+function asciiKey(e){
+  let k=e.key;
+  if(!(k.length===1&&k>=" "&&k<="~")){const m=codeAscii[e.code];k=m?m[e.shiftKey?1:0]:/^Key[A-Z]$/.test(e.code)?(e.shiftKey?e.code[3]:e.code[3].toLowerCase()):/^Digit[0-9]$/.test(e.code)?e.code[5]:"";}
+  return k&&k!==":"?k:"";
+}
+const physicalBits={ArrowUp:1,ArrowDown:2,ArrowLeft:4,ArrowRight:8,KeyW:1,KeyS:2,KeyA:4,KeyD:8,KeyZ:16,Space:16,KeyX:32,KeyJ:32,ShiftLeft:64,ShiftRight:64,Escape:128,Enter:256,NumpadEnter:256,ControlLeft:512,ControlRight:512};
 function typing(){return /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName||"")&&document.activeElement?.id!=="captureKeys";}
 window.addEventListener("keydown",e=>{
   if(!$("captureKeys").checked||typing()||!connected||!compatible||snapshot?.state.input_diag||coopStartBusy)return;
-  if(keyBits[e.key]!==undefined){e.preventDefault();keys.set(e.code,keyBits[e.key]);updateHeld();}
+  if(physicalBits[e.code]!==undefined){e.preventDefault();keys.set(e.code,physicalBits[e.code]);updateHeld();}
   else if(!e.repeat&&(e.key==="+"||e.key==="="||e.key==="-")){e.preventDefault();cmd("delta",e.key==="-"?-1:1);}
-  else if(!e.repeat&&e.key==="F9"){e.preventDefault();if(dualvideo&&!snapshot?.state.pending&&!snapshot?.state.link_stage)cmd("resolution",snapshot?.state.resolution===1?0:1);else notice("等待 R5 显示能力或当前切换完成。","error");}
-  else if(!e.repeat&&e.key==="F10"){e.preventDefault();if(snapshot?.state.video_trial)cmd("video_confirm");}
   else if(!e.repeat&&["1","2","3"].includes(e.key)){e.preventDefault();cmd("pick",Number(e.key));}
+  else if(!e.repeat&&(e.key==="Control"||e.key===";"||e.key===">")){e.preventDefault();if(snapshot?.state.scene===0)cmd("key",59);}   /* 东方跳过：; 不用 Shift（同串口 ; / pc_pad Ctrl，2026-10-28） */
+  else if(!e.repeat&&e.code==="KeyM"){e.preventDefault();cmd("menu");}
+  else if(!e.repeat&&e.code==="F1"){e.preventDefault();cmd("status");}
+  else if(!e.repeat&&!e.ctrlKey&&!e.altKey&&!e.metaKey&&asciiKey(e)){e.preventDefault();cmd("key",asciiKey(e).charCodeAt(0));}   /* 其余可打印键 = 串口按键（n m g v e p r l ` ...，2026-10-28） */
   else if(!e.repeat&&["F6","F7","F8"].includes(e.key)){e.preventDefault();cmd("step",{F6:100,F7:10,F8:1}[e.key]);}
   else if(!e.repeat&&(e.key==="["||e.key==="]")){e.preventDefault();const s=$("bulletSize"),i=(s.selectedIndex+s.options.length+(e.key==="]"?1:-1))%s.options.length;cmd("bullet",Number(s.options[i].value));}
   else if(!e.repeat&&(e.key==="{"||e.key==="}")){e.preventDefault();const s=$("squareSize"),i=(s.selectedIndex+s.options.length+(e.key==="}"?1:-1))%s.options.length;cmd("square",Number(s.options[i].value));}
-  else if(!e.repeat&&e.key==="\\"){e.preventDefault();cmd("next");}
 
 });
-window.addEventListener("keyup",e=>{if(keyBits[e.key]!==undefined){keys.delete(e.code);updateHeld();}});
+window.addEventListener("keyup",e=>{if(keys.has(e.code)){keys.delete(e.code);updateHeld();}});
+document.addEventListener("focusin",()=>{if(typing())release();});
 window.addEventListener("blur",release);document.addEventListener("visibilitychange",()=>{if(document.hidden)release();});
-window.addEventListener("beforeunload",()=>{if(connected&&compatible)fetch("/api/command",{method:"POST",headers:{"Content-Type":"application/json","X-Ti60-Token":token},body:JSON.stringify({command:"move",value:0}),keepalive:true}).catch(()=>{});});
+window.addEventListener("beforeunload",()=>{if(connected&&compatible)fetch(snapshot?.pad4?"/api/pad":"/api/command",{method:"POST",headers:{"Content-Type":"application/json","X-Ti60-Token":token},body:JSON.stringify(snapshot?.pad4?{mask:0,seq:++padSequence,client:padClient}:{command:"move",value:0}),keepalive:true}).catch(()=>{});});
 $("captureKeys").addEventListener("change",release);
 document.querySelectorAll("[data-held]").forEach(button=>{
   button.addEventListener("pointerdown",e=>{if(!connected||!compatible)return;e.preventDefault();button.setPointerCapture(e.pointerId);pointerBits.set(e.pointerId,Number(button.dataset.held));updateHeld();});
@@ -65,22 +87,21 @@ $("imagePeriod").addEventListener("change",e=>cmd("period",Number(e.target.value
 $("squareSize").addEventListener("change",e=>cmd("square",Number(e.target.value)));
 $("decrease").addEventListener("click",()=>cmd("delta",-1));$("increase").addEventListener("click",()=>cmd("delta",1));
 $("setCount").addEventListener("click",()=>{const n=Number($("targetCount").value);if(!Number.isInteger(n))return notice("数量必须为整数","error");cmd("count",n);});
-$("stressStart").addEventListener("click",()=>cmd("stress",currentScene===1?Number($("carrotTier").value):0));
+$("stressStart").addEventListener("click",()=>cmd("stress",currentScene===1?Number($("carrotTier").value):currentScene===0?Number($("thStage").value):0));
 $("volume").addEventListener("input",e=>$("volumeText").textContent=Math.round(e.target.value/256*100)+"%");
 $("volume").addEventListener("change",e=>cmd("volume",Number(e.target.value)));
-$("musicSelect").addEventListener("change",e=>cmd("music",Number(e.target.value)));
 let availablePorts=[],portsRefreshGeneration=0,portInputEpoch=0;
 function portHint(){
   const p=availablePorts.find(p=>p.device===$("port").value.trim());
-  $("portInfo").textContent=p ? `${p.label||p.description}${p.location?" · USB "+p.location:""}` : "可手动填写串口路径；设备编号会随 USB 插拔变化。";
+  $("portInfo").textContent=p ? `${p.label||p.description}${p.last_verified?" · 上次已验证":""}${p.location?" · USB "+p.location:""}${p.instance_id?" · "+p.instance_id:""}` : "可手动填写串口路径；设备编号会随 USB 插拔变化。";
 }
 async function refreshPorts(){
   const generation=++portsRefreshGeneration,epoch=portInputEpoch,initialValue=$("port").value;
   try{
     const ports=await api("/api/ports");if(generation!==portsRefreshGeneration)return;availablePorts=ports;
     $("ports").replaceChildren(...ports.map(port=>{const e=document.createElement("option");e.value=port.device;e.label=port.label||port.description;return e;}));
-    const candidates=ports.filter(p=>p.recommended);
-    if(!initialValue&&epoch===portInputEpoch&&!$("port").value&&!connected&&candidates.length===1)$("port").value=candidates[0].device;
+    const candidates=ports.filter(p=>p.recommended),remembered=ports.filter(p=>p.last_verified);
+    if(!initialValue&&epoch===portInputEpoch&&!$("port").value&&!connected){const pick=remembered.length===1?remembered:candidates;if(pick.length===1)$("port").value=pick[0].device;}
     portHint();
     if(candidates.length===1)notice(`日志口候选：${candidates[0].device}（FT4232H 通道 C）。选择后点击连接；固件由收到的数据确认。`);
     else if(candidates.length>1)notice(`发现 ${candidates.length} 个通道 C，未自动选择。请按 USB 位置或序列号选择开发板。`);
@@ -91,6 +112,11 @@ $("port").addEventListener("input",()=>{++portInputEpoch;portHint();});
 $("refreshPorts").addEventListener("click",refreshPorts);
 $("connect").addEventListener("click",async()=>{
   try{await api("/api/connect",{port:$("port").value.trim(),baud:Number($("baud").value),label:$("recordLabel").value});cursor=0;lastAck=0;lastError="";statusSynced=false;presetRequestPending=false;presetRequestedOperation=null;pendingCommands.clear();$("log").textContent="";notice("串口已连接，正在被动识别固件。旧版固件可记录日志，扩展控制需 R4 / R5；分辨率切换需 R5 配套 bit。");await poll();}catch(e){notice(e.message,"error");}
+});
+$("autoConnect").addEventListener("click",async()=>{
+  $("autoConnect").disabled=true;notice("正在识别 Ti60 日志口，接收遥测后连接…");
+  try{const data=await api("/api/auto-connect",{baud:115200,label:$("recordLabel").value});$("port").value=data.port;cursor=0;lastAck=0;lastError="";statusSynced=false;pendingCommands.clear();await poll();$("autoConnect").focus();notice("已识别并连接 "+data.port+"；电脑键盘已就绪。","success");}
+  catch(e){notice(e.message,"error");}finally{$("autoConnect").disabled=connected;}
 });
 $("disconnect").addEventListener("click",async()=>{try{release();await queue.catch(()=>{});await api("/api/disconnect",{});presetRequestPending=false;presetRequestedOperation=null;notice("串口已断开，记录已保存。");await poll();}catch(e){notice(e.message,"error");}});
 $("help").addEventListener("click",async()=>{try{await api("/api/help",{});notice("已发送兼容旧版的帮助键 h。");}catch(e){notice(e.message,"error");}});
@@ -103,37 +129,48 @@ function updateScene(scene){
   if(scene===currentScene&&pressureCapability===extended)return;currentScene=scene;pressureCapability=extended;
   document.querySelectorAll("[data-scene]").forEach(b=>b.classList.toggle("selected",Number(b.dataset.scene)===scene));
   $("imagePeriodField").classList.toggle("hidden",scene!==3);
-  $("carrotTier").classList.toggle("hidden",scene!==1);$("densityControls").classList.toggle("hidden",scene!==0);
+  $("carrotTier").classList.toggle("hidden",scene!==1);$("thStage").classList.toggle("hidden",scene!==0);$("densityControls").classList.toggle("hidden",scene!==0);
   const choices=scene===0?[[75,"75% · 小"],[100,"100% · 原尺寸"],[125,"125% · 大"],[150,"150% · 特大"]]:[[9,"9 px · 小"],[13,"13 px · 标准"],[17,"17 px · 大"],[25,"25 px · 特大"]];
   if(extended)choices.unshift([1,"1 px"],[3,"3 px"],[6,"6 px"]);
   const squares=(extended?[0,1,3,6,8,12,16,24,32,40]:[0,6,8,12,16,24,32,40]);
   $("squareSize").replaceChildren(...squares.map(value=>{const o=document.createElement("option");o.value=value;o.textContent=value?`${value} px`:"随机 6–40 px";return o;}));
   $("bulletSize").replaceChildren(...choices.map(([value,text])=>{const option=document.createElement("option");option.value=value;option.textContent=text;return option;}));
-  $("targetCount").max=extended?99999:scene===2?30000:scene===0?16384:40000;
+  $("targetCount").max=scene===2?35200:32768;
   $("targetCaption").textContent=scene===2?"方块数量":"敌弹上限";
   $("sceneHint").textContent=sceneNames[scene]||"等待读取场景";
-  $("quantityNote").textContent=extended?(scene===2?"1–99,999 个；容量上限不代表稳定 60 帧上限。":"1–99,999 颗；先进入压力模式。萝卜压力关闭角色射击，普通游戏保留射击与技能。") : scene===2?"1–30,000 个；固定尺寸与原随机尺寸均使用同一对象表。":scene===0?"1–16,384 颗上限；调节上限会关闭自动负载，密度倍率独立设置。":"1–40,000 颗上限；需要先进入萝卜自定义压力档。";
+  $("quantityNote").textContent=extended?(scene===2?"1–35,200 个；容量上限不代表稳定 60 帧上限。":scene===0?"东方只调密度倍率（下方按钮），不改数量。":"1–32,768 颗；设置数量会直接进入萝卜自定义压力档。") : scene===2?"1–30,000 个；固定尺寸与原随机尺寸均使用同一对象表。":scene===0?"1–16,384 颗上限；调节上限会关闭自动负载，密度倍率独立设置。":"1–40,000 颗上限；需要先进入萝卜自定义压力档。";
 }
 function number(id,value,unit="",decimals=1){$(id).textContent=value===undefined||value===null?"—":Number(value).toFixed(decimals)+unit;}
 function configuringPreset(){return presetRequestPending||["applying","verifying"].includes(snapshot?.preset?.status);}
 async function loadPresets(){
   try{
     const data=await api("/api/presets");presetCatalog=data.profiles;presetCatalogError="";
-    const groups=$("r2PresetGroups");groups.replaceChildren();
-    for(const group of [...new Set(presetCatalog.map(x=>x.group))]){
-      const box=document.createElement("div");box.className="preset-group";
-      const heading=document.createElement("h3");heading.textContent=group;box.append(heading);
-      const profiles=presetCatalog.filter(x=>x.group===group),detail=document.createElement("p");detail.textContent=profiles[0].detail;box.append(detail);
-      for(const p of profiles){
-        const button=document.createElement("button");button.dataset.preset=p.id;button.disabled=true;
-        button.setAttribute("aria-label",`${group} ${p.label}`);
-        const count=document.createElement("strong"),mode=document.createElement("span");count.textContent=p.count.toLocaleString();mode.textContent=p.vsync?"60 帧呈现验证":"自由吞吐对照";
-        button.append(count,mode);button.addEventListener("click",()=>applyPreset(p.id));box.append(button);
-      }groups.append(box);
-    }
+    renderPresetCatalog();
   }catch(e){presetCatalogError="预设服务未加载，请重启上位机服务并刷新页面。";}
   if(snapshot)renderPresetState(snapshot);
 }
+function renderPresetCatalog(){
+  const cards=$("r2PresetGroups"),verify=$("r2Verification");cards.replaceChildren();verify.replaceChildren();
+  document.querySelectorAll("[data-preset-group]").forEach(b=>{
+    const selected=b.dataset.presetGroup===visiblePresetGroup;b.classList.toggle("selected",selected);b.setAttribute("aria-pressed",String(selected));
+  });
+  const makeButton=(p,card)=>{
+    const button=document.createElement("button");button.type="button";button.dataset.preset=p.id;button.disabled=true;
+    button.setAttribute("aria-label",`${p.group} ${p.label}`);
+    if(card){
+      button.className="preset-limit-card";
+      const size=document.createElement("span"),amount=document.createElement("strong"),unit=document.createElement("span");
+      size.className="preset-size";size.textContent=p.size_label;amount.textContent=p.count.toLocaleString();unit.textContent="个";
+      button.append(size,amount,unit);
+    }else button.textContent=`60 帧呈现验证 · ${p.label}`;
+    button.addEventListener("click",()=>applyPreset(p.id));return button;
+  };
+  for(const p of presetCatalog.filter(x=>x.group===visiblePresetGroup&&x.category==="limit"))cards.append(makeButton(p,true));
+  const history=presetCatalog.filter(x=>x.group===visiblePresetGroup&&x.category==="verification");
+  if(history.length){const title=document.createElement("strong");title.textContent="独立验证";verify.append(title,...history.map(p=>makeButton(p,false)));}
+  if(snapshot)renderPresetState(snapshot);
+}
+document.querySelectorAll("[data-preset-group]").forEach(b=>b.addEventListener("click",()=>{visiblePresetGroup=b.dataset.presetGroup;renderPresetCatalog();}));
 async function applyPreset(id){
   if(configuringPreset())return;
   presetRequestPending=true;presetRequestedOperation=null;$("captureKeys").checked=false;release();
@@ -174,67 +211,56 @@ function render(data){
   if(presetRequestedOperation!==null&&data.preset?.operation===presetRequestedOperation){presetRequestPending=false;presetRequestedOperation=null;}
   if(!data.connected){presetRequestPending=false;presetRequestedOperation=null;}
   snapshot=data;connected=data.connected;compatible=data.compatible;dualvideo=!!data.dualvideo;token=data.token;const state=data.state,configuring=configuringPreset()||coopStartBusy;
+  $("autoConnect").disabled=connected||!!data.discovering;
+  if(data.discovering)$("portInfo").textContent=(data.discovery||[]).map(p=>p.port+"："+p.status).join("；");
   if(connected&&data.port){$("port").value=data.port;portHint();}
   $("consoleVersion").textContent=data.console_version||"旧版服务（重启后加载端口修复）";
   $("connectionBadge").textContent=!connected?"串口未连接":compatible?(String(state.firmware||"").includes("PTY")?"伪终端测试 · 非实板":(dualvideo?"R5 已连接":"兼容协议已连接")):"已连接 · 识别中";
   $("connectionBadge").className="badge "+(connected?(compatible?"online":"warning"):"");
   $("connect").disabled=connected;$("disconnect").disabled=!connected;$("help").disabled=!connected||configuring;$("port").disabled=connected;$("baud").disabled=connected;
-  for(const el of document.querySelectorAll("[data-command],[data-scene],[data-step],[data-setting],[data-held],#decrease,#increase,#setCount,#bulletSize,#squareSize,#stressStart,#volume,#captureKeys,#targetCount,#imagePeriod"))el.disabled=!connected||!compatible||configuring;
-  for(const button of document.querySelectorAll("[data-resolution]")){
-    button.disabled=!connected||!dualvideo||!!state.pending||!!state.link_stage||configuring;
-    button.classList.toggle("selected",dualvideo&&Number(button.dataset.resolution)===state.resolution);
-  }
-  $("videoState").textContent=!connected?"等待读取 R5 显示能力。":!dualvideo?"当前固件 / bit 未声明双模式输出，分辨率控制不可用。":state.pending?"切换已请求，等待硬件完成；以设备回报的输出状态为准。":`设备回报：${state.output_w||"—"}×${state.output_h||"—"}，标称 ${state.output_hz||state.nominal_hz||"—"} Hz；渲染 ${state.render_w||1280}×${state.render_h||720}。${state.bars?"当前为彩条测试。":""}扫描状态不代表显示器已锁定。`;
+  for(const el of document.querySelectorAll("[data-command],[data-scene],[data-step],[data-setting],[data-held],[data-players],#decrease,#increase,#setCount,#bulletSize,#squareSize,#stressStart,#volume,#captureKeys,#targetCount,#imagePeriod"))el.disabled=!connected||!compatible||configuring;
+  $("videoState").textContent=!connected?"输出 1280×720 · 60 Hz。":`设备回报：${state.output_w||"—"}×${state.output_h||"—"}，${state.output_hz||state.nominal_hz||60} Hz。${state.bars?"当前为彩条测试。":""}`;
   for(const id of ["restoreFast","restoreFastDiag","testBarsOn","testBarsOff"])$(id).disabled=!connected||!state.accel_supported||configuring;
   for(const id of ["volumeDown","volumeUp"])$(id).disabled=!connected||!state.volume_step_supported||configuring;
-  for(const id of ["musicSelect","musicPrev"])$(id).disabled=!connected||!state.music_supported||configuring;
-  if(state.music_supported){
-    if(document.activeElement!==$("musicSelect"))$("musicSelect").value=state.music_auto?-1:state.music_index;
-    $("musicMode").textContent=state.music_auto?"跟随场景自动配乐；点击上一首 / 下一首进入全曲库手动切换。":`手动曲目 ${(state.music_index??0)+1} / ${state.music_total||10}；切换场景仍保持所选曲目。`;
-  }else $("musicMode").textContent="当前固件只支持场景内两首备选曲；全曲库选择需要新版 ELF。";
-  $("confirmVideo").disabled=!connected||!state.video_trial||!!state.link_stage||configuring;
-  $("recoverVideo").disabled=!connected||!state.video_recover_supported||configuring;
-  $("dvi1080").disabled=!connected||!state.link_supported||!!state.link_stage||configuring;
-  $("linkState").textContent=state.link_stage?"显示链路重新启动中：暂时停发四路 TMDS，等待目标时序稳定。":state.link_fault?"恢复超时，已请求720P并重新开启输出；请记录日志。":state.link_supported?`链路重启可用 · ${state.link_dvi&&state.resolution===1?"1080P DVI诊断，无音频":"HDMI音视频"} · 恢复次数 ${state.recoveries||0}`:"完整链路重启需R5.8 bit；旧bit的恢复仅重发720P请求。";
-  for(const id of ["startCoopCarrot","startCoopTouhou"])$(id).disabled=!connected||!state.coop_start_supported||configuring||!!state.matrix_cal||matrixRestoreBusy;
-  $("coopHelp").textContent=coopStartBusy?"正在确认输入状态并启动三人新局，请稍候。":state.matrix_cal?"正在校准矩阵：先完成并应用映射，或取消本次校准，再启动游戏。":state.input_diag?"仍在只检测按键：扩展键盘不驱动角色，电脑键盘捕获也暂停。松开全部按键后，点击三人启动按钮会先退出检测；也可点击下方“结束检测”。":state.scene===1&&state.phase===5?"本局已失败，方向键不会使人物移动。点击三人启动按钮重新开局。":state.auto?"当前自动演示保持单人。点击三人启动按钮会关闭自动演示、开始新局并启用电脑键盘。":state.players===3?"三人模式已启用。P1：网页启用键盘控制；P2：USB键盘；P3：矩阵板。":"选择上方三人合作入口；压力模式不会显示三个角色。";
-  $("coopHelp").classList.toggle("input-blocked",!!state.input_diag||!!state.matrix_cal);
   $("captureKeys").disabled=!connected||!compatible||configuring||!!state.input_diag;
-  $("keyboardCaptureState").textContent=state.input_diag?"只检测按键中：电脑键盘捕获暂停。请先结束检测，或松开全部按键后启动三人新局。":$("captureKeys").checked?"电脑键盘控制已启用：让浏览器窗口保持焦点，点网页空白处后使用 WASD／方向键。":"电脑键盘控制未启用；点击三人启动按钮会自动启用，也可勾选上方开关。";
+  $("keyboardCaptureState").textContent=!connected?"连接串口后自动接收电脑键盘。":!compatible?"正在识别固件，稍候即可使用键盘。":state.input_diag?"只检测按键中：电脑键盘捕获暂停。请先结束检测，或松开全部按键后启动三人新局。":$("captureKeys").checked?"电脑键盘已就绪：保持本页面在前台，直接使用 WASD／方向键；编辑文本时暂停接收。":"电脑键盘控制未启用；勾选上方开关后用电脑键盘操作（P1）。";
+  // 三人合作（2026-10-26，萝卜）
+  $("startCoopCarrot").disabled=!connected||!state.coop_start_supported||configuring||!!state.matrix_cal||matrixRestoreBusy;
+  $("coopHelp").textContent=coopStartBusy?"正在确认输入状态并启动三人新局，请稍候。":state.matrix_cal?"正在校准矩阵：先完成并应用映射，或取消本次校准，再启动游戏。":state.input_diag?"仍在只检测按键：扩展键盘不驱动角色，电脑键盘捕获也暂停。松开全部按键后，点击三人启动按钮会先退出检测；也可点击下方“结束检测”。":state.scene===1&&state.phase===5?"本局已失败（三人都倒下）。点击三人启动按钮重新开局。":state.auto?"当前自动演示保持单人。点击三人启动按钮会关闭自动演示、开始新局并启用电脑键盘。":state.players===3?"三人模式已启用。P1：网页键盘控制 / 串口；P2：USB 键盘；P3：矩阵板。升级时轮到的玩家用自己的 1/2/3，P1 也可以代选。":"点击上方按钮开三人新局；压力模式不会显示三个角色。";
+  $("coopHelp").classList.toggle("input-blocked",!!state.input_diag||!!state.matrix_cal);
   $("inputState").textContent=`矩阵原始键位：${state.matrix_keys===undefined?"等待状态":"0x"+Number(state.matrix_keys).toString(16).padStart(4,"0")} · USB键盘报告 ${state.keyboard_reports??"—"} · UART错误 ${state.uart_error??"—"} · 鬼键 ${state.ghosts??"—"}。零键位不能单独证明未连接。`;
   renderInputDiagnostics(state,configuring);
-  $("videoTrial").textContent=state.video_trial?`试切中：约 ${Math.ceil((state.trial_ms||0)/1000)} 秒后自动返回 720P。看见正常画面后再确认。`:state.trial_supported?"1080P 试切保护已就绪；黑屏可等待自动返回 720P。":"自动回退需 R5.7 ELF。";
+  renderLangParty(state,configuring);
   $("partyMode").textContent=state.input_diag?"输入检测中":state.players===3?"同屏三人":state.players===1?(state.auto?"自动演示 · 单人":"单人 / 压力"):"菜单 / 其他场景";
   $("partyMode").className="badge "+(state.input_diag?"warning":"neutral");
-  $("coreClock").textContent=state.core_hz?`处理时钟：${(state.core_hz/1e6).toFixed(6)} MHz。请使用对应 bit / ELF。`:"处理时钟：当前固件未回报。";
   for(let p=1;p<=3;p++){
-    const life=state[`p${p}_life`],skill=state[`p${p}_skill`],score=state[`p${p}_score`];
-    $("party"+p+"Stats").textContent=p>(state.players||0)?"当前场景未启用":life===undefined?"等待角色状态":state.scene===1?`生命 ${life} · 技能 ${(skill/60).toFixed(1)}s · 击败 ${score}`:`残机 ${life<0?"退出":life} · 符卡 ${skill} · 得分 ${score}${p===3&&state.matrix_auto?" · 自动射击":""}`;
+    const life=state[`p${p}_life`],score=state[`p${p}_score`];
+    $("party"+p+"Stats").textContent=p>(state.players||0)?"当前场景未启用":life===undefined?"等待角色状态":`生命 ${life<=0?"倒下":life} · 击败 ${score??"—"}${state.players>=1&&state["p"+p+"_skill"]!==undefined?" · 大招"+(state["p"+p+"_skill"]?"就绪":"冷却"):""}`;
+    if(p<=(state.players||0)&&life!==undefined){
+      if(p===1)$("party"+p+"Stats").textContent+=" · 疾风移速被动";
+      if(p===2&&state.p2_parry_cd!==undefined)$("party"+p+"Stats").textContent+=` · 反弹 ${Math.ceil(state.p2_parry_cd/60)}秒 / 已反弹 ${state.p2_reflected||0}`;
+      if(p===3&&state.p3_shield!==undefined)$("party"+p+"Stats").textContent+=` · 护罩 ${state.p3_shield}层 / 冷却 ${Math.ceil((state.p3_shield_cd||0)/60)}秒`;
+    }
     $("party"+p+"Input").textContent=state[`p${p}_held`]===undefined?"等待独立输入状态":`逻辑位置 (${state[`p${p}_x`]}, ${state[`p${p}_y`]}) · 按键 ${state[`p${p}_held`]}`;
   }
+  $("coreClock").textContent=state.core_hz?`处理时钟：${(state.core_hz/1e6).toFixed(6)} MHz。请使用对应 bit / ELF。`:"处理时钟：当前固件未回报。";
   $("engineState").textContent=engineText(state);
-  const r6=connected&&compatible&&state.pipeline_supported===1&&!configuring;
-  for(const b of document.querySelectorAll('[data-r6]'))b.disabled=!r6||(b.dataset.r6==='stage'&&state.scene!==0)||(b.dataset.r6==='ftab'&&!state.ftab)||(b.dataset.r6==='blend'&&!state.kblend)||(['square','ftab'].includes(b.dataset.r6)&&state.scene!==2);
-  $("thStressStages").classList.toggle('hidden',currentScene!==0);
-  $("r6State").textContent=state.pipeline_supported?`VSync 流水 ${state.vpipe?'开':'关'} · Alpha ${['八像素','两像素','K关闭'][state.kmode]??'未知'} · 方块 ${['逐项','CPU＋SQTAB','CPU＋FTAB','硬件＋SQTAB'][state.square_path]??'未知'} · 东方第 ${Number(state.th_stage??0)+1} 关 · 敌弹 ${state.seed_bytes??'—'} B / 热数据 ${state.th_hot_bytes??'—'} B`:'当前固件未报告 R6 能力；新控件暂不可用。';
-
-  const degraded=state.accel_supported&&(!state.hw||state.submit_mode!==2||!state.band||!state.cache||!state.kpath||!state.seed_table||!state.seed_build||!state.overlap||(state.scene===2&&((!state.motion&&state.square_path!==2)||!state.table)));
-  $("engineWarning").textContent=degraded?"当前存在关闭的加速项。比较稳定 60 帧上限前，可先恢复加速配置，并保持场景、尺寸、Alpha 和同步条件一致。":state.accel_supported?"加速条件已报告。1080P 输出为 30 Hz；重叠是否实际生效由场景和分辨率决定。":"当前固件未报告完整加速项，无法判定测试基线。";
+  const degraded=state.accel_supported&&(!state.hw||state.submit_mode!==2||!state.band||!state.cache||!state.kpath||!state.seed_table||!state.seed_build||!state.overlap||(state.scene===2&&!state.table));
+  $("engineWarning").textContent=degraded?"当前存在关闭的加速项。比较稳定 60 帧上限前，可先恢复加速配置，并保持场景、尺寸、Alpha 和同步条件一致。":state.accel_supported?"加速条件已报告。":"当前固件未报告完整加速项，无法判定测试基线。";
   $("engineWarning").classList.toggle("degraded",!!degraded);
   const on=x=>x===undefined?"未知":x?"开":"关";
   const submitButton=document.querySelector('[data-command="key"][data-value="107"]');
   submitButton.textContent=`提交路径：${["逐对象调用","APB 列表","DDR 硬件列表","APB 列表字"][state.submit_mode]||"未知"} · 切换`;
-  for(const [key,field,title] of [[48,"cache","源缓存"],[53,"band","分带"],[113,"overlap","逻辑重叠"],[122,"seed_build","逻辑建表"],[126,"sort","键排序"]]){
+  for(const [key,field,title] of [[48,"cache","源缓存"],[53,"band","分带"],[113,"overlap","逻辑重叠"],[122,"seed_build","逻辑建表"],[106,"sort","键排序"]]){
     const b=document.querySelector(`[data-command="key"][data-value="${key}"]`);b.textContent=`${title}：${on(state[field])} · 切换`;
   }
   const bandButton=document.querySelector('[data-command="key"][data-value="53"]');
   if(state.submit_mode!==undefined&&state.submit_mode!==2)bandButton.textContent="分带未生效：需要 DDR 硬件列表";
-  if(state.motion_min_px>1&&state.square>0&&state.square<state.motion_min_px){$("engineWarning").textContent="当前 bit 的硬件运动最小尺寸为 6px。小方块正在由 CPU 更新；加载 R5.5 bit 后可使用硬件运动。";$("motion").disabled=true;}
-  const revision=state.video_rev===328193?"R5.2.1 HDMI 修正版":state.video_rev?`视频修订 ${state.video_rev}`:"未确认 HDMI 修正版 bit";
-  $("audioState").textContent=`${revision}；音库 ${state.bank_sounds??"—"} 个，混音器${on(state.mixer)}，测试音${on(state.tone)}。测试音直接由 HDMI 模块产生；开启时不播放音乐。`;
+  $("audioState").textContent=`音库 ${state.bank_sounds??"—"} 个，混音器${on(state.mixer)}，测试音${on(state.tone)}。测试音直接由 HDMI 模块产生。`;
   $("newRecord").disabled=!connected||configuring;$("mark").disabled=!connected;
   if(state.profile===0)$("stats").disabled=true;
   if(state.scene!==undefined)updateScene(Number(state.scene));
+  if(connected&&compatible&&!configuring){$("thSkip").disabled=currentScene!==0;$("sqSort").disabled=currentScene!==2;}   /* 跳过只在东方，排序只在方块 */
   if(connected&&compatible&&!configuring){$("stressStart").disabled=currentScene!==0&&currentScene!==1;$("bulletSize").disabled=currentScene!==0&&currentScene!==1;$("squareSize").disabled=currentScene!==2;for(const id of ["decrease","increase","setCount","targetCount"])$(id).disabled=currentScene===3;}
   for(const [id,key] of Object.entries(boolFields))if(state[key]!==undefined&&document.activeElement!==$(id))$(id).checked=!!state[key];
   if(state.step!==undefined)document.querySelectorAll("[data-step]").forEach(e=>e.classList.toggle("selected",Number(e.dataset.step)===state.step));
@@ -257,8 +283,7 @@ function render(data){
     [...$("costBar").children].forEach((e,i)=>e.style.width=values[i]/total*100+"%");$("costText").textContent=values.map(x=>(x/1000).toFixed(2)).join(" / ")+" ms";
     $("conditionLine").textContent=`渲染 ${s.render_w||s.w||1280}×${s.render_h||s.h||720}　输出 ${s.output_w||s.w||1280}×${s.output_h||s.h||720}　${s.hw?"硬件":"CPU"}绘制　透明${s.alpha?"开":"关"}　同步${s.vsync?"开":"关"}　${s.scene===2?"方块 "+(s.square||"随机")+"px":"弹体 "+s.bullet+(s.scene===0&&s.bullet>6?"%":"px")}　步长 ${s.step}　超预算 ${s.over||0} 帧`;
     $("conditionLine").textContent+="\n"+engineText(s);
-    $("pressureMetrics").textContent=s.pressure_supported?`角色子弹 ${s.player_shots??"—"}；轮廓${s.locator_on===0?"关闭":s.locator_on===1?"开启":"状态未报告"} / 计算 ${s.locator_us??"—"} μs，敌人与角色绘制 ${s.enemy_us??"—"} μs，玩家子弹逻辑 ${s.player_logic_us??"—"} μs，敌弹逻辑 ${s.hostile_logic_us??"—"} μs；分带提前结束 ${s.band_splits??"—"} 次，桶溢出 ${s.band_overflow??"—"}。`:"新增小尺寸与 99,999 容量需 R5.5 ELF；旧固件保留其原上限。";
-    $("fontLine").textContent=`字体累计命中 ${s.font_hit} / 生成 ${s.font_miss} / 重置 ${s.font_reset}；静态文字命中 ${s.label_hit} / 生成 ${s.label_miss}。`;
+    $("pressureMetrics").textContent=`敌人与角色绘制 ${s.enemy_us??"—"} μs，玩家子弹逻辑 ${s.player_logic_us??"—"} μs，敌弹逻辑 ${s.hostile_logic_us??"—"} μs，HUD ${s.hud_us??"—"} μs；分带提前结束 ${s.band_splits??"—"} 次，桶溢出 ${s.band_overflow??"—"}。（STATS=1 固件才有分段计时）`;
   }
   renderPresetState(data);
   chart(data.samples);
@@ -280,6 +305,21 @@ async function poll(){if(polling)return;polling=true;try{render(await api("/api/
 window.addEventListener("resize",()=>chart(snapshot?.samples||[]));setInterval(poll,500);setInterval(()=>{if($("captureKeys").checked||held)sendHeld();},100);
 Promise.all([poll(),loadPresets()]).then(refreshPorts);
 
+// ---- 界面语言 / 萝卜人数（2026-10-28）
+$("language").addEventListener("change",e=>cmd("lang",Number(e.target.value)));
+document.querySelectorAll("[data-players]").forEach(b=>b.addEventListener("click",()=>cmd("players",Number(b.dataset.players))));
+function renderLangParty(state,configuring){
+  $("language").disabled=!connected||!state.lang_supported||configuring;
+  if(document.activeElement!==$("language"))$("language").value=state.lang??0;
+  const sel=state.selected_players;
+  document.querySelectorAll("[data-players]").forEach(b=>{b.disabled=!connected||!state.party_supported||configuring;b.classList.toggle("selected",Number(b.dataset.players)===sel);});
+  document.querySelectorAll('[data-command="campaign"]').forEach(b=>b.disabled=!connected||!state.campaign_supported||configuring);
+  $("campaignState").textContent=state.campaign_supported?(state.campaign_endless?`第 6 / 6 关 · 无限模式 · 第 ${(state.endless_wave||0)+1} 波 · 蚀日龙皇已登场 ${state.ultimate_spawned||0} 次`:`第 ${state.campaign_scene} / 6 关 · 剩余 ${state.campaign_remaining} 秒${state.campaign_timeout?" · 超时结束":""}`):"新版体验使用 V6 固件";
+  $("startParty").disabled=!connected||!state.party_supported||configuring;
+  $("partySelected").textContent=sel?`下一局人数：${sel} 人${state.scene===1&&state.players&&state.players!==sel?`（当前这局 ${state.players} 人，开新局后生效）`:""}${state.team_level!==undefined&&state.players>1?` · 全队 ${state.team_level} 级，经验 ${state.team_xp}/${state.team_next_xp}${state.upgrade_wait?" · 等待选卡":""}`:""}`:"下一局人数：等待设备回报";
+}
+
+// ---- 三人合作 / 输入诊断（2026-10-26，原样取自队友版面板，去掉东方入口）
 const mapStorageKey="ti60-r59-matrix-map-v1";
 let savedMatrixMap=null,matrixRestoreBusy=false,lastSavedMatrixMap="";
 try{const x=JSON.parse(localStorage.getItem(mapStorageKey)||"null");if(x&&validMatrixMap(x.map))savedMatrixMap=x;}catch(e){}
@@ -302,11 +342,11 @@ async function confirmedInputCommand(command,value,requiredTags=[]){
 }
 async function startCoopGame(scene){
   if(coopStartBusy||matrixRestoreBusy)return;
-  coopStartBusy=true;$("captureKeys").checked=false;release();
+  const wasCapture=$("captureKeys").checked;coopStartBusy=true;$("captureKeys").checked=false;release();
   try{
     if(!snapshot?.state.coop_start_supported)throw new Error("当前固件不支持三人启动入口。");
     const diagnosticCapable=snapshot.state.input_diag_supported===1;
-    if(diagnosticCapable&&(!snapshot.responses||snapshot.boot===undefined))throw new Error("请重启上位机服务，加载 R5.9.1 后再启动三人游戏。");
+    if(diagnosticCapable&&(!snapshot.responses||snapshot.boot===undefined))throw new Error("请重启上位机服务后再启动三人游戏。");
     // Require the state tagged with this exact request, not a stale periodic
     // sample or merely an ACK that preceded the following telemetry lines.
     const tags=["S4","T7",...(diagnosticCapable?["I5","I9"]:[])];
@@ -320,9 +360,9 @@ async function startCoopGame(scene){
     const game=await confirmedInputCommand("coop",scene,tags);
     if(game.players!==3||game.scene!==scene||game.auto!==0||game.input_diag)throw new Error("尚未确认三人新局和输入状态，请同步设备状态后重试。");
     $("captureKeys").checked=true;
-    $(scene===1?"startCoopCarrot":"startCoopTouhou").focus();
+    $("startCoopCarrot").focus();
     notice("三人新局已启动，输入检测已退出，电脑键盘控制已启用。","success");
-  }catch(e){notice(e.message,"error");}
+  }catch(e){$("captureKeys").checked=wasCapture;notice(e.message,"error");}
   finally{coopStartBusy=false;}
 }
 $("matrixRestore").addEventListener("click",async()=>{
@@ -349,7 +389,7 @@ function renderInputDiagnostics(s,configuring){
   $("matrixCalApply").disabled=!available||!active||step!==16||!released;
   $("keyboardSync").disabled=!available||!s.input_diag;
   $("matrixRestore").disabled=!available||!savedMatrixMap||!released||active;
-  $("inputDiagState").textContent=!s.input_diag_supported?"请下载 R5.9 ELF 后使用；R5.8 bit 不需要更换。":s.input_diag?"检测中：扩展键盘和网页电脑键盘捕获都暂停。校准应用后仍保留检测状态；松开全部键，点结束检测，或点三人启动按钮自动退出。":"游戏输入已启用。首次接线请先进入只检测按键模式。";
+  $("inputDiagState").textContent=!s.input_diag_supported?"需要带输入页（rtl/input/input_hub.v）的新 bit；旧 bit 只能单人或用上位机强制三人。":s.input_diag?"检测中：扩展键盘和网页电脑键盘捕获都暂停。校准应用后仍保留检测状态；松开全部键，点结束检测，或点三人启动按钮自动退出。":"游戏输入已启用。首次接线请先进入只检测按键模式。";
   $("matrixCalPrompt").textContent=active?(step===16?"16 键已记录，全部松开后点击“应用完整映射”。":`已记录 ${step}/16。${s.matrix_wait?"请先松开全部按键，然后":"请"}只按板上 S${step+1}，松开并等待进度变化。`):s.matrix_mapped?"已应用校准。可在检测模式验证每一键后恢复游戏操作。":"当前为默认行列映射。点击开始校准，按板上丝印从 S1 到 S16 逐个记录。";
   if(active&&s.matrix_cal_error)$("matrixCalPrompt").textContent+=(s.matrix_cal_error===1?" 本次检测到多键，请松开重按当前键。":" 这条原始键位已录过，请松开后按当前提示的键；接触短路也会导致重复。");
   [...$("matrixCalibrationGrid").children].forEach((cell,i)=>{cell.classList.toggle("recorded",active&&i<step);cell.classList.toggle("current",active&&i===step);const m=String(s.matrix_candidate||"").slice(1);cell.textContent="S"+(i+1)+(active&&i<step?" · "+m[i].toUpperCase():"");});
@@ -365,3 +405,25 @@ function renderInputDiagnostics(s,configuring){
   $("keyboardByteTail").textContent=tail?tail.match(/.{1,2}/g).join(" ").toUpperCase():"尚未收到原始字节";
   $("keyboardDiagnosticHint").textContent=bytes===undefined?"新固件会显示最近 16 个原始字节。":errors?"检测到 UART 错误：核对 115200 8N1、共地和信号电平；日志保留累计错误，即使硬件错误位已清除。":!bytes?"尚未从接收 FIFO 取到字节。按 W 并松开，观察计数；若仍为 0，按接线说明做 TX→RX 和 USB 端枚举检查。":!s.keyboard_reports?"已有串口字节，但尚无完整键盘报告。查看是否有 57 AB 01；57 AB 82/88 通常说明模块仍处于状态0/1。":"已解析到键盘报告。按 W 时 keyboard_held 应含 1，松开归零；结束检测后进入三人游戏验证 P2。";
 }
+
+/* 手柄（2026-10-28，浏览器 Gamepad API，冰原狼 2 用 XInput / PC 模式，标准布局）：算 P1，和电脑键盘一样要勾"启用键盘控制"。
+ * 摇杆 / 十字键 移动，A 射击 / 确定，B 符卡，RB / RT / LT 低速，LB 东方跳过，Menu 暂停，View 回菜单；
+ * 萝卜升级时 X / Y / B = 选项 1 / 2 / 3。 */
+let padPrev=[],padName="";
+function pollGamepad(){
+  const pads=navigator.getGamepads?[...navigator.getGamepads()].filter(Boolean):[],p=pads[0];
+  const name=p?p.id:"";if(name!==padName){padName=name;const el=$("gamepadState");if(el)el.textContent=name?`手柄：${name}（P1）`:"手柄：未检测到（插上后按任意键）";}
+  const active=p&&document.hasFocus()&&!document.hidden&&$("captureKeys").checked&&!typing()&&connected&&compatible&&!snapshot?.state.input_diag&&!coopStartBusy;
+  if(!active){if(padHeldBits){padHeldBits=0;updateHeld();}padPrev=[];return;}
+  const b=i=>!!(p.buttons[i]&&(p.buttons[i].pressed||p.buttons[i].value>0.5)),ax=i=>p.axes[i]||0;
+  let m=0;
+  if(b(12)||ax(1)<-0.5)m|=1; if(b(13)||ax(1)>0.5)m|=2; if(b(14)||ax(0)<-0.5)m|=4; if(b(15)||ax(0)>0.5)m|=8;
+  if(b(0))m|=16; if(b(1))m|=32; if(b(5)||b(6)||b(7))m|=64; if(b(9))m|=128; if(b(4))m|=512;
+  if(m!==padHeldBits){padHeldBits=m;updateHeld();}
+  const edge=i=>b(i)&&!padPrev[i];
+  if(snapshot?.state.scene===1){if(edge(2))cmd("pick",1);if(edge(3))cmd("pick",2);if(edge(1))cmd("pick",3);}
+  if(edge(8))cmd("menu");
+  padPrev=p.buttons.map((x,i)=>b(i));
+}
+window.addEventListener("gamepadconnected",pollGamepad);window.addEventListener("gamepaddisconnected",pollGamepad);
+setInterval(pollGamepad,16);

@@ -1,2 +1,0 @@
-Running: efx_run_pt_unified.py ddr_demo_ti60 Titanium Ti60F225 --output_dir outflow --timing_model I3 --project_xml ddr_demo_ti60.xml
-[92m   interface :	PASS [0m

@@ -1,6 +1,0 @@
-PASS Touhou stress 75%: 72 bullets, state hash b398b5d5, guard intact
-PASS Touhou stress 100%: 72 bullets, state hash b398b5d5, guard intact
-PASS Touhou stress 125%: 72 bullets, state hash b398b5d5, guard intact
-PASS Touhou stress 150%: 72 bullets, state hash b398b5d5, guard intact
-PASS Touhou stress 100%: 72 bullets, state hash b398b5d5, guard intact
-PASS stress display scaling changes neither gameplay nor collision, normal mode uses original art

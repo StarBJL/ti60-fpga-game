@@ -1,6 +1,0 @@
-time_china	action	detail
-2026-10-23T17:54:23.6656754+08:00	CONNECT	COM_TEST 115200 8N1; hardware_label= (user-entered); receive-only until an explicit button/Send
-2026-10-23T17:54:23.8011983+08:00	TX	char=@ hex=40
-2026-10-23T17:54:23.8022073+08:00	TX	char=! hex=21
-2026-10-23T17:54:23.8214607+08:00	LABEL	hardware_label=R7A (user-entered)
-2026-10-23T17:54:23.8275496+08:00	END_RECORD	开始下一轮记录；串口保持连接

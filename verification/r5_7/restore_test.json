@@ -1,9 +1,0 @@
-{
-  "passed": true,
-  "parts": 6,
-  "max_part_bytes": 2097152,
-  "verified_profiles": 3,
-  "bit_files": 3,
-  "elf_files": 6,
-  "hash_validation": true
-}

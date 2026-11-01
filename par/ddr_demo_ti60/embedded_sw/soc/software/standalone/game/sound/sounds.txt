@@ -1,0 +1,102 @@
+# 声音库清单：tools/wav2bank.py 读这个文件，生成 sound/sound_bank.bin + sound_bank.S
+# （make SOUND=1 时链接进 game.elf，下载后在 DDR 0x02000000）。
+#
+# 每行：名字  WAV 文件（相对本文件）  选项...
+#   名字 <= 15 个字符；游戏按名字找声音（src/th_sound.h），清单里没有的事件就不响。
+#   选项：mono / stereo（音效默认单声道，bgm 开头的默认保留立体声）
+#         rate=N（降采样省空间；不写 = 保持原采样率，混音器播放时自己换算到 48 kHz）
+#         loop=auto（WAV 里的 smpl 循环点，没有就整首循环；bgm 默认）| loop=none（音效默认）
+#         loop=N（帧号）| loop=12.5s（秒）   gain=0.7 或 gain=-3dB   trim（去掉开头静音）   end=60s
+#         8bit（8 位，体积减半，有底噪，适合噪声类音效）
+#
+# 把 WAV 放进 sound/ 下面（比如 sound/se/、sound/bgm/），改好下面的行，然后：
+#     python tools/wav2bank.py
+# 再 build_game.bat（声音库变了 make 会自动重新汇编 sound_bank.S）。
+# 还没有自己的 WAV 时：python tools/wav2bank.py --demo  生成一套合成的占位音效和 BGM。
+#
+# 体积 / 下载时间：库会跟 elf 一起经 JTAG 下载。立体声 44.1 kHz 16 位 = 每分钟 10 MB；
+# BGM 用 rate=32000 或 22050、音效用 rate=22050 mono 可以小很多（总共上限 16 MB）。
+#
+# ---- 音效（事件名见 src/th_sound.h）----
+# shot           se/plst00.wav      rate=22050 trim
+# enemy_fire     se/tan00.wav       rate=22050 trim
+# hit            se/damage00.wav    rate=22050 trim
+# kill           se/enep00.wav      rate=22050
+# graze          se/graze.wav       rate=22050 trim
+# item           se/item00.wav      rate=22050 trim
+# powerup        se/powerup.wav
+# extend         se/extend.wav
+# bomb_get       se/cardget.wav
+# bomb           se/slash.wav
+# death          se/pldead00.wav
+# spell          se/cat00.wav
+# capture        se/cardget.wav
+# phase          se/enep01.wav
+# boss_dead      se/enep02.wav
+# warning        se/alert.wav
+# timeout        se/timeout.wav
+# select         se/select00.wav
+# ok             se/ok00.wav
+# pause          se/pause.wav
+# clear          se/clear.wav
+# over           se/over.wav
+# laser          se/lazer00.wav     rate=22050
+#
+# ---- BGM ----
+# bgm_title      bgm/title.wav      rate=32000
+# bgm_stage1     bgm/stage1.wav     rate=32000 loop=auto
+# bgm_boss1      bgm/boss1.wav      rate=32000 loop=auto
+# bgm_stage2     bgm/stage2.wav     rate=32000 loop=auto
+# bgm_mid2       bgm/mid2.wav       rate=32000 loop=auto
+# bgm_boss2      bgm/boss2.wav      rate=32000 loop=auto
+
+# ======================================================================
+# 2026-10-26 当前使用的清单（上面注释掉的是以后换成正式音效时的写法）：
+#   音效：wav2bank.py --demo 生成的占位音效（萝卜和东方共用同一套名字）
+#   BGM ：队友 R4 版原创芯片音乐（tools/create_original_music.py 生成，32 kHz 单声道），
+#         降到 22050 Hz 单声道 16 位以省 flash（6 首约 3.9 MB）：
+#         标题 / 菜单共用 bgm_title；东方两关 bgm_stage1/2、两个 Boss bgm_boss1/2；萝卜 bgm_garden
+# ======================================================================
+shot           demo/shot.wav
+enemy_fire     demo/enemy_fire.wav
+hit            demo/hit.wav
+kill           demo/kill.wav
+graze          demo/graze.wav
+item           demo/item.wav
+powerup        demo/powerup.wav
+extend         demo/extend.wav
+bomb_get       demo/bomb_get.wav
+bomb           demo/bomb.wav
+death          demo/death.wav
+spell          demo/spell.wav
+capture        demo/capture.wav
+phase          demo/phase.wav
+boss_dead      demo/boss_dead.wav
+warning        demo/warning.wav
+timeout        demo/timeout.wav
+select         demo/select.wav
+ok             demo/ok.wav
+pause          demo/pause.wav
+clear          demo/clear.wav
+over           demo/over.wav
+laser          demo/laser.wav
+bgm_title      original_r4/bgm_title.wav   mono rate=22050 loop=auto
+bgm_stage1     original_r4/bgm_stage1.wav  mono rate=22050 loop=auto
+bgm_stage2     original_r4/bgm_stage2.wav  mono rate=22050 loop=auto
+bgm_boss1      original_r4/bgm_boss1.wav   mono rate=22050 loop=auto
+bgm_boss2      original_r4/bgm_boss2.wav   mono rate=22050 loop=auto
+bgm_garden     original_r4/bgm_garden.wav  mono rate=22050 loop=auto
+
+# V5 Chinese ultimate calls, synthetic speech; measured timing in voice_timing.h.
+ult_shooter voices/shooter.wav mono rate=22050 loop=none
+ult_warrior voices/warrior.wav mono rate=22050 loop=none
+ult_mage voices/mage.wav mono rate=22050 loop=none
+
+# V6 map boss entry voices
+boss_moss voices/boss_moss.wav mono rate=22050 loop=none
+boss_jade voices/boss_jade.wav mono rate=22050 loop=none
+boss_thunder voices/boss_thunder.wav mono rate=22050 loop=none
+boss_ember voices/boss_ember.wav mono rate=22050 loop=none
+boss_astral voices/boss_astral.wav mono rate=22050 loop=none
+boss_dragon voices/boss_dragon.wav mono rate=22050 loop=none
+boss_eclipse voices/boss_eclipse.wav mono rate=22050 loop=none

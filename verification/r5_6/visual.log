@@ -1,8 +1,0 @@
-PASS 3200 warm pose changes: no outline rebuild/publication, immutable old sources
-PASS independent opaque-pixel reference: 448 normal level/heading/bob combinations, idle poses and hollow union outlines
-PASS near-index cache, overflow/table/pool fallbacks, duplicate union and player-laser coverage
-PASS 80/65 hysteresis, four-step fade, replay stability, hidden body at full fade, 3 distinct outline buffers and gameplay immutability
-PASS pressure: no near indexing, coverage/fade/outline/marker; every last projectile pixel covers the actor in all 7 sizes
-PASS 99999 visible bullets: exact backend pixel equality, including slots above 65535
-PASS all seven carrot visual sizes: independent locator coverage and backend equality
-PASS native 720p render and framebuffer guards; APB/list/DDR-table/LIST_WORD exact frame equality, CPU/HW alpha tolerance, 40K full frame, title/menus/upgrade/pause exports

@@ -1,5 +1,0 @@
-{
-  "passed": true,
-  "hardware_tested": false,
-  "description": "Real main loop and engine model, TH/carrot/squares run during physical 1080 mode; repeated mode and backend switches; unchanged quantity/skill/guard assertions."
-}

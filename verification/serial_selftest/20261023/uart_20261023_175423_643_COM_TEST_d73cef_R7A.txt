@@ -1,4 +1,0 @@
-fps 60.0 | MOT2
-测试UTF8
-[auto compare OFF]
-pending before split

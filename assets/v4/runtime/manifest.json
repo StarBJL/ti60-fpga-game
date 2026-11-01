@@ -1,0 +1,110 @@
+[
+  {
+    "scene": 1,
+    "source": "assets/v4/hd_sources/scene_1_moss_court.png",
+    "source_dimensions": [
+      1672,
+      941
+    ],
+    "source_sha256": "fd640257db7ac1db7cefb508014ffca500c3a0764b9d0a2b2917707e6d145656",
+    "runtime_dimensions": [
+      1280,
+      720
+    ],
+    "colour_treatment": "source_colours_no_dimming",
+    "resampling": "direct_source_to_1280x720_lanczos",
+    "raw_bytes": 1843200,
+    "packed_bytes": 964743,
+    "sha256": "99e809a1b618ad7357a2bb4d1bcd7c4ab1fa3c3e4846d8883f6b004f237a77ce"
+  },
+  {
+    "scene": 2,
+    "source": "assets/v4/hd_sources/scene_2_jade_palace.png",
+    "source_dimensions": [
+      1672,
+      941
+    ],
+    "source_sha256": "31256bf541be2237cfefd46bc2a241ef1ca9125009c141cfaff373926a65c7d8",
+    "runtime_dimensions": [
+      1280,
+      720
+    ],
+    "colour_treatment": "source_colours_no_dimming",
+    "resampling": "direct_source_to_1280x720_lanczos",
+    "raw_bytes": 1843200,
+    "packed_bytes": 1280214,
+    "sha256": "360b0a79a0cd29481a910a93fd00e68431e8144d342f5903593c32cef3c3864e"
+  },
+  {
+    "scene": 3,
+    "source": "assets/v4/hd_sources/scene_3_thunder_city.png",
+    "source_dimensions": [
+      1672,
+      941
+    ],
+    "source_sha256": "12e5b809209bb211537e9891ec91246354f6b80ca3d09d38c0c340149cc65e3a",
+    "runtime_dimensions": [
+      1280,
+      720
+    ],
+    "colour_treatment": "source_colours_no_dimming",
+    "resampling": "direct_source_to_1280x720_lanczos",
+    "raw_bytes": 1843200,
+    "packed_bytes": 1283381,
+    "sha256": "c558e566ac2c8d8dc3683779341e4303bfd7c6e404e0807dfa557330794fe4ad"
+  },
+  {
+    "scene": 4,
+    "source": "assets/v4/hd_sources/scene_4_ember_palace.png",
+    "source_dimensions": [
+      1672,
+      941
+    ],
+    "source_sha256": "e18e4ae95cf6af0a0497ed2f191cef7b7f02df3925d939460bf6e7cd35b69a75",
+    "runtime_dimensions": [
+      1280,
+      720
+    ],
+    "colour_treatment": "source_colours_no_dimming",
+    "resampling": "direct_source_to_1280x720_lanczos",
+    "raw_bytes": 1843200,
+    "packed_bytes": 1231383,
+    "sha256": "ab04bc3d93d93dc0fdc21845659a7e7917fbaba4f3ebf4069663d45cbbf04786"
+  },
+  {
+    "scene": 5,
+    "source": "assets/v4/hd_sources/scene_5_astral_sanctum.png",
+    "source_dimensions": [
+      1672,
+      941
+    ],
+    "source_sha256": "f2210fab29b5874c26b1071b47bb5a97522c211db777ed75b5b95e404127b33e",
+    "runtime_dimensions": [
+      1280,
+      720
+    ],
+    "colour_treatment": "source_colours_no_dimming",
+    "resampling": "direct_source_to_1280x720_lanczos",
+    "raw_bytes": 1843200,
+    "packed_bytes": 1239267,
+    "sha256": "e771d8821ef08620ead2253ee9204a387feebd155e4a1a4db1e9fd51f45b7e4d"
+  },
+  {
+    "scene": 6,
+    "source": "assets/v4/hd_sources/scene_6_twin_dragon_temple.png",
+    "source_dimensions": [
+      1672,
+      941
+    ],
+    "source_sha256": "0b91b3d99accbc4501afd0e8d387ab850f1401bd66a4ec65c9d916a3131c5a5a",
+    "runtime_dimensions": [
+      1280,
+      720
+    ],
+    "colour_treatment": "source_colours_no_dimming",
+    "resampling": "direct_source_to_1280x720_lanczos",
+    "raw_bytes": 1843200,
+    "packed_bytes": 1275128,
+    "sha256": "baa411f14070b6225b25a76202f42c256e27092b705ce859db4f60a36d728289"
+  }
+]

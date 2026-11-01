@@ -1,3 +1,0 @@
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/verification/r5/blit_control_tb.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module blit_fifo_check
-INFO: [VRFC 10-311] analyzing module blit_control_tb

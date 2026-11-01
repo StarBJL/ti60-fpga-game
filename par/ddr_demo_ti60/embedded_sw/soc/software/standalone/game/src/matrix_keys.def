@@ -1,0 +1,18 @@
+/* Single source for firmware actions and generated wiring/key help.
+ * KEY(S-number, held PAD mask, action, value, Fn action, Fn value, label, Fn label) */
+KEY(1,0,INPUT_MENU,0,INPUT_SCENE_NEXT,0,"返回菜单","切换场景")
+KEY(2,1,INPUT_HELD,0,INPUT_HELD,0,"上移","—")
+KEY(3,0,INPUT_START_PAUSE,0,INPUT_HELD,0,"确认 / 开始","—")
+KEY(4,0,INPUT_HELD,0,INPUT_HELD,0,"Fn","—")
+KEY(5,4,INPUT_HELD,0,INPUT_HELD,0,"左移","—")
+KEY(6,2,INPUT_HELD,0,INPUT_HELD,0,"下移","—")
+KEY(7,8,INPUT_HELD,0,INPUT_HELD,0,"右移","—")
+KEY(8,32,INPUT_HELD,0,INPUT_HELD,0,"能量大招 / 东方Bomb","—")
+KEY(9,0,INPUT_PICK,1,INPUT_VOLUME_DELTA,-1,"升级项 1","音量减")
+KEY(10,0,INPUT_PICK,2,INPUT_VOLUME_DELTA,1,"升级项 2","音量加")
+KEY(11,0,INPUT_PICK,3,INPUT_BGM_TOGGLE,0,"升级项 3","BGM 开关")
+KEY(12,0,INPUT_PLAYERS_NEXT,0,INPUT_P2_SOURCE_NEXT,0,"选择人数","保留（未实现）")
+KEY(13,0,INPUT_PAUSE,0,INPUT_HELD,0,"暂停 / 继续","—")
+KEY(14,0,INPUT_RESTART,0,INPUT_HELD,0,"重开确认","—")
+KEY(15,0,INPUT_STATUS,0,INPUT_TRACK_NEXT,0,"状态 / 帮助","保留（未实现）")
+KEY(16,64,INPUT_HELD,0,INPUT_HELD,0,"普通局冲刺 / 东方慢速","—")

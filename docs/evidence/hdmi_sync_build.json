@@ -1,0 +1,95 @@
+{
+  "selected_build": "/home/user/fpga_contest/1025/1030/HDMI_AUDIO_225M_SYNC_BUILD_20261101_T3_S3",
+  "delivered_bit": "/home/user/fpga_contest/1025/1030/Ti60_V6_225M_HDMI_SYNC_FIX_20261101/ti60_v6_225m_hdmi_audio_sync_fix.bit",
+  "bit_bytes": 2775684,
+  "clock_hz": 225000000,
+  "elf_modified": false,
+  "checks": {
+    "r7_tmds_comparison_cycles": 1237587,
+    "comparison_scope": "one full 720p frame, colour bars and stereo 1kHz test tone",
+    "tmds_equal_to_r7": true,
+    "timing": {
+      "setup": [
+        {
+          "launch": "core_clk",
+          "capture": "core_clk",
+          "slack_ns": 0.063
+        },
+        {
+          "launch": "pll_fb_clk",
+          "capture": "pll_fb_clk",
+          "slack_ns": 3.09
+        },
+        {
+          "launch": "sdram_clk",
+          "capture": "sdram_clk",
+          "slack_ns": 0.329
+        },
+        {
+          "launch": "rx_cal_clk",
+          "capture": "rx_cal_clk",
+          "slack_ns": 0.397
+        },
+        {
+          "launch": "tx_cal_clk",
+          "capture": "tx_cal_clk",
+          "slack_ns": 0.19
+        },
+        {
+          "launch": "tx_cal_clk_90edge",
+          "capture": "tx_cal_clk_90edge",
+          "slack_ns": 0.326
+        },
+        {
+          "launch": "hdmi_tx_slow_clk",
+          "capture": "hdmi_tx_slow_clk",
+          "slack_ns": 7.163
+        }
+      ],
+      "hold": [
+        {
+          "launch": "core_clk",
+          "capture": "core_clk",
+          "slack_ns": 0.012
+        },
+        {
+          "launch": "pll_fb_clk",
+          "capture": "pll_fb_clk",
+          "slack_ns": 0.033
+        },
+        {
+          "launch": "sdram_clk",
+          "capture": "sdram_clk",
+          "slack_ns": 0.097
+        },
+        {
+          "launch": "rx_cal_clk",
+          "capture": "rx_cal_clk",
+          "slack_ns": 0.026
+        },
+        {
+          "launch": "tx_cal_clk",
+          "capture": "tx_cal_clk",
+          "slack_ns": 0.049
+        },
+        {
+          "launch": "tx_cal_clk_90edge",
+          "capture": "tx_cal_clk_90edge",
+          "slack_ns": 0.072
+        },
+        {
+          "launch": "hdmi_tx_slow_clk",
+          "capture": "hdmi_tx_slow_clk",
+          "slack_ns": 0.089
+        }
+      ],
+      "all_reported_relations_pass": true
+    }
+  },
+  "board_audio_result": "awaiting user confirmation",
+  "not_selected": [
+    "three compat4 candidates with negative setup slack",
+    "SYNC TIMING_2 candidate with negative setup slack",
+    "SYNC TIMING_3 seed 1 and seed 8 with negative setup slack"
+  ]
+}

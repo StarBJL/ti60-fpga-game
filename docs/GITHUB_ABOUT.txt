@@ -1,0 +1,14 @@
+中文 About（推荐直接粘贴）
+基于 Efinix Ti60 FPGA 与 Sapphire RISC-V 的裸机多媒体游戏平台，集成 225 MHz BitBlt 图形加速、DDR3 帧缓冲、720p HDMI 音视频、多人输入和 Windows 压力测试上位机。
+
+英文 About（可选）
+A bare-metal multimedia game platform on Efinix Ti60 FPGA and Sapphire RISC-V, featuring a 225 MHz BitBlt engine, DDR3 framebuffers, 720p HDMI audio/video, multiplayer input, and a Windows test console.
+
+建议仓库标题
+Ti60 FPGA Multimedia Game and 2D Graphics Accelerator
+
+建议 Topics
+fpga, efinix, ti60, riscv, verilog, embedded, bare-metal, graphics, hdmi, ddr3, uart, hardware-acceleration
+
+完整技术介绍放在仓库根目录 README.md；现场讲解见 docs/EXPLANATION_GUIDE.md。
+本文件提供 About 与 Topics 建议；本次更新仓库文件，不修改 GitHub About 字段或 Topics。

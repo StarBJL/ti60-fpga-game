@@ -1,8 +1,0 @@
-main 0 off by the pad: 1
-R3 skill casts 0; native scenes and controls exercised
-video model fullframes 720=564 1080=48; render canvas=1280x720
-PASS 1080 trial confirm and automatic timeout return to 720p
-PASS explicit three-player start from demo/pressure, link quiet/stabilize/restart, DVI request and bounded failure recovery
-PASS R6 dispatcher: FTAB prerequisites, K fallback status, VSync A/B, independent stress stages and invalid-state rejection
-PASS
-

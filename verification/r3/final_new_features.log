@@ -1,7 +1,0 @@
-gameplay 0 PASS R3 gameplay: 32 headings x 1..6 shots; muzzle alignment; 16/32-shot skill and cooldown; seven upgrades and appearances; four tiers and 1K..40K; native corners; triple DMA tables; invulnerability preserves bullets; audio events
-
-visual 0 ations, idle poses and hollow union outlines
-PASS near-index cache, overflow/table/pool fallbacks, duplicate union and player-laser coverage
-PASS 80/65 hysteresis, four-step fade, replay stability, hidden body at full fade, 3 distinct outline buffers and gameplay immutability
-PASS native 720p render and framebuffer guards; APB/list/DDR-table/LIST_WORD exact frame equality, CPU/HW alpha tolerance, 40K full frame, title/menus/upgrade/pause exports
-

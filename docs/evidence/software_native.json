@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "tests": [
+    "balance_test",
+    "sort_test",
+    "legacy_game_test",
+    "endless_test"
+  ],
+  "render_frames": 87,
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "endless_seconds": 400,
+  "render_game_state_unchanged": true,
+  "physical_board_tested": false
+}

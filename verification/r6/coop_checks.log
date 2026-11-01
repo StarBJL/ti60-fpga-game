@@ -1,8 +1,0 @@
-test_coop 0 PASS independent UART/USB/matrix input ownership, same-key overlap, release, ghost isolation and UART timeout
-PASS carrot: three independent movement/skill/shot quotas, per-owner hits/items/upgrades, whole-team defeat, pressure remains one player
-PASS Touhou: independent movement/shooting/bombs/lives/graze, shared world and whole-team defeat; pressure remains one player
-
-coop_preview 0 PASS 3-player game render models and framebuffer bounds; FPS values are placeholders, not board measurements
-
-test_band_bound 0 PASS 99999 squares, 4 aligned MOT2 jobs, CPU/HW motion equality, 1/3/6px SQTAB alpha parity and full world pixels
-

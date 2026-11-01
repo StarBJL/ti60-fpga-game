@@ -1,9 +1,0 @@
-{
-  "font": "Noto Sans CJK SC Medium",
-  "source": "/usr/share/fonts/opentype/noto/NotoSansCJK-Medium.ttc",
-  "size": 12,
-  "threshold": 100,
-  "glyphs": 351,
-  "license": "SIL Open Font License 1.1",
-  "ascii": "Existing 5x7 pixel font, vertically aligned to shared line height"
-}

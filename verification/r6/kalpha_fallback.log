@@ -1,6 +1,0 @@
-CAPS ff0a0904 CAPS2 00002d3f
-K blend frame 0 ok: 102254 cycles, K beats 168 (K busy 782)
-blend overlap ok (band)
-addga overlap ok (band)
-add overlap ok (band)
-PASS kalpha seed 43 mode random kboff 1 (223876 cycles)

@@ -1,6 +1,0 @@
-CAPS2 00002d3f
-direct list ok: 2 fill tables, 5 items
-band frame 0 ok (39042 cycles)
-band frame 1 ok (31512 cycles)
-squares 300 as one FTAB: 60876 cycles, phase1 2476 bands 58364 (flush 26094) records 725 K beats 30895
-PASS ftab seed 17 mode random (157769 cycles)

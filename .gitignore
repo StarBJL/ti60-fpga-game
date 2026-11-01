@@ -1,0 +1,17 @@
+# Local rebuilds and runtime output; preserve delivered BIT/ELF and asset inputs.
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+Thumbs.db
+/logs/
+/tools/control_panel/logs/
+/tools/control_panel/build/
+/tools/control_panel/dist/
+/par/ddr_demo_ti60/work_*/
+/par/ddr_demo_ti60/outflow/
+/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build/
+/par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/build_*/
+/BOARD_TEST/verified_225/*.log
+/BOARD_TEST/verified_225/*.map
+/BOARD_TEST/verified_225/software_clock.json

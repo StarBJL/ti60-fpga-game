@@ -25,9 +25,16 @@ def interpreter(environment):
 def has_dependency(python):
     try:
         result = subprocess.run([str(python), "-c", "import serial; assert serial.VERSION == '3.5'"],
-                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
         return result.returncode == 0
-    except OSError:
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+
+def usable_interpreter(python):
+    try:
+        return subprocess.run([str(python), "-c", "import sys; sys.exit(0 if sys.version_info >= (3,10) else 1)"],
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10).returncode == 0
+    except (OSError, subprocess.TimeoutExpired):
         return False
 
 def main(argv=None):
@@ -44,6 +51,14 @@ def main(argv=None):
     try:
         if args.system_python and has_dependency(sys.executable):
             python = Path(sys.executable)
+        if python.is_file() and not usable_interpreter(python):
+            # Windows venv executables reference their original base Python.
+            # Regenerate the launcher/config after copying the project between
+            # machines; retain the already installed pure-Python dependencies.
+            print("Repairing copied Python environment:", environment, flush=True)
+            venv.EnvBuilder(with_pip=False).create(environment)
+            if not usable_interpreter(python):
+                raise RuntimeError("The local environment could not be repaired with " + sys.executable)
         if not python.is_file():
             if args.no_install:
                 parser.error("Local environment is absent. Start normally once, or prepare --venv-dir offline.")

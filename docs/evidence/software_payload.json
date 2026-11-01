@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "changed_source_files": [
+    "carrot_fx.c",
+    "game.c",
+    "render.c",
+    "sprout_config.h",
+    "ui_zh_data.h",
+    "ultimate_spirits.c"
+  ],
+  "unchanged_source_files": 66,
+  "clock_hz": 225000000,
+  "source_digest": "519462fd560c452441f663b1f787391cf12e3dcc62f50352903c6d2624d2d9d9",
+  "elfs": [
+    {
+      "kind": "debug",
+      "path": "BOARD_TEST/verified_225/ti60_verified_225_debug.elf",
+      "sha256": "0d8d6720095dcd4dc6039cf7e4d76d0dedf7c9d860d9cea38213171cb7df3c9c",
+      "bytes": 17368568,
+      "ram_bytes": 14820832,
+      "art_bytes": 33475968,
+      "new_voice_bank_unchanged": true,
+      "compressed_visual_masters_unchanged": true,
+      "enemy_slots": 384
+    },
+    {
+      "kind": "release",
+      "path": "BOARD_TEST/verified_225/ti60_verified_225_release.elf",
+      "sha256": "defc550138270d387b05f5d8f9ded25c0e98d2b7badbe7dbe7142bbc82b1c77d",
+      "bytes": 17325560,
+      "ram_bytes": 14747888,
+      "art_bytes": 33475968,
+      "new_voice_bank_unchanged": true,
+      "compressed_visual_masters_unchanged": true,
+      "enemy_slots": 384
+    }
+  ],
+  "bit_unchanged": true,
+  "voice_bank_unchanged": true,
+  "visual_master_data_unchanged": true,
+  "only_host_count_change": {
+    "size_px": 25,
+    "before": 9000,
+    "after": 11000
+  },
+  "physical_board_tested": false
+}

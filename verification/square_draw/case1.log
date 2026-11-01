@@ -1,2 +1,0 @@
-PASS native 1280x720 SQTAB framebuffer exact, cycles 164007 AR 47 AW 7339
-D:\FPGA_competition\Ti60_720p_MERGE_R2_ZH_FULL\verification\square_draw\test.sv:79: $finish called at 820065000 (1ps)

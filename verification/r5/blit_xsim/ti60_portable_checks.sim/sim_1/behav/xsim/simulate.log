@@ -1,5 +1,0 @@
-Time resolution is 1 ps
-FIFO_PASS DW=32 AW=5 cycles=12000 full=237 empty=114 simultaneous=6494
-FIFO_PASS DW=23 AW=4 cycles=12000 full=267 empty=270 simultaneous=6362
-TEST_PASS: R5 descriptor/list register queues
-$finish called at time : 120180 ns : File "/data/users/user/codex_tmp/ti60_r5_work/Ti60_R5_DUALVIDEO/verification/r5/blit_control_tb.sv" Line 64
