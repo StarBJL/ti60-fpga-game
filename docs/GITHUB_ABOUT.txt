@@ -11,4 +11,4 @@ Ti60 FPGA Multimedia Game and 2D Graphics Accelerator
 fpga, efinix, ti60, riscv, verilog, embedded, bare-metal, graphics, hdmi, ddr3, uart, hardware-acceleration
 
 完整技术介绍放在仓库根目录 README.md；现场讲解见 docs/EXPLANATION_GUIDE.md。
-本文件提供 About 与 Topics 建议；本次更新仓库文件，不修改 GitHub About 字段或 Topics。
+About 用于一句话介绍项目；架构、功能、测量口径和部署方法详见中英文 README。
