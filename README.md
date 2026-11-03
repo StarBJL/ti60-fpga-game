@@ -6,7 +6,7 @@
 
 当前仓库仅保留 **Ti60_V6_225M_CLEAN_20261101** 工程，内容直接放在仓库根目录，沿用原工程相对路径。硬件、软件、素材、上位机和配套下载文件属于同一份交付。版本与下载文件校验值见 [CURRENT_RELEASE.json](CURRENT_RELEASE.json)。
 
-阅读顺序：[项目目标](#goals) → [演示功能](#demo) → [总体架构](#architecture) → [时钟与数据流](#clocks) → [软件帧循环](#frame-loop) → [图形引擎](#graphics) → [DDR 优化](#ddr) → [HDMI 音视频](#hdmi) → [输入与上位机](#input) → [游戏与素材](#assets) → [性能和验证](#validation) → [部署与后续改进](#deployment)。
+阅读顺序：[项目目标](#goals) → [演示功能](#demo) → [东方弹幕实拍](#danmaku) → [总体架构](#architecture) → [时钟与数据流](#clocks) → [软件帧循环](#frame-loop) → [图形引擎](#graphics) → [DDR 优化](#ddr) → [HDMI 音视频](#hdmi) → [输入与上位机](#input) → [游戏与素材](#assets) → [性能和验证](#validation) → [部署与后续改进](#deployment)。
 
 <a id="goals"></a>
 ## 1. 项目目标
@@ -35,6 +35,23 @@
 随工程提供的渲染预览；[大招演示视频](docs/demo/compact_ultimate_fx.mp4)。这些资料用于展示画面内容，不作为实板性能测量。
 
 建议先用 Release ELF 体验游戏，再用 Debug ELF 观察性能。这里的 Debug/Release 主要区别是 `STATS=1/0` 测量开关；[构建脚本][build]为两者都使用优化构建 `DEBUG=no`。
+
+<a id="danmaku"></a>
+### 东方风格弹幕 Sprout Danmaku
+
+Sprout Danmaku 是运行在 Ti60F225 上的东方风格竖版弹幕射击游戏。玩家控制自机射击、低速移动，在密集弹幕中躲避与擦弹，收集火力和得分道具，并在危急时使用 Bomb 清弹。关卡配有场景音乐、Boss 多阶段符卡和独立的侧栏状态显示。
+
+- **两关流程：** `SPROUTING FLOWER FIELD` 与 `MOONLIT SEA OF CLOUDS`，提供 NORMAL、LUNATIC 难度及第二关练习入口。
+- **弹型与特效：** 小弹、圆弹、米粒弹、苦无弹、星弹、大玉与泡弹，配合符卡背景、透明雾层、旋转魔法阵和加法发光效果。
+- **压力演示：** 提供 ×1～×48 共 14 档弹幕密度，支持手动调节与自动负载控制；敌弹池容量为 16,384 颗，界面显示当前弹数与压力档位。
+
+渲染采用**表驱动批量绘制**：CPU 更新弹幕状态时直接生成对象绘制表，按绘制分组批量提交；FPGA 图形引擎自主读表，结合精灵缓存与分带合成完成绘制。玩法逻辑见 [th_game.c][th-game]，绘制流程见 [th_render.c][th-render]。
+
+下图为团队提供的实板运行照片。
+
+![东方弹幕多色圆弹符卡实拍](docs/images/danmaku-prism-flower.jpg)
+
+![东方弹幕第二关流星符卡实拍](docs/images/danmaku-meteor-shower.jpg)
 
 <a id="architecture"></a>
 ## 3. 总体架构
@@ -247,7 +264,7 @@ Debug ELF 提供启动测速、详细统计和对照开关；Release ELF 关闭�
 
 本次仓库整理已完成以下检查：
 
-- 最终仓库共 712 个文件，运行源码、素材和下载文件沿用指定工程；更新中英文说明与入口，保留随工程新增的讲解、演示和验证资料。
+- 最终仓库共 714 个文件，运行源码、素材和下载文件沿用指定工程；更新中英文说明与入口，保留随工程新增的讲解、演示和验证资料。
 - BIT、Debug ELF、Release ELF、声音库 SHA-256 及源码摘要均与 `CURRENT_RELEASE.json` 一致；两份 ELF 的程序、声音、图形加载段完整。
 - 46 项硬件工程文件引用、39 条声音素材、45 个 Python 文件语法检查通过。
 - 两种语言各 12 章、目录 / 文件 / 锚点链接检查通过；上位机 9 个页面、资源和 API 入口返回成功，未打开串口设备。
@@ -319,6 +336,8 @@ python3 tools/build_verified.py --toolchain /path/to/efinity-riscv-toolchain --p
 [audio-sw]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/audio.c
 [game-sound]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game_sound.c
 [th-sound]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_sound.c
+[th-game]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_game.c
+[th-render]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_render.c
 [input-rtl]: rtl/input/input_hub.v
 [input-sw]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.c
 [input-link]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_link.h

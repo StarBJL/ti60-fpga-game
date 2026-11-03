@@ -6,7 +6,7 @@ A system on the Efinix Titanium Ti60F225 that turns RISC-V software state into H
 
 The current repository contains only **Ti60_V6_225M_CLEAN_20261101**, with its contents placed directly at the repository root and its relative paths preserved. Hardware, software, assets, the console, and programming files form one delivery. See [CURRENT_RELEASE.json](CURRENT_RELEASE.json) for the revision and programming-file checksums.
 
-Reading order: [Project goals](#goals) → [Demonstrations](#demo) → [System architecture](#architecture) → [Clocks and data flow](#clocks) → [Software frame loop](#frame-loop) → [Graphics engine](#graphics) → [DDR optimization](#ddr) → [HDMI video and audio](#hdmi) → [Input and host console](#input) → [Game and assets](#assets) → [Performance and validation](#validation) → [Deployment and future work](#deployment).
+Reading order: [Project goals](#goals) → [Demonstrations](#demo) → [Bullet-hell board photos](#danmaku) → [System architecture](#architecture) → [Clocks and data flow](#clocks) → [Software frame loop](#frame-loop) → [Graphics engine](#graphics) → [DDR optimization](#ddr) → [HDMI video and audio](#hdmi) → [Input and host console](#input) → [Game and assets](#assets) → [Performance and validation](#validation) → [Deployment and future work](#deployment).
 
 <a id="goals"></a>
 ## 1. Project goals
@@ -35,6 +35,23 @@ The carrot, rectangle, and image scenes render at native 1280×720. Bullet hell 
 Rendering preview supplied with the project; [ultimate demonstration video](docs/demo/compact_ultimate_fx.mp4). These illustrate visual content and are not used as board performance measurements.
 
 Use the Release ELF for a demonstration and the Debug ELF for measurement. Here, Debug/Release primarily selects `STATS=1/0`; the [build script][build] uses optimized `DEBUG=no` builds for both.
+
+<a id="danmaku"></a>
+### Touhou-style bullet hell Sprout Danmaku
+
+Sprout Danmaku is a Touhou-style vertical bullet-hell shooter running on the Ti60F225. Players shoot, use focused slow movement, dodge and graze dense bullet patterns, collect power and score items, and use Bombs to clear bullets when needed. The stages include music, multi-phase boss spell cards, and a separate status panel.
+
+- **Two stages:** `SPROUTING FLOWER FIELD` and `MOONLIT SEA OF CLOUDS`, with NORMAL and LUNATIC difficulties and a stage-two practice entry.
+- **Bullet shapes and effects:** pellets, orbs, rice bullets, kunai, stars, large glowing orbs, and bubble rings, combined with spell-card backgrounds, translucent fog, rotating magic circles, and additive glow.
+- **Stress demonstration:** 14 density presets from ×1 to ×48, with manual adjustment and automatic load control. The enemy bullet pool has 16,384 slots; the HUD shows the current bullet count and stress preset.
+
+Rendering uses **table-driven batch drawing**. The CPU builds object draw tables while updating bullet state and submits them by drawing group. The FPGA graphics engine reads these tables and draws through sprite caching and band composition. See [th_game.c][th-game] for gameplay and [th_render.c][th-render] for rendering.
+
+The following photographs show the game running on the team's board.
+
+![Sprout Danmaku multicolored orb spell card running on the board](docs/images/danmaku-prism-flower.jpg)
+
+![Sprout Danmaku stage-two meteor spell card running on the board](docs/images/danmaku-meteor-shower.jpg)
 
 <a id="architecture"></a>
 ## 3. System architecture
@@ -247,7 +264,7 @@ Debug enables startup benchmarks, detailed statistics, and comparison controls; 
 
 Checks completed for this repository update:
 
-- The final repository contains 712 files. Runtime sources, assets, and programming files are preserved from the selected project; bilingual documentation and entry points are updated, including its additional presentation and validation materials.
+- The final repository contains 714 files. Runtime sources, assets, and programming files are preserved from the selected project; bilingual documentation and entry points are updated, including its additional presentation and validation materials.
 - BIT, Debug ELF, Release ELF, and sound-bank SHA-256 values and the source digest match `CURRENT_RELEASE.json`. Both ELFs contain the program, sound, and graphics load segments.
 - All 46 hardware project-file references, 39 sound entries, and syntax checks for 45 Python files pass.
 - Both languages have 12 matching chapters and checked directory/file/anchor links. Nine console pages, resources, and API endpoints respond successfully; no serial device was opened.
@@ -319,6 +336,8 @@ Future work follows the data path: preserve complete 225 MHz timing/resource rep
 [audio-sw]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/audio.c
 [game-sound]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/game_sound.c
 [th-sound]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_sound.c
+[th-game]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_game.c
+[th-render]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/th_render.c
 [input-rtl]: rtl/input/input_hub.v
 [input-sw]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_devices.c
 [input-link]: par/ddr_demo_ti60/embedded_sw/soc/software/standalone/game/src/input_link.h
