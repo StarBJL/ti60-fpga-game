@@ -517,23 +517,6 @@ Collision radii are defined separately from sprite canvas dimensions.
 
 **Tile-based composition for higher resolutions.** The current 1280 × 16 horizontal window is specialized for 720p. A fixed-size rectangular tile such as 64 × 64 could extend the approach toward 1080p while controlling the on-chip working-set size.
 
-## 4.2 Engineering Observations
-
-Full-system timing analysis is essential for hardware/software co-design. A dense projectile workload spans CPU object updates, command generation, AXI submission, repeated DDR image traffic, and video scan-out. Improving only one stage may expose a different bottleneck. The project therefore measures logic, submission, queue waiting, engine completion, and presentation separately and maps each optimization to a specific stage.
-
-Correctness also depends on explicit asynchronous ownership contracts. Publishing a command table, making its contents visible to DMA, receiving the final framebuffer write response, and switching the HDMI scan address occur at different points in time. Three rotating drawing tables, four exclusive framebuffers, and completion sequence numbers coordinate these operations while allowing parallel progress.
-
----
-
-# Part V — References
-
-1. [Ti60 FPGA Game — Project Source](https://github.com/StarBJL/ti60-fpga-game)
-2. Efinix Inc., *Efinity Software User Guide*, v2026.1.
-3. Efinix Inc., *Efinity Timing Closure User Guide*, v7.6, 2026.
-4. Efinix Inc., *Sapphire RV32 SoC Data Sheet and BSP Reference Manual*.
-
----
-
 # Build, Program, and Run
 
 ### FPGA Hardware Project
@@ -566,7 +549,3 @@ py -3 tools/control_panel/bootstrap.py --open
 ~~~
 
 The launcher prepares a local Python environment and starts the browser UI. Select the serial port and connect from the UI to send commands, view performance metrics, and save telemetry. Board-side gameplay does not require the PC console.
-
-### Third-Party Components
-
-The project integrates DDR/Sapphire SoC IP, TMDS example logic, and third-party runtime components. Copyright notices and applicable licenses are retained in their corresponding source and package files.
