@@ -1,2 +1,0 @@
-record_id,board_id,bit_sha256,elf_sha256,clock_hz,backend,scene,size_px,target_count,actual_count,alpha,vsync,submit_mode,band,source_cache,overlap,audio_enabled,window_seconds,render_fps,logic_hz,present_fps,scan_hz,repeat_fps,logic_us,submit_us,qstall_us,tail_wait_us,hud_us,work_max_us,video_uf_delta,audio_uf_delta,notes
-TO_BE_MEASURED,,,,225000000,,,,,,,,,,,,,,,,,,,,,,,,,,,Fill observed values from the same measurement window; target_count is not a measured limit
