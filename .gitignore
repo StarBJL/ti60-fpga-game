@@ -15,3 +15,10 @@ Thumbs.db
 /BOARD_TEST/verified_225/*.log
 /BOARD_TEST/verified_225/*.map
 /BOARD_TEST/verified_225/software_clock.json
+
+# Local host build caches and unpackaged distributions
+/.venv-control/
+/.venv-control-build/
+/build/
+/dist/
+/.pytest_cache/
